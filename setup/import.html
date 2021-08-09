@@ -399,21 +399,17 @@
 
 <ol id="markdown-toc">
   <li><a href="#copying-using-external-tools" id="markdown-toc-copying-using-external-tools">Copying using external tools</a></li>
-  <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
   <li><a href="#importing-data-from-an-object-store-without-actually-copying-it" id="markdown-toc-importing-data-from-an-object-store-without-actually-copying-it">Importing data from an object store without actually copying it</a>    <ol>
-      <li><a href="#running-lakectl-ingest-with-s3-as-the-source" id="markdown-toc-running-lakectl-ingest-with-s3-as-the-source">Running lakectl ingest with S3 as the source</a></li>
-      <li><a href="#running-lakectl-ingest-with-azure-blob-storage-as-the-source" id="markdown-toc-running-lakectl-ingest-with-azure-blob-storage-as-the-source">Running lakectl ingest with Azure Blob storage as the source</a></li>
-      <li><a href="#running-lakectl-ingest-with-google-cloud-storage-as-the-source" id="markdown-toc-running-lakectl-ingest-with-google-cloud-storage-as-the-source">Running lakectl ingest with Google Cloud storage as the source</a></li>
+      <li><a href="#ingesting-from-s3" id="markdown-toc-ingesting-from-s3">Ingesting from S3</a></li>
+      <li><a href="#ingesting-from-azure-blob-storage" id="markdown-toc-ingesting-from-azure-blob-storage">Ingesting from Azure Blob storage</a></li>
+      <li><a href="#ingesting-from-google-cloud-storage" id="markdown-toc-ingesting-from-google-cloud-storage">Ingesting from Google Cloud storage</a></li>
     </ol>
   </li>
   <li><a href="#very-large-buckets-using-lakefs-s3-inventory-import-tool" id="markdown-toc-very-large-buckets-using-lakefs-s3-inventory-import-tool">Very large buckets: Using lakeFS S3 inventory import tool</a>    <ol>
       <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
-      <li><a href="#using-the-import-tool" id="markdown-toc-using-the-import-tool">Using the import tool</a>        <ol>
-          <li><a href="#merging-imported-data-to-the-main-branch" id="markdown-toc-merging-imported-data-to-the-main-branch">Merging imported data to the main branch</a></li>
-        </ol>
-      </li>
+      <li><a href="#usage" id="markdown-toc-usage">Usage</a></li>
       <li><a href="#gradual-import" id="markdown-toc-gradual-import">Gradual Import</a></li>
-      <li><a href="#limitations-1" id="markdown-toc-limitations-1">Limitations</a></li>
+      <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
     </ol>
   </li>
 </ol>
@@ -428,21 +424,6 @@
 
 <p>In order to import existing data to lakeFS, you may choose to copy it using <a href="/integrations/aws_cli.html#copy-from-a-local-path-to-lakefs">S3 CLI</a> 
 or using tools like <a href="/integrations/distcp.html#from-s3-to-lakefs">Apache DistCp</a>. This is the most straightforward way, and we recommend it if it’s applicable for you.</p>
-      <h2 id="limitations">
-        
-        
-          <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
-        
-        
-      </h2>
-    
-
-<p>Unfortunately, copying data is not always feasible for the following reasons:</p>
-<ol>
-  <li>Some data is just too big to copy.</li>
-  <li>It requires you to stop making changes to the data before starting to copy.</li>
-  <li>It requires you to switch to using the lakeFS endpoint in all places at once.</li>
-</ol>
       <h2 id="importing-data-from-an-object-store-without-actually-copying-it">
         
         
@@ -452,7 +433,7 @@ or using tools like <a href="/integrations/distcp.html#from-s3-to-lakefs">Apache
       </h2>
     
 
-<p>The <code class="language-plaintext highlighter-rouge">lakectl</code> command supports ingesting objects from a source object store without actually copying the data itself.
+<p>For cases where copying data is not feasible, the <code class="language-plaintext highlighter-rouge">lakectl</code> command supports ingesting objects from a source object store without actually copying the data itself.
 This is done by listing the source bucket (and optional prefix), and creating pointers to the returned objects in lakeFS.</p>
 
 <p>By doing this, it’s possible to take even large sets of objects, and have them appear as objects in a lakeFS branch, as if they were written directly to it.</p>
@@ -463,10 +444,10 @@ This is done by listing the source bucket (and optional prefix), and creating po
   <li>The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> must have permissions to list the object at the source object store</li>
   <li>The lakeFS installation must have read permissions to the objects being ingested</li>
 </ol>
-      <h3 id="running-lakectl-ingest-with-s3-as-the-source">
+      <h3 id="ingesting-from-s3">
         
         
-          <a href="#running-lakectl-ingest-with-s3-as-the-source" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running lakectl ingest with S3 as the source
+          <a href="#ingesting-from-s3" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ingesting from S3
         
         
       </h3>
@@ -479,10 +460,10 @@ This is done by listing the source bucket (and optional prefix), and creating po
 
 <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command will attempt to use the current user’s existing credentials and will respect instance profiles, 
 environment variables and credential files <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html" target="_blank">in the same way that the AWS cli does</a></p>
-      <h3 id="running-lakectl-ingest-with-azure-blob-storage-as-the-source">
+      <h3 id="ingesting-from-azure-blob-storage">
         
         
-          <a href="#running-lakectl-ingest-with-azure-blob-storage-as-the-source" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running lakectl ingest with Azure Blob storage as the source
+          <a href="#ingesting-from-azure-blob-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ingesting from Azure Blob storage
         
         
       </h3>
@@ -498,10 +479,10 @@ lakectl ingest <span class="se">\</span>
 <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports storage accounts configured through environment variables as shown above.</p>
 
 <p class="note"><strong>Note:</strong> Currently <code class="language-plaintext highlighter-rouge">lakectl import</code> supports the <code class="language-plaintext highlighter-rouge">http://</code> and <code class="language-plaintext highlighter-rouge">https://</code> schemes for Azure storage URIs. <code class="language-plaintext highlighter-rouge">wasb</code>, <code class="language-plaintext highlighter-rouge">abfs</code> or <code class="language-plaintext highlighter-rouge">adls</code> are currently not supported.</p>
-      <h3 id="running-lakectl-ingest-with-google-cloud-storage-as-the-source">
+      <h3 id="ingesting-from-google-cloud-storage">
         
         
-          <a href="#running-lakectl-ingest-with-google-cloud-storage-as-the-source" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running lakectl ingest with Google Cloud storage as the source
+          <a href="#ingesting-from-google-cloud-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ingesting from Google Cloud storage
         
         
       </h3>
@@ -529,15 +510,24 @@ since it has to paginate through all the objects in the source using API calls.<
 <p>For S3, we provide a utility as part of the <code class="language-plaintext highlighter-rouge">lakefs</code> binary, called <code class="language-plaintext highlighter-rouge">lakefs import</code>.</p>
 
 <p>The lakeFS import tool will use the <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html">S3 Inventory</a> feature to create lakeFS metadata.
-In case the repository is empty, the imported metadata will be committed directly to the main branch. In all other cases, it will be committed to a special branch, called <code class="language-plaintext highlighter-rouge">import-from-inventory</code>.
-You should not make any changes or commit anything to branch <code class="language-plaintext highlighter-rouge">import-from-inventory</code>: it will be operated on only by lakeFS.
+The imported metadata will be committed to a special branch, called <code class="language-plaintext highlighter-rouge">import-from-inventory</code>.</p>
+
+<p class="note">You should not make any changes or commit anything to branch <code class="language-plaintext highlighter-rouge">import-from-inventory</code>: it will be operated on only by lakeFS.
 After importing, you will be able to merge this branch into your main branch.</p>
+      <h3 class="no_toc" id="how-it-works">
+        
+        
+          <a href="#how-it-works" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How it works
+        
+        
+      </h3>
+    
 
 <p>The imported data is not copied to the repository’s dedicated bucket.
 Rather, it will be read directly from your existing bucket when you access it through lakeFS.
 Files created or replaced through lakeFS will then be stored in the repository’s dedicated bucket.</p>
 
-<p>It is important to note that due to the deduplication feature of lakeFS, data will stay in your original bucket even
+<p>It is important to note that due to the deduplication feature of lakeFS, data will be read from your original bucket even
 when accessing it through other branches. In a sense, your original bucket becomes an initial snapshot of your data.</p>
 
 <p class="note pb-3"><strong>Note:</strong> lakeFS will never make any changes to the import source bucket.</p>
@@ -557,16 +547,16 @@ when accessing it through other branches. In a sense, your original bucket becom
   <li>The S3 credentials you provided to lakeFS should have GetObject permissions on the source bucket and on the bucket where the inventory is stored.</li>
   <li>If you want to use the tool for <a href="#gradual-import">gradual import</a>, you should not delete the data for the most recently imported inventory, until a more recent inventory is successfully imported.</li>
 </ul>
-      <h3 id="using-the-import-tool">
+      <h3 id="usage">
         
         
-          <a href="#using-the-import-tool" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the import tool
+          <a href="#usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
         
         
       </h3>
     
 
-<p>Import is performed by <code class="language-plaintext highlighter-rouge">lakefs</code>’s <code class="language-plaintext highlighter-rouge">import</code> command.</p>
+<p>Import is performed by the <code class="language-plaintext highlighter-rouge">lakefs import</code> command.</p>
 
 <p>Assuming your manifest.json is at <code class="language-plaintext highlighter-rouge">s3://example-bucket/path/to/inventory/YYYY-MM-DDT00-00Z/manifest.json</code>, and your lakeFS configuration yaml is at <code class="language-plaintext highlighter-rouge">config.yaml</code> (see notes below), run the following command to start the import:</p>
 
@@ -586,7 +576,7 @@ To list imported objects, run:
 To merge the changes to your main branch, run:
 	$ lakectl merge lakefs://example-repo/import-from-inventory lakefs://goo/main
 </code></pre></div></div>
-      <h4 id="merging-imported-data-to-the-main-branch">
+      <h4 class="no_toc" id="merging-imported-data-to-the-main-branch">
         
         
           <a href="#merging-imported-data-to-the-main-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merging imported data to the main branch
@@ -636,10 +626,10 @@ However, if your operation still requires that you work on the original bucket,
 you can repeat using the import API with up-to-date inventories every day, until you complete the onboarding process.
 You can specify only the prefixes that require import. lakeFS will merge those prefixes with the previous imported inventory.
 For example, a prefixes-file that contains only the prefix <code class="language-plaintext highlighter-rouge">new/data/</code>. The new commit to <code class="language-plaintext highlighter-rouge">import-from-inventory</code> branch will include all objects from the HEAD of that branch, except for objects with prefix <code class="language-plaintext highlighter-rouge">new/data/</code> that is imported from the inventory.</p>
-      <h3 id="limitations-1">
+      <h3 id="limitations">
         
         
-          <a href="#limitations-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+          <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
         
         
       </h3>
