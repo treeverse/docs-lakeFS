@@ -209,59 +209,59 @@
     "url": "/deploy/aws.html",
     "relUrl": "/deploy/aws.html"
   },"35": {
-    "doc": "Add Data",
-    "title": "Add Data",
-    "content": "In this section we’ll review how to copy files into lakeFS using the AWS CLI. | If you don’t have the AWS CLI installed, follow the instructions here. | Configure a new connection profile using the credentials we generated earlier: . aws configure --profile local # output: # AWS Access Key ID [None]: AKIAJVHTOKZWGCD2QQYQ # AWS Secret Access Key [None]: **************************************** # Default region name [None]: # Default output format [None]: . | Let’s test to see that it works. We’ll do that by calling s3 ls which should list our repositories for us: . aws --endpoint-url=http://s3.local.lakefs.io:8000 --profile local s3 ls # output: # 2021-06-15 13:43:03 example-repo . Note: We’re using s3.local.lakefs.io - a special DNS record which always resolves to localhost, subdomains included. Since S3’s API uses subdomains for bucket addressing, simply using localhost:8000 as an endpoint URL will not work. | Great, now let’s copy some files. We’ll write to the main branch. This is done by prefixing our path with the name of the branch we’d like to read/write from: . aws --endpoint-url=http://s3.local.lakefs.io:8000 --profile local s3 cp ./foo.txt s3://example-repo/main/ # output: # upload: ./foo.txt to s3://example-repo/main/foo.txt . | Back in the lakeFS UI, we should be able to see our file added to the main branch! . | . Next steps . Now that your repository contains some data, what about using the lakeFS CLI for committing, branching and viewing the history? . ",
-    "url": "/quickstart/aws_cli.html",
-    "relUrl": "/quickstart/aws_cli.html"
-  },"36": {
     "doc": "AWS CLI",
     "title": "Using lakeFS with AWS CLI",
     "content": "The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. We could use the file commands for S3 to access lakeFS . ",
     "url": "/integrations/aws_cli.html#using-lakefs-with-aws-cli",
     "relUrl": "/integrations/aws_cli.html#using-lakefs-with-aws-cli"
-  },"37": {
+  },"36": {
     "doc": "AWS CLI",
     "title": "Table of contents",
     "content": ". | Configuration | Path convention | Usage | Examples . | List directory | Copy from lakeFS to lakeFS | Copy from lakeFS to a local path | Copy from a local path to lakeFS | Delete file | Delete directory | . | Adding an alias | . ",
     "url": "/integrations/aws_cli.html#table-of-contents",
     "relUrl": "/integrations/aws_cli.html#table-of-contents"
-  },"38": {
+  },"37": {
     "doc": "AWS CLI",
     "title": "Configuration",
     "content": "We would like to configure an AWS profile for lakeFS. In order to configure the lakeFS credentials run: . aws configure --profile lakefs . we will be prompted to enter AWS Access Key ID , AWS Secret Access Key . It should look like this: . aws configure --profile lakefs # output: # AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE # AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY # Default region name [None]: # Default output format [None]: . ",
     "url": "/integrations/aws_cli.html#configuration",
     "relUrl": "/integrations/aws_cli.html#configuration"
-  },"39": {
+  },"38": {
     "doc": "AWS CLI",
     "title": "Path convention",
     "content": "When accessing objects in s3 we will need to use the lakeFS path convention s3://[REPOSITORY]/[BRANCH]/PATH/TO/OBJECT . ",
     "url": "/integrations/aws_cli.html#path-convention",
     "relUrl": "/integrations/aws_cli.html#path-convention"
-  },"40": {
+  },"39": {
     "doc": "AWS CLI",
     "title": "Usage",
     "content": "After configuring the credentials, This is how a command should look: . aws s3 --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ ls s3://example-repo/main/example-directory . Where endpoint-url should be the same value configured for gateways.s3.domain_name. We could use an alias to make it shorter and more convenient. ",
     "url": "/integrations/aws_cli.html#usage",
     "relUrl": "/integrations/aws_cli.html#usage"
-  },"41": {
+  },"40": {
     "doc": "AWS CLI",
     "title": "Examples",
     "content": "List directory . aws --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ s3 ls s3://example-repo/main/example-directory . Copy from lakeFS to lakeFS . aws --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ s3 cp s3://example-repo/main/example-file-1 s3://example-repo/main/example-file-2 . Copy from lakeFS to a local path . aws --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ s3 cp s3://example-repo/main/example-file-1 /path/to/local/file . Copy from a local path to lakeFS . aws --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ s3 cp /path/to/local/file s3://example-repo/main/example-file-1 . Delete file . aws --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ s3 rm s3://example-repo/main/example-directory/example-file . Delete directory . aws --profile lakefs \\ --endpoint-url https://s3.lakefs.example.com \\ s3 rm s3://example-repo/main/example-directory/ --recursive . ",
     "url": "/integrations/aws_cli.html#examples",
     "relUrl": "/integrations/aws_cli.html#examples"
-  },"42": {
+  },"41": {
     "doc": "AWS CLI",
     "title": "Adding an alias",
     "content": "In order to make the command shorter and more convenient we can create an alias: . alias awslfs='aws --endpoint https://s3.lakefs.example.com --profile lakefs' . Now, the ls command using the alias will be: . awslfs s3 ls s3://example-repo/main/example-directory . ",
     "url": "/integrations/aws_cli.html#adding-an-alias",
     "relUrl": "/integrations/aws_cli.html#adding-an-alias"
-  },"43": {
+  },"42": {
     "doc": "AWS CLI",
     "title": "AWS CLI",
     "content": " ",
     "url": "/integrations/aws_cli.html",
     "relUrl": "/integrations/aws_cli.html"
+  },"43": {
+    "doc": "Add Data",
+    "title": "Add Data",
+    "content": "In this section we’ll review how to copy files into lakeFS using the AWS CLI. | If you don’t have the AWS CLI installed, follow the instructions here. | Configure a new connection profile using the credentials we generated earlier: . aws configure --profile local # output: # AWS Access Key ID [None]: AKIAJVHTOKZWGCD2QQYQ # AWS Secret Access Key [None]: **************************************** # Default region name [None]: # Default output format [None]: . | Let’s test to see that it works. We’ll do that by calling s3 ls which should list our repositories for us: . aws --endpoint-url=http://s3.local.lakefs.io:8000 --profile local s3 ls # output: # 2021-06-15 13:43:03 example-repo . Note: We’re using s3.local.lakefs.io - a special DNS record which always resolves to localhost, subdomains included. Since S3’s API uses subdomains for bucket addressing, simply using localhost:8000 as an endpoint URL will not work. | Great, now let’s copy some files. We’ll write to the main branch. This is done by prefixing our path with the name of the branch we’d like to read/write from: . aws --endpoint-url=http://s3.local.lakefs.io:8000 --profile local s3 cp ./foo.txt s3://example-repo/main/ # output: # upload: ./foo.txt to s3://example-repo/main/foo.txt . | Back in the lakeFS UI, we should be able to see our file added to the main branch! . | . Next steps . Now that your repository contains some data, what about using the lakeFS CLI for committing, branching and viewing the history? . ",
+    "url": "/quickstart/aws_cli.html",
+    "relUrl": "/quickstart/aws_cli.html"
   },"44": {
     "doc": "On Azure",
     "title": "Deploy lakeFS on Azure",
@@ -1157,53 +1157,53 @@
     "url": "/setup/import.html",
     "relUrl": "/setup/import.html"
   },"193": {
-    "doc": "Using lakeFS",
-    "title": "Using lakeFS",
-    "content": " ",
-    "url": "/usecases/",
-    "relUrl": "/usecases/"
-  },"194": {
-    "doc": "Prepare Your Storage",
-    "title": "Prepare Your Storage",
-    "content": "A production installation of lakeFS will usually use your cloud provider’s object storage as the underlying storage layer. You can choose to create a new bucket/container (recommended), or use an existing one with a path prefix. The path under the existing bucket/container should be empty. If you already have a bucket/container configured, you are ready to create your first lakeFS repository. Choose your storage provider to configure your storage: . ",
-    "url": "/setup/storage/",
-    "relUrl": "/setup/storage/"
-  },"195": {
-    "doc": "Setup lakeFS",
-    "title": "Setup lakeFS",
-    "content": "Once lakeFS is installed, a few simple steps are required to start working. The first step is to create a bucket/container in your underlying storage. If you already have one, you are ready to create your first lakeFS repository. ",
-    "url": "/setup/",
-    "relUrl": "/setup/"
-  },"196": {
-    "doc": "Slack",
-    "title": "Slack",
-    "content": " ",
-    "url": "/slack/",
-    "relUrl": "/slack/"
-  },"197": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": "This section includes all the details about the lakeFS open source project. ",
-    "url": "/understand/",
-    "relUrl": "/understand/"
-  },"198": {
-    "doc": "Quickstart",
-    "title": "Quickstart",
-    "content": "This section will guide you through setting up your lakeFS environment locally. Note: The quickstart section is for learning purposes. The installations below will not persist your data. Instead, it will spin-up a database in a docker container, which will be discarded later. For a production suitable deployment, see Deploying on AWS. ",
-    "url": "/quickstart/",
-    "relUrl": "/quickstart/"
-  },"199": {
     "doc": "Reference",
     "title": "Reference",
     "content": " ",
     "url": "/reference/",
     "relUrl": "/reference/"
-  },"200": {
+  },"194": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": "This section includes all the details about the lakeFS open source project. ",
+    "url": "/understand/",
+    "relUrl": "/understand/"
+  },"195": {
     "doc": "Integrations",
     "title": "Integrations",
     "content": " ",
     "url": "/integrations/",
     "relUrl": "/integrations/"
+  },"196": {
+    "doc": "Using lakeFS",
+    "title": "Using lakeFS",
+    "content": " ",
+    "url": "/usecases/",
+    "relUrl": "/usecases/"
+  },"197": {
+    "doc": "Quickstart",
+    "title": "Quickstart",
+    "content": "This section will guide you through setting up your lakeFS environment locally. Note: The quickstart section is for learning purposes. The installations below will not persist your data. Instead, it will spin-up a database in a docker container, which will be discarded later. For a production suitable deployment, see Deploying on AWS. ",
+    "url": "/quickstart/",
+    "relUrl": "/quickstart/"
+  },"198": {
+    "doc": "Slack",
+    "title": "Slack",
+    "content": " ",
+    "url": "/slack/",
+    "relUrl": "/slack/"
+  },"199": {
+    "doc": "Prepare Your Storage",
+    "title": "Prepare Your Storage",
+    "content": "A production installation of lakeFS will usually use your cloud provider’s object storage as the underlying storage layer. You can choose to create a new bucket/container (recommended), or use an existing one with a path prefix. The path under the existing bucket/container should be empty. If you already have a bucket/container configured, you are ready to create your first lakeFS repository. Choose your storage provider to configure your storage: . ",
+    "url": "/setup/storage/",
+    "relUrl": "/setup/storage/"
+  },"200": {
+    "doc": "Setup lakeFS",
+    "title": "Setup lakeFS",
+    "content": "Once lakeFS is installed, a few simple steps are required to start working. The first step is to create a bucket/container in your underlying storage. If you already have one, you are ready to create your first lakeFS repository. ",
+    "url": "/setup/",
+    "relUrl": "/setup/"
   },"201": {
     "doc": "Deploy lakeFS",
     "title": "Deploy lakeFS",
@@ -1673,23 +1673,23 @@
     "url": "/understand/roadmap.html#architecture--operations",
     "relUrl": "/understand/roadmap.html#architecture--operations"
   },"279": {
-    "doc": "AWS S3",
-    "title": "Prepare Your AWS S3 Bucket",
-    "content": ". | From the S3 Administration console, choose Create Bucket. | Make sure you: . | Block public access | Disable Object Locking | . | lakeFS requires permissions to interact with your bucket. Following is a minimal bucket policy. To add it, go to the Permissions tab, and paste it as : . { \"Id\": \"Policy1590051531320\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"Stmt1590051522178\", \"Action\": [ \"s3:GetObject\", \"s3:GetObjectVersion\", \"s3:PutObject\", \"s3:AbortMultipartUpload\", \"s3:ListMultipartUploadParts\", \"s3:GetBucketVersioning\", \"s3:ListBucket\", \"s3:GetBucketLocation\", \"s3:ListBucketMultipartUploads\", \"s3:ListBucketVersions\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::&lt;BUCKET_NAME&gt;\", \"arn:aws:s3:::&lt;BUCKET_NAME_WITH_PATH_PREFIX&gt;/*\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;\"] } } ] } . Replace &lt;ACCOUNT_ID&gt;, &lt;BUCKET_NAME&gt; and &lt;IAM_ROLE&gt; with values relevant to your environment. IAM_ROLE should be the role assumed by your lakeFS installation. Alternatively, if you use an AWS user’s key-pair to authenticate lakeFS to AWS, change the policy’s Principal to be the user: . \"Principal\": { \"AWS\": [\"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;\"] } . | . You are now ready to create your first lakeFS repository. ",
-    "url": "/setup/storage/s3.html#prepare-your-aws-s3-bucket",
-    "relUrl": "/setup/storage/s3.html#prepare-your-aws-s3-bucket"
-  },"280": {
-    "doc": "AWS S3",
-    "title": "AWS S3",
-    "content": " ",
-    "url": "/setup/storage/s3.html",
-    "relUrl": "/setup/storage/s3.html"
-  },"281": {
     "doc": "S3 Supported API",
     "title": "S3 Supported API",
     "content": "The S3 Gateway emulates a subset of the API exposed by S3. This subset includes all API endpoints relevant to data systems. for more information, see architecture . lakeFS supports the following API operations: . | Identity and authorization . | SIGv2 | SIGv4 | . | Bucket operations: . | HEAD bucket | . | Object operations: . | DeleteObject | DeleteObjects | GetObject . | Support for caching headers, ETag | Support for range requests | No support for SSE | No support for SelectObject operations | . | HeadObject | PutObject . | Support multi-part uploads | No support for storage classes | No object level tagging | . | CopyObject | . | Object Listing: . | ListObjects | ListObjectsV2 | Delimiter support (for \"/\" only) | . | Multipart Uploads: . | AbortMultipartUpload | CompleteMultipartUpload | CreateMultipartUpload | ListParts | Upload Part | UploadPartCopy | . | . ",
     "url": "/reference/s3.html",
     "relUrl": "/reference/s3.html"
+  },"280": {
+    "doc": "AWS S3",
+    "title": "Prepare Your AWS S3 Bucket",
+    "content": ". | From the S3 Administration console, choose Create Bucket. | Make sure you: . | Block public access | Disable Object Locking | . | lakeFS requires permissions to interact with your bucket. Following is a minimal bucket policy. To add it, go to the Permissions tab, and paste it as : . { \"Id\": \"Policy1590051531320\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"Stmt1590051522178\", \"Action\": [ \"s3:GetObject\", \"s3:GetObjectVersion\", \"s3:PutObject\", \"s3:AbortMultipartUpload\", \"s3:ListMultipartUploadParts\", \"s3:GetBucketVersioning\", \"s3:ListBucket\", \"s3:GetBucketLocation\", \"s3:ListBucketMultipartUploads\", \"s3:ListBucketVersions\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::&lt;BUCKET_NAME&gt;\", \"arn:aws:s3:::&lt;BUCKET_NAME_WITH_PATH_PREFIX&gt;/*\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;\"] } } ] } . Replace &lt;ACCOUNT_ID&gt;, &lt;BUCKET_NAME&gt; and &lt;IAM_ROLE&gt; with values relevant to your environment. IAM_ROLE should be the role assumed by your lakeFS installation. Alternatively, if you use an AWS user’s key-pair to authenticate lakeFS to AWS, change the policy’s Principal to be the user: . \"Principal\": { \"AWS\": [\"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;\"] } . | . You are now ready to create your first lakeFS repository. ",
+    "url": "/setup/storage/s3.html#prepare-your-aws-s3-bucket",
+    "relUrl": "/setup/storage/s3.html#prepare-your-aws-s3-bucket"
+  },"281": {
+    "doc": "AWS S3",
+    "title": "AWS S3",
+    "content": " ",
+    "url": "/setup/storage/s3.html",
+    "relUrl": "/setup/storage/s3.html"
   },"282": {
     "doc": "SageMaker",
     "title": "Using lakeFS with SageMaker",
