@@ -685,6 +685,7 @@ Moreover, the branch is locked during the execution of <code class="language-pla
       <th>Data Type</th>
       <th>Required</th>
       <th>Default Value</th>
+      <th>Env Vars Support</th>
     </tr>
   </thead>
   <tbody>
@@ -694,6 +695,7 @@ Moreover, the branch is locked during the execution of <code class="language-pla
       <td>String</td>
       <td>true</td>
       <td> </td>
+      <td>no</td>
     </tr>
     <tr>
       <td>timeout</td>
@@ -701,6 +703,7 @@ Moreover, the branch is locked during the execution of <code class="language-pla
       <td>String (golang’s <a href="https://golang.org/pkg/time/#Duration.String">Duration</a> representation)</td>
       <td>false</td>
       <td>1m</td>
+      <td>no</td>
     </tr>
     <tr>
       <td>query_params</td>
@@ -708,9 +711,23 @@ Moreover, the branch is locked during the execution of <code class="language-pla
       <td>Dictionary(String:String or String:List(String)</td>
       <td>false</td>
       <td> </td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <td>headers</td>
+      <td>List of query params that will be added to the request</td>
+      <td>Dictionary(String:String)</td>
+      <td>false</td>
+      <td> </td>
+      <td>yes</td>
     </tr>
   </tbody>
 </table></div>
+
+<p class="note"><strong>Secrets &amp; Environment Variables</strong><br />
+lakeFS Actions supports secrets by using environment variables.
+The following format <code class="language-plaintext highlighter-rouge">{{ ENV.SOME_ENV_VAR }}</code> will be replaced with the value of <code class="language-plaintext highlighter-rouge">SOME_ENV_VAR</code>
+during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail.</p>
 
 <p>Example:</p>
 
@@ -725,6 +742,8 @@ Moreover, the branch is locked during the execution of <code class="language-pla
       <span class="na">query_params</span><span class="pi">:</span>
         <span class="na">disallow</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">user_"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">private_"</span><span class="pi">]</span>
         <span class="na">prefix</span><span class="pi">:</span> <span class="s">public/</span>
+      <span class="na">headers</span><span class="pi">:</span>
+        <span class="na">secret_header</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ENV.MY_SECRET</span><span class="nv"> </span><span class="s">}}"</span>
 <span class="nn">...</span>
 </code></pre></div></div>
       <h4 id="request-body-schema">
@@ -853,6 +872,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
       <th>Data Type</th>
       <th>Example</th>
       <th>Required</th>
+      <th>Env Vars Support</th>
     </tr>
   </thead>
   <tbody>
@@ -862,6 +882,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
       <td>String</td>
       <td>“http://localhost:8080”</td>
       <td>true</td>
+      <td>no</td>
     </tr>
     <tr>
       <td>dag_id</td>
@@ -869,6 +890,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
       <td>String</td>
       <td>“example_dag”</td>
       <td>true</td>
+      <td>no</td>
     </tr>
     <tr>
       <td>username</td>
@@ -876,6 +898,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
       <td>String</td>
       <td>“admin”</td>
       <td>true</td>
+      <td>no</td>
     </tr>
     <tr>
       <td>password</td>
@@ -883,6 +906,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
       <td>String</td>
       <td>“admin”</td>
       <td>true</td>
+      <td>yes</td>
     </tr>
     <tr>
       <td>dag_conf</td>
@@ -890,6 +914,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
       <td>JSON</td>
       <td> </td>
       <td>false</td>
+      <td>no</td>
     </tr>
   </tbody>
 </table></div>
@@ -904,7 +929,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
        <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://localhost:8000"</span>
        <span class="na">dag_id</span><span class="pi">:</span> <span class="s2">"</span><span class="s">example_dag"</span>
        <span class="na">username</span><span class="pi">:</span> <span class="s2">"</span><span class="s">admin"</span>
-       <span class="na">password</span><span class="pi">:</span> <span class="s2">"</span><span class="s">admin"</span>
+       <span class="na">password</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">ENV.AIRFLOW_SECRET</span><span class="nv"> </span><span class="s">}}"</span>
        <span class="na">dag_conf</span><span class="pi">:</span>
           <span class="na">some</span><span class="pi">:</span> <span class="s2">"</span><span class="s">additional_conf"</span>
 <span class="nn">...</span>
