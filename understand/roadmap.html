@@ -409,6 +409,7 @@
       <li><a href="#git-lakefs-integration" id="markdown-toc-git-lakefs-integration">Git-lakeFS integration</a></li>
       <li><a href="#protected-branches" id="markdown-toc-protected-branches">Protected Branches</a></li>
       <li><a href="#native-metastore-integration-high-priority" id="markdown-toc-native-metastore-integration-high-priority">Native Metastore Integration <span class="label">High Priority</span></a></li>
+      <li><a href="#support-delta-lake-merges-and-diffs-across-branches-requires-discussion" id="markdown-toc-support-delta-lake-merges-and-diffs-across-branches-requires-discussion">Support Delta Lake merges and diffs across branches <span class="label label-yellow">Requires Discussion</span></a></li>
       <li><a href="#hooks-usability-improvements-high-priority" id="markdown-toc-hooks-usability-improvements-high-priority">Hooks: usability improvements <span class="label">High Priority</span></a>        <ol>
           <li><a href="#extended-hook-types-beyond-webhooks" id="markdown-toc-extended-hook-types-beyond-webhooks">Extended hook types beyond webhooks</a></li>
           <li><a href="#expose-merged-snapshot-to-pre-merge-hooks" id="markdown-toc-expose-merged-snapshot-to-pre-merge-hooks">Expose merged snapshot to pre-merge hooks</a></li>
@@ -428,6 +429,8 @@
       <li><a href="#snowflake-support-requires-discussion" id="markdown-toc-snowflake-support-requires-discussion">Snowflake Support <span class="label label-yellow">Requires Discussion</span></a></li>
       <li><a href="#metadata-operations-security-and-access-model-high-priority" id="markdown-toc-metadata-operations-security-and-access-model-high-priority">Metadata operations security and access model <span class="label">High Priority</span></a></li>
       <li><a href="#native-spark-outputcommitter" id="markdown-toc-native-spark-outputcommitter">Native Spark OutputCommitter</a></li>
+      <li><a href="#native-connector-trino" id="markdown-toc-native-connector-trino">Native connector: Trino</a></li>
+      <li><a href="#improved-streaming-support-for-apache-kafka" id="markdown-toc-improved-streaming-support-for-apache-kafka">Improved streaming support for Apache Kafka</a></li>
     </ol>
   </li>
 </ol><hr />
@@ -510,6 +513,29 @@ Ideally, metastore representations of tables managed in lakeFS should be version
 <p>Additionally, for CD use cases, it will allow a merge operation to introduce Hive table changes (schema evolution, partition addition/removal) atomically alongside the change to the data itself - as well as track those changes with the same set of commits - a lakeFS diff will show both metadata and data changes.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/1846" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="support-delta-lake-merges-and-diffs-across-branches-requires-discussion">
+        
+        
+          <a href="#support-delta-lake-merges-and-diffs-across-branches-requires-discussion" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support Delta Lake merges and diffs across branches <span class="label label-yellow">Requires Discussion</span>
+        
+        
+      </h3>
+    
+
+<p>New data formats (<a href="https://hudi.apache.org/" target="_blank">Apache Hudi</a>, <a href="https://iceberg.apache.org/" target="_blank">Apache Iceberg</a> and most notably, <a href="https://delta.io/" target="_blank">Delta Lake</a>) don’t rely simply on a hierarchical directory structure - they are usually accompanied by metadata files.
+These files contain information about changes made, partition and indexing information, as well as represent small deltas to be applied to the larger, typically columnar data objects.</p>
+
+<p>For Delta Lake in particular, these metadata files represent a <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md#delta-log-entries">logical transaction log that relies on numerical ordering</a>.</p>
+
+<p>Currently, when trying to modify a Delta table from 2 different branches, lakeFS would correctly recognize a conflict: this log diverged into 2 different copies, representing different changes.
+Users would then have to forgo one of the change sets, by either retaining the destination’s branch set of changes, or the source’s branch.</p>
+
+<p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
+
+<p>While beneficial for Delta Lake users, this is a departure from the un-opinionated nature of lakeFS, that is kept simple by treating objects as opaque blobs.
+We’re still gathering information on the use cases and access patterns where this is beneficial - please let us know if this is something you’d find interesting</p>
+
+<p><a href="mailto:hello@treeverse.io?subject=using+lakeFS+with+Delta+Lake" target="_blank" class="btn">Contact us, we’d love to talk about it!</a></p>
       <h3 id="hooks-usability-improvements-high-priority">
         
         
@@ -692,6 +718,54 @@ This allows creating atomic Spark writes that are automatically tracked in lakeF
 </ul>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/2042" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="native-connector-trino">
+        
+        
+          <a href="#native-connector-trino" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native connector: Trino
+        
+        
+      </h3>
+    
+
+<p>Currently, the Trino integration works well using the <a href="/understand/architecture.html#s3-gateway">lakeFS s3 Gateway</a>.</p>
+
+<p>While easy to integrate and useful out of the box, due to the S3 protocol, it means that the data itself must pass through the lakeFS server.</p>
+
+<p>For larger installations, a native integration where lakeFS handles metadata, returning locations in the underlying object store that Trino can then access directly, would allow reducing the operational overhead and increasing the scalability of lakeFS.
+This would be done in a similar way to the <a href="/integrations/spark.html">Native Spark integration</a> using the <a href="/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">Hadoop Filesystem implementation</a>.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2357" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="improved-streaming-support-for-apache-kafka">
+        
+        
+          <a href="#improved-streaming-support-for-apache-kafka" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Improved streaming support for Apache Kafka
+        
+        
+      </h3>
+    
+
+<p>Committing (along with attaching useful information to the commit) makes a lot of sense for batch workloads:</p>
+<ul>
+  <li>run a job or a pipeline on a separate branch and commit</li>
+  <li>record information such as the git hash of the code executed, the versions of frameworks used, and information about the data artifacts</li>
+  <li>once the pipeline has completed successfully, commit and attach the recorded information as metadata</li>
+</ul>
+
+<p>For streaming however, this is currently less clear: There’s no obvious point in time to commit, as things never actually “finish successfully”.
+<a href="/usecases/production.html#example-1-rollback---data-ingested-from-a-kafka-stream">The recommended pattern</a> would be to ingest from a stream on a separate branch, periodically committing - storing not only the data added since last commit but also capturing the offset read from the stream, for reproducibility.
+These commits can then be merged into a main branch given they pass all relevant quality checks and other validations using hooks, exposing consumers to validated, clean data.</p>
+
+<p>In practice, implementing such a workflow is a little challenging. Users need to:</p>
+
+<ol>
+  <li>Orchestrate the commits and merge operations.</li>
+  <li>figure out how to attach the correct offset read from the stream broker</li>
+  <li>Handle writes coming in while the commit is taking place</li>
+</ol>
+
+<p>Ideally, lakeFS should provide tools to automate this, with native support for <a href="https://kafka.apache.org/" target="_blank">Apache Kafka</a>.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2358" target="_blank" class="btn">Track and discuss on GitHub</a></p>
 
                 
 
