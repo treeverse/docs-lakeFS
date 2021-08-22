@@ -215,7 +215,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/setup/create-repo.html"
                    class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/setup/import.html"
                    class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/setup/hooks.html"
-                   class="nav-list-link">Hooks</a></li></ul></li><li
+                   class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/setup/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/usecases/"
@@ -430,77 +431,87 @@ Each step using lakeFS should pass the appropriate config params.</li>
     
 
 <p>Use the below configuration when creating the cluster. You may delete any app configuration which is not suitable for your use-case.</p>
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"presto-connector-hive"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[{</span><span class="w">
+   </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"presto-connector-hive"</span><span class="p">,</span><span class="w">
+   </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
       </span><span class="nl">"hive.s3.aws-access-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"hive.s3.aws-secret-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"hive.s3.path-style-access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
       </span><span class="nl">"hive.s3-file-system-type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PRESTO"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive-site"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hdfs-site"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"core-site"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"emrfs-site"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mapred-site"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://s3.lakefs.example.com"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spark-defaults"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"spark.sql.catalogImplementation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive"</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive-site"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hdfs-site"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"core-site"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"emrfs-site"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mapred-site"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">},</span><span class="w">
+   </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spark-defaults"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"spark.sql.catalogImplementation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
       <h2 id="configuration-on-adding-a-step">
@@ -520,7 +531,8 @@ Each step using lakeFS should pass the appropriate config params.</li>
   <span class="nt">--steps</span><span class="o">=</span><span class="s2">"Type=Spark,Name=SparkApplication,ActionOnFailure=CONTINUE, </span><span class="se">\</span><span class="s2">
   Args=[--conf,spark.hadoop.fs.s3a.access.key=AKIAIOSFODNN7EXAMPLE, </span><span class="se">\</span><span class="s2">
   --conf,spark.hadoop.fs.s3a.secret.key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY, </span><span class="se">\</span><span class="s2">
-  --conf,spark.hadoop.fs.s3a.endpoint=https://s3.lakefs.example.com, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.endpoint=https://lakefs.example.com, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.path.style.access=true, </span><span class="se">\</span><span class="s2">
   s3a://&lt;lakefs-repo&gt;/&lt;lakefs-branch&gt;/path/to/jar]"</span>
 </code></pre></div></div>
 

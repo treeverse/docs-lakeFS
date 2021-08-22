@@ -215,7 +215,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/setup/create-repo.html"
                    class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/setup/import.html"
                    class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/setup/hooks.html"
-                   class="nav-list-link">Hooks</a></li></ul></li><li
+                   class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/setup/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/usecases/"
@@ -427,9 +428,10 @@ In the following examples we set AWS credentials on the command line, for clarit
 <p>You can use DistCP to copy between two different lakeFS repositories. Replace the access key pair with your lakeFS access key pair:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hadoop distcp <span class="se">\</span>
+  <span class="nt">-Dfs</span>.s3a.path.style.access<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.access.key<span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span> <span class="se">\</span>
-  <span class="nt">-Dfs</span>.s3a.endpoint<span class="o">=</span><span class="s2">"https://s3.lakefs.example.com"</span> <span class="se">\</span>
+  <span class="nt">-Dfs</span>.s3a.endpoint<span class="o">=</span><span class="s2">"https://lakefs.example.com"</span> <span class="se">\</span>
   <span class="s2">"s3a://example-repo-1/main/example-file.parquet"</span> <span class="se">\</span>
   <span class="s2">"s3a://example-repo-2/main/example-file.parquet"</span>
 </code></pre></div></div>
@@ -455,9 +457,10 @@ In the following examples, replace the first access key pair with your lakeFS ke
       </h3>
     
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hadoop distcp <span class="se">\</span>
+  <span class="nt">-Dfs</span>.s3a.path.style.access<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-repo.access.key<span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-repo.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span> <span class="se">\</span>
-  <span class="nt">-Dfs</span>.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s2">"https://s3.lakefs.example.com"</span> <span class="se">\</span>
+  <span class="nt">-Dfs</span>.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s2">"https://lakefs.example.com"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-bucket.access.key<span class="o">=</span><span class="s2">"AKIAIOSFODNN3EXAMPLE"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-bucket.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span> <span class="se">\</span>
   <span class="s2">"s3a://example-bucket/example-file.parquet"</span> <span class="se">\</span>
@@ -472,9 +475,10 @@ In the following examples, replace the first access key pair with your lakeFS ke
       </h3>
     
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hadoop distcp <span class="se">\</span>
+  <span class="nt">-Dfs</span>.s3a.path.style.access<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-repo.access.key<span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-repo.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span> <span class="se">\</span>
-  <span class="nt">-Dfs</span>.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s2">"https://s3.lakefs.example.com"</span> <span class="se">\</span>
+  <span class="nt">-Dfs</span>.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s2">"https://lakefs.example.com"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-bucket.access.key<span class="o">=</span><span class="s2">"AKIAIOSFODNN3EXAMPLE"</span> <span class="se">\</span>
   <span class="nt">-Dfs</span>.s3a.bucket.example-bucket.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span> <span class="se">\</span>
   <span class="s2">"s3a://example-repo/main/myfile"</span> <span class="se">\</span>

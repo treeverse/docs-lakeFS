@@ -215,7 +215,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/setup/create-repo.html"
                    class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/setup/import.html"
                    class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/setup/hooks.html"
-                   class="nav-list-link">Hooks</a></li></ul></li><li
+                   class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/setup/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/usecases/"
@@ -464,12 +465,9 @@ you can control multiple AWS services from the command line and automate them th
 
 <p>After configuring the credentials, This is how a command should look:</p>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   <span class="nb">ls </span>s3://example-repo/main/example-directory
 </code></pre></div></div>
-
-<p>Where endpoint-url should be the same value <a href="/reference/configuration.html#reference">configured</a>
-for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</code>.</p>
 
 <p>We could use an <a href="/integrations/aws_cli.html#adding-an-alias">alias</a> to make it shorter and more convenient.</p>
       <h2 id="examples">
@@ -490,7 +488,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
     
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   s3 <span class="nb">ls </span>s3://example-repo/main/example-directory
 </code></pre></div></div>
       <h3 id="copy-from-lakefs-to-lakefs">
@@ -503,7 +501,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
     
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   s3 <span class="nb">cp </span>s3://example-repo/main/example-file-1 s3://example-repo/main/example-file-2
 </code></pre></div></div>
       <h3 id="copy-from-lakefs-to-a-local-path">
@@ -515,7 +513,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
       </h3>
     
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   s3 <span class="nb">cp </span>s3://example-repo/main/example-file-1 /path/to/local/file
 </code></pre></div></div>
       <h3 id="copy-from-a-local-path-to-lakefs">
@@ -527,7 +525,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
       </h3>
     
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   s3 <span class="nb">cp</span> /path/to/local/file s3://example-repo/main/example-file-1
 </code></pre></div></div>
       <h3 id="delete-file">
@@ -539,7 +537,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
       </h3>
     
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   s3 <span class="nb">rm </span>s3://example-repo/main/example-directory/example-file
 </code></pre></div></div>
       <h3 id="delete-directory">
@@ -551,7 +549,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
       </h3>
     
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--profile</span> lakefs <span class="se">\</span>
-  <span class="nt">--endpoint-url</span> https://s3.lakefs.example.com <span class="se">\</span>
+  <span class="nt">--endpoint-url</span> https://lakefs.example.com <span class="se">\</span>
   s3 <span class="nb">rm </span>s3://example-repo/main/example-directory/ <span class="nt">--recursive</span>
 </code></pre></div></div>
       <h2 id="adding-an-alias">
@@ -565,7 +563,7 @@ for <code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</
 
 <p>In order to make the command shorter and more convenient we can create an alias:</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">alias </span><span class="nv">awslfs</span><span class="o">=</span><span class="s1">'aws --endpoint https://s3.lakefs.example.com --profile lakefs'</span>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">alias </span><span class="nv">awslfs</span><span class="o">=</span><span class="s1">'aws --endpoint https://lakefs.example.com --profile lakefs'</span>
 </code></pre></div></div>
 
 <p>Now, the ls command using the alias will be:</p>

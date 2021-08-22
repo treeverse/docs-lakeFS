@@ -215,7 +215,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/setup/create-repo.html"
                    class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/setup/import.html"
                    class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/setup/hooks.html"
-                   class="nav-list-link">Hooks</a></li></ul></li><li
+                   class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/setup/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/usecases/"
@@ -431,9 +432,10 @@
 
 <p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, we need to set the proper credentials and endpoint in the S3 Hadoop configuration, like we do with any <a href="/integrations/spark.html#configuration">Spark</a> script.</p>
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.access.key"</span><span class="o">,</span> <span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="o">)</span>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">)</span>
+ <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.access.key"</span><span class="o">,</span> <span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="o">)</span>
  <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.secret.key"</span><span class="o">,</span> <span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
- <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.endpoint"</span><span class="o">,</span> <span class="s">"https://s3.lakefs.example.com"</span><span class="o">)</span>
+ <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.endpoint"</span><span class="o">,</span> <span class="s">"https://lakefs.example.com"</span><span class="o">)</span>
 </code></pre></div></div>
 
 <p>Once set, you can now interact with Delta tables using regular Spark path URIs. Make sure you include the lakeFS repository and branch name:</p>

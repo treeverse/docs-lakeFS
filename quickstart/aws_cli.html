@@ -215,7 +215,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/setup/create-repo.html"
                    class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/setup/import.html"
                    class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/setup/hooks.html"
-                   class="nav-list-link">Hooks</a></li></ul></li><li
+                   class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/setup/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/usecases/"
@@ -408,18 +409,15 @@
   <li>
     <p>Let’s test to see that it works. We’ll do that by calling <code class="language-plaintext highlighter-rouge">s3 ls</code> which should list our repositories for us:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--endpoint-url</span><span class="o">=</span>http://s3.local.lakefs.io:8000 <span class="nt">--profile</span> <span class="nb">local </span>s3 <span class="nb">ls</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--endpoint-url</span><span class="o">=</span>http://localhost:8000 <span class="nt">--profile</span> <span class="nb">local </span>s3 <span class="nb">ls</span>
 <span class="c"># output:</span>
 <span class="c"># 2021-06-15 13:43:03 example-repo</span>
 </code></pre></div>    </div>
-
-    <p class="note note-info"><strong>Note:</strong> We’re using <code class="language-plaintext highlighter-rouge">s3.local.lakefs.io</code> - a special DNS record which always resolves to localhost, subdomains included.<br />
-Since S3’s API uses <a href="https://aws.amazon.com/blogs/aws/amazon-s3-path-deprecation-plan-the-rest-of-the-story/" target="_blank">subdomains for bucket addressing</a>, simply using <code class="language-plaintext highlighter-rouge">localhost:8000</code> as an endpoint URL will not work.</p>
   </li>
   <li>
     <p>Great, now let’s copy some files. We’ll write to the main branch. This is done by prefixing our path with the name of the branch we’d like to read/write from:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--endpoint-url</span><span class="o">=</span>http://s3.local.lakefs.io:8000 <span class="nt">--profile</span> <span class="nb">local </span>s3 <span class="nb">cp</span> ./foo.txt s3://example-repo/main/
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--endpoint-url</span><span class="o">=</span>http://localhost:8000 <span class="nt">--profile</span> <span class="nb">local </span>s3 <span class="nb">cp</span> ./foo.txt s3://example-repo/main/
 <span class="c"># output:</span>
 <span class="c"># upload: ./foo.txt to s3://example-repo/main/foo.txt</span>
 </code></pre></div>    </div>
