@@ -425,6 +425,10 @@
           <li><a href="#exportsetconfiguration" id="markdown-toc-exportsetconfiguration">ExportSetConfiguration</a></li>
         </ol>
       </li>
+      <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a>        <ol>
+          <li><a href="#readwrite-access-for-a-specific-repository" id="markdown-toc-readwrite-access-for-a-specific-repository">Read/write access for a specific repository</a></li>
+        </ol>
+      </li>
       <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a>        <ol>
           <li><a href="#admins" id="markdown-toc-admins">Admins</a></li>
           <li><a href="#superusers" id="markdown-toc-superusers">SuperUsers</a></li>
@@ -1171,6 +1175,77 @@ arn:lakefs:fs:::*
             </span><span class="p">],</span><span class="w">
             </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
             </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+      <h3 id="additional-policies">
+        
+        
+          <a href="#additional-policies" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Additional Policies
+        
+        
+      </h3>
+    
+
+<p>The following examples can be used to create additional policies to further limit user access. Use the web UI or the <a href="/reference/commands.html#lakectl-auth-policies-create">lakectl auth</a> command to create policies.</p>
+      <h4 id="readwrite-access-for-a-specific-repository">
+        
+        
+          <a href="#readwrite-access-for-a-specific-repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Read/write access for a specific repository
+        
+        
+      </h4>
+    
+
+<p>Policy:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:ReadRepository"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ReadCommit"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ListBranches"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ListTags"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ListObjects"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:RevertBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ReadBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateCommit"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/branch/*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:ListObjects"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ReadObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:WriteObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteObject"</span><span class="p">,</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/object/*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:ReadTag"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateTag"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteTag"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/tag/*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+        	</span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fs:ReadConfig"</span><span class="p">],</span><span class="w">
+        	</span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+        	</span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
