@@ -811,7 +811,7 @@
   },"135": {
     "doc": "Garbage Collection",
     "title": "Garbage Collection",
-    "content": "By default, lakeFS keeps all your objects forever. This allows you to travel back in time to previous versions of your data. However, sometimes you may want to hard-delete your objects, namely delete them from the underlying storage. Reasons for this include cost-reduction and privacy policies. Garbage collection rules in lakeFS define for how long to retain objects after they have been deleted (see more information below). After running a GC job, objects that have been deleted prior to the retention period are hard-deleted. The GC job does not remove any commits: you will still be able to use commits containing hard-deleted objects, but trying to read these objects from lakeFS will result in a 410 Gone HTTP status. ",
+    "content": "By default, lakeFS keeps all your objects forever. This allows you to travel back in time to previous versions of your data. However, sometimes you may want to hard-delete your objects, namely delete them from the underlying storage. Reasons for this include cost-reduction and privacy policies. Garbage collection rules in lakeFS define for how long to retain objects after they have been deleted (see more information below). lakeFS provides a Spark program to hard-delete objects that have been deleted and whose retention period has ended according to the GC rules. The GC job does not remove any commits: you will still be able to use commits containing hard-deleted objects, but trying to read these objects from lakeFS will result in a 410 Gone HTTP status. ",
     "url": "/reference/garbage-collection.html",
     "relUrl": "/reference/garbage-collection.html"
   },"136": {
@@ -829,7 +829,7 @@
   },"138": {
     "doc": "Garbage Collection",
     "title": "Running the GC job",
-    "content": "spark-submit --class io.treeverse.clients.GarbageCollector \\ -c spark.hadoop.lakefs.api.url=https://lakefs.example.com:8000/api/v1 \\ -c spark.hadoop.lakefs.api.access_key=&lt;LAKEFS_ACCESS_KEY&gt; \\ -c spark.hadoop.lakefs.api.secret_key=&lt;LAKEFS_SECRET_KEY&gt; \\ -c spark.hadoop.fs.s3a.access.key=&lt;S3_ACCESS_KEY&gt; \\ -c spark.hadoop.fs.s3a.secret.key=&lt;S3_SECRET_KEY&gt; \\ --packages io.lakefs:lakefs-spark-client-301_2.12:0.5.0 \\ example-repo us-east-1 . ",
+    "content": "The GC job is a Spark program that can be run using spark-submit (or using your preferred method of running Spark programs). The job will hard-delete objects that were deleted and whose retention period has ended according to the GC rules. spark-submit --class io.treeverse.clients.GarbageCollector \\ -c spark.hadoop.lakefs.api.url=https://lakefs.example.com:8000/api/v1 \\ -c spark.hadoop.lakefs.api.access_key=&lt;LAKEFS_ACCESS_KEY&gt; \\ -c spark.hadoop.lakefs.api.secret_key=&lt;LAKEFS_SECRET_KEY&gt; \\ -c spark.hadoop.fs.s3a.access.key=&lt;S3_ACCESS_KEY&gt; \\ -c spark.hadoop.fs.s3a.secret.key=&lt;S3_SECRET_KEY&gt; \\ --packages io.lakefs:lakefs-spark-client-301_2.12:0.5.0 \\ example-repo us-east-1 . ",
     "url": "/reference/garbage-collection.html#running-the-gc-job",
     "relUrl": "/reference/garbage-collection.html#running-the-gc-job"
   },"139": {
