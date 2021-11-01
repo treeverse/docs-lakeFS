@@ -411,14 +411,13 @@
   <li><a href="#use-case-deployment" id="markdown-toc-use-case-deployment">Use Case: Deployment</a>    <ol>
       <li><a href="#repo-linking" id="markdown-toc-repo-linking">Repo linking</a></li>
       <li><a href="#git-lakefs-integration" id="markdown-toc-git-lakefs-integration">Git-lakeFS integration</a></li>
-      <li><a href="#protected-branches" id="markdown-toc-protected-branches">Protected Branches</a></li>
+      <li><a href="#dbt-integration-high-priority" id="markdown-toc-dbt-integration-high-priority">DBT Integration <span class="label">High Priority</span></a></li>
       <li><a href="#native-metastore-integration-high-priority" id="markdown-toc-native-metastore-integration-high-priority">Native Metastore Integration <span class="label">High Priority</span></a></li>
       <li><a href="#support-delta-lake-merges-and-diffs-across-branches-requires-discussion" id="markdown-toc-support-delta-lake-merges-and-diffs-across-branches-requires-discussion">Support Delta Lake merges and diffs across branches <span class="label label-yellow">Requires Discussion</span></a></li>
       <li><a href="#hooks-usability-improvements-high-priority" id="markdown-toc-hooks-usability-improvements-high-priority">Hooks: usability improvements <span class="label">High Priority</span></a>        <ol>
           <li><a href="#extended-hook-types-beyond-webhooks" id="markdown-toc-extended-hook-types-beyond-webhooks">Extended hook types beyond webhooks</a></li>
           <li><a href="#expose-merged-snapshot-to-pre-merge-hooks" id="markdown-toc-expose-merged-snapshot-to-pre-merge-hooks">Expose merged snapshot to pre-merge hooks</a></li>
           <li><a href="#create-and-edit-hooks-directly-in-the-ui" id="markdown-toc-create-and-edit-hooks-directly-in-the-ui">Create and edit hooks directly in the UI:</a></li>
-          <li><a href="#post-commit-post-merge-hooks" id="markdown-toc-post-commit-post-merge-hooks">Post-commit, Post-merge hooks</a></li>
           <li><a href="#one-click-reusable-hook-installation" id="markdown-toc-one-click-reusable-hook-installation">One-click reusable hook installation</a></li>
         </ol>
       </li>
@@ -489,19 +488,27 @@
 <p>The ability to connect Git commits with lakeFS commits.
 Especially useful for reproducibility: By looking at a set of changes to the <strong>data</strong>, be able to reference (or ever run) the job that produced it.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h3 id="protected-branches">
+<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss on GitHub</a></p><hr />
+      <h3 id="dbt-integration-high-priority">
         
         
-          <a href="#protected-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Protected Branches
+          <a href="#dbt-integration-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DBT Integration <span class="label">High Priority</span>
         
         
       </h3>
     
-<p>A way to ensure certain branches (i.e. main) are only merged to, and are not being directly written to. In combination with <a href="/setup/hooks.html">Webhook Support</a>, this allows users to provide a set of quality guarantees about a given branch (i.e., reading from
-main ensures schema never breaks and all partitions are complete and tested)</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2181" target="_blank" class="btn">Track and discuss on GitHub</a></p><hr />
+<p>Allow DBT users to gain isolation for running in production, as well as being able to create zero-copy test and dev environments:
+This is done by allowing the following:</p>
+
+<ol>
+  <li>Create a DBT environment that is mapped to a lakeFS branch. Since branches are zero-copy, these environments are verifiably identical to production without having to copy any data</li>
+  <li>Be able to run transformations on production data, with <code class="language-plaintext highlighter-rouge">dbt test</code> running before the data gets exposed to downstream consumers (via lakeFS merge)</li>
+</ol>
+
+<p>This is an item that was often requested by DBT users, and is currently actively worked on.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2530" target="_blank" class="btn">Track and discuss on GitHub</a></p>
       <h3 id="native-metastore-integration-high-priority">
         
         
@@ -592,19 +599,6 @@ users will be able to directly feed the merged view into a dataframe, a testing 
 <p>Hooks require a YAML configuration file to describe the required functionality and triggers. Instead of having to edit them somewhere else and then carefully uploading to the correct path for them to take effect, we want to allow creating and editing hooks with a single click in the UI</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/2232" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h4 id="post-commit-post-merge-hooks">
-        
-        
-          <a href="#post-commit-post-merge-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Post-commit, Post-merge hooks
-        
-        
-      </h4>
-    
-
-<p>For validation, testing and governance, pre-commit and pre-merge hooks provide strong guarantees about what we can or cannot expose to downstream consumers.
-However, in some cases we wish to run or notify another system when a commit or a merge occurs. The most common example would be registering changes in external systems: register new partitions in Hive Metastore, update last update date on data discovery tools, generate manifest files for e.g. AWS Athena and more.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2182" target="_blank" class="btn">Track and discuss on GitHub</a></p>
       <h4 id="one-click-reusable-hook-installation">
         
         
