@@ -397,28 +397,39 @@
 
 <p>The CLI is a great way to get started with lakeFS since it is a complete implementation of the lakeFS API.</p>
 
+<p>You can follow the below tutorial video to get started with the CLI or follow the instructions on this page.</p>
+
+<p><a href="http://www.youtube.com/watch?v=8nO7RT411nA" title="Install the lakeFS CLI"><img src="http://img.youtube.com/vi/8nO7RT411nA/0.jpg" alt="IMAGE ALT TEXT" /></a></p>
+
 <p>Here’s how to get started with the CLI:</p>
 
 <ol>
   <li>
     <p>Download the CLI binary:</p>
 
-    <p><a href="/#downloads" class="btn btn-green" target="_blank">Download lakectl</a></p>
+    <p>The CLI binary can be downloaded from the official <a href="https://github.com/treeverse/lakeFS/releases">lakeFS releases</a> published on GitHub under “Assets”. Unless you need a specific previous version of the CLI, it is recommended to download the most recently released version.</p>
+
+    <p><img src="/assets/img/lakefs-release-asset.png" alt="Release Assets" /></p>
+
+    <p>The Operating System of the computer being used determines whether you should pick the binary Asset compiled for a Windows, Linux, or Mac (Darwin). For Mac and Linux Operating Systems, the processor determines whether you should download the x64 or arm binary.</p>
   </li>
-  <li>It’s recommended that you place it somewhere in your PATH (this is OS dependant but for *NIX systems , <code class="language-plaintext highlighter-rouge">/usr/local/bin</code> is usually a safe bet).</li>
   <li>
-    <p>configure the CLI to use the credentials you’ve created earlier:</p>
+    <p>Once unzipped, inside the downloaded asset, you’ll see a file named <code class="language-plaintext highlighter-rouge">lakectl</code>. It’s recommended that you place this file somewhere in your PATH (this is OS dependant but for *NIX systems , <code class="language-plaintext highlighter-rouge">/usr/local/bin</code> is usually a safe bet). Once in your PATH, you’ll be able to open a Terminal program and run lakectl commands!</p>
+  </li>
+  <li>
+    <p>We recommend starting with <code class="language-plaintext highlighter-rouge">lakectl config</code> to configure the CLI to use the credentials created earlier:</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl config
 <span class="c"># output:</span>
 <span class="c"># Config file /home/janedoe/.lakectl.yaml will be used</span>
 <span class="c"># Access key ID: AKIAJVHTOKZWGCD2QQYQ</span>
 <span class="c"># Secret access key: ****************************************</span>
-<span class="c"># Server endpoint URL: http://localhost:8000/api/v1</span>
+<span class="c"># Server endpoint URL: http://localhost:8000</span>
 </code></pre></div>    </div>
+    <p><strong>Note</strong> The first time you run a <code class="language-plaintext highlighter-rouge">lakectl</code> command, depending on your computer’s security settings, you may need to respond to a prompt to allow the program to run.</p>
   </li>
   <li>
-    <p>Now that we’ve configured it, let’s run a few sample commands:</p>
+    <p>Now that we’ve configured it, let’s run a few sample commands. First we can list the branches in the repo we created:</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch list lakefs://example-repo
 <span class="c"># output:</span>
@@ -427,23 +438,24 @@
 <span class="c"># +----------+------------------------------------------------------------------+</span>
 <span class="c"># | main     | a91f56a7e11be1348fc405053e5234e4af7d6da01ed02f3d9a8ba7b1f71499c8 |</span>
 <span class="c"># +----------+------------------------------------------------------------------+</span>
-     
-lakectl commit lakefs://example-repo/main <span class="nt">-m</span> <span class="s1">'added our first file!'</span>
-<span class="c"># output:</span>
-<span class="c"># Commit for branch "main" done.</span>
-<span class="c"># </span>
-<span class="c"># ID: 901f7b21e1508e761642b142aea0ccf28451675199655381f65101ea230ebb87</span>
-<span class="c"># Timestamp: 2021-06-15 13:48:37 +0300 IDT</span>
-<span class="c"># Parents: a91f56a7e11be1348fc405053e5234e4af7d6da01ed02f3d9a8ba7b1f71499c8</span>
-  
-lakectl log lakefs://example-repo/main
-<span class="c"># output:  </span>
-<span class="c"># commit 901f7b21e1508e761642b142aea0ccf28451675199655381f65101ea230ebb87</span>
-<span class="c"># Author: Example User &lt;user@example.com&gt;</span>
-<span class="c"># Date: 2021-06-15 13:48:37 +0300 IDT</span>
+</code></pre></div>    </div>
+    <p>Next we can create a new commit on the main branch for the file we added:</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl commit lakefs://example-repo/main -m 'added our first file!'
+# output:
+# Commit for branch "main" done.
+# 
+# ID: 901f7b21e1508e761642b142aea0ccf28451675199655381f65101ea230ebb87
+# Timestamp: 2021-06-15 13:48:37 +0300 IDT
+# Parents: a91f56a7e11be1348fc405053e5234e4af7d6da01ed02f3d9a8ba7b1f71499c8
+</code></pre></div>    </div>
+    <p>And finally we can view the log to see the new commit:</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl log lakefs://example-repo/main
+# output:  
+# commit 901f7b21e1508e761642b142aea0ccf28451675199655381f65101ea230ebb87
+# Author: Example User &lt;user@example.com&gt;
+# Date: 2021-06-15 13:48:37 +0300 IDT
        
-      added our first file!
-       
+      added our first file! 
 </code></pre></div>    </div>
 
     <p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch.</p>
