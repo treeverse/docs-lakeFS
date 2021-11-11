@@ -23,17 +23,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Airflow | lakeFS</title>
+<title>DBT | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Airflow" />
+<meta property="og:title" content="DBT" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Easily build reproducible data pipelines with Airflow and lakeFS using commits, without modifying the code or logic of your job." />
-<meta property="og:description" content="Easily build reproducible data pipelines with Airflow and lakeFS using commits, without modifying the code or logic of your job." />
+<meta name="description" content="Maintaining environments with DBT and lakeFS." />
+<meta property="og:description" content="Maintaining environments with DBT and lakeFS." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Airflow" />
+<meta property="twitter:title" content="DBT" />
 <script type="application/ld+json">
-{"description":"Easily build reproducible data pipelines with Airflow and lakeFS using commits, without modifying the code or logic of your job.","headline":"Airflow","@type":"WebPage","url":"/integrations/airflow.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Maintaining environments with DBT and lakeFS.","headline":"DBT","@type":"WebPage","url":"/integrations/dbt.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -254,13 +254,13 @@
                    class="nav-list-link">Presto/Trino</a></li><li class="nav-list-item "><a href="/integrations/boto.html"
                    class="nav-list-link">Boto (Python)</a></li><li class="nav-list-item "><a href="/integrations/minio.html"
                    class="nav-list-link">MinIO</a></li><li class="nav-list-item "><a href="/integrations/athena.html"
-                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item  active"><a href="/integrations/airflow.html"
-                   class="nav-list-link active">Airflow</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
+                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/integrations/airflow.html"
+                   class="nav-list-link">Airflow</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/airbyte.html"
                    class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/integrations/databricks.html"
                    class="nav-list-link">Databricks</a></li><li class="nav-list-item "><a href="/integrations/delta.html"
-                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/integrations/dbt.html"
-                   class="nav-list-link">DBT</a></li><li class="nav-list-item "><a href="/integrations/glue_hive_metastore.html"
+                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item  active"><a href="/integrations/dbt.html"
+                   class="nav-list-link active">DBT</a></li><li class="nav-list-item "><a href="/integrations/glue_hive_metastore.html"
                    class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/integrations/glue_etl.html"
                    class="nav-list-link">Glue ETL</a></li><li class="nav-list-item "><a href="/integrations/kakfa.html"
                    class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/integrations/mapreduce.html"
@@ -378,149 +378,162 @@
                     <li class="breadcrumb-nav-list-item"><a href="/integrations/">Integrations</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Airflow</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>DBT</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 id="using-lakefs-with-airflow">
+                <h2 class="no_toc" id="maintaining-environments-with-dbt-and-lakefs">
         
         
-          <a href="#using-lakefs-with-airflow" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Airflow
-        
-        
-      </h1>
-    
-<p><a href="https://airflow.apache.org/">Apache Airflow</a> is a platform to programmatically author, schedule and monitor workflows.</p>
-
-<p>There are some aspects we will need to handle in order to run Airflow with lakeFS:</p>
-      <h2 id="creating-the-lakefs-connection">
-        
-        
-          <a href="#creating-the-lakefs-connection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Creating the lakeFS connection
+          <a href="#maintaining-environments-with-dbt-and-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Maintaining environments with DBT and lakeFS
         
         
       </h2>
     
-<p>For authenticating to the lakeFS server, you need to create a new <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/connection.html">Airflow Connection</a>
-of type HTTP and pass it to your DAG. You can do that using the Airflow UI or the cli.
-Here’s an example Airflow command that does just that:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>airflow connections add conn_lakefs <span class="nt">--conn-type</span><span class="o">=</span>HTTP <span class="nt">--conn-host</span><span class="o">=</span>http://&lt;LAKEFS_ENDPOINT&gt; <span class="se">\</span>
- <span class="nt">--conn-extra</span><span class="o">=</span><span class="s1">'{"access_key_id":"&lt;LAKEFS_ACCESS_KEY_ID&gt;","secret_access_key":"&lt;LAKEFS_SECRET_ACCESS_KEY&gt;"}'</span>
-</code></pre></div></div>
-      <h2 id="installing-lakefs-airflow-package">
+<p>DBT could run on lakeFS with the Spark adapter or the Presto/Trino adapter. 
+Both Spark and Presto use Hive metastore or Glue in order to manage tables and views.
+When creating a branch in lakeFS we receive a logical copy of the data that could be accessed by <code class="language-plaintext highlighter-rouge">s3://my-repo/branch/...</code> 
+In order to run our DBT project on a new created branch we need to have a copy ot the metadata as well.</p>
+
+<p>The lakectl dbt command generates all the metadata needed in order to work on the new created branch,
+continuing from the last state in the source branch.
+The dbt lakectl command does this using dbt commands and lakectl metastore commands.</p>
+
+<div class="toc-block">
+      <h2 class="no_toc text-delta" id="table-of-contents">
         
         
-          <a href="#installing-lakefs-airflow-package" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installing lakeFS Airflow package
+          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
         
         
       </h2>
     
-<p>Installing the package using <code class="language-plaintext highlighter-rouge">pip</code>:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>airflow-provider-lakefs
-</code></pre></div></div>
-      <h2 id="using-the-package">
-        
-        
-          <a href="#using-the-package" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the package
-        
-        
-      </h2>
-    
-<p>The package exposes several operations for interacting with a lakeFS server:</p>
-<ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">CreateBranchOperator</code> creates a new lakeFS branch from the source branch (defaults to main).</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_create_branch</span> <span class="o">=</span> <span class="n">CreateBranchOperator</span><span class="p">(</span>
-   <span class="n">task_id</span><span class="o">=</span><span class="s">'create_branch'</span><span class="p">,</span>
-   <span class="n">repo</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
-   <span class="n">branch</span><span class="o">=</span><span class="s">'example-branch'</span><span class="p">,</span>
-   <span class="n">source_branch</span><span class="o">=</span><span class="s">'main'</span>
-<span class="p">)</span>
-</code></pre></div>    </div>
+<ol id="markdown-toc">
+  <li><a href="#configuration" id="markdown-toc-configuration">Configuration</a>    <ol>
+      <li><a href="#hive-metastore" id="markdown-toc-hive-metastore">Hive metastore</a></li>
+      <li><a href="#glue" id="markdown-toc-glue">Glue</a></li>
+    </ol>
   </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">CommitOperator</code> commits uncommitted changes to a branch.</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_commit</span> <span class="o">=</span> <span class="n">CommitOperator</span><span class="p">(</span>
-    <span class="n">task_id</span><span class="o">=</span><span class="s">'commit'</span><span class="p">,</span>
-    <span class="n">repo</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
-    <span class="n">branch</span><span class="o">=</span><span class="s">'example-branch'</span><span class="p">,</span>
-    <span class="n">msg</span><span class="o">=</span><span class="s">'committing to lakeFS using airflow!'</span><span class="p">,</span>
-    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'committed_from": "airflow-operator'</span><span class="p">}</span>
-<span class="p">)</span>
-</code></pre></div>    </div>
+  <li><a href="#views" id="markdown-toc-views">Views</a>    <ol>
+      <li><a href="#using-lakectl" id="markdown-toc-using-lakectl">Using lakectl</a></li>
+      <li><a href="#manually" id="markdown-toc-manually">Manually</a></li>
+    </ol>
   </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">MergeOperator</code> merges 2 lakeFS branches.</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_merge</span> <span class="o">=</span> <span class="n">MergeOperator</span><span class="p">(</span>
-  <span class="n">task_id</span><span class="o">=</span><span class="s">'merge_branches'</span><span class="p">,</span>
-  <span class="n">source_ref</span><span class="o">=</span><span class="s">'example-branch'</span><span class="p">,</span>
-  <span class="n">destination_branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span>
-  <span class="n">msg</span><span class="o">=</span><span class="s">'merging job outputs'</span><span class="p">,</span>
-  <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'committer'</span><span class="p">:</span> <span class="s">'airflow-operator'</span><span class="p">}</span>
-<span class="p">)</span>
-</code></pre></div>    </div>
-  </li>
+  <li><a href="#create-schema" id="markdown-toc-create-schema">Create Schema</a></li>
 </ol>
 
-<p>Sensors are also available if you want to synchronize a running DAG with external operations:</p>
-<ol>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">CommitSensor</code> waits until a commit has been applied to the branch</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_sense_commit</span> <span class="o">=</span> <span class="n">CommitSensor</span><span class="p">(</span>
-    <span class="n">repo</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
-    <span class="n">branch</span><span class="o">=</span><span class="s">'example-branch'</span><span class="p">,</span>
-    <span class="n">task_id</span><span class="o">=</span><span class="s">'sense_commit'</span>
-<span class="p">)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">FileSensor</code> waits until a given file is present in a branch.</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_sense_file</span> <span class="o">=</span> <span class="n">FileSensor</span><span class="p">(</span>
-    <span class="n">task_id</span><span class="o">=</span><span class="s">'sense_file'</span><span class="p">,</span>
-    <span class="n">repo</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
-    <span class="n">branch</span><span class="o">=</span><span class="s">'example-branch'</span><span class="p">,</span>
-    <span class="n">path</span><span class="o">=</span><span class="s">"file/to/sense"</span>
-<span class="p">)</span>
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p>For a DAG example that uses all the above, check out the <a href="https://github.com/treeverse/airflow-provider-lakeFS/blob/main/lakefs_provider/example_dags/lakefs-dag.py">example DAG</a>
-in the airflow-provider-lakeFS repository.</p>
-      <h3 id="performing-other-operations">
+</div>
+      <h2 id="configuration">
         
         
-          <a href="#performing-other-operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Performing other operations
+          <a href="#configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
+        
+        
+      </h2>
+    
+
+<p>In order to run the lakectl-dbt commands we need to configure both dbt and lakectl. 
+Assuming dbt is already configured using either a Spark or Presto/Trino target 
+you will need to add configurations to give access to your catalog (metastore).
+This is done by adding the following configurations to the lakectl configuration file (by default <code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code>)</p>
+      <h3 id="hive-metastore">
+        
+        
+          <a href="#hive-metastore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hive metastore
         
         
       </h3>
     
-<p>To perform other operations that are not yet supported by the package, you can use:</p>
 
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">metastore</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">hive</span>
+  <span class="na">hive</span><span class="pi">:</span>
+    <span class="na">uri</span><span class="pi">:</span> <span class="s">thrift://hive-metastore:9083</span>
+</code></pre></div></div>
+      <h3 id="glue">
+        
+        
+          <a href="#glue" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Glue
+        
+        
+      </h3>
+    
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">metastore</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">glue</span>
+  <span class="na">glue</span><span class="pi">:</span>
+    <span class="na">catalog-id</span><span class="pi">:</span> <span class="m">123456789012</span>
+    <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
+    <span class="na">profile</span><span class="pi">:</span> <span class="s">default</span> <span class="c1"># optional, implies using a credentials file</span>
+    <span class="na">credentials</span><span class="pi">:</span>
+      <span class="na">access_key_id</span><span class="pi">:</span> <span class="s">AKIAIOSFODNN7EXAMPLE</span>
+      <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
+</code></pre></div></div>
+      <h2 id="views">
+        
+        
+          <a href="#views" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Views
+        
+        
+      </h2>
+    
+
+<p>lakectl copies all models materialized as tables and incremental directly on your metastore.
+copying views should be done manually or with lakectl</p>
+      <h3 id="using-lakectl">
+        
+        
+          <a href="#using-lakectl" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakectl
+        
+        
+      </h3>
+    
+
+<p>The <code class="language-plaintext highlighter-rouge">generate_schema_name</code> macro could be used by lakectl to create models using dbt on a dynamic schema.
+The following command will add a macro to your project allowing lakectl to run dbt on the destination schema using an environment variable</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl dbt generate-schema-macro
+</code></pre></div></div>
+      <h3 id="manually">
+        
+        
+          <a href="#manually" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Manually
+        
+        
+      </h3>
+    
+
+<p>In case you don’t want to add the <code class="language-plaintext highlighter-rouge">generate_schema_name</code> macro to your project
+you could create the views on the destination schema manually.
+For every run:</p>
 <ul>
-  <li>SimpleHttpOperator to send <a href="/reference/api.html">API requests</a> to lakeFS.</li>
-  <li>BashOperator with <a href="/quickstart/lakefs_cli.html">lakeCTL</a> commands.
-For example, deleting a branch using BashOperator:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>commit_extract <span class="o">=</span> BashOperator<span class="o">(</span>
- <span class="nv">task_id</span><span class="o">=</span><span class="s1">'delete_branch'</span>,
- <span class="nv">bash_command</span><span class="o">=</span><span class="s1">'lakectl branch delete lakefs://example-repo/example-branch'</span>,
- <span class="nv">dag</span><span class="o">=</span>dag,
-<span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
+  <li>use the <code class="language-plaintext highlighter-rouge">--skip-views</code> flag</li>
+  <li>change the default schema to be the branch schema in your dbt configuration file</li>
+  <li>run dbt on all views</li>
 </ul>
 
-<p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dbt run <span class="nt">--select</span> config.materialized:view
+</code></pre></div></div>
+      <h2 id="create-schema">
+        
+        
+          <a href="#create-schema" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create Schema
+        
+        
+      </h2>
+    
+
+<p>Creating the schema 
+From your dbt project run:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl dbt create-branch-schema <span class="nt">--branch</span> my-branch <span class="nt">--to-schema</span> my_branch   
+</code></pre></div></div>
+
+<p>Advanced options could be found <a href="/reference/commands.html#lakectl-dbt-create-branch-schema">here</a></p>
 
                 
 
