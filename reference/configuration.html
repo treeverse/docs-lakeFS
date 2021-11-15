@@ -480,6 +480,7 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.force_path_style</code> <code class="language-plaintext highlighter-rouge">(boolean : false)</code> - When true, use path-style S3 URLs (https://<host>/<bucket> instead of https://<bucket>.<host>)</host></bucket></bucket></host></li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.streaming_chunk_size</code> <code class="language-plaintext highlighter-rouge">(int : 1048576)</code> - Object chunk size to buffer before streaming to blockstore (use a lower value for less reliable networks). Minimum is 8192.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.streaming_chunk_timeout</code> <code class="language-plaintext highlighter-rouge">(time duration : "60s")</code> - Per object chunk timeout for blockstore streaming operations (use a larger value for less reliable networks).</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.discover_bucket_region</code> <code class="language-plaintext highlighter-rouge">(boolean : true)</code> - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API).</li>
   <li><code class="language-plaintext highlighter-rouge">committed.local_cache</code> - an object describing the local (on-disk) cache of metadata from
 permanent storage:
     <ul>
@@ -591,7 +592,7 @@ To set an environment variable, prepend <code class="language-plaintext highligh
 <span class="na">blockstore</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">s3</span>
   <span class="na">s3</span><span class="pi">:</span>
-    <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
+    <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span> <span class="c1"># optional, fallback in case discover from bucket is not supported</span>
     <span class="na">credentials_file</span><span class="pi">:</span> <span class="s">/secrets/aws/credentials</span>
     <span class="na">profile</span><span class="pi">:</span> <span class="s">default</span>
 
@@ -649,9 +650,9 @@ To set an environment variable, prepend <code class="language-plaintext highligh
 <span class="na">blockstore</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">s3</span>
   <span class="na">s3</span><span class="pi">:</span>
-    <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
     <span class="na">force_path_style</span><span class="pi">:</span> <span class="no">true</span>
     <span class="na">endpoint</span><span class="pi">:</span> <span class="s">http://localhost:9000</span>
+    <span class="na">discover_bucket_region</span><span class="pi">:</span> <span class="no">false</span>
     <span class="na">credentials</span><span class="pi">:</span>
       <span class="na">access_key_id</span><span class="pi">:</span> <span class="s">minioadmin</span>
       <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">minioadmin</span>
