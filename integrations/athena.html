@@ -395,12 +395,149 @@
     
 <p class="pb-5"><a href="https://aws.amazon.com/athena/">Amazon Athena</a> is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL.</p>
 
-<p>Amazon Athena works directly above S3 and can’t access lakeFS.</p>
+<p>Amazon Athena works directly above S3 and can’t access lakeFS. Tables created using Athena aren’t readable by lakeFS.
+However, tables stored in lakeFS (that were created with <a href="/integrations/glue_hive_metastore.html">glue/hive</a>) can be queried by Athena.</p>
 
-<p>In order to support querying data from lakeFS with Amazon Athena, we will use <a href="/integrations/glue_hive_metastore.html#create-symlink">create-symlink</a>, one of the <a href="/integrations/glue_hive_metastore.html">metastore commands</a> in <a href="/reference/commands.html">lakectl</a>.</p>
+<p>In order to support querying data from lakeFS with Amazon Athena, we will use <code class="language-plaintext highlighter-rouge">create-symlink</code>, one of the <a href="/integrations/glue_hive_metastore.html">metastore commands</a> in <a href="/reference/commands.html">lakectl</a>.
+<code class="language-plaintext highlighter-rouge">create-symlink</code> receives a source table, destination table and the location of the table and does two actions:</p>
+<ol>
+  <li>Creates partitioned directories with symlink files in the underlying S3 bucket.</li>
+  <li>Creates a table in Glue catalog with symlink format type and location pointing to the created symlinks.</li>
+</ol>
 
-<p>create-symlink receives a table in glue pointing to lakeFS and creates a copy of the table in glue pointing to the underlying S3 bucket.
-We can then query the new created table with Athena</p>
+<p class="note"><strong>Note</strong>
+<code class="language-plaintext highlighter-rouge">.lakectl.yaml</code> file should be configured with the proper hive/glue credentials. <a href="/integrations/glue_hive_metastore.html#configurations">For more information</a></p>
+
+<p>create-symlink receives a table in glue or hive pointing to lakeFS and creates a copy of the table in glue.
+The table data will use the <code class="language-plaintext highlighter-rouge">SymlinkTextInputFormat</code>, which will point to the lakeFS repository storage namespace. Without copying data,
+you will be able to query your data with Athena. However, the symlinks table will only show the data that existed during 
+the copy. If the table changed in lakeFS, you need to run <code class="language-plaintext highlighter-rouge">create-symlink</code> again for your changed to be reflected in Athena.</p>
+      <h3 id="example">
+        
+        
+          <a href="#example" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example:
+        
+        
+      </h3>
+    
+
+<p>Let’s assume that some time ago, we created a hive table <code class="language-plaintext highlighter-rouge">my_table</code> that is stored in lakeFS repo <code class="language-plaintext highlighter-rouge">example</code> under branch <code class="language-plaintext highlighter-rouge">main</code>, using the command:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE EXTERNAL TABLE <span class="sb">`</span>my_table<span class="sb">`</span><span class="o">(</span>
+   <span class="sb">`</span><span class="nb">id</span><span class="sb">`</span> bigint, 
+   <span class="sb">`</span>key<span class="sb">`</span> string 
+<span class="o">)</span>
+PARTITIONED BY <span class="o">(</span>YEAR INT, MONTH INT<span class="o">)</span>
+LOCATION <span class="s1">'s3://example/main/my_table'</span><span class="p">;</span>
+WITH <span class="o">(</span>format <span class="o">=</span> <span class="s1">'PARQUET'</span>, external_location <span class="s1">'s3a://example/main/my_table'</span> <span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>The repository <code class="language-plaintext highlighter-rouge">example</code> has the s3 storage space <code class="language-plaintext highlighter-rouge">s3://my-bucket/my-repo-prefix/</code>. 
+After inserting some data to it, object structure under <code class="language-plaintext highlighter-rouge">lakefs://example/main/my_table</code> looks like:</p>
+
+<p><img src="/assets/img/lakefs_table.png" alt="lakefs_table.png" /></p>
+
+<p>Now we would like to query that table with Athena. We need to use the <code class="language-plaintext highlighter-rouge">create-symlink</code> command as follows:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore create-symlink <span class="se">\</span>
+<span class="nt">--repo</span> example <span class="se">\</span>
+<span class="nt">--branch</span> main <span class="se">\</span>
+<span class="nt">--path</span> my_table <span class="se">\</span>
+<span class="nt">--from-client-type</span> hive <span class="se">\</span>
+<span class="nt">--from-schema</span> default <span class="se">\</span>
+<span class="nt">--from-table</span> my_table <span class="se">\</span>
+<span class="nt">--to-schema</span> default <span class="se">\ </span>
+<span class="nt">--to-table</span> my_table  
+</code></pre></div></div>
+
+<p>The command will have 2 notable outputs:</p>
+
+<ol>
+  <li>For each partition the command will create a symlink file:</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜   aws s3 <span class="nb">ls </span>s3://my-bucket/my-repo-prefix/my_table/ <span class="nt">--recursive</span>
+2021-11-23 17:46:29          0 my-repo-prefix/my_table/symlinks/example/main/my_table/year<span class="o">=</span>2021/month<span class="o">=</span>11/symlink.txt
+2021-11-23 17:46:29         60 my-repo-prefix/my_table/symlinks/example/main/my_table/year<span class="o">=</span>2021/month<span class="o">=</span>12/symlink.txt
+2021-11-23 17:46:30         60 my-repo-prefix/my_table/symlinks/example/main/my_table/year<span class="o">=</span>2022/month<span class="o">=</span>1/symlink.txt
+</code></pre></div></div>
+
+<p>An example content of a symlink file, where each line represents a single object of the specific partition:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>s3://my-bucket/my-repo-prefix/5bdc62da516944b49889770d98274227
+s3://my-bucket/my-repo-prefix/64262fbf3d6347a79ead641d2b2baee6
+s3://my-bucket/my-repo-prefix/64486c8de6484de69f12d7d26804c93e
+s3://my-bucket/my-repo-prefix/b0165d5c5b13473d8a0f460eece9eb26
+</code></pre></div></div>
+
+<ol>
+  <li>A glue table pointing to the symlink directories structure:</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws glue get-table <span class="nt">--name</span> my_table <span class="nt">--database-name</span> default
+
+<span class="o">{</span>
+  <span class="s2">"Table"</span>: <span class="o">{</span>
+    <span class="s2">"Name"</span>: <span class="s2">"my_table"</span>,
+    <span class="s2">"DatabaseName"</span>: <span class="s2">"default"</span>,
+    <span class="s2">"Owner"</span>: <span class="s2">"anonymous"</span>,
+    <span class="s2">"CreateTime"</span>: <span class="s2">"2021-11-23T17:46:30+02:00"</span>,
+    <span class="s2">"UpdateTime"</span>: <span class="s2">"2021-11-23T17:46:30+02:00"</span>,
+    <span class="s2">"LastAccessTime"</span>: <span class="s2">"1970-01-01T02:00:00+02:00"</span>,
+    <span class="s2">"Retention"</span>: 0,
+    <span class="s2">"StorageDescriptor"</span>: <span class="o">{</span>
+      <span class="s2">"Columns"</span>: <span class="o">[</span>
+        <span class="o">{</span>
+          <span class="s2">"Name"</span>: <span class="s2">"id"</span>,
+          <span class="s2">"Type"</span>: <span class="s2">"bigint"</span>,
+          <span class="s2">"Comment"</span>: <span class="s2">""</span>
+        <span class="o">}</span>,
+        <span class="o">{</span>
+          <span class="s2">"Name"</span>: <span class="s2">"key"</span>,
+          <span class="s2">"Type"</span>: <span class="s2">"string"</span>,
+          <span class="s2">"Comment"</span>: <span class="s2">""</span>
+        <span class="o">}</span>
+      <span class="o">]</span>,
+      <span class="s2">"Location"</span>: <span class="s2">"s3://my-bucket/my-repo-prefix/symlinks/example/main/my_table"</span>,
+      <span class="s2">"InputFormat"</span>: <span class="s2">"org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat"</span>,
+      <span class="s2">"OutputFormat"</span>: <span class="s2">"org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"</span>,
+      <span class="s2">"Compressed"</span>: <span class="nb">false</span>,
+      <span class="s2">"NumberOfBuckets"</span>: <span class="nt">-1</span>,
+      <span class="s2">"SerdeInfo"</span>: <span class="o">{</span>
+        <span class="s2">"Name"</span>: <span class="s2">"default"</span>,
+        <span class="s2">"SerializationLibrary"</span>: <span class="s2">"org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"</span>,
+        <span class="s2">"Parameters"</span>: <span class="o">{</span>
+          <span class="s2">"serialization.format"</span>: <span class="s2">"1"</span>
+        <span class="o">}</span>
+      <span class="o">}</span>,
+      <span class="s2">"StoredAsSubDirectories"</span>: <span class="nb">false</span>
+    <span class="o">}</span>,
+    <span class="s2">"PartitionKeys"</span>: <span class="o">[</span>
+      <span class="o">{</span>
+        <span class="s2">"Name"</span>: <span class="s2">"year"</span>,
+        <span class="s2">"Type"</span>: <span class="s2">"int"</span>,
+        <span class="s2">"Comment"</span>: <span class="s2">""</span>
+      <span class="o">}</span>,
+      <span class="o">{</span>
+        <span class="s2">"Name"</span>: <span class="s2">"month"</span>,
+        <span class="s2">"Type"</span>: <span class="s2">"int"</span>,
+        <span class="s2">"Comment"</span>: <span class="s2">""</span>
+      <span class="o">}</span>
+    <span class="o">]</span>,
+    <span class="s2">"ViewOriginalText"</span>: <span class="s2">""</span>,
+    <span class="s2">"ViewExpandedText"</span>: <span class="s2">""</span>,
+    <span class="s2">"TableType"</span>: <span class="s2">"EXTERNAL_TABLE"</span>,
+    <span class="s2">"Parameters"</span>: <span class="o">{</span>
+      <span class="s2">"EXTERNAL"</span>: <span class="s2">"TRUE"</span>,
+      <span class="s2">"bucketing_version"</span>: <span class="s2">"2"</span>,
+      <span class="s2">"transient_lastDdlTime"</span>: <span class="s2">"1637681750"</span>
+    <span class="o">}</span>,
+    <span class="s2">"CreatedBy"</span>: <span class="s2">"arn:aws:iam::************:user/********"</span>,
+    <span class="s2">"IsRegisteredWithLakeFormation"</span>: <span class="nb">false</span>,
+    <span class="s2">"CatalogId"</span>: <span class="s2">"*********"</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>You can now safely use Athena to query <code class="language-plaintext highlighter-rouge">my_table</code>.</p>
 
                 
 

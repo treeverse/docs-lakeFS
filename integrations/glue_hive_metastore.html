@@ -406,7 +406,6 @@
           <li><a href="#diff" id="markdown-toc-diff">Diff</a></li>
         </ol>
       </li>
-      <li><a href="#athena-with-lakefs-branches" id="markdown-toc-athena-with-lakefs-branches">Athena with lakeFS branches</a></li>
     </ol>
   </li>
 </ol>
@@ -498,7 +497,7 @@ Add the following to the lakectl configuration file (by default <code class="lan
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">metastore</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">hive</span>
   <span class="na">hive</span><span class="pi">:</span>
-    <span class="na">uri</span><span class="pi">:</span> <span class="s">thrift://hive-metastore:9083</span>
+    <span class="na">uri</span><span class="pi">:</span> <span class="s">hive-metastore:9083</span>
 </code></pre></div></div>
       <h3 class="no_toc" id="glue">
         
@@ -637,37 +636,6 @@ Partitions
 + 2020-07-06
 ~ 2020-07-08
 </code></pre></div></div>
-      <h2 id="athena-with-lakefs-branches">
-        
-        
-          <a href="#athena-with-lakefs-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Athena with lakeFS branches
-        
-        
-      </h2>
-    
-<p>Athena doesn’t support configuring the endpoint-uri. to use S3-compatible services like lakeFS.
-Hence, Athena can’t access lakeFS, and can only be used with AWS S3 as the storage.</p>
-
-<p>In order to enable accessing partitioned data we could use the <code class="language-plaintext highlighter-rouge">create-symlink</code> command.
-create-symlink receives a source table, destination table and the location of the table and does two actions:</p>
-<ol>
-  <li>Creates partitioned directories with symlink files in the underlying S3 bucket.</li>
-  <li>Creates a table in Glue catalog with symlink format type and location pointing to the created symlinks.</li>
-</ol>
-
-<p class="note pb-3"><strong>Notice:</strong> create-symlink source table must point to a location in lakeFS.</p>
-
-<p>Example:</p>
-
-<p>Let’s assume we have the table <code class="language-plaintext highlighter-rouge">inventory</code> in Glue.
-The table is pointing to repo <code class="language-plaintext highlighter-rouge">example-repo</code> branch <code class="language-plaintext highlighter-rouge">main</code> and the data is located at <code class="language-plaintext highlighter-rouge">path/to/table/in/lakeFS</code></p>
-
-<p>We want to query the table using Athena.
-To do this, we run the command:</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore create-symlink <span class="nt">--address</span> 123456789012 <span class="nt">--branch</span> main <span class="nt">--from-schema</span> default <span class="nt">--from-table</span> branch_inventory <span class="nt">--to-schema</span> default <span class="nt">--to-table</span> sym_inventory <span class="nt">--repo</span> example-repository <span class="nt">--path</span> path/to/table/in/lakeFS
-</code></pre></div></div>
-
-<p>We can now use Amazon Athena to query the created table <code class="language-plaintext highlighter-rouge">sym_inventory</code>.</p>
 
                 
 
