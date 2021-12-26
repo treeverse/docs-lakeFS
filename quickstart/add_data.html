@@ -23,17 +23,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Prepare Your Storage | lakeFS</title>
+<title>Add Data | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Prepare Your Storage" />
+<meta property="og:title" content="Add Data" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section explains how to configure the underlying storage layer." />
-<meta property="og:description" content="This section explains how to configure the underlying storage layer." />
+<meta name="description" content="In this section we will learn how to configure and use AWS CLI to manage data with the lakeFS Server." />
+<meta property="og:description" content="In this section we will learn how to configure and use AWS CLI to manage data with the lakeFS Server." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Prepare Your Storage" />
+<meta property="twitter:title" content="Add Data" />
 <script type="application/ld+json">
-{"description":"This section explains how to configure the underlying storage layer.","headline":"Prepare Your Storage","@type":"WebPage","url":"/setup/storage/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"In this section we will learn how to configure and use AWS CLI to manage data with the lakeFS Server.","headline":"Add Data","@type":"WebPage","url":"/quickstart/add_data.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -178,13 +178,13 @@
             <ul class="nav-list"><li
             class="nav-list-item"><a href="/"
            class="nav-list-link">What is lakeFS</a></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/quickstart/"
            class="nav-list-link">Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/quickstart/installing.html"
                    class="nav-list-link">Install lakeFS</a></li><li class="nav-list-item "><a href="/quickstart/repository.html"
-                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/quickstart/add_data.html"
-                   class="nav-list-link">Add Data</a></li><li class="nav-list-item "><a href="/quickstart/first_commit.html"
+                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item  active"><a href="/quickstart/add_data.html"
+                   class="nav-list-link active">Add Data</a></li><li class="nav-list-item "><a href="/quickstart/first_commit.html"
                    class="nav-list-link">Commit the Changes</a></li><li class="nav-list-item "><a href="/quickstart/more_quickstart_options.html"
                    class="nav-list-link">More Quickstart Options</a></li><li class="nav-list-item "><a href="/quickstart/try.html"
                    class="nav-list-link">Try without installing</a></li></ul></li><li
@@ -197,13 +197,13 @@
                    class="nav-list-link">On GCP</a></li><li class="nav-list-item "><a href="/deploy/k8s.html"
                    class="nav-list-link">With Kubernetes</a></li><li class="nav-list-item "><a href="/deploy/docker.html"
                    class="nav-list-link">With Docker</a></li></ul></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item  active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
-                   class="nav-list-link active">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
+                   class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
                         <a href="/setup/storage/s3.html"
                            class="nav-list-link">AWS S3</a>
                     </li><li class="nav-list-item ">
@@ -375,54 +375,86 @@
             <nav aria-label="Breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb-nav-list">
                     
-                    <li class="breadcrumb-nav-list-item"><a href="/setup/">Setup lakeFS</a>
+                    <li class="breadcrumb-nav-list-item"><a href="/quickstart/">Quickstart</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Prepare Your Storage</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Add Data</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 id="prepare-your-storage">
+                <h1 id="add-data">
         
         
-          <a href="#prepare-your-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prepare Your Storage
+          <a href="#add-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Add Data
         
         
       </h1>
     
 
-<p>A production installation of lakeFS will usually use your cloud provider’s object storage as the underlying storage layer.
-You can choose to create a new bucket/container (recommended), or use an existing one with a path prefix.
-The path under the existing bucket/container should be empty.</p>
+<p>In this section we will copy a file into lakeFS.</p>
+      <h2 id="configuring-the-aws-cli">
+        
+        
+          <a href="#configuring-the-aws-cli" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring the AWS CLI
+        
+        
+      </h2>
+    
 
-<p>If you already have a bucket/container configured, you are ready to <a href="/setup/create-repo.html">create your first lakeFS repository</a>.</p>
+<p>Since lakeFS exposes an S3-compatible API, we can use the AWS CLI to operate on it.</p>
 
-<p>Choose your storage provider to configure your storage:</p>
+<ol>
+  <li>If you don’t have the AWS CLI installed, follow the <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html" target="_blank">instructions here</a>.</li>
+  <li>
+    <p>Configure a new connection profile using the <strong>lakeFS credentials</strong> we generated earlier:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws configure <span class="nt">--profile</span> <span class="nb">local</span>
+<span class="c"># fill in the lakeFS credentials generated earlier:</span>
+<span class="c"># AWS Access Key ID [None]: AKIAJVHTOKZWGCD2QQYQ</span>
+<span class="c"># AWS Secret Access Key [None]: ****************************************</span>
+<span class="c"># Default region name [None]:</span>
+<span class="c"># Default output format [None]:</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Let’s test to see that it works. We’ll do that by calling <code class="language-plaintext highlighter-rouge">s3 ls</code> which should list our repositories for us:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--endpoint-url</span><span class="o">=</span>http://localhost:8000 <span class="nt">--profile</span> <span class="nb">local </span>s3 <span class="nb">ls</span>
+<span class="c"># output:</span>
+<span class="c"># 2021-06-15 13:43:03 example-repo</span>
+</code></pre></div>    </div>
+    <p>Note the usage of the <code class="language-plaintext highlighter-rouge">--endpoint-url</code> flag, which tells the AWS CLI to connect to lakeFS instead of AWS S3.</p>
+  </li>
+  <li>
+    <p>Great, now let’s copy some files. We’ll write to the main branch. This is done by prefixing our path with the name of the branch we’d like to read/write from:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws <span class="nt">--endpoint-url</span><span class="o">=</span>http://localhost:8000 <span class="nt">--profile</span> <span class="nb">local </span>s3 <span class="nb">cp</span> ./foo.txt s3://example-repo/main/
+<span class="c"># output:</span>
+<span class="c"># upload: ./foo.txt to s3://example-repo/main/foo.txt</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Back in the lakeFS UI, we are able to see our file in the <em>Uncommitted Changes</em> tab:</p>
+
+    <p><img src="/assets/img/object_added.png" alt="Object Added" /></p>
+  </li>
+</ol>
+      <h3 id="next-steps">
+        
+        
+          <a href="#next-steps" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Next steps
+        
+        
+      </h3>
+    
+
+<p>It’s time to <a href="/quickstart/first_commit.html">commit your changes</a> using the lakeFS CLI.</p>
 
                 
 
-                
-                <hr>
-                <div class="toc-block">
-                    <h2 class="text-delta">Table of contents</h2>
-                    <ul>
-                        <li>
-                            <a href="/setup/storage/s3.html">AWS S3</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/setup/storage/gcs.html">Google Cloud Storage</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/setup/storage/blob.html">Azure Blob Storage</a>
-                        </li>
-                        
-                    </ul>
-                </div>
                 
 
 
