@@ -448,11 +448,12 @@ This is done by listing the source bucket (and optional prefix), and creating po
 
 <p>By doing this, it’s possible to take even large sets of objects, and have them appear as objects in a lakeFS branch, as if they were written directly to it.</p>
 
-<p>For this to work, we’d need to ensure 2 things first:</p>
+<p>For this to work, we’d need to ensure 3 things first:</p>
 
 <ol>
   <li>The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> must have permissions to list the object at the source object store</li>
   <li>The lakeFS installation must have read permissions to the objects being ingested</li>
+  <li>The source path must <strong>not</strong> be in a storage namespace used by lakeFS. e.g. if <code class="language-plaintext highlighter-rouge">lakefs://my-repo</code> created with storage namespace <code class="language-plaintext highlighter-rouge">s3://my-bucket</code>, then <code class="language-plaintext highlighter-rouge">s3://my-bucket/*</code> cannot be an ingestion source.</li>
 </ol>
       <h3 id="ingesting-from-s3">
         
