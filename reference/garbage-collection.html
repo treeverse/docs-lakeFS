@@ -463,13 +463,24 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
 <p>The GC job is a Spark program that can be run using <code class="language-plaintext highlighter-rouge">spark-submit</code> (or using your preferred method of running Spark programs).
 The job will hard-delete objects that were deleted and whose retention period has ended according to the GC rules.</p>
 
+<p>First, you’ll have to download the lakeFS Spark client Uber-jar. The Uber-Jar can be found on a public S3 location:</p>
+
+<p>For Spark 2.4.7: <br />
+http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-247/${CLIENT_VERSION}/lakefs-spark-client-247-assembly-${CLIENT_VERSION}.jar</p>
+
+<p>For Spark 3.0.1: <br />
+http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-301/${CLIENT_VERSION}/lakefs-spark-client-301-assembly-${CLIENT_VERSION}.jar</p>
+
+<p><code class="language-plaintext highlighter-rouge">CLIENT_VERSION</code>s for Spark 2.4.7 can be found <a href="https://mvnrepository.com/artifact/io.lakefs/lakefs-spark-client-247">here</a>, and for Spark 3.0.1 they can be found <a href="https://mvnrepository.com/artifact/io.lakefs/lakefs-spark-client-301">here</a>.</p>
+
+<p>Second, you should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code> and run the following command to make the garbage collector start running:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://lakefs.example.com:8000/api/v1  <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;S3_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;S3_SECRET_KEY&gt; <span class="se">\</span>
-  <span class="nt">--packages</span> io.lakefs:lakefs-spark-client-301_2.12:0.1.6 <span class="se">\</span>
+  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
   example-repo us-east-1
 </code></pre></div></div>
       <h2 id="considerations">
