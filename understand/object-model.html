@@ -23,17 +23,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Quickstart | lakeFS</title>
+<title>Object Model | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Quickstart" />
+<meta property="og:title" content="Object Model" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="The quickstart. This section provides simple instructions for deploying lakeFS so that you start exploring the technology" />
-<meta property="og:description" content="The quickstart. This section provides simple instructions for deploying lakeFS so that you start exploring the technology" />
+<meta name="description" content="The lakeFS object model blends the object models of git and of object stores such as S3. Here are the explicit definitions." />
+<meta property="og:description" content="The lakeFS object model blends the object models of git and of object stores such as S3. Here are the explicit definitions." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Quickstart" />
+<meta property="twitter:title" content="Object Model" />
 <script type="application/ld+json">
-{"description":"The quickstart. This section provides simple instructions for deploying lakeFS so that you start exploring the technology","headline":"Quickstart","@type":"WebPage","url":"/quickstart/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"The lakeFS object model blends the object models of git and of object stores such as S3. Here are the explicit definitions.","headline":"Object Model","@type":"WebPage","url":"/understand/object-model.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -178,10 +178,10 @@
             <ul class="nav-list"><li
             class="nav-list-item"><a href="/"
            class="nav-list-link">What is lakeFS</a></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/quickstart/"
-           class="nav-list-link active">Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/quickstart/try.html"
+           class="nav-list-link">Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/quickstart/try.html"
                    class="nav-list-link">Try without installing</a></li><li class="nav-list-item "><a href="/quickstart/installing.html"
                    class="nav-list-link">Install lakeFS</a></li><li class="nav-list-item "><a href="/quickstart/repository.html"
                    class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/quickstart/add_data.html"
@@ -266,13 +266,13 @@
                    class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/understand/"
            class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/understand/architecture.html"
                    class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/understand/versioning-internals.html"
-                   class="nav-list-link">Versioning Internals</a></li><li class="nav-list-item "><a href="/understand/object-model.html"
-                   class="nav-list-link">Object Model</a></li><li class="nav-list-item "><a href="/understand/branching-model.html"
+                   class="nav-list-link">Versioning Internals</a></li><li class="nav-list-item  active"><a href="/understand/object-model.html"
+                   class="nav-list-link active">Object Model</a></li><li class="nav-list-item "><a href="/understand/branching-model.html"
                    class="nav-list-link">Branching Model</a></li><li class="nav-list-item "><a href="/understand/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/understand/roadmap.html"
                    class="nav-list-link">Roadmap</a></li></ul></li><li
@@ -387,73 +387,377 @@
         <div id="main-content-wrap" class="main-content-wrap">
             
             
+            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb-nav-list">
+                    
+                    <li class="breadcrumb-nav-list-item"><a href="/understand/">Understanding lakeFS</a>
+                    </li>
+                    
+                    <li class="breadcrumb-nav-list-item"><span>Object Model</span></li>
+                </ol>
+            </nav>
+            
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="quickstart">
+                <h1 class="no_toc" id="object-model">
         
         
-          <a href="#quickstart" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Quickstart
+          <a href="#object-model" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Object Model
         
         
       </h1>
     
-      <h2 id="lakefs-playground">
+
+<div class="toc-block">
+      <h2 class="no_toc text-delta" id="table-of-contents">
         
         
-          <a href="#lakefs-playground" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Playground
+          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
         
         
       </h2>
     
 
-<p>Experience lakeFS first hand with your own isolated environment.
-You can easily integrate it with your existing tools, and feel lakeFS in action in an environment
-similar to your own.</p>
+<ol id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a></li>
+  <li><a href="#lakefs-the-object-store" id="markdown-toc-lakefs-the-object-store">lakeFS the object store</a></li>
+  <li><a href="#lakefs-the-version-control-system" id="markdown-toc-lakefs-the-version-control-system">lakeFS the version control system</a>    <ol>
+      <li><a href="#repository" id="markdown-toc-repository">Repository</a></li>
+      <li><a href="#commits" id="markdown-toc-commits">Commits</a></li>
+      <li><a href="#identifying-commits" id="markdown-toc-identifying-commits">Identifying commits</a>        <ol>
+          <li><a href="#tags" id="markdown-toc-tags">Tags</a></li>
+          <li><a href="#branches" id="markdown-toc-branches">Branches</a></li>
+          <li><a href="#ref-expressions" id="markdown-toc-ref-expressions">Ref expressions</a></li>
+        </ol>
+      </li>
+      <li><a href="#history" id="markdown-toc-history">History</a></li>
+      <li><a href="#three-way-merge" id="markdown-toc-three-way-merge">Three way merge</a></li>
+    </ol>
+  </li>
+  <li><a href="#concepts-unique-to-lakefs" id="markdown-toc-concepts-unique-to-lakefs">Concepts unique to lakeFS</a>    <ol>
+      <li><a href="#lakefs-protocol-uris" id="markdown-toc-lakefs-protocol-uris"><code class="language-plaintext highlighter-rouge">lakefs</code> protocol URIs</a></li>
+    </ol>
+  </li>
+</ol>
 
-<p>
-    <a class="btn btn-green" href="https://demo.lakefs.io/" target="_blank">
-        Try lakeFS now without installing
-    </a>
-</p>
-      <h2 id="katacoda-tutorial">
+</div>
+      <h2 id="introduction">
         
         
-          <a href="#katacoda-tutorial" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Katacoda Tutorial
+          <a href="#introduction" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Introduction
         
         
       </h2>
     
 
-<p>Learn how to use lakeFS using the CLI and an interactive Spark shell - all from your browser, without installing anything.</p>
+<p>lakeFS blends concepts from object stores such as S3 with concepts from Git.  This reference
+defines the common concepts of lakeFS.  Every concept appearing in <em>italic text</em> is its
+definition.</p>
+      <h2 id="lakefs-the-object-store">
+        
+        
+          <a href="#lakefs-the-object-store" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS the object store
+        
+        
+      </h2>
+    
 
-<p>In the tutorial we cover:</p>
+<p>lakeFS is an object store, and borrows concepts from S3.</p>
+
+<p>An <em>object store</em> links objects to paths.  An <em>object</em> holds:</p>
 
 <ul>
-  <li>Basic <code class="language-plaintext highlighter-rouge">lakectl</code> command line usage</li>
-  <li>How to read, write, list and delete objects from lakeFS using the <code class="language-plaintext highlighter-rouge">lakectl</code> command</li>
-  <li>Read from, and write to lakeFS using its S3 API interface using <a href="https://spark.apache.org/" target="_blank">Spark</a></li>
-  <li>Diff, commit and merge the changes created by Spark</li>
-  <li>Track commit history to understand changes to your data over time</li>
+  <li>Some <em>contents</em>, with unlimited size and format.</li>
+  <li>Some <em>metadata</em>, including
+    <ul>
+      <li><em>size</em> in bytes</li>
+      <li>the <em>creation time</em>, a timestamp with seconds resolution</li>
+      <li>a <em>checksum</em> string which uniquely identifies the contents</li>
+      <li>some <em>user metadata</em>, a small map of strings to strings.</li>
+    </ul>
+  </li>
 </ul>
 
-<p>The web based environment provides a full working lakeFS and Spark environment, so feel free to explore it on your own.</p>
+<p>Similarly to many object stores, lakeFS objects are immutable and never rewritten.  They can
+be entirely replaced or deleted, but not modified.</p>
 
-<p>
-    <a class="btn btn-green" href="https://www.katacoda.com/lakefs/scenarios/lakefs-play" target="_blank">
-        Start Katacoda Tutorial Now
-    </a>
-</p>
-      <h2 id="next-steps">
+<p>A <em>path</em> is a readable string, typically decoded as UTF-8.  lakeFS maps paths to their objects
+according to specific rules.  lakeFS paths use the <code class="language-plaintext highlighter-rouge">lakefs</code> protocol, described below.</p>
+      <h2 id="lakefs-the-version-control-system">
         
         
-          <a href="#next-steps" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Next Steps
+          <a href="#lakefs-the-version-control-system" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS the version control system
         
         
       </h2>
     
 
-<p>After getting acquainted with lakeFS, easily <a href="installing.html">install it on your computer</a> or <a href="../deploy/index.html">deploy it on your cloud account</a>.</p>
+<p>lakeFS borrows its concepts for version control from Git.</p>
+      <h3 id="repository">
+        
+        
+          <a href="#repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Repository
+        
+        
+      </h3>
+    
+
+<p>A <em>repository</em> is a collection of objects with common history tracking.  lakeFS manages
+versions of the repository, identified by their commits.  A <em>commit</em> is a collection of object
+metadata and data, including especially all paths and the object contents and metadata at that
+commit.  Commits have their own <em>commit metadata</em>, which includes a textual comment and
+additional user metadata.</p>
+      <h3 id="commits">
+        
+        
+          <a href="#commits" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Commits
+        
+        
+      </h3>
+    
+
+<p>Commits are organized into a <em>history</em> using their parent commits.  Every repository has
+exactly one <em>initial commit</em> with no parents.  <span style="font-size: smaller">Note that a
+Git repository may have multiple initial commits.</span> A commit with more than one parent is
+a <em>merge commit</em>.  <span style="font-size: smaller">Currently lakeFS only supports merge
+commits with two parents.</span></p>
+      <h3 id="identifying-commits">
+        
+        
+          <a href="#identifying-commits" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Identifying commits
+        
+        
+      </h3>
+    
+
+<p>A commit is identified by its <em>commit ID</em>, a digest of all contents of the commit.  Commit IDs
+are by nature long, so a unique prefix may be used to abbreviate them (but note that short
+prefixes can become non-unique as the repository grows, so prefer to avoid abbreviating when
+storing commits for the long term).  A commit may also be identified by using a textual
+definition, called a <em>ref</em>.  Examples of refs include tags, branches, and expressions.  The
+state of the repository at any commit is always readable.</p>
+      <h4 id="tags">
+        
+        
+          <a href="#tags" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Tags
+        
+        
+      </h4>
+    
+
+<p>A <em>tag</em> is an immutable pointer to a single commit.  Tags have readable names.  Because tags
+are commits, a repository can be read from any tag.  Example tags:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">v2.3</code> to mark a release</li>
+  <li><code class="language-plaintext highlighter-rouge">dev:jane-before-v2.3-merge</code> to mark Jane’s private temporary point.</li>
+</ul>
+      <h4 id="branches">
+        
+        
+          <a href="#branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Branches
+        
+        
+      </h4>
+    
+
+<p>A <em>branch</em> is a mutable pointer to a commit and its staging area.  Repositories are readable
+from any branch, but they are also <strong>writable</strong> to a branch.  The <em>staging area</em> associated
+with a branch is mutable storage where objects can be created, updated or deleted.  These
+objects are readable when reading from the branch.  To <strong>create</strong> a commit from a branch, all
+files from the staging area are merged into the contents of the current branch, creating the
+new set of objects.  The parent of the commit is the previous branch tip, and the new branch
+tip is set to this new commit.  Example branches:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">main</code>, the trunk</li>
+  <li><code class="language-plaintext highlighter-rouge">staging</code>, maybe ahead of <code class="language-plaintext highlighter-rouge">main</code></li>
+  <li><code class="language-plaintext highlighter-rouge">dev:joe-bugfix-1234</code> for Joe to fix issue 1234.</li>
+</ul>
+      <h4 id="ref-expressions">
+        
+        
+          <a href="#ref-expressions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ref expressions
+        
+        
+      </h4>
+    
+
+<p>lakeFS also supports <em>expressions</em> for creating a ref.  These are similar to <a href="https://git-scm.com/docs/gitrevisions#_specifying_revisions">revisions in
+Git</a>; indeed all <code class="language-plaintext highlighter-rouge">~</code> and <code class="language-plaintext highlighter-rouge">^</code>
+examples at the end of that section will work unchanged in lakeFS.</p>
+
+<ul>
+  <li>A branch or a tag are ref expressions.</li>
+  <li>If <code class="language-plaintext highlighter-rouge">&lt;ref&gt;</code> is a ref expression, then:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">&lt;ref&gt;^</code> is a ref expression referring to its first parent.</li>
+      <li><code class="language-plaintext highlighter-rouge">&lt;ref&gt;^N</code> is a ref expression referring to its N’th parent; in particular <code class="language-plaintext highlighter-rouge">&lt;ref&gt;^1</code> is the
+same as <code class="language-plaintext highlighter-rouge">&lt;ref&gt;^</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">&lt;ref&gt;~</code> is a ref expression referring to its first parent; in particular <code class="language-plaintext highlighter-rouge">&lt;ref&gt;~</code> is the
+same as <code class="language-plaintext highlighter-rouge">&lt;ref&gt;^</code> and <code class="language-plaintext highlighter-rouge">&lt;ref&gt;~</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">&lt;ref&gt;~N</code> is a ref expression referring to its N’th parent, always traversing to the first
+parent.  So <code class="language-plaintext highlighter-rouge">&lt;ref&gt;~N</code> is the same as <code class="language-plaintext highlighter-rouge">&lt;ref&gt;^^...^</code> with N consecutive carets <code class="language-plaintext highlighter-rouge">^</code>.</li>
+    </ul>
+  </li>
+</ul>
+      <h3 id="history">
+        
+        
+          <a href="#history" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> History
+        
+        
+      </h3>
+    
+
+<p>The <em>history</em> of the branch is the list of commits from the branch tip through the first
+parent of each commit.  Histories go back in time.</p>
+
+<p>The other way to create a commit is to merge an existing commit onto a branch.  To <em>merge</em> a
+source commit into a branch, lakeFS finds the <em>best</em> common ancestor of that source commit and
+the branch tip, called the “base”.  Then it performs a <a href="#three-way-merge">3-way merge</a>.  The
+“best” ancestor is exactly that defined in the documentation for
+<a href="https://git-scm.com/docs/git-merge-base#_description">git-merge-base</a>.  The result of a merge
+is a new commit, with the destination as the first parent and the source as the second.  Thus
+the previous tip of the merge destination is part of the history of the merged object.</p>
+      <h3 id="three-way-merge">
+        
+        
+          <a href="#three-way-merge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Three way merge
+        
+        
+      </h3>
+    
+
+<p>To merge a <em>merge source</em> (a commit) into a <em>merge destination</em> (another commit), lakeFS first
+finds the <em>merge base</em>, the nearest common parent of the two commits.  It can now perform a
+three-way merge, by examining the presence and identity of files in each commit.  In the table
+below, “A”, “B” and “C” are possible file contents, “X” is a missing file, and “conflict”
+(which only appears as a result) is a merge failure.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>In base</strong></th>
+      <th style="text-align: center"><strong>In source</strong></th>
+      <th style="text-align: center"><strong>In destination</strong></th>
+      <th style="text-align: center"><strong>Result</strong></th>
+      <th style="text-align: left"><strong>Comment</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: left">Unchanged file</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: left">Files changed on both sides in same way</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">conflict</td>
+      <td style="text-align: left">Files changed on both sides differently</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: left">File changed only on one branch</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: left">File changed only on one branch</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: left">Files deleted on both sides</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">conflict</td>
+      <td style="text-align: left">File changed on one side, deleted on the other</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">conflict</td>
+      <td style="text-align: left">File changed on one side, deleted on the other</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: left">File deleted on one side</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: left">File deleted on one side</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>As a format-agnostic system, lakeFS currently merges by complete files.  Format-specific and
+other user-defined merge strategies for handling conflicts are on the roadmap.</p>
+      <h2 id="concepts-unique-to-lakefs">
+        
+        
+          <a href="#concepts-unique-to-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Concepts unique to lakeFS
+        
+        
+      </h2>
+    
+
+<p><em>Underlying storage</em> is the area on some other object store that lakeFS uses to store object
+contents and some of its metadata.  We sometimes refer to underlying storage as <em>physical</em>.
+The path used to store the contents of an object is then termed a <em>physical path</em>.  The object
+itself on underlying storage is never modified, except to remove it entirely during some
+cleanups.</p>
+
+<p>When creating a lakeFS repository, you assign it with a <em>storage namespace</em>. The repository’s
+storage namespace is the prefix in the underlying storage where data for this repository
+will be stored.</p>
+
+<p>A lot of what lakeFS does is to manage how lakeFS paths translate to <em>physical paths</em> on the
+object store.  This mapping is generally <strong>not</strong> straightforward.  Importantly (and unlike
+many object stores), lakeFS may map multiple paths to the same object on backing storage, and
+always does this for objects that are unchanged across versions.</p>
+      <h3 id="lakefs-protocol-uris">
+        
+        
+          <a href="#lakefs-protocol-uris" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs</code> protocol URIs
+        
+        
+      </h3>
+    
+
+<p>lakeFS uses a specific format for path URIs.  The URI <code class="language-plaintext highlighter-rouge">lakefs://&lt;REPO&gt;/&lt;REF&gt;/&lt;KEY&gt;</code> is a path
+to objects in the given repo and ref expression under key.  This is used both for path
+prefixes and for full paths.  In similar fashion, <code class="language-plaintext highlighter-rouge">lakefs://&lt;REPO&gt;/&lt;REF&gt;</code> identifies the
+repository at a ref expression, and <code class="language-plaintext highlighter-rouge">lakefs://&lt;REPO&gt;</code> identifes a repo.</p>
 
                 
 
