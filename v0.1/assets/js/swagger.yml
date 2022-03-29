@@ -425,6 +425,10 @@ components:
           type: object
           additionalProperties:
             type: string
+        date:
+          description: set date to override creation date in the commit (Unix Epoch in seconds)
+          type: integer
+          format: int64
 
     Merge:
       type: object
@@ -435,6 +439,9 @@ components:
           type: object
           additionalProperties:
             type: string
+        strategy:
+          description: In case of a merge conflict, this option will force the merge process to automatically favor changes from the dest branch ('dest-wins') or from the source branch('source-wins'). In case no selection is made, the merge process will fail in case of a conflict
+          type: string
 
     BranchCreation:
       type: object
@@ -753,7 +760,8 @@ components:
           type: string
         blockstore_namespace_ValidityRegex:
           type: string
-
+        default_namespace_prefix:
+          type: string
     VersionConfig:
       type: object
       properties:
@@ -2576,7 +2584,7 @@ paths:
       tags:
         - objects
       operationId: uploadObject
-      x-validation-exclude-body: false
+      x-validation-exclude-body: true
       requestBody:
         content:
           multipart/form-data:
