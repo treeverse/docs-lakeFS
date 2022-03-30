@@ -408,48 +408,62 @@
         
       </h1>
     
+
 <p><a href="https://airflow.apache.org/">Apache Airflow</a> is a platform to programmatically author, schedule and monitor workflows.</p>
 
-<p>There are some aspects we will need to handle in order to run Airflow with lakeFS:</p>
-      <h2 id="creating-the-lakefs-connection">
+<p>There are several steps needed to run Airflow with lakeFS.</p>
+      <h2 id="create-a-lakefs-connection-on-airflow">
         
         
-          <a href="#creating-the-lakefs-connection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Creating the lakeFS connection
+          <a href="#create-a-lakefs-connection-on-airflow" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a lakeFS connection on Airflow
         
         
       </h2>
     
-<p>For authenticating to the lakeFS server, you need to create a new <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/connection.html">Airflow Connection</a>
-of type HTTP and pass it to your DAG. You can do that using the Airflow UI or the cli.
-Here’s an example Airflow command that does just that:</p>
+
+<p>To access the lakeFS server and authenticate with it, create a new <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/connection.html">Airflow
+Connection</a>
+of type HTTP and add it to your DAG.  You can do that using the Airflow UI
+or the CLI.  Here’s an example Airflow command that does just that:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>airflow connections add conn_lakefs <span class="nt">--conn-type</span><span class="o">=</span>HTTP <span class="nt">--conn-host</span><span class="o">=</span>http://&lt;LAKEFS_ENDPOINT&gt; <span class="se">\</span>
- <span class="nt">--conn-extra</span><span class="o">=</span><span class="s1">'{"access_key_id":"&lt;LAKEFS_ACCESS_KEY_ID&gt;","secret_access_key":"&lt;LAKEFS_SECRET_ACCESS_KEY&gt;"}'</span>
+    <span class="nt">--conn-extra</span><span class="o">=</span><span class="s1">'{"access_key_id":"&lt;LAKEFS_ACCESS_KEY_ID&gt;","secret_access_key":"&lt;LAKEFS_SECRET_ACCESS_KEY&gt;"}'</span>
 </code></pre></div></div>
-      <h2 id="installing-lakefs-airflow-package">
+      <h2 id="install-the-lakefs-airflow-package">
         
         
-          <a href="#installing-lakefs-airflow-package" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installing lakeFS Airflow package
+          <a href="#install-the-lakefs-airflow-package" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Install the lakeFS Airflow package
         
         
       </h2>
     
-<p>Installing the package using <code class="language-plaintext highlighter-rouge">pip</code>:</p>
+
+<p>You can use <code class="language-plaintext highlighter-rouge">pip</code> to install <a href="https://pypi.org/project/airflow-provider-lakefs/">the package</a></p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>airflow-provider-lakefs
 </code></pre></div></div>
-      <h2 id="using-the-package">
+      <h2 id="use-the-package">
         
         
-          <a href="#using-the-package" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the package
+          <a href="#use-the-package" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use the package
         
         
       </h2>
     
-<p>The package exposes several operations for interacting with a lakeFS server:</p>
+      <h3 id="operators">
+        
+        
+          <a href="#operators" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operators
+        
+        
+      </h3>
+    
+
+<p>The package exposes several operations to interact with a lakeFS server:</p>
+
 <ol>
   <li>
-    <p><code class="language-plaintext highlighter-rouge">CreateBranchOperator</code> creates a new lakeFS branch from the source branch (defaults to main).</p>
+    <p><code class="language-plaintext highlighter-rouge">CreateBranchOperator</code> creates a new lakeFS branch from the source branch (<code class="language-plaintext highlighter-rouge">main</code> by default).</p>
 
     <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_create_branch</span> <span class="o">=</span> <span class="n">CreateBranchOperator</span><span class="p">(</span>
    <span class="n">task_id</span><span class="o">=</span><span class="s">'create_branch'</span><span class="p">,</span>
@@ -484,8 +498,17 @@ Here’s an example Airflow command that does just that:</p>
 </code></pre></div>    </div>
   </li>
 </ol>
+      <h3 id="sensors">
+        
+        
+          <a href="#sensors" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sensors
+        
+        
+      </h3>
+    
 
-<p>Sensors are also available if you want to synchronize a running DAG with external operations:</p>
+<p>Sensors are also available that allow synchronizing a running DAG with external operations:</p>
+
 <ol>
   <li>
     <p><code class="language-plaintext highlighter-rouge">CommitSensor</code> waits until a commit has been applied to the branch</p>
@@ -498,7 +521,7 @@ Here’s an example Airflow command that does just that:</p>
 </code></pre></div>    </div>
   </li>
   <li>
-    <p><code class="language-plaintext highlighter-rouge">FileSensor</code> waits until a given file is present in a branch.</p>
+    <p><code class="language-plaintext highlighter-rouge">FileSensor</code> waits until a given file is present on a branch.</p>
 
     <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task_sense_file</span> <span class="o">=</span> <span class="n">FileSensor</span><span class="p">(</span>
     <span class="n">task_id</span><span class="o">=</span><span class="s">'sense_file'</span><span class="p">,</span>
@@ -509,9 +532,17 @@ Here’s an example Airflow command that does just that:</p>
 </code></pre></div>    </div>
   </li>
 </ol>
+      <h3 id="example">
+        
+        
+          <a href="#example" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example
+        
+        
+      </h3>
+    
 
-<p>For a DAG example that uses all the above, check out the <a href="https://github.com/treeverse/airflow-provider-lakeFS/blob/main/lakefs_provider/example_dags/lakefs-dag.py">example DAG</a>
-in the airflow-provider-lakeFS repository.</p>
+<p>This <a href="https://github.com/treeverse/airflow-provider-lakeFS/blob/main/lakefs_provider/example_dags/lakefs-dag.py">example DAG</a>
+in the airflow-provider-lakeFS repository shows how to use all of these.</p>
       <h3 id="performing-other-operations">
         
         
@@ -520,7 +551,8 @@ in the airflow-provider-lakeFS repository.</p>
         
       </h3>
     
-<p>To perform other operations that are not yet supported by the package, you can use:</p>
+
+<p>Sometimes an operator might not yet be supported by airflow-provider-lakeFS. You can directly access lakeFS by using:</p>
 
 <ul>
   <li>SimpleHttpOperator to send <a href="/reference/api.html">API requests</a> to lakeFS.</li>
