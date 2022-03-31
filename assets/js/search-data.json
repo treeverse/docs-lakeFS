@@ -1069,7 +1069,7 @@
   },"178": {
     "doc": "Hooks",
     "title": "Table of contents",
-    "content": ". | Example use-cases | Terminology | Uploading Action files | Runs API &amp; CLI | Hook types . | Webhooks . | Action file Webhook properties | Request body schema | . | Airflow Hooks . | Action file Airflow hook properties | Hook Record in configuration field | . | . | Experimentation | . Like other version control systems, lakeFS allows the configuration of Actions to trigger when predefined events occur. Supported Events: . | pre_commit - Action runs when the commit occurs, before the commit is finalized. | post_commit - Action runs after the commit is finalized. | pre_merge - Action runs when the merge occurs, before the merge is finalized. | post_merge - Action runs after the merge is finalized. | . lakeFS Actions are handled per repository and cannot be shared between repositories. Failure of any Hook under any Action of a pre_* event will result in aborting the lakeFS operation that is taking place. On the contrary, Hook failures under any Action of a post_* event will not affect the same operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
+    "content": ". | Example use-cases | Terminology | Uploading Action files | Runs API &amp; CLI | Hook types . | Webhooks . | Action file Webhook properties | Request body schema | . | Airflow Hooks . | Action file Airflow hook properties | Hook Record in configuration field | . | . | Experimentation | . Like other version control systems, lakeFS allows the configuration of Actions to trigger when predefined events occur. Supported Events: . | Event | Description | . | pre_commit | Runs when the commit occurs, before the commit is finalized | . | post_commit | Runs after the commit is finalized | . | pre_merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post_merge | Runs on the merge result, after the merge is finalized | . | pre_create_branch | Runs on the source branch prior to creating a new branch | . | post_create_branch | Runs on the new branch after the branch was created | . | pre_delete_branch | Runs prior to deleting a branch | . | post_delete_branch | Runs after the branch was deleted | . | pre_create_tag | Runs prior to creating a new tag | . | post_create_tag | Runs after the tag was created | . | pre_delete_tag | Runs prior to deleting a tag | . | post_delete_tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. Failure of any Hook under any Action of a pre_* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post_* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
     "url": "/setup/hooks.html#table-of-contents",
     "relUrl": "/setup/hooks.html#table-of-contents"
   },"179": {
@@ -1081,7 +1081,7 @@
   },"180": {
     "doc": "Hooks",
     "title": "Terminology",
-    "content": "Action . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action, or none at all. The Hooks under an Action are ordered and so is their execution. A Hook will only be executed if all previous Hooks that were triggered with it, had passed. Hook . A Hook is the basic building block of an Action. Failure of a single Hook will stop the execution of the containing Action and fail the Run. Action file . Schema of the Action file: . | Property | Description | Data Type | Required | Default Value | . | name | Identify the Action file | String | false | If missing, filename is used instead | . | on | List of events that will trigger the hooks | List | true |   | . | on.branches | Glob pattern list of branches that triggers the hooks | List | false | If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | true |   | . | hook.id | ID of the hook, must be unique within the Action | String | true |   | . | hook.type | Type of the hook (types) | String | true |   | . | hook.properties | Hook’s specific configuration | Dictionary | true |   | . Example: . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://your.domain.io/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://your.domain.io/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" . Note: lakeFS will validate action files only when an Event occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Run . A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if our repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exists in the context of that Run (run_id). ",
+    "content": "Action . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action, or none at all. The Hooks under an Action are ordered and so is their execution. A Hook will only be executed if all previous Hooks that were triggered with it, had passed. Hook . A Hook is the basic building block of an Action. Failure of a single Hook will stop the execution of the containing Action and fail the Run. Action file . Schema of the Action file: . | Property | Description | Data Type | Required | Default Value | . | name | Identify the Action file | String | false | If missing, filename is used instead | . | on | List of events that will trigger the hooks | List | true |   | . | on.branches | Glob pattern list of branches that triggers the hooks | List | false | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | true |   | . | hook.id | ID of the hook, must be unique within the Action | String | true |   | . | hook.type | Type of the hook (types) | String | true |   | . | hook.properties | Hook’s specific configuration | Dictionary | true |   | . Example: . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://your.domain.io/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://your.domain.io/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" . Note: lakeFS will validate action files only when an Event occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Run . A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if our repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exists in the context of that Run (run_id). ",
     "url": "/setup/hooks.html#terminology",
     "relUrl": "/setup/hooks.html#terminology"
   },"181": {
@@ -1099,13 +1099,13 @@
   },"183": {
     "doc": "Hooks",
     "title": "Hook types",
-    "content": "Currently, there are two types of Hooks that are supported by lakeFS: Webhook and Airflow. Webhooks . A Webhook is a Hook type that sends an HTTP POST request to the configured URL. Any non 2XX response by the responding endpoint will fail the Hook, cancel the execution of the following Hooks under the same Action. For pre_* hooks, the triggering operation (commit/merge) will also be aborted. Warning: You should not use pre_* webhooks for long-running tasks, since they block the performed operation. Moreover, the branch is locked during the execution of pre_* hooks, so the webhook server cannot perform any write operations (like uploading or commits) on the branch. Action file Webhook properties . | Property | Description | Data Type | Required | Default Value | Env Vars Support | . | url | The URL address of the request | String | true |   | no | . | timeout | Time to wait for response before failing the hook | String (golang’s Duration representation) | false | 1m | no | . | query_params | List of query params that will be added to the request | Dictionary(String:String or String:List(String) | false |   | yes | . | headers | Headers to add to the request | Dictionary(String:String) | false |   | yes | . Secrets &amp; Environment Variables lakeFS Actions supports secrets by using environment variables. The following format {{ ENV.SOME_ENV_VAR }} will be replaced with the value of SOME_ENV_VAR during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail. Example: ... hooks: - id: prevent_user_columns type: webhook description: Ensure no user_* columns under public/ properties: url: \"http://&lt;host:port&gt;/webhooks/schema\" timeout: 1m30s query_params: disallow: [\"user_\", \"private_\"] prefix: public/ headers: secret_header: \"{{ ENV.MY_SECRET }}\" ... Request body schema . Upon execution, a webhook will send a request containing a JSON object with the following fields: . | Field | Description | Type | Example | . | EventType | Type of the event that triggered the Action | string | pre_commit | . | EventTime | Time of the event that triggered the Action (RFC3339) | string | 2006-01-02T15:04:05Z07:00 | . | ActionName | Containing Hook Action’s Name | string |   | . | HookID | ID of the Hook | string |   | . | RepositoryID | ID of the Repository | string |   | . | BranchID | ID of the Branch | string |   | . | SourceRef | Reference to the source that triggered the event (source Branch for commit or merge) | string |   | . | CommitMessage | The message for the commit (or merge) that is taking place | string |   | . | Committer | Name of the committer | string |   | . | CommitMetadata | The metadata for the commit that is taking place | string |   | . Example: . { \"event_type\": \"pre-merge\", \"event_time\": \"2021-02-28T14:03:31Z\", \"action_name\": \"test action\", \"hook_id\": \"prevent_user_columns\", \"repository_id\": \"repo1\", \"branch_id\": \"feature-1\", \"source_ref\": \"feature-1\", \"commit_message\": \"merge commit message\", \"committer\": \"committer\", \"commit_metadata\": { \"key\": \"value\" } } . Airflow Hooks . Airflow Hook triggers a DAG run in an Airflow installation using Airflow’s REST API. The hook run succeeds if the DAG was triggered, and fails otherwise. Action file Airflow hook properties . | Property | Description | Data Type | Example | Required | Env Vars Support | . | url | The URL of the Airflow instance | String | “http://localhost:8080” | true | no | . | dag_id | The DAG to trigger | String | “example_dag” | true | no | . | username | The name of the Airflow user performing the request | String | “admin” | true | no | . | password | The password of the Airflow user performing the request | String | “admin” | true | yes | . | dag_conf | DAG run configuration that will be passed as is | JSON |   | false | no | . Example: ... hooks: - id: trigger_my_dag type: airflow description: Trigger an example_dag properties: url: \"http://localhost:8000\" dag_id: \"example_dag\" username: \"admin\" password: \"{{ ENV.AIRFLOW_SECRET }}\" dag_conf: some: \"additional_conf\" ... Hook Record in configuration field . lakeFS will add an entry to the Airflow request configuration property (conf) with the event that triggered the action. The key of the record will be lakeFS_event and the value will match the one described here . ",
+    "content": "Currently, there are two types of Hooks that are supported by lakeFS: Webhook and Airflow. Webhooks . A Webhook is a Hook type that sends an HTTP POST request to the configured URL. Any non 2XX response by the responding endpoint will fail the Hook, cancel the execution of the following Hooks under the same Action. For pre_* hooks, the triggering operation will also be aborted. Warning: You should not use pre_* webhooks for long-running tasks, since they block the performed operation. Moreover, the branch is locked during the execution of pre_* hooks, so the webhook server cannot perform any write operations (like uploading or commits) on the branch. Action file Webhook properties . | Property | Description | Data Type | Required | Default Value | Env Vars Support | . | url | The URL address of the request | String | true |   | no | . | timeout | Time to wait for response before failing the hook | String (golang’s Duration representation) | false | 1 minute | no | . | query_params | List of query params that will be added to the request | Dictionary(String:String or String:List(String) | false |   | yes | . | headers | Headers to add to the request | Dictionary(String:String) | false |   | yes | . Secrets &amp; Environment Variables lakeFS Actions supports secrets by using environment variables. The following format {{ ENV.SOME_ENV_VAR }} will be replaced with the value of SOME_ENV_VAR during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail. Example: ... hooks: - id: prevent_user_columns type: webhook description: Ensure no user_* columns under public/ properties: url: \"http://&lt;host:port&gt;/webhooks/schema\" timeout: 1m30s query_params: disallow: [\"user_\", \"private_\"] prefix: public/ headers: secret_header: \"{{ ENV.MY_SECRET }}\" ... Request body schema . Upon execution, a webhook will send a request containing a JSON object with the following fields: . | Field | Description | Type | . | event_type | Type of the event that triggered the Action | string | . | event_time | Time of the event that triggered the Action (RFC3339) | string | . | action_name | Containing Hook Action’s Name | string | . | hook_id | ID of the Hook | string | . | repository_id | ID of the Repository | string | . | branch_id1 | ID of the Branch | string | . | source_ref | Reference to the source on which the event was triggered | string | . | commit_message2 | The message for the commit (or merge) that is taking place | string | . | committer2 | Name of the committer | string | . | commit_metadata2 | The metadata for the commit that is taking place | string | . | tag_id3 | The ID of the created/deleted tag | string | . Example: . { \"event_type\": \"pre-merge\", \"event_time\": \"2021-02-28T14:03:31Z\", \"action_name\": \"test action\", \"hook_id\": \"prevent_user_columns\", \"repository_id\": \"repo1\", \"branch_id\": \"feature-1\", \"source_ref\": \"feature-1\", \"commit_message\": \"merge commit message\", \"committer\": \"committer\", \"commit_metadata\": { \"key\": \"value\" } } . Airflow Hooks . Airflow Hook triggers a DAG run in an Airflow installation using Airflow’s REST API. The hook run succeeds if the DAG was triggered, and fails otherwise. Action file Airflow hook properties . | Property | Description | Data Type | Example | Required | Env Vars Support |———-|———————————————————|———–|————————-|———-|——————| url | The URL of the Airflow instance | String | “http://localhost:8080” | true | no | dag_id | The DAG to trigger | String | “example_dag” | true | no | username | The name of the Airflow user performing the request | String | “admin” | true | no | password | The password of the Airflow user performing the request | String | “admin” | true | yes | dag_conf | DAG run configuration that will be passed as is | JSON | false | no | . Example: ... hooks: - id: trigger_my_dag type: airflow description: Trigger an example_dag properties: url: \"http://localhost:8000\" dag_id: \"example_dag\" username: \"admin\" password: \"{{ ENV.AIRFLOW_SECRET }}\" dag_conf: some: \"additional_conf\" ... Hook Record in configuration field . lakeFS will add an entry to the Airflow request configuration property (conf) with the event that triggered the action. The key of the record will be lakeFS_event and the value will match the one described here . ",
     "url": "/setup/hooks.html#hook-types",
     "relUrl": "/setup/hooks.html#hook-types"
   },"184": {
     "doc": "Hooks",
     "title": "Experimentation",
-    "content": "It’s sometimes easier to start experimenting with lakeFS webhooks, even before you have a running server to receive the calls. There are a couple of online tools that can intercept and display the webhook requests, one of them is Svix. | Go to play.svix.com and copy the URL address supplied by Svix. It should look like https://api.relay.svix.com/api/v1/play/receive/&lt;Random_Gen_String&gt;/ . | Upload the following action file to lakeFS under the path _lakefs_actions/test.yaml in the default branch: . name: Sending everything to Svix description: Experimenting with webhooks on: pre-commit: branches: pre-merge: branches: post-commit: branches: post-merge: branches: hooks: - id: svix type: webhook properties: url: \"https://api.relay.svix.com/api/v1/play/receive/&lt;Random_Gen_String&gt;/\" . by using: . lakectl fs upload lakefs://example-repo/main/_lakefs_actions/test.yaml -s path/to/action/file . or the UI. | Commit that file to the branch. lakectl commit lakefs://example-repo/main -m 'added webhook action file' . | Every time you commit or merge to a branch, the relevant pre_* and post_* requests will be available in the Svix endpoint you provided. You can also check the Actions tab in the lakeFS UI for more details. | . ",
+    "content": "It’s sometimes easier to start experimenting with lakeFS webhooks, even before you have a running server to receive the calls. There are a couple of online tools that can intercept and display the webhook requests, one of them is Svix. | Go to play.svix.com and copy the URL address supplied by Svix. It should look like https://api.relay.svix.com/api/v1/play/receive/&lt;Random_Gen_String&gt;/ . | Upload the following action file to lakeFS under the path _lakefs_actions/test.yaml in the default branch: . name: Sending everything to Svix description: Experimenting with webhooks on: pre-commit: branches: pre-merge: branches: post-commit: branches: post-merge: branches: hooks: - id: svix type: webhook properties: url: \"https://api.relay.svix.com/api/v1/play/receive/&lt;Random_Gen_String&gt;/\" . by using: . lakectl fs upload lakefs://example-repo/main/_lakefs_actions/test.yaml -s path/to/action/file . or the UI. | Commit that file to the branch. lakectl commit lakefs://example-repo/main -m 'added webhook action file' . | Every time you commit or merge to a branch, the relevant pre_* and post_* requests will be available in the Svix endpoint you provided. You can also check the Actions tab in the lakeFS UI for more details. | . | N\\A for Tag events &#8617; . | N\\A for Tag and Create/Delete Branch events &#8617; &#8617;2 &#8617;3 . | Applicable only for Tag events &#8617; . | . ",
     "url": "/setup/hooks.html#experimentation",
     "relUrl": "/setup/hooks.html#experimentation"
   },"185": {
@@ -1163,65 +1163,65 @@
     "url": "/setup/",
     "relUrl": "/setup/"
   },"194": {
-    "doc": "Using lakeFS",
-    "title": "Using lakeFS",
-    "content": " ",
-    "url": "/usecases/",
-    "relUrl": "/usecases/"
-  },"195": {
-    "doc": "Integrations",
-    "title": "Integrations",
-    "content": " ",
-    "url": "/integrations/",
-    "relUrl": "/integrations/"
-  },"196": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": "This section includes all the details about the lakeFS open source project. ",
-    "url": "/understand/",
-    "relUrl": "/understand/"
-  },"197": {
-    "doc": "Deploy lakeFS",
-    "title": "Deploy lakeFS",
-    "content": "This page contains a collection of practical step-by-step instructions to help you set up lakeFS on your preferred cloud environemnt. If you just want to try out lakeFS locally, see Quickstart. ",
-    "url": "/deploy/",
-    "relUrl": "/deploy/"
-  },"198": {
-    "doc": "Quickstart",
-    "title": "Quickstart",
-    "content": " ",
-    "url": "/quickstart/",
-    "relUrl": "/quickstart/"
-  },"199": {
-    "doc": "Quickstart",
-    "title": "lakeFS Playground",
-    "content": "Experience lakeFS first hand with your own isolated environment. You can easily integrate it with your existing tools, and feel lakeFS in action in an environment similar to your own. Try lakeFS now without installing . ",
-    "url": "/quickstart/#lakefs-playground",
-    "relUrl": "/quickstart/#lakefs-playground"
-  },"200": {
-    "doc": "Quickstart",
-    "title": "Katacoda Tutorial",
-    "content": "Learn how to use lakeFS using the CLI and an interactive Spark shell - all from your browser, without installing anything. In the tutorial we cover: . | Basic lakectl command line usage | How to read, write, list and delete objects from lakeFS using the lakectl command | Read from, and write to lakeFS using its S3 API interface using Spark | Diff, commit and merge the changes created by Spark | Track commit history to understand changes to your data over time | . The web based environment provides a full working lakeFS and Spark environment, so feel free to explore it on your own. Start Katacoda Tutorial Now . ",
-    "url": "/quickstart/#katacoda-tutorial",
-    "relUrl": "/quickstart/#katacoda-tutorial"
-  },"201": {
-    "doc": "Quickstart",
-    "title": "Next Steps",
-    "content": "After getting acquainted with lakeFS, easily install it on your computer or deploy it on your cloud account. ",
-    "url": "/quickstart/#next-steps",
-    "relUrl": "/quickstart/#next-steps"
-  },"202": {
     "doc": "Reference",
     "title": "Reference",
     "content": " ",
     "url": "/reference/",
     "relUrl": "/reference/"
-  },"203": {
+  },"195": {
+    "doc": "Deploy lakeFS",
+    "title": "Deploy lakeFS",
+    "content": "This page contains a collection of practical step-by-step instructions to help you set up lakeFS on your preferred cloud environemnt. If you just want to try out lakeFS locally, see Quickstart. ",
+    "url": "/deploy/",
+    "relUrl": "/deploy/"
+  },"196": {
+    "doc": "Using lakeFS",
+    "title": "Using lakeFS",
+    "content": " ",
+    "url": "/usecases/",
+    "relUrl": "/usecases/"
+  },"197": {
+    "doc": "Integrations",
+    "title": "Integrations",
+    "content": " ",
+    "url": "/integrations/",
+    "relUrl": "/integrations/"
+  },"198": {
     "doc": "Slack",
     "title": "Slack",
     "content": " ",
     "url": "/slack/",
     "relUrl": "/slack/"
+  },"199": {
+    "doc": "Quickstart",
+    "title": "Quickstart",
+    "content": " ",
+    "url": "/quickstart/",
+    "relUrl": "/quickstart/"
+  },"200": {
+    "doc": "Quickstart",
+    "title": "lakeFS Playground",
+    "content": "Experience lakeFS first hand with your own isolated environment. You can easily integrate it with your existing tools, and feel lakeFS in action in an environment similar to your own. Try lakeFS now without installing . ",
+    "url": "/quickstart/#lakefs-playground",
+    "relUrl": "/quickstart/#lakefs-playground"
+  },"201": {
+    "doc": "Quickstart",
+    "title": "Katacoda Tutorial",
+    "content": "Learn how to use lakeFS using the CLI and an interactive Spark shell - all from your browser, without installing anything. In the tutorial we cover: . | Basic lakectl command line usage | How to read, write, list and delete objects from lakeFS using the lakectl command | Read from, and write to lakeFS using its S3 API interface using Spark | Diff, commit and merge the changes created by Spark | Track commit history to understand changes to your data over time | . The web based environment provides a full working lakeFS and Spark environment, so feel free to explore it on your own. Start Katacoda Tutorial Now . ",
+    "url": "/quickstart/#katacoda-tutorial",
+    "relUrl": "/quickstart/#katacoda-tutorial"
+  },"202": {
+    "doc": "Quickstart",
+    "title": "Next Steps",
+    "content": "After getting acquainted with lakeFS, easily install it on your computer or deploy it on your cloud account. ",
+    "url": "/quickstart/#next-steps",
+    "relUrl": "/quickstart/#next-steps"
+  },"203": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": "This section includes all the details about the lakeFS open source project. ",
+    "url": "/understand/",
+    "relUrl": "/understand/"
   },"204": {
     "doc": "What is lakeFS",
     "title": "What is lakeFS",

@@ -445,16 +445,69 @@
 <p>Like other version control systems, lakeFS allows the configuration of <code class="language-plaintext highlighter-rouge">Actions</code> to trigger when predefined events occur.</p>
 
 <p>Supported Events:</p>
-<ol>
-  <li><code class="language-plaintext highlighter-rouge">pre_commit</code> - Action runs when the commit occurs, before the commit is finalized.</li>
-  <li><code class="language-plaintext highlighter-rouge">post_commit</code> - Action runs after the commit is finalized.</li>
-  <li><code class="language-plaintext highlighter-rouge">pre_merge</code> - Action runs when the merge occurs, before the merge is finalized.</li>
-  <li><code class="language-plaintext highlighter-rouge">post_merge</code> - Action runs after the merge is finalized.</li>
-</ol>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre_commit</code></td>
+      <td>Runs when the commit occurs, before the commit is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post_commit</code></td>
+      <td>Runs after the commit is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre_merge</code></td>
+      <td>Runs on the source branch when the merge occurs, before the merge is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post_merge</code></td>
+      <td>Runs on the merge result, after the merge is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre_create_branch</code></td>
+      <td>Runs on the source branch prior to creating a new branch</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post_create_branch</code></td>
+      <td>Runs on the new branch after the branch was created</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre_delete_branch</code></td>
+      <td>Runs prior to deleting a branch</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post_delete_branch</code></td>
+      <td>Runs after the branch was deleted</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre_create_tag</code></td>
+      <td>Runs prior to creating a new tag</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post_create_tag</code></td>
+      <td>Runs after the tag was created</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre_delete_tag</code></td>
+      <td>Runs prior to deleting a tag</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post_delete_tag</code></td>
+      <td>Runs after the tag was deleted</td>
+    </tr>
+  </tbody>
+</table></div>
 
 <p>lakeFS <code class="language-plaintext highlighter-rouge">Actions</code> are handled per repository and cannot be shared between repositories.
 Failure of any <code class="language-plaintext highlighter-rouge">Hook</code> under any <code class="language-plaintext highlighter-rouge">Action</code> of a <code class="language-plaintext highlighter-rouge">pre_*</code> event will result in aborting the lakeFS operation that is taking place.
-On the contrary, <code class="language-plaintext highlighter-rouge">Hook</code> failures under any <code class="language-plaintext highlighter-rouge">Action</code> of a <code class="language-plaintext highlighter-rouge">post_*</code> event will not affect the same operation.</p>
+<code class="language-plaintext highlighter-rouge">Hook</code> failures under any <code class="language-plaintext highlighter-rouge">Action</code> of a <code class="language-plaintext highlighter-rouge">post_*</code> event will not revert the operation.</p>
 
 <p><code class="language-plaintext highlighter-rouge">Hooks</code> are managed by <code class="language-plaintext highlighter-rouge">Action</code> files that are written to a prefix in the lakeFS repository.
 This allows configuration-as-code inside lakeFS, where <code class="language-plaintext highlighter-rouge">Action</code> files are declarative and written in YAML.</p>
@@ -547,7 +600,7 @@ Failure of a single <code class="language-plaintext highlighter-rouge">Hook</cod
       <td>Glob pattern list of branches that triggers the hooks</td>
       <td>List</td>
       <td>false</td>
-      <td>If empty, Action runs on all branches</td>
+      <td><strong>Not applicable to Tag events.</strong> If empty, Action runs on all branches</td>
     </tr>
     <tr>
       <td>hooks</td>
@@ -617,7 +670,7 @@ Use <code class="language-plaintext highlighter-rouge">lakectl actions validate 
 For example, if our repository contains a pre-commit hook, every commit would generate a <code class="language-plaintext highlighter-rouge">Run</code> for that specific commit.</p>
 
 <p>lakeFS will fetch, parse and filter the repository <code class="language-plaintext highlighter-rouge">Action</code> files and start to execute the <code class="language-plaintext highlighter-rouge">Hooks</code> under each <code class="language-plaintext highlighter-rouge">Action</code>.
-All executed <code class="language-plaintext highlighter-rouge">Hooks</code> (each with <code class="language-plaintext highlighter-rouge">hook_run_id</code>) exists in the context of that <code class="language-plaintext highlighter-rouge">Run</code> (<code class="language-plaintext highlighter-rouge">run_id</code>).</p>
+All executed <code class="language-plaintext highlighter-rouge">Hooks</code> (each with <code class="language-plaintext highlighter-rouge">hook_run_id</code>) exists in the context of that <code class="language-plaintext highlighter-rouge">Run</code> (<code class="language-plaintext highlighter-rouge">run_id</code>).</p><hr />
       <h2 id="uploading-action-files">
         
         
@@ -664,7 +717,7 @@ The endpoint also allows to download the execution log of any executed <code cla
 </ol>
 
 <p class="note"><strong>Note:</strong> Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges.
-Metadata files stored in the metadata section aren’t accessible like user stored files.</p>
+Metadata files stored in the metadata section aren’t accessible like user stored files.</p><hr />
       <h2 id="hook-types">
         
         
@@ -686,7 +739,7 @@ Metadata files stored in the metadata section aren’t accessible like user stor
 
 <p>A <code class="language-plaintext highlighter-rouge">Webhook</code> is a <code class="language-plaintext highlighter-rouge">Hook</code> type that sends an HTTP POST request to the configured URL.
 Any non 2XX response by the responding endpoint will fail the <code class="language-plaintext highlighter-rouge">Hook</code>, cancel the execution of the following <code class="language-plaintext highlighter-rouge">Hooks</code> 
-under the same <code class="language-plaintext highlighter-rouge">Action</code>. For <code class="language-plaintext highlighter-rouge">pre_*</code> hooks, the triggering operation (commit/merge) will also be aborted.</p>
+under the same <code class="language-plaintext highlighter-rouge">Action</code>. For <code class="language-plaintext highlighter-rouge">pre_*</code> hooks, the triggering operation will also be aborted.</p>
 
 <p class="note"><strong>Warning:</strong> You should not use <code class="language-plaintext highlighter-rouge">pre_*</code> webhooks for long-running tasks, since they block the performed operation.
 Moreover, the branch is locked during the execution of <code class="language-plaintext highlighter-rouge">pre_*</code> hooks, so the webhook server cannot perform any write operations (like uploading or commits) on the branch.</p>
@@ -724,7 +777,7 @@ Moreover, the branch is locked during the execution of <code class="language-pla
       <td>Time to wait for response before failing the hook</td>
       <td>String (golang’s <a href="https://golang.org/pkg/time/#Duration.String">Duration</a> representation)</td>
       <td>false</td>
-      <td>1m</td>
+      <td>1 minute</td>
       <td>no</td>
     </tr>
     <tr>
@@ -784,69 +837,63 @@ during the execution of the action. If that environment variable doesn’t exist
       <th>Field</th>
       <th>Description</th>
       <th>Type</th>
-      <th>Example</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>EventType</td>
+      <td>event_type</td>
       <td>Type of the event that triggered the <code class="language-plaintext highlighter-rouge">Action</code></td>
       <td>string</td>
-      <td>pre_commit</td>
     </tr>
     <tr>
-      <td>EventTime</td>
+      <td>event_time</td>
       <td>Time of the event that triggered the <code class="language-plaintext highlighter-rouge">Action</code> (RFC3339)</td>
       <td>string</td>
-      <td>2006-01-02T15:04:05Z07:00</td>
     </tr>
     <tr>
-      <td>ActionName</td>
+      <td>action_name</td>
       <td>Containing <code class="language-plaintext highlighter-rouge">Hook</code> Action’s Name</td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>HookID</td>
+      <td>hook_id</td>
       <td>ID of the <code class="language-plaintext highlighter-rouge">Hook</code></td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>RepositoryID</td>
+      <td>repository_id</td>
       <td>ID of the Repository</td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>BranchID</td>
+      <td>branch_id<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup></td>
       <td>ID of the Branch</td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>SourceRef</td>
-      <td>Reference to the source that triggered the event (source Branch for commit or merge)</td>
+      <td>source_ref</td>
+      <td>Reference to the source on which the event was triggered</td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>CommitMessage</td>
+      <td>commit_message<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup></td>
       <td>The message for the commit (or merge) that is taking place</td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>Committer</td>
+      <td>committer<sup id="fnref:2:1" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup></td>
       <td>Name of the committer</td>
       <td>string</td>
-      <td> </td>
     </tr>
     <tr>
-      <td>CommitMetadata</td>
+      <td>commit_metadata<sup id="fnref:2:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup></td>
       <td>The metadata for the commit that is taking place</td>
       <td>string</td>
-      <td> </td>
+    </tr>
+    <tr>
+      <td>tag_id<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup></td>
+      <td>The ID of the created/deleted tag</td>
+      <td>string</td>
     </tr>
   </tbody>
 </table></div>
@@ -885,61 +932,13 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
         
       </h4>
     
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Description</th>
-      <th>Data Type</th>
-      <th>Example</th>
-      <th>Required</th>
-      <th>Env Vars Support</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>url</td>
-      <td>The URL of the Airflow instance</td>
-      <td>String</td>
-      <td>“http://localhost:8080”</td>
-      <td>true</td>
-      <td>no</td>
-    </tr>
-    <tr>
-      <td>dag_id</td>
-      <td>The DAG to trigger</td>
-      <td>String</td>
-      <td>“example_dag”</td>
-      <td>true</td>
-      <td>no</td>
-    </tr>
-    <tr>
-      <td>username</td>
-      <td>The name of the Airflow user performing the request</td>
-      <td>String</td>
-      <td>“admin”</td>
-      <td>true</td>
-      <td>no</td>
-    </tr>
-    <tr>
-      <td>password</td>
-      <td>The password of the Airflow user performing the request</td>
-      <td>String</td>
-      <td>“admin”</td>
-      <td>true</td>
-      <td>yes</td>
-    </tr>
-    <tr>
-      <td>dag_conf</td>
-      <td>DAG run configuration that will be passed as is</td>
-      <td>JSON</td>
-      <td> </td>
-      <td>false</td>
-      <td>no</td>
-    </tr>
-  </tbody>
-</table></div>
+<p>| Property | Description                                             | Data Type | Example                 | Required | Env Vars Support |
+|———-|———————————————————|———–|————————-|———-|——————|
+| url      | The URL of the Airflow instance                         | String    | “http://localhost:8080” | true     | no               |
+| dag_id   | The DAG to trigger                                      | String    | “example_dag”           | true     | no               |
+| username | The name of the Airflow user performing the request     | String    | “admin”                 | true     | no               |
+| password | The password of the Airflow user performing the request | String    | “admin”                 | true     | yes              |
+| dag_conf | DAG run configuration that will be passed as is         | JSON      |                         | false    | no               |</p>
 
 <p>Example:</p>
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
@@ -966,7 +965,7 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
     
 <p>lakeFS will add an entry to the Airflow request configuration property (<code class="language-plaintext highlighter-rouge">conf</code>) with the event that triggered the action.</p>
 
-<p>The key of the record will be <code class="language-plaintext highlighter-rouge">lakeFS_event</code> and the value will match the one described <a href="#request-body-schema">here</a></p>
+<p>The key of the record will be <code class="language-plaintext highlighter-rouge">lakeFS_event</code> and the value will match the one described <a href="#request-body-schema">here</a></p><hr />
       <h2 id="experimentation">
         
         
@@ -1024,7 +1023,20 @@ in the Svix endpoint you provided. You can also check the <code class="language-
   </li>
 </ol>
 
-<p><img src="/assets/img/svix_play.png" alt="Setup" /></p>
+<p><img src="/assets/img/svix_play.png" alt="Setup" /></p><hr />
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p>N\A for Tag events <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>N\A for Tag and Create/Delete Branch events <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:2:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a> <a href="#fnref:2:2" class="reversefootnote" role="doc-backlink">&#8617;<sup>3</sup></a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p>Applicable only for Tag events <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
                 
 
