@@ -2210,7 +2210,18 @@ Simply type policies help [path to command] for full details.</p>
 
 <p>Create a new branch in a repository</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch create &lt;ref uri&gt; [flags]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch create &lt;branch uri&gt; -s &lt;source ref uri&gt; [flags]
+</code></pre></div></div>
+      <h4 class="no_toc" id="examples-3">
+        
+        
+          <a href="#examples-3" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+        
+        
+      </h4>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch create lakefs://example-repo/new-branch -s lakefs://example-repo/main
 </code></pre></div></div>
       <h4 class="no_toc" id="options-56">
         
@@ -2236,6 +2247,17 @@ Simply type policies help [path to command] for full details.</p>
 <p>Delete a branch in a repository, along with its uncommitted changes (CAREFUL)</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch delete &lt;branch uri&gt; [flags]
+</code></pre></div></div>
+      <h4 class="no_toc" id="examples-4">
+        
+        
+          <a href="#examples-4" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+        
+        
+      </h4>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch delete lakefs://example-repo/example-branch
 </code></pre></div></div>
       <h4 class="no_toc" id="options-57">
         
@@ -2297,10 +2319,10 @@ Simply type branch help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch list &lt;repository uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-3">
+      <h4 class="no_toc" id="examples-5">
         
         
-          <a href="#examples-3" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-5" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2330,7 +2352,7 @@ Simply type branch help [path to command] for full details.</p>
       </h3>
     
 
-<p>Reset changes to specified commit, or reset uncommitted changes - all changes, or by path</p>
+<p>Reset uncommitted changes - all of them, or by path</p>
       <h4 class="no_toc" id="synopsis-19">
         
         
@@ -2343,11 +2365,22 @@ Simply type branch help [path to command] for full details.</p>
 <p>reset changes.  There are four different ways to reset changes:</p>
 <ol>
   <li>reset all uncommitted changes - reset lakefs://myrepo/main</li>
-  <li>reset uncommitted changes under specific path -	reset lakefs://myrepo/main –prefix path</li>
+  <li>reset uncommitted changes under specific path - reset lakefs://myrepo/main –prefix path</li>
   <li>reset uncommitted changes for specific object - reset lakefs://myrepo/main –object path</li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch reset &lt;branch uri&gt; [flags]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch reset &lt;branch uri&gt; [--prefix|--object] [flags]
+</code></pre></div></div>
+      <h4 class="no_toc" id="examples-6">
+        
+        
+          <a href="#examples-6" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+        
+        
+      </h4>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch reset lakefs://example-repo/example-branch
 </code></pre></div></div>
       <h4 class="no_toc" id="options-60">
         
@@ -2386,10 +2419,10 @@ Simply type branch help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch revert &lt;branch uri&gt; &lt;commit ref to revert&gt; [&lt;more commits&gt;...] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-4">
+      <h4 class="no_toc" id="examples-7">
         
         
-          <a href="#examples-4" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-7" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2425,6 +2458,17 @@ Simply type branch help [path to command] for full details.</p>
 <p>Show branch latest commit reference</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch show &lt;branch uri&gt; [flags]
+</code></pre></div></div>
+      <h4 class="no_toc" id="examples-8">
+        
+        
+          <a href="#examples-8" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+        
+        
+      </h4>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch show lakefs://example-repo/example-branch
 </code></pre></div></div>
       <h4 class="no_toc" id="options-62">
         
@@ -2491,10 +2535,10 @@ Simply type branch help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch-protect add &lt;repo uri&gt; &lt;pattern&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-5">
+      <h4 class="no_toc" id="examples-9">
         
         
-          <a href="#examples-5" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-9" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2536,10 +2580,10 @@ Simply type branch help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch-protect delete &lt;repo uri&gt; &lt;pattern&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-6">
+      <h4 class="no_toc" id="examples-10">
         
         
-          <a href="#examples-6" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-10" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2606,10 +2650,10 @@ Simply type branch-protect help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch-protect list &lt;repo uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-7">
+      <h4 class="no_toc" id="examples-11">
         
         
-          <a href="#examples-7" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-11" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2643,10 +2687,10 @@ Simply type branch-protect help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl cat-hook-output [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-8">
+      <h4 class="no_toc" id="examples-12">
         
         
-          <a href="#examples-8" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-12" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2852,10 +2896,10 @@ to enable it.  You can execute the following once:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl dbt create-branch-schema [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-9">
+      <h4 class="no_toc" id="examples-13">
         
         
-          <a href="#examples-9" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-13" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2895,10 +2939,10 @@ to enable it.  You can execute the following once:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl dbt generate-schema-macro [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-10">
+      <h4 class="no_toc" id="examples-14">
         
         
-          <a href="#examples-10" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-14" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -2966,10 +3010,10 @@ Simply type dbt help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl diff &lt;ref uri&gt; [ref uri] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-11">
+      <h4 class="no_toc" id="examples-15">
         
         
-          <a href="#examples-11" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-15" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -3302,10 +3346,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc get-config [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-12">
+      <h4 class="no_toc" id="examples-16">
         
         
-          <a href="#examples-12" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-16" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -3397,10 +3441,10 @@ Example configuration file:
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc set-config [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-13">
+      <h4 class="no_toc" id="examples-17">
         
         
-          <a href="#examples-13" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-17" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -3922,10 +3966,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl refs-restore &lt;repository uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-14">
+      <h4 class="no_toc" id="examples-18">
         
         
-          <a href="#examples-14" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-18" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -3979,10 +4023,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl repo create &lt;repository uri&gt; &lt;storage namespace&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-15">
+      <h4 class="no_toc" id="examples-19">
         
         
-          <a href="#examples-15" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-19" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -4017,10 +4061,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl repo create-bare &lt;repository uri&gt; &lt;storage namespace&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-16">
+      <h4 class="no_toc" id="examples-20">
         
         
-          <a href="#examples-16" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-20" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -4196,10 +4240,10 @@ Simply type repo help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag create &lt;tag uri&gt; &lt;commit uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-17">
+      <h4 class="no_toc" id="examples-21">
         
         
-          <a href="#examples-17" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-21" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
@@ -4291,10 +4335,10 @@ Simply type tag help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag list &lt;repository uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="examples-18">
+      <h4 class="no_toc" id="examples-22">
         
         
-          <a href="#examples-18" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+          <a href="#examples-22" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
         
         
       </h4>
