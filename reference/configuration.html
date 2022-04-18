@@ -469,8 +469,10 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">auth.cache.size</code> <code class="language-plaintext highlighter-rouge">(int : 1024)</code> - How many items to store in the auth cache. Systems with a very high user count should use a larger value at the expense of ~1kb of memory per cached user.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.ttl</code> <code class="language-plaintext highlighter-rouge">(time duration : "20s")</code> - How long to store an item in the auth cache. Using a higher value reduces load on the database, but will cause changes longer to take effect for cached users.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.jitter</code> <code class="language-plaintext highlighter-rouge">(time duration : "3s")</code> - A random amount of time between 0 and this value is added to each item’s TTL. This is done to avoid a large bulk of keys expiring at once and overwhelming the database.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.encrypt.secret_key</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - A random (cryptographically safe) generated string that is used for encryption and HMAC signing</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.api.endpoint</code> <code class="language-plaintext highlighter-rouge">(string: https://external.service/api/v1)</code> - URL to external Authorization Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authorization.yml">authorization.yml</a>;</li>
   <li>
-    <p><code class="language-plaintext highlighter-rouge">auth.encrypt.secret_key</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - A random (cryptographically safe) generated string that is used for encryption and HMAC signing</p>
+    <p><code class="language-plaintext highlighter-rouge">auth.api.token</code> <code class="language-plaintext highlighter-rouge">(string: eyJhbGciOiJIUzI1NiIsInR5...)</code> - API token used to authenticate requests to api endpoint</p>
 
     <p class="note"><strong>Note:</strong> It is best to keep this somewhere safe such as KMS or Hashicorp Vault, and provide it to the system at run time</p>
   </li>
