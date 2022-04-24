@@ -557,6 +557,11 @@ If you can’t provide such access, lakeFS can be configured to use an AWS key-p
 <p>You should have a load balancer direct requests to the lakeFS server.
 Options to do so include a Kubernetes Service of type <code class="language-plaintext highlighter-rouge">LoadBalancer</code>, or a Kubernetes Ingress.
 By default, lakeFS operates on port 8000, and exposes a <code class="language-plaintext highlighter-rouge">/_health</code> endpoint which you can use for health checks.</p>
+
+<p class="note">The NGINX Ingress Controller by default limits the client body size to 1 MiB.
+Some clients use bigger chunks to upload objects, for example multipart upload to lakeFS using the <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> or 
+a simple PUT request using the <a href="/understand/architecture.html#openapi-server">OpenAPI Server</a>.
+Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-max-body-size">documentation</a> for increasing the limit, or an example of Nginx configuration with <a href="https://docs.min.io/docs/setup-nginx-proxy-with-minio.html">MinIO</a>.</p>
       <h2 id="next-steps">
         
         
