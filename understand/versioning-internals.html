@@ -424,7 +424,7 @@
   <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
   <li><a href="#sstable-file-format-graveler-file" id="markdown-toc-sstable-file-format-graveler-file">SSTable File Format (“Graveler File”)</a></li>
   <li><a href="#constructing-a-consistent-view-of-the-keyspace-ie-a-commit" id="markdown-toc-constructing-a-consistent-view-of-the-keyspace-ie-a-commit">Constructing a consistent view of the keyspace (i.e., a commit)</a></li>
-  <li><a href="#representing-references-and-uncommitted-data" id="markdown-toc-representing-references-and-uncommitted-data">Representing references and uncommitted data</a></li>
+  <li><a href="#representing-references-and-uncommitted-metadata" id="markdown-toc-representing-references-and-uncommitted-metadata">Representing references and uncommitted metadata</a></li>
 </ol>
 
 </div>
@@ -521,26 +521,29 @@ File identity is calculated based on the identity of the ValueRecords the file c
 </code></pre></div></div>
 
 <p><em>Note: this relatively flat structure could be modified in the future: looking at the diagram above, it imposes no real limitations on the depth of the tree. A tree could easily be made recursive by having Meta Ranges point to other Meta Ranges - and still provide all the same characteristics. For simplicity, we decided to start with a fixed 2-level hierarchy.</em></p>
-      <h2 id="representing-references-and-uncommitted-data">
+      <h2 id="representing-references-and-uncommitted-metadata">
         
         
-          <a href="#representing-references-and-uncommitted-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Representing references and uncommitted data
+          <a href="#representing-references-and-uncommitted-metadata" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Representing references and uncommitted metadata
         
         
       </h2>
     
 
-<p>Unlike committed data which is immutable, uncommitted (or “staged”) data experiences frequent random writes and is very mutable in nature. This is also true for “refs” - in particular, branches, which are simply pointers to an underlying commit, are modified frequently: on every commit or merge operation.</p>
+<p>lakeFS always stores the object data in the storage namespace in the user’s object store, committed and uncommitted data alike.</p>
 
-<p>Both these types of data are not only mutable, but also require strong consistency guarantees while also being fault tolerant. If we can’t access the current pointer of the main branch, a big portion of the system is essentially down.</p>
+<p>However, the lakeFS object metadata might be stored in either the object store or PostgresSQL.</p>
 
-<p>Luckily, this is also much smaller data, compared to the committed dataset.</p>
+<p>Unlike committed metadata which is immutable, uncommitted (or “staged”) metadata experiences frequent random writes and is very mutable in nature. This is also true for “refs” - in particular, branches, which are simply pointers to an underlying commit, are modified frequently: on every commit or merge operation.</p>
 
-<p>References and uncommitted data are currently stored on PostgreSQL for its strong consistency and transactional guarantees.</p>
+<p>Both these types of metadata are not only mutable, but also require strong consistency guarantees while also being fault tolerant. If we can’t access the current pointer of the main branch, a big portion of the system is essentially down.</p>
 
-<p><a href="/understand/roadmap.html#lakefs-on-the-rocks-milestone-3---remove-postgresql">In the future</a> we plan on eliminating the need for an RDBMS by embedding <a href="https://raft.github.io/" target="_blank">Raft</a> to replicate these writes across a cluster of machines, with the data itself being stored in RocksDB. To make operations easier, the replicated RocksDB database will be periodically snapshotted to the underlying object store.</p>
+<p>Luckily, this is also much smaller set of metadata, compared to the committed metadata.</p>
 
-<p>For extremely large installations ( &gt;= millions of read/write operations per second), it will be possible to utilize <a href="https://pingcap.com/blog/2017-08-15-multi-raft/" target="_blank">multi-Raft</a> to shard references across a wider fleet of machines.</p>
+<p>References and uncommitted metadata are currently stored on PostgreSQL for its strong consistency and transactional guarantees.</p>
+
+<p><a href="/understand/roadmap.html#decouple-ref-store-from-postgresql">In the future</a> we plan on eliminating the need for an RDBMS by using a pluggable Key-Value store interface that would allow the use of <a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples">many databases</a> that meet its naive requirements.
+Non-production single server installations can leverage an embedded key-value store like RocksDB, that will allow running with only a single container.</p>
 
                 
 
