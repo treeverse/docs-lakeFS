@@ -421,298 +421,112 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#use-case-development" id="markdown-toc-use-case-development">Use Case: Development</a>    <ol>
-      <li><a href="#ephemeral-branches-with-a-ttl" id="markdown-toc-ephemeral-branches-with-a-ttl">Ephemeral branches with a TTL</a></li>
-    </ol>
-  </li>
-  <li><a href="#use-case-deployment" id="markdown-toc-use-case-deployment">Use Case: Deployment</a>    <ol>
-      <li><a href="#repo-linking" id="markdown-toc-repo-linking">Repo linking</a></li>
-      <li><a href="#git-lakefs-integration" id="markdown-toc-git-lakefs-integration">Git-lakeFS integration</a></li>
-      <li><a href="#dbt-integration-high-priority" id="markdown-toc-dbt-integration-high-priority">DBT Integration <span class="label">High Priority</span></a></li>
-      <li><a href="#native-metastore-integration-high-priority" id="markdown-toc-native-metastore-integration-high-priority">Native Metastore Integration <span class="label">High Priority</span></a></li>
-      <li><a href="#support-delta-lake-merges-and-diffs-across-branches-requires-discussion" id="markdown-toc-support-delta-lake-merges-and-diffs-across-branches-requires-discussion">Support Delta Lake merges and diffs across branches <span class="label label-yellow">Requires Discussion</span></a></li>
-      <li><a href="#hooks-usability-improvements-high-priority" id="markdown-toc-hooks-usability-improvements-high-priority">Hooks: usability improvements <span class="label">High Priority</span></a>        <ol>
-          <li><a href="#extended-hook-types-beyond-webhooks" id="markdown-toc-extended-hook-types-beyond-webhooks">Extended hook types beyond webhooks</a></li>
-          <li><a href="#expose-merged-snapshot-to-pre-merge-hooks" id="markdown-toc-expose-merged-snapshot-to-pre-merge-hooks">Expose merged snapshot to pre-merge hooks</a></li>
-          <li><a href="#create-and-edit-hooks-directly-in-the-ui" id="markdown-toc-create-and-edit-hooks-directly-in-the-ui">Create and edit hooks directly in the UI:</a></li>
-          <li><a href="#one-click-reusable-hook-installation" id="markdown-toc-one-click-reusable-hook-installation">One-click reusable hook installation</a></li>
+  <li><a href="#ecosystem" id="markdown-toc-ecosystem">Ecosystem</a>    <ol>
+      <li><a href="#snowflake-support-external-tables-on-lakefs-requires-discussion" id="markdown-toc-snowflake-support-external-tables-on-lakefs-requires-discussion">Snowflake Support: External tables on lakeFS <span class="label label-yellow">Requires Discussion</span></a></li>
+      <li><a href="#pluggable-diffmerge-operators" id="markdown-toc-pluggable-diffmerge-operators">Pluggable diff/merge operators</a>        <ol>
+          <li><a href="#delta-lake-merges-and-diffs-across-branches" id="markdown-toc-delta-lake-merges-and-diffs-across-branches">Delta Lake merges and diffs across branches</a></li>
+          <li><a href="#iceberg-merges-and-diffs-across-branches-high-priority" id="markdown-toc-iceberg-merges-and-diffs-across-branches-high-priority">Iceberg merges and diffs across branches <span class="label label-blue">High Priority</span></a></li>
         </ol>
       </li>
-    </ol>
-  </li>
-  <li><a href="#use-case-production" id="markdown-toc-use-case-production">Use Case: Production</a>    <ol>
-      <li><a href="#webhook-alerting" id="markdown-toc-webhook-alerting">Webhook Alerting</a></li>
-    </ol>
-  </li>
-  <li><a href="#architecture--operations" id="markdown-toc-architecture--operations">Architecture &amp; Operations</a>    <ol>
-      <li><a href="#decouple-ref-store-from-postgresql" id="markdown-toc-decouple-ref-store-from-postgresql">Decouple ref-store from PostgreSQL</a></li>
-      <li><a href="#snowflake-support-requires-discussion" id="markdown-toc-snowflake-support-requires-discussion">Snowflake Support <span class="label label-yellow">Requires Discussion</span></a></li>
-      <li><a href="#metadata-operations-security-and-access-model-high-priority" id="markdown-toc-metadata-operations-security-and-access-model-high-priority">Metadata operations security and access model <span class="label">High Priority</span></a></li>
       <li><a href="#native-spark-outputcommitter" id="markdown-toc-native-spark-outputcommitter">Native Spark OutputCommitter</a></li>
       <li><a href="#native-connector-trino" id="markdown-toc-native-connector-trino">Native connector: Trino</a></li>
       <li><a href="#improved-streaming-support-for-apache-kafka" id="markdown-toc-improved-streaming-support-for-apache-kafka">Improved streaming support for Apache Kafka</a></li>
     </ol>
   </li>
+  <li><a href="#versioning-capabilities" id="markdown-toc-versioning-capabilities">Versioning Capabilities</a>    <ol>
+      <li><a href="#git-lakefs-integration" id="markdown-toc-git-lakefs-integration">Git-lakeFS integration</a></li>
+      <li><a href="#support-asyncronous-hooks-high-priority" id="markdown-toc-support-asyncronous-hooks-high-priority">Support asyncronous hooks <span class="label label-blue">High Priority</span></a></li>
+      <li><a href="#partial-commits" id="markdown-toc-partial-commits">Partial Commits</a></li>
+      <li><a href="#rebase" id="markdown-toc-rebase">Rebase</a></li>
+    </ol>
+  </li>
+  <li><a href="#architecture" id="markdown-toc-architecture">Architecture</a>    <ol>
+      <li><a href="#decouple-ref-store-from-postgresql-high-priority" id="markdown-toc-decouple-ref-store-from-postgresql-high-priority">Decouple ref-store from PostgreSQL <span class="label label-blue">High Priority</span></a></li>
+      <li><a href="#ref-store-implementation-for-dynamodb" id="markdown-toc-ref-store-implementation-for-dynamodb">Ref-store implementation for DynamoDB</a></li>
+      <li><a href="#ref-store-implementation-for-rocksdb-for-testing-and-experimentation" id="markdown-toc-ref-store-implementation-for-rocksdb-for-testing-and-experimentation">Ref-store implementation for RocksDB (for testing and experimentation)</a></li>
+    </ol>
+  </li>
 </ol>
 
 </div><hr />
-      <h2 id="use-case-development">
+      <h2 id="ecosystem">
         
         
-          <a href="#use-case-development" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use Case: Development
-        
-        
-      </h2>
-    
-      <h3 id="ephemeral-branches-with-a-ttl">
-        
-        
-          <a href="#ephemeral-branches-with-a-ttl" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ephemeral branches with a TTL
-        
-        
-      </h3>
-    
-<p>Throwaway development or experimentation branches that live for a pre-configured amount of time, and are cleaned up afterwards. This is especially useful when running automated tests or when experimenting with new technologies, code or algorithms. We want to see what the outcome looks like, but don’t really need the output to live much longer than the duration of the experiment.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2180" target="_blank" class="btn">Track and discuss on GitHub</a></p><hr />
-      <h2 id="use-case-deployment">
-        
-        
-          <a href="#use-case-deployment" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use Case: Deployment
+          <a href="#ecosystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ecosystem
         
         
       </h2>
     
-      <h3 id="repo-linking">
+      <h3 id="snowflake-support-external-tables-on-lakefs-requires-discussion">
         
         
-          <a href="#repo-linking" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Repo linking
-        
-        
-      </h3>
-    
-<p>The ability to explicitly depend on data residing in another repository. While it is possible to state these cross-links by sticking them in the report’s commit metadata, we think a more explicit and structured approach would be valuable. Stating our dependencies in something that resembles a <a href="https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#:~:text=A%20Project%20Object%20Model%20or,default%20values%20for%20most%20projects.">pom.xml</a> or <a href="https://github.com/golang/go/wiki/Modules#gomod">go.mod</a> file would allow us to support better CI and CD integrations that ensure reproducibility without vendoring or copying data.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/1771" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h3 id="git-lakefs-integration">
-        
-        
-          <a href="#git-lakefs-integration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Git-lakeFS integration
-        
-        
-      </h3>
-    
-<p>The ability to connect Git commits with lakeFS commits.
-Especially useful for reproducibility: By looking at a set of changes to the <strong>data</strong>, be able to reference (or ever run) the job that produced it.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss on GitHub</a></p><hr />
-      <h3 id="dbt-integration-high-priority">
-        
-        
-          <a href="#dbt-integration-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DBT Integration <span class="label">High Priority</span>
+          <a href="#snowflake-support-external-tables-on-lakefs-requires-discussion" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Snowflake Support: External tables on lakeFS <span class="label label-yellow">Requires Discussion</span>
         
         
       </h3>
     
 
-<p>Allow DBT users to gain isolation for running in production, as well as being able to create zero-copy test and dev environments:
-This is done by allowing the following:</p>
+<p>Since Snowflake supports reading external tables from an object store, we’d like to extend this support to work with lakeFS repositories that are hosted on top of <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html#supported-cloud-storage-services" target="_blank">supported object stores</a>.
+This could be done by utilizing Snowflake’s support for <code class="language-plaintext highlighter-rouge">SymlinkInputFormat</code> similar to how <a href="https://docs.databricks.com/delta/snowflake-integration.html" target="_blank">Delta Lake support is implemented</a>, and later on by having a native integration with Snowflake itself. If you’d like to hear more:</p>
 
-<ol>
-  <li>Create a DBT environment that is mapped to a lakeFS branch. Since branches are zero-copy, these environments are verifiably identical to production without having to copy any data</li>
-  <li>Be able to run transformations on production data, with <code class="language-plaintext highlighter-rouge">dbt test</code> running before the data gets exposed to downstream consumers (via lakeFS merge)</li>
-</ol>
-
-<p>This is an item that was often requested by DBT users, and is currently actively worked on.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2530" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h3 id="native-metastore-integration-high-priority">
+<p><a href="mailto:hello@treeverse.io?subject=using+lakeFS+with+Snowflake" target="_blank" class="btn">Contact us, we’d love to talk about it!</a></p>
+      <h3 id="pluggable-diffmerge-operators">
         
         
-          <a href="#native-metastore-integration-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native Metastore Integration <span class="label">High Priority</span>
+          <a href="#pluggable-diffmerge-operators" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Pluggable diff/merge operators
         
         
       </h3>
     
 
-<p>Create a robust connection between a Hive Metastore and lakeFS.
-Ideally, metastore representations of tables managed in lakeFS should be versioned in the same way.</p>
+<p>Currently, lakeFS supports merging and comparing references by doing an object-wise comparison. 
+For unstructured data and some forms of tabluar data (namely Hive structured tables), this works fine.</p>
 
-<p>This will allow users to move across different branches or commits for both data and metadata, so that querying from a certain commit will always produce the same results.</p>
+<p>However, in some cases, simply creating a union of object modifications from both references isn’t good enough. 
+Modern table formats such as Delta Lake, Hudi and Iceberg rely on a set of manifest or log files that describe the logical structure of the table. 
+In those cases, a merge operation might have to be aware of the structure of the data: 
+generate a new manifest or re-order the log in order for the output to make sense.
+Additionally, the definition of a conflict is also a bit different: 
+simply looking at object names to determine whether or not a conflict occured might not be good enough.</p>
 
-<p>Additionally, for CD use cases, it will allow a merge operation to introduce Hive table changes (schema evolution, partition addition/removal) atomically alongside the change to the data itself - as well as track those changes with the same set of commits - a lakeFS diff will show both metadata and data changes.</p>
+<p>With that in mind, we plan on making the diff and merge operations pluggable. 
+lakeFS already supports injecting custom behavior using hooks. Ideally, we can support this by introducing <code class="language-plaintext highlighter-rouge">on-diff</code> and <code class="language-plaintext highlighter-rouge">on-merge</code> hooks that allow implementing hooks in different languages, possibly utilizing existing code and libraries to aid with understanding these formats.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/1846" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h3 id="support-delta-lake-merges-and-diffs-across-branches-requires-discussion">
+<p>Once implemented we could support:</p>
+      <h4 id="delta-lake-merges-and-diffs-across-branches">
         
         
-          <a href="#support-delta-lake-merges-and-diffs-across-branches-requires-discussion" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support Delta Lake merges and diffs across branches <span class="label label-yellow">Requires Discussion</span>
+          <a href="#delta-lake-merges-and-diffs-across-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Delta Lake merges and diffs across branches
         
         
-      </h3>
+      </h4>
     
 
-<p>New data formats (<a href="https://hudi.apache.org/" target="_blank">Apache Hudi</a>, <a href="https://iceberg.apache.org/" target="_blank">Apache Iceberg</a> and most notably, <a href="https://delta.io/" target="_blank">Delta Lake</a>) don’t rely simply on a hierarchical directory structure - they are usually accompanied by metadata files.
-These files contain information about changes made, partition and indexing information, as well as represent small deltas to be applied to the larger, typically columnar data objects.</p>
-
-<p>For Delta Lake in particular, these metadata files represent a <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md#delta-log-entries">logical transaction log that relies on numerical ordering</a>.</p>
+<p>Delta lake stores metadata files that represent a <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md#delta-log-entries">logical transaction log that relies on numerical ordering</a>.</p>
 
 <p>Currently, when trying to modify a Delta table from 2 different branches, lakeFS would correctly recognize a conflict: this log diverged into 2 different copies, representing different changes.
 Users would then have to forgo one of the change sets, by either retaining the destination’s branch set of changes, or the source’s branch.</p>
 
 <p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
 
-<p>While beneficial for Delta Lake users, this is a departure from the un-opinionated nature of lakeFS, that is kept simple by treating objects as opaque blobs.
-We’re still gathering information on the use cases and access patterns where this is beneficial - please let us know if this is something you’d find interesting</p>
-
-<p><a href="mailto:hello@treeverse.io?subject=using+lakeFS+with+Delta+Lake" target="_blank" class="btn">Contact us, we’d love to talk about it!</a></p>
-      <h3 id="hooks-usability-improvements-high-priority">
+<p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h4 id="iceberg-merges-and-diffs-across-branches-high-priority">
         
         
-          <a href="#hooks-usability-improvements-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hooks: usability improvements <span class="label">High Priority</span>
-        
-        
-      </h3>
-    
-
-<p>While hooks are an immensely useful tool that provides strong guarantees to data consumers, we want to make them more useful but also easier to implement:</p>
-      <h4 id="extended-hook-types-beyond-webhooks">
-        
-        
-          <a href="#extended-hook-types-beyond-webhooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Extended hook types beyond webhooks
+          <a href="#iceberg-merges-and-diffs-across-branches-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Iceberg merges and diffs across branches <span class="label label-blue">High Priority</span>
         
         
       </h4>
     
 
-<p>While webhooks are easy to understand, they can be challenging in terms of operations: they require a running server listening for requests,
- network access and authentication information need to be applied between lakeFS and the hook server and network timeouts might interfere with long running hooks.</p>
+<p>Iceberg stores metadata files (“manifests”) that represent a <a href="https://iceberg.apache.org/spec/#manifests">snapshot of a given Iceberg table</a>.</p>
 
-<p>To help reduce this burden, we plan on adding more hook types that are easier to manage - running a command line script, executing a docker image or calling out to an external orchestration/scheduling system such as Airflow or even Kubernetes.</p>
+<p>Currently, when trying to modify an Iceberg table from 2 different branches, lakeFS would not be able to create a logical snapshot that consists of the changes applied in both references.
+Users would then have to forgo one of the change sets, by either retaining the destination’s branch set of changes, or the source’s branch.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2231" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h4 id="expose-merged-snapshot-to-pre-merge-hooks">
-        
-        
-          <a href="#expose-merged-snapshot-to-pre-merge-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Expose merged snapshot to pre-merge hooks
-        
-        
-      </h4>
-    
+<p>A much better user experience would be to allow merging snapshots into a new unified set of changes, representing changes made in both refs as a new snapshot.</p>
 
-<p>pre-merge hooks are a great place to introduce data validation checks. However, currently lakeFS exposes the source branch, the destination branch and the diff between them. In many cases, the desired input is actually the merged view of both branches. By having a referencable commit ID that could be passed to e.g. Spark,
-users will be able to directly feed the merged view into a dataframe, a testing framework, etc.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/1742" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h4 id="create-and-edit-hooks-directly-in-the-ui">
-        
-        
-          <a href="#create-and-edit-hooks-directly-in-the-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create and edit hooks directly in the UI:
-        
-        
-      </h4>
-    
-
-<p>Hooks require a YAML configuration file to describe the required functionality and triggers. Instead of having to edit them somewhere else and then carefully uploading to the correct path for them to take effect, we want to allow creating and editing hooks with a single click in the UI</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2232" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h4 id="one-click-reusable-hook-installation">
-        
-        
-          <a href="#one-click-reusable-hook-installation" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> One-click reusable hook installation
-        
-        
-      </h4>
-    
-
-<p>Expanding on the abilities above (executing hooks locally as a command line or docker container - and the ability to create hooks in the UI), lakeFS
-can expose a set of pre-defined hooks that could be installed in a single click through the UI and provide useful functionality (schema validation, metastore updates, format enforcement, Symlink generation - and more, etc).</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2233" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h2 id="use-case-production">
-        
-        
-          <a href="#use-case-production" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use Case: Production
-        
-        
-      </h2>
-    
-      <h3 id="webhook-alerting">
-        
-        
-          <a href="#webhook-alerting" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Webhook Alerting
-        
-        
-      </h3>
-    
-<p>Support integration into existing alerting systems that trigger in the event a webhook returns a failure. This is useful for example when a data quality test fails, so new data is not merged into main due to a quality issue, so will alert the owning team.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2183" target="_blank" class="btn">Track and discuss on GitHub</a></p><hr />
-      <h2 id="architecture--operations">
-        
-        
-          <a href="#architecture--operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Architecture &amp; Operations
-        
-        
-      </h2>
-    
-
-<p class="note note-warning"><em>TL;DR</em> - After receiving feedback on early versions of lakeFS, project <strong><a href="https://docs.google.com/document/d/1jzD7-jun-tdU5BGapmnMBe9ovSzBvTNjXCcVztV07A4/edit?usp=sharing" target="_blank">“lakeFS on the Rocks”</a></strong> represents a set of changes to the architecture and data model of lakeFS. The main motivators are simplicity, reduced barriers of entry, scalability -  and the added benefit of having lakeFS adhere more closely to Git in semantics and UX.</p>
-
-<p>There are 3 big shifts in design:</p>
-
-<ol>
-  <li><del>Using the underlying object store as a source of truth for all committed data. We do this by storing commits as RocksDB SSTable files, where each commit is a “snapshot” of a given repository, split across multiple SSTable files that could be reused across commits.</del></li>
-  <li><del>Expose metadata operations as part of the OpenAPI gateway to allow other client types (e.g., Hadoop FileSystem) except for the S3 gateway interface</del></li>
-  <li>Implement a pluggable ref-store that allows storing references not (only) on PostgreSQL</li>
-</ol>
-      <h3 id="decouple-ref-store-from-postgresql">
-        
-        
-          <a href="#decouple-ref-store-from-postgresql" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Decouple ref-store from PostgreSQL
-        
-        
-      </h3>
-    
-
-<p>Currently lakeFS requires a PostgreSQL database. Internally, it is used to store references (branches, tags, etc), uncommitted objects metadata and other metadata such as user management.</p>
-
-<p>Making this store a pluggable component would allow the following:</p>
-
-<ol>
-  <li>Simpler quickstart using <strong>only an object store</strong>: allow running lakeFS without any dependencies. This ref-store will use the underlying object store to also store the references. For S3 (or any object store that doesn’t support any native transaction/compare-and-swap semantics) this will be available only when running in single-instance mode. This is still beneficial for running lakeFS in POC or development mode, removing the need to run and connect multiple Docker containers.</li>
-  <li>Flexible production setup: A PostgreSQL option will still be available, but additional implementations will also be possible:  Using other RDBMS types such as MySQL &amp;emdash; or using managed services such as DynamoDB that lakeFS will be able to manage itself</li>
-  <li>Easier scalability: Scaling RDBMS for very high throughput while keeping it predictable in performance for different loads and access patterns has a very high operational cost.</li>
-</ol>
-
-<p>This release will mark the completion of project <strong><a href="https://docs.google.com/document/d/1jzD7-jun-tdU5BGapmnMBe9ovSzBvTNjXCcVztV07A4/edit?usp=sharing" target="_blank">“lakeFS on the Rocks”</a></strong></p>
-
-<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md" target="_blank" class="btn">Track and discuss on GitHub</a></p>
-      <h3 id="snowflake-support-requires-discussion">
-        
-        
-          <a href="#snowflake-support-requires-discussion" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Snowflake Support <span class="label label-yellow">Requires Discussion</span>
-        
-        
-      </h3>
-    
-
-<p>TBD - We don’t yet have concrete plans on how to handle Snowflake (and potentially other Data Warehouse/Database sources).
-If you’d like to have data in Snowflake managed by lakeFS, with full branching/merging/CI/CD capabilities, please contact us!</p>
-
-<p><a href="mailto:hello@treeverse.io?subject=using+lakeFS+with+Snowflake" target="_blank" class="btn">Contact us, we’d love to talk about it!</a></p>
-      <h3 id="metadata-operations-security-and-access-model-high-priority">
-        
-        
-          <a href="#metadata-operations-security-and-access-model-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Metadata operations security and access model <span class="label">High Priority</span>
-        
-        
-      </h3>
-    
-<p>Reduce the operational overhead of managing access control: Currently operators working with both lakeFS and the native object store are required to manage a similar set of access controls for both.
-Moving to a federated access control model using the object store’s native access control facilities (e.g. <a href="https://aws.amazon.com/iam/">IAM</a>) will help reduce this overhead. This requires more discovery around the different use cases to help design something coherent. If you’re using lakeFS and have strong opinions about access control, please reach out on Slack.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2184" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/3381" target="_blank" class="btn">Track and discuss on GitHub</a></p>
       <h3 id="native-spark-outputcommitter">
         
         
@@ -722,19 +536,18 @@ Moving to a federated access control model using the object store’s native acc
       </h3>
     
 
-<p>Provide a Spark OutputCommitter that actually… commits.
-This allows creating atomic Spark writes that are automatically tracked in lakeFS as commits.</p>
+<p>Add a Hadoop OutputCommitter that uses existing lakeFS operations for atomic commits that are efficient and safely concurrent.</p>
 
-<p>Each job will use its native job ID as (part of) a branch name for isolation, with the Output Committer doing a commit and merge operation to the requested branch on success. This has several benefits:</p>
+<p>This has several benefits:</p>
 
 <ul>
   <li>Performance: This committer does metadata operations only, and doesn’t rely on copying data</li>
   <li>Atomicity: A commit in lakeFS is guaranteed to either succeed or fail, but will not leave any intermediate state on failure.</li>
-  <li>Allows incorporating simple hooks into the spark job: users can define a webhook to happen before such a merge is completed successfully</li>
   <li>Traceability: Attaching metadata to each commit means we get quite a lot of information on where data is coming from, how it’s generated, etc. This allows building reproducible pipelines in an easier way.</li>
+  <li>Resilience: Since every Spark write is a commit, it is also undoable by reverting it.</li>
 </ul>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2042" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/spark-outputcommitter/committer.md" target="_blank" class="btn">Track and discuss on GitHub</a></p>
       <h3 id="native-connector-trino">
         
         
@@ -783,6 +596,129 @@ These commits can then be merged into a main branch given they pass all relevant
 <p>Ideally, lakeFS should provide tools to automate this, with native support for <a href="https://kafka.apache.org/" target="_blank">Apache Kafka</a>.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/2358" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h2 id="versioning-capabilities">
+        
+        
+          <a href="#versioning-capabilities" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Versioning Capabilities
+        
+        
+      </h2>
+    
+      <h3 id="git-lakefs-integration">
+        
+        
+          <a href="#git-lakefs-integration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Git-lakeFS integration
+        
+        
+      </h3>
+    
+<p>The ability to connect Git commits with lakeFS commits.
+Especially useful for reproducibility: By looking at a set of changes to the <strong>data</strong>, be able to reference (or ever run) the job that produced it.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="support-asyncronous-hooks-high-priority">
+        
+        
+          <a href="#support-asyncronous-hooks-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support asyncronous hooks <span class="label label-blue">High Priority</span>
+        
+        
+      </h3>
+    
+
+<p>support running hooks that might possibly take many minutes to complete. 
+This is useful for things such as data quality checks - where we might want to do big queries or scans to ensure the data being merged adheres to certain business rules.</p>
+
+<p>Currently, <code class="language-plaintext highlighter-rouge">pre-commit</code> and <code class="language-plaintext highlighter-rouge">pre-merge</code> hooks in lakeFS are tied to the lifecycle of the API request that triggers the said commit or merge operation.
+In order to support long running hooks, there are enhancements to make to lakeFS APIs in order to support an asynchronous commit and merge operations that are no
+longer tied to the HTTP request that triggered them.</p>
+      <h3 id="partial-commits">
+        
+        
+          <a href="#partial-commits" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Partial Commits
+        
+        
+      </h3>
+    
+
+<p>In some cases, lakeFS users might want to commit only a set of staged objects instead of all modifications made to a branch
+This is especially useful when experimenting with multiple data sources, but we only care about an output as opposed to intermediate state.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2512" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="rebase">
+        
+        
+          <a href="#rebase" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Rebase
+        
+        
+      </h3>
+    
+
+<p>Since some users are interested in achieving parity between their Git workflow and their lakeFS workflow, extending the merge behavior to support
+history rewriting in which the changes that occured in the source branch are then reapplied to the HEAD of the destination branch (aka “rebase”) is desired.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2739" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h2 id="architecture">
+        
+        
+          <a href="#architecture" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Architecture
+        
+        
+      </h2>
+    
+      <h3 id="decouple-ref-store-from-postgresql-high-priority">
+        
+        
+          <a href="#decouple-ref-store-from-postgresql-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Decouple ref-store from PostgreSQL <span class="label label-blue">High Priority</span>
+        
+        
+      </h3>
+    
+
+<p>Currently lakeFS requires a PostgreSQL database. Internally, it is used to store references (branches, tags, etc), uncommitted objects metadata and other metadata such as user management.</p>
+
+<p>Making this store a pluggable component would allow the following:</p>
+
+<ol>
+  <li>Simpler quickstart using <strong>only an object store</strong>: allow running lakeFS without any dependencies. This ref-store will use the underlying object store to also store the references. For S3 (or any object store that doesn’t support any native transaction/compare-and-swap semantics) this will be available only when running in single-instance mode. This is still beneficial for running lakeFS in POC or development mode, removing the need to run and connect multiple Docker containers.</li>
+  <li>Flexible production setup: A PostgreSQL option will still be available, but additional implementations will also be possible:  Using other RDBMS types such as MySQL &amp;emdash; or using managed services such as DynamoDB that lakeFS will be able to manage itself</li>
+  <li>Easier scalability: Scaling RDBMS for very high throughput while keeping it predictable in performance for different loads and access patterns has a very high operational cost.</li>
+</ol>
+
+<p>This release will mark the completion of project <strong><a href="https://docs.google.com/document/d/1jzD7-jun-tdU5BGapmnMBe9ovSzBvTNjXCcVztV07A4/edit?usp=sharing" target="_blank">“lakeFS on the Rocks”</a></strong></p>
+
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="ref-store-implementation-for-dynamodb">
+        
+        
+          <a href="#ref-store-implementation-for-dynamodb" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ref-store implementation for DynamoDB
+        
+        
+      </h3>
+    
+
+<p>Once we’ve decoupled the ref-store from PostgreSQL, we’d like to create a ref-store implementation that supports DynamoDB.
+This has several advantages for users looking to run lakeFS on AWS:</p>
+
+<ol>
+  <li>DynamoDB is fast to provision and requires very little configuration</li>
+  <li>The operational overhead of maintaining a serverless database is very small</li>
+  <li>Scaling according to usage is much more fine grained, which eliminates a lot of the cost for smaller installations (as opposed to RDS)</li>
+</ol>
+
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+      <h3 id="ref-store-implementation-for-rocksdb-for-testing-and-experimentation">
+        
+        
+          <a href="#ref-store-implementation-for-rocksdb-for-testing-and-experimentation" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ref-store implementation for RocksDB (for testing and experimentation)
+        
+        
+      </h3>
+    
+
+<p>Once we’ve decoupled the ref-store from PostgreSQL, we’d like to create a ref-store implementation that supports running with an embedded RocksDB database.
+While not fit for real world production use, it makes it much easier to try lakeFS when running locally, either by directly executing the binary, or by doing a single <code class="language-plaintext highlighter-rouge">docker run</code> with the right configuration (as opposed to having to use <code class="language-plaintext highlighter-rouge">docker-compose</code> or run PostgreSQL locally).</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples" target="_blank" class="btn">Track and discuss on GitHub</a></p>
 
                 
 
