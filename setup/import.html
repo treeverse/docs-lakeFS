@@ -423,8 +423,17 @@
 
 <ol id="markdown-toc">
   <li><a href="#use-external-tools" id="markdown-toc-use-external-tools">Use external tools</a></li>
-  <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a></li>
-  <li><a href="#import-from-very-large-buckets" id="markdown-toc-import-from-very-large-buckets">Import from very large buckets</a></li>
+  <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
+      <li><a href="#ui-import" id="markdown-toc-ui-import">UI Import</a>        <ol>
+          <li><a href="#prerequisite" id="markdown-toc-prerequisite">Prerequisite</a></li>
+          <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
+        </ol>
+      </li>
+      <li><a href="#lakectl-ingest" id="markdown-toc-lakectl-ingest">lakectl ingest</a></li>
+      <li><a href="#lakefs-import" id="markdown-toc-lakefs-import">lakefs import</a></li>
+    </ol>
+  </li>
+  <li><a href="#importing-from-public-buckets" id="markdown-toc-importing-from-public-buckets">Importing from public buckets</a></li>
 </ol>
 
 </div>
@@ -446,6 +455,73 @@ or using tools like <a href="/integrations/distcp.html#from-s3-to-lakefs">Apache
         
         
       </h2>
+    
+
+<p>lakeFS supports 3 ways to ingest objects from the object store without copying the data.
+They differ by the outcome, scale and ease of use:</p>
+
+<ol>
+  <li>Import from the UI - A UI dialog to trigger an import to a designated import branch. It creates a commit from all imported objects. Easy to use and scales well.</li>
+  <li><code class="language-plaintext highlighter-rouge">lakectl ingest</code> - Use a simple CLI command to create uncommitted objects in a branch. It will make sequential calls between the CLI and the server, which make scaling difficult.</li>
+  <li><code class="language-plaintext highlighter-rouge">lakefs import</code> - Use the lakeFS binary to create a commit from an S3 inventory file. Supported only with lakeFS with S3 storage adapters.
+Requires the most setup - lakeFS binary with DB access and an S3 inventory file. The most scalable option.</li>
+</ol>
+      <h3 id="ui-import">
+        
+        
+          <a href="#ui-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> UI Import
+        
+        
+      </h3>
+    
+
+<p>Clicking the Import button from any branch will open the following dialog:</p>
+
+<p><img src="/assets/img/UI-Import-Dialog.png" alt="ui-import.png" /></p>
+
+<p>If it’s the first import to <code class="language-plaintext highlighter-rouge">my-branch</code>, it will create the import branch named <code class="language-plaintext highlighter-rouge">_my-branch_imported</code>.
+lakeFS will import all objects from the Source URI to the import branch under the given prefix.</p>
+
+<p>Hang tight! It might take several minutes for the operation to complete:</p>
+
+<p><img src="/assets/img/ui-import-waiting.png" alt="img.png" /></p>
+
+<p>Once the import is completed, you can merge the changes from the import branch to the source branch.</p>
+
+<p><img src="/assets/img/ui-import-completed.png" alt="img.png" /></p>
+      <h4 id="prerequisite">
+        
+        
+          <a href="#prerequisite" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisite
+        
+        
+      </h4>
+    
+
+<p>lakeFS must have permissions to list the objects at the source object store,
+and on the same region of your destination bucket.</p>
+      <h4 id="limitations">
+        
+        
+          <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+        
+        
+      </h4>
+    
+
+<p>Import is feasible only from source object storage that matches the storage namespace of the
+current repository.  lakeFS S3 installation cannot import from Azure bucket.</p>
+
+<p class="note">Although created by lakeFS, import branches are just like any other branch.
+Authorization policies, CI/CD triggering, branch protection rules and all other lakeFS concepts apply to them
+as they apply to any other branch.</p>
+      <h3 id="lakectl-ingest">
+        
+        
+          <a href="#lakectl-ingest" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakectl ingest
+        
+        
+      </h3>
     
 
 <p>For cases where copying data is not feasible, the <code class="language-plaintext highlighter-rouge">lakectl</code> command supports ingesting objects from a source object store without actually copying the data itself.
@@ -499,13 +575,13 @@ lakectl ingest <span class="se">\</span>
     <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports the standard <code class="language-plaintext highlighter-rouge">GOOGLE_APPLICATION_CREDENTIALS</code> environment variable <a href="https://cloud.google.com/docs/authentication/getting-started">as described in Google Cloud’s documentation</a>.</p>
   </div>
 </div>
-      <h2 id="import-from-very-large-buckets">
+      <h3 id="lakefs-import">
         
         
-          <a href="#import-from-very-large-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Import from very large buckets
+          <a href="#lakefs-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakefs import
         
         
-      </h2>
+      </h3>
     
 
 <p>Importing a very large amount of objects (&gt; ~250M) might take some time using <code class="language-plaintext highlighter-rouge">lakectl ingest</code> as described above,
@@ -518,13 +594,13 @@ The imported metadata will be committed to a special branch, called <code class=
 
 <p class="note">You should not make any changes or commit anything to branch <code class="language-plaintext highlighter-rouge">import-from-inventory</code>: it will be operated on only by lakeFS.
 After importing, you will be able to merge this branch into your main branch.</p>
-      <h3 class="no_toc" id="how-it-works">
+      <h4 class="no_toc" id="how-it-works">
         
         
           <a href="#how-it-works" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How it works
         
         
-      </h3>
+      </h4>
     
 
 <p>The imported data is not copied to the repository’s dedicated bucket.
@@ -535,13 +611,13 @@ Files created or replaced through lakeFS will then be stored in the repository�
 when accessing it through other branches. In a sense, your original bucket becomes an initial snapshot of your data.</p>
 
 <p class="note pb-3"><strong>Note:</strong> lakeFS will never make any changes to the import source bucket.</p>
-      <h3 class="no_toc" id="prerequisites">
+      <h4 class="no_toc" id="prerequisites">
         
         
           <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
         
         
-      </h3>
+      </h4>
     
 
 <ul>
@@ -553,13 +629,13 @@ when accessing it through other branches. In a sense, your original bucket becom
 </ul>
 
 <p class="note note-info">For a step-by-step walkthrough of this process, see the post <a href="https://lakefs.io/3-ways-to-add-data-to-lakefs/">3 Ways to Add Data to lakeFS</a> on our blog.</p>
-      <h3 class="no_toc" id="usage">
+      <h4 class="no_toc" id="usage">
         
         
           <a href="#usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
         
         
-      </h3>
+      </h4>
     
 
 <p>Import is performed by the <code class="language-plaintext highlighter-rouge">lakefs import</code> command.</p>
@@ -582,13 +658,13 @@ To list imported objects, run:
 To merge the changes to your main branch, run:
 	$ lakectl merge lakefs://example-repo/import-from-inventory lakefs://goo/main
 </code></pre></div></div>
-      <h4 class="no_toc" id="merging-imported-data-to-the-main-branch">
+      <h5 class="no_toc" id="merging-imported-data-to-the-main-branch">
         
         
           <a href="#merging-imported-data-to-the-main-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merging imported data to the main branch
         
         
-      </h4>
+      </h5>
     
 
 <p>As previously mentioned, the above command imports data to the dedicated <code class="language-plaintext highlighter-rouge">import-from-inventory</code> branch.
@@ -596,13 +672,13 @@ By adding the <code class="language-plaintext highlighter-rouge">--with-merge</c
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs import <span class="nt">--with-merge</span> lakefs://example-repo <span class="nt">-m</span> s3://example-bucket/path/to/inventory/YYYY-MM-DDT00-00Z/manifest.json <span class="nt">--config</span> config.yaml
 </code></pre></div></div>
-      <h4 class="no_toc" id="notes">
+      <h5 class="no_toc" id="notes">
         
         
           <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
         
         
-      </h4>
+      </h5>
     
 
 <ol>
@@ -618,13 +694,13 @@ By adding the <code class="language-plaintext highlighter-rouge">--with-merge</c
 </ol>
 
 <p class="note"><strong>Warning:</strong> the <em>import-from-inventory</em> branch should only be used by lakeFS. You should not make any operations on it.</p>
-      <h3 class="no_toc" id="gradual-import">
+      <h4 class="no_toc" id="gradual-import">
         
         
           <a href="#gradual-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Gradual Import
         
         
-      </h3>
+      </h4>
     
 
 <p>Once you switch to using the lakeFS S3-compatible endpoint in all places, you can stop making changes to your original bucket.
@@ -632,13 +708,13 @@ However, if your operation still requires that you work on the original bucket,
 you can repeat using the import API with up-to-date inventories every day, until you complete the onboarding process.
 You can specify only the prefixes that require import. lakeFS will merge those prefixes with the previous imported inventory.
 For example, a prefixes-file that contains only the prefix <code class="language-plaintext highlighter-rouge">new/data/</code>. The new commit to <code class="language-plaintext highlighter-rouge">import-from-inventory</code> branch will include all objects from the HEAD of that branch, except for objects with prefix <code class="language-plaintext highlighter-rouge">new/data/</code> that is imported from the inventory.</p>
-      <h3 class="no_toc" id="limitations">
+      <h4 class="no_toc" id="limitations-1">
         
         
-          <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+          <a href="#limitations-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
         
         
-      </h3>
+      </h4>
     
 
 <p>Note that lakeFS cannot manage your metadata if you make changes to data in the original bucket.
@@ -670,6 +746,51 @@ The following table describes the results of making changes in the original buck
     </tr>
   </tbody>
 </table></div>
+      <h2 id="importing-from-public-buckets">
+        
+        
+          <a href="#importing-from-public-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing from public buckets
+        
+        
+      </h2>
+    
+
+<p>lakeFS needs access to the imported location to first list the files to import and later
+to read the files upon users request.</p>
+
+<p>There are some use-cases where the user would like to import from a destination which isn’t owned by the account running lakeFS.
+For example, importing public datasets to experiment with lakeFS and Spark.</p>
+
+<p>lakeFS will require additional permissions to read from public buckets. For example, for S3 public buckets,
+the following policy needs to be attached to the lakeFS S3 service-account to allow access to public buckets, while blocking access to other owned buckets:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">   </span><span class="p">{</span><span class="w">
+     </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+     </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+       </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PubliclyAccessibleBuckets"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3:GetBucketVersioning"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucketVersions"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetObjectVersion"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+           </span><span class="nl">"StringNotEquals"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+             </span><span class="nl">"s3:ResourceAccount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;YourAccountID&gt;"</span><span class="w">
+           </span><span class="p">}</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+       </span><span class="p">}</span><span class="w">
+     </span><span class="p">]</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 
                 
 
