@@ -423,6 +423,13 @@ but trying to read these objects from lakeFS will result in a <code class="langu
 
 <p class="note"><strong>Note</strong>
 At this point, lakeFS supports Garbage Collection only on S3, but we have <a href="https://github.com/treeverse/lakeFS/issues/3271">concrete plans</a> to extend the support to Azure.</p>
+
+<ol class="pb-5" id="markdown-toc">
+  <li><a href="#understanding-garbage-collection" id="markdown-toc-understanding-garbage-collection">Understanding Garbage Collection</a></li>
+  <li><a href="#configuring-gc-rules" id="markdown-toc-configuring-gc-rules">Configuring GC rules</a></li>
+  <li><a href="#running-the-gc-job" id="markdown-toc-running-the-gc-job">Running the GC job</a></li>
+  <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
+</ol>
       <h2 id="understanding-garbage-collection">
         
         
@@ -457,6 +464,14 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
         
       </h2>
     
+      <h3 class="no_toc" id="using-lakectl">
+        
+        
+          <a href="#using-lakectl" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakectl
+        
+        
+      </h3>
+    
 
 <p>Use the <code class="language-plaintext highlighter-rouge">lakectl</code> CLI to define the GC rules:</p>
 
@@ -472,6 +487,23 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
 
 </span>lakectl gc set-config lakefs://example-repo <span class="nt">-f</span> example_repo_gc_rules.json 
 </code></pre></div></div>
+      <h3 class="no_toc" id="from-the-lakefs-ui">
+        
+        
+          <a href="#from-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> From the lakeFS UI
+        
+        
+      </h3>
+    
+
+<ol>
+  <li>Navigate to the main page of your repository.</li>
+  <li>Go to <em>Settings</em> -&gt; <em>Retention</em>.</li>
+  <li>Click <em>Edit policy</em> and paste your GC rule into the text box as a JSON.</li>
+  <li>Save your changes.</li>
+</ol>
+
+<p><img src="/assets/img/gc_rules_from_ui.png" alt="GC Rules From UI" /></p>
       <h2 id="running-the-gc-job">
         
         

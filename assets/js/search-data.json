@@ -871,7 +871,7 @@
   },"145": {
     "doc": "Garbage Collection",
     "title": "Garbage Collection",
-    "content": "By default, lakeFS keeps all your objects forever. This allows you to travel back in time to previous versions of your data. However, sometimes you may want to hard-delete your objects, namely delete them from the underlying storage. Reasons for this include cost-reduction and privacy policies. Garbage collection rules in lakeFS define for how long to retain objects after they have been deleted (see more information below). lakeFS provides a Spark program to hard-delete objects that have been deleted and whose retention period has ended according to the GC rules. The GC job does not remove any commits: you will still be able to use commits containing hard-deleted objects, but trying to read these objects from lakeFS will result in a 410 Gone HTTP status. Note At this point, lakeFS supports Garbage Collection only on S3, but we have concrete plans to extend the support to Azure. ",
+    "content": "By default, lakeFS keeps all your objects forever. This allows you to travel back in time to previous versions of your data. However, sometimes you may want to hard-delete your objects, namely delete them from the underlying storage. Reasons for this include cost-reduction and privacy policies. Garbage collection rules in lakeFS define for how long to retain objects after they have been deleted (see more information below). lakeFS provides a Spark program to hard-delete objects that have been deleted and whose retention period has ended according to the GC rules. The GC job does not remove any commits: you will still be able to use commits containing hard-deleted objects, but trying to read these objects from lakeFS will result in a 410 Gone HTTP status. Note At this point, lakeFS supports Garbage Collection only on S3, but we have concrete plans to extend the support to Azure. | Understanding Garbage Collection | Configuring GC rules | Running the GC job | Considerations | . ",
     "url": "/reference/garbage-collection.html",
     "relUrl": "/reference/garbage-collection.html"
   },"146": {
@@ -883,7 +883,7 @@
   },"147": {
     "doc": "Garbage Collection",
     "title": "Configuring GC rules",
-    "content": "Use the lakectl CLI to define the GC rules: . cat &lt;&lt;EOT &gt;&gt; example_repo_gc_rules.json { \"default_retention_days\": 21, \"branches\": [ {\"branch_id\": \"main\", \"retention_days\": 28}, {\"branch_id\": \"dev\", \"retention_days\": 7} ] } EOT lakectl gc set-config lakefs://example-repo -f example_repo_gc_rules.json . ",
+    "content": "Using lakectl . Use the lakectl CLI to define the GC rules: . cat &lt;&lt;EOT &gt;&gt; example_repo_gc_rules.json { \"default_retention_days\": 21, \"branches\": [ {\"branch_id\": \"main\", \"retention_days\": 28}, {\"branch_id\": \"dev\", \"retention_days\": 7} ] } EOT lakectl gc set-config lakefs://example-repo -f example_repo_gc_rules.json . From the lakeFS UI . | Navigate to the main page of your repository. | Go to Settings -&gt; Retention. | Click Edit policy and paste your GC rule into the text box as a JSON. | Save your changes. | . ",
     "url": "/reference/garbage-collection.html#configuring-gc-rules",
     "relUrl": "/reference/garbage-collection.html#configuring-gc-rules"
   },"148": {
