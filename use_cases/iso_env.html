@@ -459,18 +459,20 @@
 <p>The key difference when using lakeFS for isolated data environments is you can create them immediately before testing a change. And once new data is merged into production, you can delete the branch, effectively deleting the old environment.</p>
 
 <p>This is different from creating a long-living dev environment that is used as a staging area to test all updates. With lakeFS, <strong>we create a new branch for each change to production</strong> we want to make. (One benefit of this is the ability to test multiple changes at one time).</p>
-      <h3 id="setup">
+      <h3 id="prerequisites">
         
         
-          <a href="#setup" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setup
+          <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
         
         
       </h3>
     
 
-<p>This tutorial will use a local Docker environment called the “Everything Bagel” to get lakeFS and other technologies running on your machine. For instructions on how to get this running, <a href="/quickstart/#lakefs-docker-everything-bagel">click here</a>.</p>
+<p>This tutorial will use an exisitng lakeFS environment and an Apache Spark notebook.</p>
 
-<p>Once the containers are running, it’ll be useful to add some data into the lakeFS repo. We’ll use an Amazon review dataset from a public S3 bucket. First we’ll download the file to our local computer using the AWS CLI. Then, we’ll upload it into lakeFS using the <code class="language-plaintext highlighter-rouge">Upload Object</code> button in the UI.</p>
+<p>To read more about how to setup lakeFS environment, checkout <a href="/quickstart/">Quickstart</a>.</p>
+
+<p>Once you have a live environment, it’ll be useful to add some data into the lakeFS repo. We’ll use an Amazon review dataset from a public S3 bucket. First we’ll download the file to our local computer using the AWS CLI. Then, we’ll upload it into lakeFS using the <code class="language-plaintext highlighter-rouge">Upload Object</code> button in the UI.</p>
 
 <p class="note note-info">To install the AWS CLI, follow <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">these instructions</a></p>
 
@@ -504,11 +506,11 @@
       </h3>
     
 
-<p>The Everything Bagel comes with Spark and Jupyter installed. Let’s use them to manipulate the data on one branch, showing how it has no effect on the other.</p>
+<p>This use-case discuss manipulating data using Spark, we are using Juputer. However you can integrate lakeFS with your favorite <a href="../integrations/spark">Spark environment</a>. Let’s use them to manipulate the data on one branch, showing how it has no effect on the other.</p>
 
-<p>To access the Jupyter notebook UI, go to http://localhost:8888 in your browser and type in “lakefs” when prompted for a password.</p>
+<p>Go to your Spark notebook UI, in our case this is the Jupyter UI.</p>
 
-<p>Next, create a new notebook and start a spark context:</p>
+<p>Inside the notebook, create a new notebook and start a spark context:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from pyspark.context import SparkContext
 from pyspark.sql.session import SparkSession
@@ -540,7 +542,15 @@ spark <span class="o">=</span> SparkSession<span class="o">(</span>sc<span class
 
 <p><img src="/assets/img/iso-env-df-counts.png" alt="Branch Counts" /></p>
 
-<p>As expected, there are now twice as many rows, 972k, on the <code class="language-plaintext highlighter-rouge">double-branch</code> branch. On the <code class="language-plaintext highlighter-rouge">main</code> branch however, there is still just the origin 486k rows. This shows the utility of branch-based isolated environments with lakeFS.</p>
+<p>As expected, there are now twice as many rows, 972k, on the <code class="language-plaintext highlighter-rouge">double-branch</code> branch. That means we <em>duplicated our data!</em>oh no!</p>
+
+<p>Data duplication introduce errors into our data analytics, BI and machine learning efforts, hence we would like to avoid duplicating our data.</p>
+
+<p>But do not worry!</p>
+
+<p>On the <code class="language-plaintext highlighter-rouge">main</code> branch however, there is still just the origin 486k rows. This shows the utility of branch-based isolated environments with lakeFS.</p>
+
+<p>You can safely continue working with the data from main which is unharmed due to lakeFS isolation capabilities.</p>
 
                 
 
