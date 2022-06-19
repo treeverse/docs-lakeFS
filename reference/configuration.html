@@ -441,7 +441,7 @@
 </div>
 
 <p>Configuring lakeFS is done using a yaml configuration file and/or environment variable.
-The configuration file location can be set with the ‘–config’ flag. If not specified, the the first file found in the following order will be used:</p>
+The configuration file location can be set with the ‘–config’ flag. If not specified, the first file found in the following order will be used:</p>
 <ol>
   <li>./config.yaml</li>
   <li><code class="language-plaintext highlighter-rouge">$HOME</code>/lakefs/config.yaml</li>
@@ -465,9 +465,10 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
 <ul class="ref-list">
   <li><code class="language-plaintext highlighter-rouge">logging.format</code> <code class="language-plaintext highlighter-rouge">(one of ["json", "text"] : "text")</code> - Format to output log message in</li>
   <li><code class="language-plaintext highlighter-rouge">logging.level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Logging level to output</li>
+  <li><code class="language-plaintext highlighter-rouge">logging.audit_log_level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Audit logs level to output. <strong>Please notice that in case you configure this field to be lower than the main logger level, you won’t be able to get the audit logs</strong></li>
   <li><code class="language-plaintext highlighter-rouge">logging.output</code> <code class="language-plaintext highlighter-rouge">(string : "-")</code> - A path or paths to write logs to. A <code class="language-plaintext highlighter-rouge">-</code> means the standard output, <code class="language-plaintext highlighter-rouge">=</code> means the standard error.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.file_max_size_mb</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - Output file maximum size in megabytes.</li>
-  <li><code class="language-plaintext highlighter-rouge">logging.files_keep</code> <code class="language-plaintext highlighter-rouge">(int : 0)</code> - Numbe of log files to keep, default is all.</li>
+  <li><code class="language-plaintext highlighter-rouge">logging.files_keep</code> <code class="language-plaintext highlighter-rouge">(int : 0)</code> - Number of log files to keep, default is all.</li>
   <li><code class="language-plaintext highlighter-rouge">actions.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Setting this to false will block hooks from being executed</li>
   <li><code class="language-plaintext highlighter-rouge">database.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
   <li><code class="language-plaintext highlighter-rouge">database.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</li>
@@ -562,7 +563,7 @@ representing the S3 endpoint used by S3 clients to call this server
 local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual-host addressing</a>.</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - AWS region we’re pretending to be. Should match the region configuration used in AWS SDK clients</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.fallback_url</code> <code class="language-plaintext highlighter-rouge">(string)</code> - If specified, requests with a non-existing repository will be forwarded to this url. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an <a href="https://github.com/gaul/s3proxy">S3Proxy</a> instance.</li>
-  <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(boolean : true)</code> - Whether or not to periodically collect anonymous usage statistics</li>
+  <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(boolean : true)</code> - Whether to periodically collect anonymous usage statistics</li>
   <li><code class="language-plaintext highlighter-rouge">security.audit_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 12h)</code> - Duration in which we check for security audit</li>
 </ul>
       <h2 id="using-environment-variables">
