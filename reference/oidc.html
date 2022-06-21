@@ -23,17 +23,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Create a Repository | lakeFS</title>
+<title>OIDC support | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Create a Repository" />
+<meta property="og:title" content="OIDC support" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In this guide, we’re going to run an initial setup and then create a new repository using lakeFS." />
-<meta property="og:description" content="In this guide, we’re going to run an initial setup and then create a new repository using lakeFS." />
+<meta name="description" content="Use an OIDC provider to manage lakeFS users" />
+<meta property="og:description" content="Use an OIDC provider to manage lakeFS users" />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Create a Repository" />
+<meta property="twitter:title" content="OIDC support" />
 <script type="application/ld+json">
-{"description":"In this guide, we’re going to run an initial setup and then create a new repository using lakeFS.","headline":"Create a Repository","@type":"WebPage","url":"/quickstart/repository.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Use an OIDC provider to manage lakeFS users","headline":"OIDC support","@type":"WebPage","url":"/reference/oidc.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -178,13 +178,13 @@
             <ul class="nav-list"><li
             class="nav-list-item"><a href="/"
            class="nav-list-link">What is lakeFS</a></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/quickstart/"
            class="nav-list-link">Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/quickstart/try.html"
                    class="nav-list-link">Try without installing</a></li><li class="nav-list-item "><a href="/quickstart/installing.html"
-                   class="nav-list-link">Install lakeFS</a></li><li class="nav-list-item  active"><a href="/quickstart/repository.html"
-                   class="nav-list-link active">Create a Repository</a></li><li class="nav-list-item "><a href="/quickstart/add_data.html"
+                   class="nav-list-link">Install lakeFS</a></li><li class="nav-list-item "><a href="/quickstart/repository.html"
+                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/quickstart/add_data.html"
                    class="nav-list-link">Add Data</a></li><li class="nav-list-item "><a href="/quickstart/first_commit.html"
                    class="nav-list-link">Commit the Changes</a></li><li class="nav-list-item "><a href="/quickstart/more_quickstart_options.html"
                    class="nav-list-link">More Quickstart Options</a></li></ul></li><li
@@ -231,7 +231,7 @@
                    class="nav-list-link">Isolated Environment</a></li><li class="nav-list-item "><a href="/use_cases/rollback.html"
                    class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/use_cases/reproducibility.html"
                    class="nav-list-link">Reproducibility</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/reference/"
            class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/api.html"
@@ -246,8 +246,8 @@
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
                    class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
-                   class="nav-list-link">OIDC support</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item  active"><a href="/reference/oidc.html"
+                   class="nav-list-link active">OIDC support</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -400,96 +400,118 @@
             <nav aria-label="Breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb-nav-list">
                     
-                    <li class="breadcrumb-nav-list-item"><a href="/quickstart/">Quickstart</a>
+                    <li class="breadcrumb-nav-list-item"><a href="/reference/">Reference</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Create a Repository</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>OIDC support</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="create-a-repository">
+                <h1 id="oidc-support">
         
         
-          <a href="#create-a-repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a Repository
+          <a href="#oidc-support" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> OIDC support
         
         
       </h1>
     
 
-<p>A <em>repository</em> contains all of your objects, including the revision history.
-It can be considered the lakeFS analog of a bucket in an object store. Since it has version control qualities, it is also analogous to a repository in Git.</p>
-      <h2 id="create-the-first-user">
+<p class="no_toc">You can manage lakeFS users externally using an OpenID Connect (OIDC) compatible identity provider.</p>
+
+<div class="toc-block">
+      <h2 class="no_toc text-delta" id="table-of-contents">
         
         
-          <a href="#create-the-first-user" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create the first user
+          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
         
         
       </h2>
     
 
-<p>When you first open the lakeFS UI, you will be asked to create an initial admin user.</p>
-
-<ol>
-  <li>
-    <p>Open <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a> in your web browser.</p>
-
-    <p><img src="/assets/img/setup.png" alt="Setup" /></p>
-  </li>
-  <li>
-    <p>Follow the steps to create an initial administrator user. Save the credentials you’ve received somewhere safe, you won’t be able to see them again!</p>
-
-    <p><img src="/assets/img/setup_done.png" alt="Setup Done" /></p>
-  </li>
-  <li>
-    <p>Follow the link and go to the login screen:</p>
-
-    <p><img src="/assets/img/login.png" alt="Login Screen" /></p>
+<ol id="markdown-toc">
+  <li><a href="#oidc-support" id="markdown-toc-oidc-support">OIDC support</a>    <ol>
+      <li><a href="#configuring-lakefs-server-for-oidc" id="markdown-toc-configuring-lakefs-server-for-oidc">Configuring lakeFS server for OIDC</a></li>
+      <li><a href="#user-permissions" id="markdown-toc-user-permissions">User permissions</a>        <ol>
+          <li><a href="#using-a-different-claim-name" id="markdown-toc-using-a-different-claim-name">Using a different claim name</a></li>
+        </ol>
+      </li>
+    </ol>
   </li>
 </ol>
-      <h2 id="create-the-repository">
+
+</div>
+      <h2 id="configuring-lakefs-server-for-oidc">
         
         
-          <a href="#create-the-repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create the repository
+          <a href="#configuring-lakefs-server-for-oidc" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring lakeFS server for OIDC
         
         
       </h2>
     
 
+<p>To support OIDC, add the following to your <a href="/reference/configuration.html">lakeFS configuration</a>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">client_id</span><span class="pi">:</span> <span class="s">example-client-id</span>
+    <span class="na">client_secret</span><span class="pi">:</span> <span class="s">exampleSecretValue</span>
+    <span class="na">callback_base_url</span><span class="pi">:</span> <span class="s">https://lakefs.example.com</span>       <span class="c1"># The scheme, domain (and port) of your lakeFS installation</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">https://my-account.oidc-provider-example.com</span>
+    <span class="na">default_initial_groups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">Developers"</span><span class="pi">]</span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">name</span>                      <span class="c1">#  Optional: use the value from this claim as the user's display name </span>
+</code></pre></div></div>
+
+<p>Your login page will now include a link to sign-in using the 
+OIDC provider. When a user first logs in through the provider, a corresponding user is created in lakeFS.</p>
+      <h4 class="no_toc" id="notes">
+        
+        
+          <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
+        
+        
+      </h4>
+    
 <ol>
-  <li>
-    <p>Use the credentials from the previous step to log in as an administrator.</p>
-  </li>
-  <li>
-    <p>Click <em>Create Repository</em>.</p>
-
-    <p><img src="/assets/img/create_repo_local.png" alt="Create Repository" /></p>
-  </li>
-  <li>
-    <p>Fill in a repository name.</p>
-  </li>
-  <li>
-    <p>Under <em>Storage Namespace</em>, enter <code class="language-plaintext highlighter-rouge">local://</code>.</p>
-
-    <p class="note note-info">In this tutorial, the underlying storage for lakeFS is the local disk. Accordingly, the value for <em>Storage Namespace</em> should simply be <code class="language-plaintext highlighter-rouge">local://</code>.
-For a deployment that uses an object store as the underlying storage, this would be a location in the store, e.g. <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix</code>.</p>
-  </li>
-  <li>
-    <p>Click <em>Create Repository</em>.</p>
-  </li>
+  <li>As always, you may choose to provide these configurations using <a href="/reference/configuration.html#using-environment-variables">environment variables</a>.</li>
+  <li>You may already have other configuration values under the <em>auth</em> key, so make sure you combine them correctly.</li>
 </ol>
-      <h3 id="next-steps">
+      <h2 id="user-permissions">
         
         
-          <a href="#next-steps" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Next steps
+          <a href="#user-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User permissions
+        
+        
+      </h2>
+    
+
+<p>Authorization is still managed via <a href="/reference/authorization.html">lakeFS groups and policies</a>.</p>
+
+<p>By default, an externally managed user is assigned to the lakeFS groups configured in the <em>default_initial_groups</em> property above.
+For a user to be assigned to other groups, add the <em>initial_groups</em> claim to their <strong>ID token</strong> claims. The claim should contain a
+comma-separated list of group names.</p>
+
+<p>Once the user has been created, you can manage their permissions from the Administration pages in the lakeFS UI or using <em>lakectl</em>.</p>
+      <h3 id="using-a-different-claim-name">
+        
+        
+          <a href="#using-a-different-claim-name" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using a different claim name
         
         
       </h3>
     
 
-<p>You just created your first lakeFS repository! You can now <a href="/quickstart/add_data.html">add some data</a> to it.</p>
+<p>To supply the initial groups using another claim from your ID token, you can use the <code class="language-plaintext highlighter-rouge">auth.oidc.initial_groups_claim_name</code> 
+lakeFS configuration. For example, to take the initial groups from the <em>roles</em> claim, add:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="c1"># ... Other OIDC configurations</span>
+    <span class="na">initial_groups_claim_name</span><span class="pi">:</span> <span class="s">roles</span>
+</code></pre></div></div>
 
                 
 

@@ -246,7 +246,8 @@
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
                    class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
+                   class="nav-list-link">OIDC support</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -494,6 +495,14 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.user_base_dn</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - Base DN for searching for users.  Search looks for users in the subtree below this.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.default_user_group</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Create all LDAP users in this group.  Defaults to <code class="language-plaintext highlighter-rouge">Viewers</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.user_filter</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Additional filter for users.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.enabled</code> <code class="language-plaintext highlighter-rouge">(boolean : false)</code> - Set to true to enable authentication with an external OIDC provider.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.client_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - OIDC client ID.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.client_secret</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - OIDC client secret.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.url</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - The base URL of your OIDC compatible identity provider.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.callback_base_url</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - The scheme, host and port of your lakeFS installation. After authenticating, your identity provider will redirect you to a URL under this base.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.default_initial_groups</code> <code class="language-plaintext highlighter-rouge">(string[] : [])</code> - By default, OIDC users will be assigned to these groups</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.initial_groups_claim_name</code> <code class="language-plaintext highlighter-rouge">(string[] : [])</code> - Use this claim from the ID token to provide the initial group for new users.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.friendly_name_claim_name</code> <code class="language-plaintext highlighter-rouge">(string[] : )</code> - If specified, the value from the claim with this name will be used as the user’s display name.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.type</code> <code class="language-plaintext highlighter-rouge">(one of ["local", "s3", "gs", "azure", "mem"] : required)</code>.  Block adapter to use. This controls where the underlying data will be stored</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.default_namespace_prefix</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Use this to help your users choose a storage namespace for their repositories. 
  If specified, the storage namespace will be filled with this default value as a prefix, when creating a repository from the UI.
