@@ -432,7 +432,10 @@ but trying to read these objects from lakeFS will result in a <code class="langu
 At this point, lakeFS supports Garbage Collection only on S3, but we have <a href="https://github.com/treeverse/lakeFS/issues/3271">concrete plans</a> to extend the support to Azure.</p>
 
 <ol class="pb-5" id="markdown-toc">
-  <li><a href="#understanding-garbage-collection" id="markdown-toc-understanding-garbage-collection">Understanding Garbage Collection</a></li>
+  <li><a href="#understanding-garbage-collection" id="markdown-toc-understanding-garbage-collection">Understanding Garbage Collection</a>    <ol>
+      <li><a href="#what-gets-collected" id="markdown-toc-what-gets-collected">What gets collected</a></li>
+    </ol>
+  </li>
   <li><a href="#configuring-gc-rules" id="markdown-toc-configuring-gc-rules">Configuring GC rules</a></li>
   <li><a href="#running-the-gc-job" id="markdown-toc-running-the-gc-job">Running the GC job</a></li>
   <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
@@ -453,16 +456,92 @@ That is, it is hard-deleted only after the retention period has ended for all re
 
 <p>Example GC rules for a repository:</p>
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"default_retention_days"</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"default_retention_days"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
   </span><span class="nl">"branches"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="p">{</span><span class="nl">"branch_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main"</span><span class="p">,</span><span class="w"> </span><span class="nl">"retention_days"</span><span class="p">:</span><span class="w"> </span><span class="mi">28</span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="nl">"branch_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main"</span><span class="p">,</span><span class="w"> </span><span class="nl">"retention_days"</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">},</span><span class="w">
     </span><span class="p">{</span><span class="nl">"branch_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">,</span><span class="w"> </span><span class="nl">"retention_days"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">}</span><span class="w">
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p>In the above example, objects are retained for 21 days after deletion by default. However, if they are present in the branch <code class="language-plaintext highlighter-rouge">main</code>, they are retained for 28 days.
+<p>In the above example, objects are retained for 14 days after deletion by default. However, if they are present in the branch <code class="language-plaintext highlighter-rouge">main</code>, they are retained for 21 days.
 Objects present in the <code class="language-plaintext highlighter-rouge">dev</code> branch (but not in any other branch), are retained for 7 days after they are deleted.</p>
+      <h3 id="what-gets-collected">
+        
+        
+          <a href="#what-gets-collected" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What gets collected
+        
+        
+      </h3>
+    
+
+<p>Because each object in lakeFS may be accessible from multiple branches, it
+might not be obvious what objects will be considered garbage and collected.</p>
+
+<p>Garbage collection is configured by specifying the number of days to retain
+objects on each branch.  If a branch is configured to retain objects for a
+given number of days, any object that was accessible from the HEAD of a
+branch in that past number of days will be retained.</p>
+
+<p>The garbage collection process proceeds in two main phases:</p>
+
+<ul>
+  <li>
+    <p><strong>Discover which commits will retain their objects.</strong>  For every branch,
+the garbage collection job looks at the HEAD of the branch that many days
+ago; every commit at or since that HEAD must be retained.</p>
+
+    <pre><code class="language-mermaid">%%{init: { 'theme': 'base', 'gitGraph': {'rotateCommitLabel': true}} }%%
+gitGraph
+    commit id: "2022-02-27 🚮"
+    commit id: "2022-03-01 🚮"
+    commit id: "2022-03-09"
+branch dev
+checkout main
+    commit id: "2022-03-12"
+checkout dev
+    commit id: "d: 2022-03-14 🚮"
+    commit id: "d: 2022-03-16 🚮"
+checkout main
+    commit id: "2022-03-18"
+checkout dev
+    commit id: "d: 2022-03-20 🚮"
+    commit id: "d: 2022-03-23"
+checkout main
+merge dev
+    commit id: "2022-03-26"
+</code></pre>
+
+    <p>Continuing the example, branch <code class="language-plaintext highlighter-rouge">main</code> retains for 21 days and branch <code class="language-plaintext highlighter-rouge">dev</code>
+for 7.  When running GC on 2022-03-31:</p>
+
+    <ul>
+      <li>7 days ago, on 2022-03-24 the head of branch <code class="language-plaintext highlighter-rouge">dev</code> was <code class="language-plaintext highlighter-rouge">d:
+2022-03-23</code>.  So that commit is retained (along with all more recent
+commits on <code class="language-plaintext highlighter-rouge">dev</code>), but all older commits <code class="language-plaintext highlighter-rouge">d: *</code> will be collected.</li>
+      <li>21 days ago, on 2022-03-10, the head of branch <code class="language-plaintext highlighter-rouge">main</code> was
+<code class="language-plaintext highlighter-rouge">2022-03-09</code>.  So that commit is retained (along with all more recent
+commits on <code class="language-plaintext highlighter-rouge">main</code>), but commits <code class="language-plaintext highlighter-rouge">2022-02-27</code> and <code class="language-plaintext highlighter-rouge">2022-03-01</code> will be
+collected.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Discover which objects need to be garbage collected.</strong> Hold (<em>only</em>)
+objects accessible on some retained commits.</p>
+
+    <p>In the example, all objects of commit <code class="language-plaintext highlighter-rouge">2022-03-12</code>, for instance, are
+retained.  This <em>includes</em> objects added in previous commits.  However,
+objects added in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-14</code> which were overwritten or
+committed in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
+and will be garbage collected.</p>
+  </li>
+  <li>
+    <p><strong>Garbage collect those objects by deleting them.</strong>  The data of any
+deleted object will no longer be accessible.  lakeFS retains all metadata
+about the object, but attempting to read it via the lakeFS API or the S3
+gateway will return HTTP status 410 (“Gone”).</p>
+  </li>
+</ul>
       <h2 id="configuring-gc-rules">
         
         
@@ -484,9 +563,9 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOT</span><span class="sh"> &gt;&gt; example_repo_gc_rules.json
 {
-  "default_retention_days": 21,
+  "default_retention_days": 14,
   "branches": [
-    {"branch_id": "main", "retention_days": 28},
+    {"branch_id": "main", "retention_days": 21},
     {"branch_id": "dev", "retention_days": 7}
   ]
 }
