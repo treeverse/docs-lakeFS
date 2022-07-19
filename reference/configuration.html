@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Configuration Reference" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Configuring lakeFS is done using a yaml configuration file. This reference uses . to denote the nesting of values." />
-<meta property="og:description" content="Configuring lakeFS is done using a yaml configuration file. This reference uses . to denote the nesting of values." />
+<meta name="description" content="Configuring lakeFS is done using a YAML configuration file. This reference uses . to denote the nesting of values." />
+<meta property="og:description" content="Configuring lakeFS is done using a YAML configuration file. This reference uses . to denote the nesting of values." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Configuration Reference" />
 <script type="application/ld+json">
-{"description":"Configuring lakeFS is done using a yaml configuration file. This reference uses . to denote the nesting of values.","headline":"Configuration Reference","@type":"WebPage","url":"/reference/configuration.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Configuring lakeFS is done using a YAML configuration file. This reference uses . to denote the nesting of values.","headline":"Configuration Reference","@type":"WebPage","url":"/reference/configuration.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -443,8 +443,8 @@
 
 </div>
 
-<p>Configuring lakeFS is done using a yaml configuration file and/or environment variable.
-The configuration file location can be set with the ‘–config’ flag. If not specified, the first file found in the following order will be used:</p>
+<p>Configuring lakeFS is done using a YAML configuration file and/or environment variable.
+The configuration file’s location can be set with the ‘–config’ flag. If not specified, the first file found in the following order will be used:</p>
 <ol>
   <li>./config.yaml</li>
   <li><code class="language-plaintext highlighter-rouge">$HOME</code>/lakefs/config.yaml</li>
@@ -490,7 +490,7 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
 
     <p class="note"><strong>Note:</strong> It is best to keep this somewhere safe such as KMS or Hashicorp Vault, and provide it to the system at run time</p>
   </li>
-  <li><a name="ldap"></a><code class="language-plaintext highlighter-rouge">auth.ldap.server_endpoint</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - If specified, also authenticate users via this LDAP server</li>
+  <li><a name="ldap"></a><code class="language-plaintext highlighter-rouge">auth.ldap.server_endpoint</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - If specified, also authenticate users via this LDAP server.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.bind_dn</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - Use this DN to bind lakeFS on the LDAP server for searching for users.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.bind_password</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If set, use this password for binding <code class="language-plaintext highlighter-rouge">bind_dn</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.username_attribute</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - Attribute holding login username on LDAP users, e.g. <code class="language-plaintext highlighter-rouge">cn</code> or <code class="language-plaintext highlighter-rouge">uid</code>.</li>
@@ -508,9 +508,9 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">auth.oidc.friendly_name_claim_name</code> <code class="language-plaintext highlighter-rouge">(string[] : )</code> - If specified, the value from the claim with this name will be used as the user’s display name.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.oidc.authorize_endpoint_query_parameters</code> <code class="language-plaintext highlighter-rouge">(map[string]string : )</code> - Add these parameters when calling the provider’s <code class="language-plaintext highlighter-rouge">/authorize</code> endpoint</li>
   <li><code class="language-plaintext highlighter-rouge">auth.oidc.validate_id_token_claims</code> <code class="language-plaintext highlighter-rouge">(map[string]string : )</code> - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values.</li>
-  <li><code class="language-plaintext highlighter-rouge">blockstore.type</code> <code class="language-plaintext highlighter-rouge">(one of ["local", "s3", "gs", "azure", "mem"] : required)</code>.  Block adapter to use. This controls where the underlying data will be stored</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.type</code> <code class="language-plaintext highlighter-rouge">(one of ["local", "s3", "gs", "azure", "mem"] : required)</code>. Block adapter to use. This controls where the underlying data will be stored</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.default_namespace_prefix</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Use this to help your users choose a storage namespace for their repositories. 
- If specified, the storage namespace will be filled with this default value as a prefix, when creating a repository from the UI.
+ If specified, the storage namespace will be filled with this default value as a prefix when creating a repository from the UI.
  The user may still change it to something else.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.local.path</code> <code class="language-plaintext highlighter-rouge">(string: "~/lakefs/data")</code> - When using the local Block Adapter, which directory to store files in</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.gs.credentials_file</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified will be used as a file path of the JSON file that contains your Google service account key</li>
@@ -575,10 +575,10 @@ in-memory cache used for each SSTable reader.</li>
 representing the S3 endpoint used by S3 clients to call this server
 (<code class="language-plaintext highlighter-rouge">*.s3.local.lakefs.io</code> always resolves to 127.0.0.1, useful for
 local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual-host addressing</a>.</li>
-  <li><code class="language-plaintext highlighter-rouge">gateways.s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - AWS region we’re pretending to be. Should match the region configuration used in AWS SDK clients</li>
-  <li><code class="language-plaintext highlighter-rouge">gateways.s3.fallback_url</code> <code class="language-plaintext highlighter-rouge">(string)</code> - If specified, requests with a non-existing repository will be forwarded to this url. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an <a href="https://github.com/gaul/s3proxy">S3Proxy</a> instance.</li>
+  <li><code class="language-plaintext highlighter-rouge">gateways.s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - AWS region we’re pretending to be in, it should match the region configuration used in AWS SDK clients</li>
+  <li><code class="language-plaintext highlighter-rouge">gateways.s3.fallback_url</code> <code class="language-plaintext highlighter-rouge">(string)</code> - If specified, requests with a non-existing repository will be forwarded to this URL. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an <a href="https://github.com/gaul/s3proxy">S3Proxy</a> instance.</li>
   <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(boolean : true)</code> - Whether to periodically collect anonymous usage statistics</li>
-  <li><code class="language-plaintext highlighter-rouge">security.audit_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 12h)</code> - Duration in which we check for security audit</li>
+  <li><code class="language-plaintext highlighter-rouge">security.audit_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 12h)</code> - Duration in which we check for security audit.</li>
 </ul>
       <h2 id="using-environment-variables">
         
@@ -589,7 +589,7 @@ local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest
       </h2>
     
 
-<p>All configuration variables can be set or overridden using environment variables.
+<p>All the configuration variables can be set or overridden using environment variables.
 To set an environment variable, prepend <code class="language-plaintext highlighter-rouge">LAKEFS_</code> to its name, convert it to upper case, and replace <code class="language-plaintext highlighter-rouge">.</code> with <code class="language-plaintext highlighter-rouge">_</code>:</p>
 
 <p>For example, <code class="language-plaintext highlighter-rouge">logging.format</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_FORMAT</code>, <code class="language-plaintext highlighter-rouge">blockstore.s3.region</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_BLOCKSTORE_S3_REGION</code>, etc.</p>

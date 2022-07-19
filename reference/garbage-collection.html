@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Garbage Collection" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Clean up unnecessary objects" />
-<meta property="og:description" content="Clean up unnecessary objects" />
+<meta name="description" content="Clean up unnecessary objects using the garbage collection feature in lakeFS." />
+<meta property="og:description" content="Clean up unnecessary objects using the garbage collection feature in lakeFS." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Garbage Collection" />
 <script type="application/ld+json">
-{"description":"Clean up unnecessary objects","headline":"Garbage Collection","@type":"WebPage","url":"/reference/garbage-collection.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Clean up unnecessary objects using the garbage collection feature in lakeFS.","headline":"Garbage Collection","@type":"WebPage","url":"/reference/garbage-collection.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -422,7 +422,7 @@
     
 
 <p>By default, lakeFS keeps all your objects forever. This allows you to travel back in time to previous versions of your data.
-However, sometimes you may want to hard-delete your objects, namely delete them from the underlying storage. 
+However, sometimes you may want to hard-delete your objects - namely, delete them from the underlying storage. 
 Reasons for this include cost-reduction and privacy policies.</p>
 
 <p>Garbage collection rules in lakeFS define for how long to retain objects after they have been deleted (see more information <a href="#considerations">below</a>).
@@ -453,8 +453,8 @@ At this point, lakeFS supports Garbage Collection only on S3, but we have <a hre
 
 <p>For every branch, the GC job retains deleted objects for the number of days defined for the branch.
 In the absence of a branch-specific rule, the default rule for the repository is used.
-If an object is present in more than one branch ancestry, it is retained according to the rule with the largest number of days between those branches.
-That is, it is hard-deleted only after the retention period has ended for all relevant branches.</p>
+If an object is present in more than one branch ancestry, it’s retained according to the rule with the largest number of days between those branches.
+That is, it’s hard-deleted only after the retention period has ended for all relevant branches.</p>
 
 <p>Example GC rules for a repository:</p>
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
@@ -467,7 +467,7 @@ That is, it is hard-deleted only after the retention period has ended for all re
 </span></code></pre></div></div>
 
 <p>In the above example, objects are retained for 14 days after deletion by default. However, if they are present in the branch <code class="language-plaintext highlighter-rouge">main</code>, they are retained for 21 days.
-Objects present in the <code class="language-plaintext highlighter-rouge">dev</code> branch (but not in any other branch), are retained for 7 days after they are deleted.</p>
+Objects present in the <code class="language-plaintext highlighter-rouge">dev</code> branch (but not in any other branch) are retained for 7 days after they are deleted.</p>
       <h3 id="what-gets-collected">
         
         
@@ -478,10 +478,10 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
     
 
 <p>Because each object in lakeFS may be accessible from multiple branches, it
-might not be obvious what objects will be considered garbage and collected.</p>
+might not be obvious which objects will be considered garbage and collected.</p>
 
 <p>Garbage collection is configured by specifying the number of days to retain
-objects on each branch.  If a branch is configured to retain objects for a
+objects on each branch. If a branch is configured to retain objects for a
 given number of days, any object that was accessible from the HEAD of a
 branch in that past number of days will be retained.</p>
 
@@ -496,15 +496,15 @@ ago; every commit at or since that HEAD must be retained.</p>
     <p><img src="/reference/gc-sample-commits.png" alt="mermaid diagram" /></p>
 
     <p>Continuing the example, branch <code class="language-plaintext highlighter-rouge">main</code> retains for 21 days and branch <code class="language-plaintext highlighter-rouge">dev</code>
-for 7.  When running GC on 2022-03-31:</p>
+for 7. When running GC on 2022-03-31:</p>
 
     <ul>
       <li>7 days ago, on 2022-03-24 the head of branch <code class="language-plaintext highlighter-rouge">dev</code> was <code class="language-plaintext highlighter-rouge">d:
-2022-03-23</code>.  So that commit is retained (along with all more recent
-commits on <code class="language-plaintext highlighter-rouge">dev</code>), but all older commits <code class="language-plaintext highlighter-rouge">d: *</code> will be collected.</li>
+2022-03-23</code>. So, that commit is retained (along with all more recent
+commits on <code class="language-plaintext highlighter-rouge">dev</code>) but all older commits <code class="language-plaintext highlighter-rouge">d: *</code> will be collected.</li>
       <li>21 days ago, on 2022-03-10, the head of branch <code class="language-plaintext highlighter-rouge">main</code> was
-<code class="language-plaintext highlighter-rouge">2022-03-09</code>.  So that commit is retained (along with all more recent
-commits on <code class="language-plaintext highlighter-rouge">main</code>), but commits <code class="language-plaintext highlighter-rouge">2022-02-27</code> and <code class="language-plaintext highlighter-rouge">2022-03-01</code> will be
+<code class="language-plaintext highlighter-rouge">2022-03-09</code>. So that commit is retained (along with all more recent
+commits on <code class="language-plaintext highlighter-rouge">main</code>) but commits <code class="language-plaintext highlighter-rouge">2022-02-27</code> and <code class="language-plaintext highlighter-rouge">2022-03-01</code> will be
 collected.</li>
     </ul>
   </li>
@@ -513,14 +513,14 @@ collected.</li>
 objects accessible on some retained commits.</p>
 
     <p>In the example, all objects of commit <code class="language-plaintext highlighter-rouge">2022-03-12</code>, for instance, are
-retained.  This <em>includes</em> objects added in previous commits.  However,
+retained. This <em>includes</em> objects added in previous commits. However,
 objects added in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-14</code> which were overwritten or
 committed in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
 and will be garbage collected.</p>
   </li>
   <li>
-    <p><strong>Garbage collect those objects by deleting them.</strong>  The data of any
-deleted object will no longer be accessible.  lakeFS retains all metadata
+    <p><strong>Garbage collect those objects by deleting them.</strong> The data of any
+deleted object will no longer be accessible. lakeFS retains all metadata
 about the object, but attempting to read it via the lakeFS API or the S3
 gateway will return HTTP status 410 (“Gone”).</p>
   </li>
@@ -585,7 +585,7 @@ gateway will return HTTP status 410 (“Gone”).</p>
 <p>The GC job is a Spark program that can be run using <code class="language-plaintext highlighter-rouge">spark-submit</code> (or using your preferred method of running Spark programs).
 The job will hard-delete objects that were deleted and whose retention period has ended according to the GC rules.</p>
 
-<p>First, you’ll have to download the lakeFS Spark client Uber-jar. The Uber-Jar can be found on a public S3 location:</p>
+<p>First, you’ll have to download the lakeFS Spark client Uber-jar. The Uber-jar can be found on a public S3 location:</p>
 
 <p>For Spark 2.4.7: <br />
 http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-247/${CLIENT_VERSION}/lakefs-spark-client-247-assembly-${CLIENT_VERSION}.jar</p>

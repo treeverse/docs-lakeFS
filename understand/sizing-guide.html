@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Sizing Guide" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This page provides a detailed sizing guide for deploying lakeFS" />
-<meta property="og:description" content="This page provides a detailed sizing guide for deploying lakeFS" />
+<meta name="description" content="This section provides a detailed sizing guide for deploying lakeFS." />
+<meta property="og:description" content="This section provides a detailed sizing guide for deploying lakeFS." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Sizing Guide" />
 <script type="application/ld+json">
-{"description":"This page provides a detailed sizing guide for deploying lakeFS","headline":"Sizing Guide","@type":"WebPage","url":"/understand/sizing-guide.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section provides a detailed sizing guide for deploying lakeFS.","headline":"Sizing Guide","@type":"WebPage","url":"/understand/sizing-guide.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -480,8 +480,8 @@
         
       </h3>
     
-<p>lakeFS can run on MacOS and Linux (Windows binaries are available but not rigorously tested - 
-we don’t recommend deploying lakeFS to production on Windows).
+<p>lakeFS can run on MacOS and Linux. Windows binaries are available but not rigorously tested - 
+we don’t recommend deploying lakeFS to production on Windows.
 x86_64 and arm64 architectures are supported for both MacOS and Linux.</p>
       <h3 id="memory-and-cpu-requirements">
         
@@ -504,7 +504,7 @@ For high throughput, additional CPUs help scale requests across different cores.
     
 <p>If using the data APIs such as the <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a>, 
 lakeFS will require enough network bandwidth to support the planned concurrent network upload/download operations.
-For most cloud providers, more powerful machines (i.e. more expensive and usually with more CPU cores) also provide increased network bandwidth.</p>
+For most cloud providers, more powerful machines (i.e., more expensive and usually containing more CPU cores) also provide increased network bandwidth.</p>
 
 <p>If using only the metadata APIs (for example, only using the Hadoop/Spark clients), network bandwidth is minimal, 
 at roughly 1Kb per request.</p>
@@ -518,7 +518,7 @@ at roughly 1Kb per request.</p>
     
 <p>lakeFS greatly benefits from fast local disks. 
 A lakeFS instance doesn’t require any strong durability guarantees from the underlying storage, 
-as the disk is only ever used as a local caching layer for lakeFS metadata, and not for long-term storage.
+as the disk is only ever used as a local caching layer for lakeFS metadata and not for long-term storage.
 lakeFS is designed to work with <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ssd-instance-store.html" target="_blank">ephemeral disks</a> - 
 these are usually based on NVMe and are tied to the machine’s lifecycle. 
 Using ephemeral disks lakeFS can provide a very high throughput/cost ratio, 
@@ -547,7 +547,7 @@ and to keep track of currently uncommitted data across branches.</p>
         
       </h4>
     
-<p>The dataset stored in PostgreSQL is relatively modest, 
+<p>The dataset stored in PostgreSQL is relatively modest 
 as most metadata is pushed down into the object store. 
 Required storage is mostly a factor of the amount of uncommitted writes across all branches at any given point in time: 
 in the range of 150 MiB per every 100,000 uncommitted writes.</p>
@@ -561,14 +561,13 @@ in the range of 150 MiB per every 100,000 uncommitted writes.</p>
         
       </h4>
     
-<p>Since the data size is small, it is recommended to provide enough memory to hold the vast majority of that data in RAM:
-Ideally configure <a href="https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS" target="_blank">shared_buffers</a> 
+<p>Since the data size is small, it’s recommended to provide enough memory to hold the vast majority of that data in RAM:
+Ideally, configure the <a href="https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS" target="_blank">shared_buffers</a> 
 of your PostgreSQL instances to be large enough to contain the currently active dataset. 
-Pick a database instance with enough RAM to accommodate this buffer size, at roughly x4 the size given for <code class="language-plaintext highlighter-rouge">shared_buffers</code> 
-(so for example, if an installation has ~500,000 uncommitted writes at any given time, it would require about 750 MiB of <code class="language-plaintext highlighter-rouge">shared_buffers</code>, 
-that would require about 3 GiB of RAM).</p>
+Pick a database instance with enough RAM to accommodate this buffer size at roughly x4 the size given for <code class="language-plaintext highlighter-rouge">shared_buffers</code>. For example, if an installation has ~500,000 uncommitted writes at any given time, it would require about 750 MiB of <code class="language-plaintext highlighter-rouge">shared_buffers</code> 
+that would require about 3 GiB of RAM.</p>
 
-<p>Cloud providers will save you the need to tune this parameter. It will be set to a fixed percentage the chosen instance’s available RAM (25% on AWS RDS, 30% on Google Cloud SQL).</p>
+<p>Cloud providers will save you the need to tune this parameter - it will be set to a fixed percentage the chosen instance’s available RAM (25% on AWS RDS, 30% on Google Cloud SQL).</p>
       <h4 id="cpu">
         
         
@@ -588,8 +587,7 @@ that would require about 3 GiB of RAM).</p>
       </h2>
     
 
-<p>Scaling lakeFS, like most data systems, moves across 2 axes: 
-throughput of requests (amount per given timeframe), and latency (time to complete a single request).</p>
+<p>Scaling lakeFS, like most data systems, moves across two axes: throughput of requests (amount per given timeframe) and latency (time to complete a single request).</p>
       <h3 id="understanding-latency-and-throughput-considerations">
         
         
@@ -600,27 +598,26 @@ throughput of requests (amount per given timeframe), and latency (time to comple
     
 
 <p>Most lakeFS operations are designed to be very low in latency. 
-Assuming a well tuned local disk cache (see <a href="#storage">Storage</a> above), 
+Assuming a well-tuned local disk cache (see <a href="#storage">Storage</a> above), 
 most critical path operations 
 (writing objects, requesting objects, deleting objects) are designed to complete in <strong>&lt;25ms at p90</strong>. 
 Listing objects obviously requires accessing more data, but should always be on-par with what the underlying object store can provide, 
-and in most cases, it is actually faster. 
-At the worst case for directory listing with 1,000 common prefixes returned, expect a latency of <strong>75ms at p90</strong>.</p>
+and in most cases, it’s actually faster. 
+At the worst case, for directory listing with 1,000 common prefixes returned, expect a latency of <strong>75ms at p90</strong>.</p>
 
 <p>Managing branches (creating them, listing them and deleting them) are all constant-time operations, generally taking <strong>&lt;30ms at p90</strong>.</p>
 
 <p>Committing and merging can take longer, as they are proportional to the amount of <strong>changes</strong> introduced. 
 This is what makes lakeFS optimal for large Data Lakes - 
-the amount of changes introduced per commit usually stays relatively stable, 
-while the entire data set usually grows over time. 
+the amount of changes introduced per commit usually stays relatively stable while the entire data set usually grows over time. 
 This means lakeFS will provide predictable performance: 
 committing 100 changes will take roughly the same amount of time whether the resulting commit contains 500 or 500 million objects.</p>
 
 <p>See <a href="/understand/versioning-internals.html">Data Model</a> for more information.</p>
 
 <p>Scaling throughput depends very much on the amount of CPU cores available to lakeFS. 
-In many cases it is easier to scale lakeFS across a fleet of smaller cloud instances (or containers) 
-than it is to scale up with machines that have many cores, and in fact, lakeFS works well in both cases. 
+In many cases, it’s easier to scale lakeFS across a fleet of smaller cloud instances (or containers) 
+than scale up with machines that have many cores. In fact, lakeFS works well in both cases. 
 Most critical path operations scale very well across machines.</p>
       <h2 id="benchmarks">
         
@@ -634,7 +631,7 @@ Most critical path operations scale very well across machines.</p>
 <p>All benchmarks below were measured using 2 x <a href="https://aws.amazon.com/ec2/instance-types/c5/" target="_blank">c5ad.4xlarge</a> instances 
 on <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions">AWS us-east-1</a>. 
 Similar results can be achieved on Google Cloud using a <code class="language-plaintext highlighter-rouge">c2-standard-16</code> machine type, with an attached <a href="https://cloud.google.com/compute/docs/disks/local-ssd">local SSD</a>.
-On Azure, a <code class="language-plaintext highlighter-rouge">Standard_F16s_v2</code> virtual machine can be used.</p>
+On Azure, you can use a <code class="language-plaintext highlighter-rouge">Standard_F16s_v2</code> virtual machine.</p>
 
 <p>The PostgreSQL instance that was used is a <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html" target="_blank">db.m6g.2xlarge</a>
 (8 vCPUs, 32 GB RAM). Equivalent machines on Google Cloud or Azure should yield similar results.</p>
@@ -643,7 +640,7 @@ On Azure, a <code class="language-plaintext highlighter-rouge">Standard_F16s_v2<
 where each commit contains <strong>~180,000,000</strong> objects (representing ~7.5 Petabytes of data).</p>
 
 <p>All tests are reproducible using the <a href="/reference/commands.html#lakectl-abuse">lakectl abuse command</a>, 
-so do use it to properly size and tune your setup. All tests are accompanied by the relevant <code class="language-plaintext highlighter-rouge">lakectl abuse</code> command that generated them.</p>
+so use it to properly size and tune your setup. All tests are accompanied by the relevant <code class="language-plaintext highlighter-rouge">lakectl abuse</code> command that generated them.</p>
       <h3 id="random-reads">
         
         
@@ -706,7 +703,7 @@ total	500000
     
 
 <p>This test generates random write requests to a given lakeFS branch. 
-All paths are pre-generated and do not overwrite each other (as overwrites are relatively rare in a Data Lake setup).</p>
+All the paths are pre-generated and don’t overwrite each other (as overwrites are relatively rare in a Data Lake setup).</p>
 
 <p><strong>command executed:</strong></p>
 
@@ -742,11 +739,11 @@ max	233
 total	500000
 </code></pre></div></div>
 
-<p>So 50% of all requests took &lt;10ms, while 99.9% of them took &lt;25ms</p>
+<p>So, 50% of all requests took &lt;10ms, while 99.9% of them took &lt;25ms.</p>
 
 <p><strong>throughput:</strong></p>
 
-<p>Average throughput during the experiment was <strong>7595.46 requests/second</strong></p>
+<p>The average throughput during the experiment was <strong>7595.46 requests/second</strong>.</p>
       <h3 id="branch-creation">
         
         
@@ -756,7 +753,7 @@ total	500000
       </h3>
     
 
-<p>This test creates branches from a given reference</p>
+<p>This test creates branches from a given reference.</p>
 
 <p><strong>command executed:</strong></p>
 
@@ -793,11 +790,11 @@ max	304
 total	500000
 </code></pre></div></div>
 
-<p>So 50% of all requests took &lt;15ms, while 99.9% of them took &lt;100ms</p>
+<p>So, 50% of all requests took &lt;15ms, while 99.9% of them took &lt;100ms.</p>
 
 <p><strong>throughput:</strong></p>
 
-<p>Average throughput during the experiment was <strong>7069.03 requests/second</strong></p>
+<p>The average throughput during the experiment was <strong>7069.03 requests/second</strong>.</p>
       <h2 id="important-metrics">
         
         
@@ -812,11 +809,11 @@ Every lakeFS instance exposes a <code class="language-plaintext highlighter-roug
 
 <p>Here are a few notable metrics to keep track of when sizing lakeFS:</p>
 
-<p><code class="language-plaintext highlighter-rouge">api_requests_total</code> - Tracks throughput of API requests over time</p>
+<p><code class="language-plaintext highlighter-rouge">api_requests_total</code> - Tracks throughput of API requests over time.</p>
 
-<p><code class="language-plaintext highlighter-rouge">api_request_duration_seconds</code> - Histogram of latency per operation type</p>
+<p><code class="language-plaintext highlighter-rouge">api_request_duration_seconds</code> - Histogram of latency per operation type.</p>
 
-<p><code class="language-plaintext highlighter-rouge">gateway_request_duration_seconds</code> - Histogram of latency per <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> operation</p>
+<p><code class="language-plaintext highlighter-rouge">gateway_request_duration_seconds</code> - Histogram of latency per <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> operation.</p>
 
 <p><code class="language-plaintext highlighter-rouge">go_sql_stats_*</code> - Important client-side metrics collected from the PostgreSQL driver. 
 See <a href="https://github.com/dlmiddlecote/sqlstats#exposed-metrics" target="_blank">The full reference here</a>.</p>
@@ -829,7 +826,7 @@ See <a href="https://github.com/dlmiddlecote/sqlstats#exposed-metrics" target="_
       </h2>
     
 
-<p>Below are a few example architectures for lakeFS deployment</p>
+<p>Below are a few example architectures for lakeFS deployment.</p>
       <h3 id="reference-architecture-data-scienceresearch-environment">
         
         
@@ -841,7 +838,7 @@ See <a href="https://github.com/dlmiddlecote/sqlstats#exposed-metrics" target="_
 
 <p><strong>Use case:</strong> Manage Machine learning or algorithms development. 
 Use lakeFS branches to achieve both isolation and reproducibility of experiments. 
-Data being managed by lakeFS is both structured, tabular data; 
+Data being managed by lakeFS is both structured tabular data, 
 as well as unstructured sensor and image data used for training. 
 Assuming a team of 20-50 researchers, with a dataset size of 500 TiB across 20M objects.</p>
 
@@ -849,7 +846,7 @@ Assuming a team of 20-50 researchers, with a dataset size of 500 TiB across 20M 
 managed by <a href="https://aws.amazon.com/eks/" target="_blank">AWS EKS</a> 
 with PostgreSQL on <a href="https://aws.amazon.com/rds/aurora/postgresql-features/" target="_blank">AWS RDS Aurora</a></p>
 
-<p><strong>Sizing:</strong> Since most of the work is done by humans (vs automated pipelines), most experiments tend to be small in scale, 
+<p><strong>Sizing:</strong> Since most of the work is done by humans (vs. automated pipelines), most experiments tend to be small in scale, 
 reading and writing 10s to 1000s of objects. 
 The expected amount of branches active in parallel is relatively low, around 1-2 per user, 
 each representing a small amount of uncommitted changes at any given point in time. 
@@ -857,11 +854,11 @@ Let’s assume 5,000 uncommitted writes per branch = ~500k.</p>
 
 <p>To support the expected throughput, a single moderate lakeFS instance should be more than enough, 
 since requests per second would be on the order of 10s to 100s. 
-For high availability, we’ll deploy 2 pods with 1 CPU core and 1 GiB of RAM each..</p>
+For high availability, we’ll deploy 2 pods with 1 CPU core and 1 GiB of RAM each.</p>
 
 <p>Since the PostgreSQL instance is expected to hold a very small dataset 
 (at 500k, expected dataset size is <code class="language-plaintext highlighter-rouge">150MiB (for 100k records) * 5 = 750MiB</code>). 
-To ensure we have enough RAM to hold this, we’ll need 3 GiB of RAM, so a very moderate Aurora instance <code class="language-plaintext highlighter-rouge">db.t3.large</code> (2 vCPUs, 8 GB RAM) will be more than enough.
+To ensure we have enough RAM to hold this, we’ll need 3 GiB of RAM, so, a very moderate Aurora instance <code class="language-plaintext highlighter-rouge">db.t3.large</code> (2 vCPUs, 8 GB RAM) will be more than enough.
 An equivalent database instance on GCP or Azure should give similar results.</p>
 
 <p><img src="/assets/img/reference_arch1.png" alt="ML and Research lakeFS reference architecture" /></p>
@@ -876,15 +873,15 @@ An equivalent database instance on GCP or Azure should give similar results.</p>
 
 <p><strong>Use case:</strong> Manage multiple concurrent data pipelines using Apache Spark and Airflow. 
 Airflow DAGs start by creating a branch for isolation and for CI/CD. 
-Data being managed by lakeFS is structured, tabular data. Total dataset size is 10 PiB,  spanning across 500M objects. 
-Expected throughput is 10k reads/second + 2k writes per second across 100 concurrent branches.</p>
+Data being managed by lakeFS is structured, tabular data. The total dataset size is 10 PiB, spanning across 500M objects. 
+The expected throughput is 10k reads/second + 2k writes per second across 100 concurrent branches.</p>
 
 <p><strong>Environment:</strong> lakeFS will be deployed on <a href="/deploy/k8s.html">Kubernetes</a> 
 managed by <a href="https://aws.amazon.com/eks/" target="_blank">AWS EKS</a> 
 with PostgreSQL on <a href="https://aws.amazon.com/rds/aurora/postgresql-features/" target="_blank">AWS RDS</a></p>
 
 <p><strong>Sizing:</strong> Data pipelines tend to be bursty in nature: 
-reading in a lot of objects concurrently, doing some calculation or aggregation and then writing many objects concurrently. 
+reading in a lot of objects concurrently, doing some calculation or aggregation, and then writing many objects concurrently. 
 The expected amount of branches active in parallel is high, 
 with many Airflow DAGs running per day, each representing a moderate amount of uncommitted changes at any given point in time. 
 Let’s assume 1,000 uncommitted writes/branch * 2500 branches = ~2.5M records.</p>
@@ -892,8 +889,7 @@ Let’s assume 1,000 uncommitted writes/branch * 2500 branches = ~2.5M records.<
 <p>To support the expected throughput, looking the benchmarking numbers above, 
 we’re doing roughly 625 requests/core, so 24 cores should cover our peak traffic. We can deploy <code class="language-plaintext highlighter-rouge">6 * 4 CPU core pods</code>.</p>
 
-<p>The PostgreSQL instance 
-(at 500k, expected dataset size is <code class="language-plaintext highlighter-rouge">150MiB (for 100k records) * 25 = 3750 MiB</code>). 
+<p>On to the PostgreSQL instance - at 500k, the expected dataset size is <code class="language-plaintext highlighter-rouge">150MiB (for 100k records) * 25 = 3750 MiB</code>. 
 To ensure we have enough RAM to hold this, we’ll need at least 15 GiB of RAM, so we’ll go with a <code class="language-plaintext highlighter-rouge">db.r5.xlarge</code> (4 vCPUs, 32GB RAM) Aurora instance.
 An equivalent database instance on GCP or Azure should give similar results.</p>
 

@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="With Kubernetes" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This guide will help you deploy your production lakeFS environment on Kubernetes using a helm chart" />
-<meta property="og:description" content="This guide will help you deploy your production lakeFS environment on Kubernetes using a helm chart" />
+<meta name="description" content="This guide will help you deploy your production lakeFS environment on Kubernetes using a Helm chart." />
+<meta property="og:description" content="This guide will help you deploy your production lakeFS environment on Kubernetes using a Helm chart." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="With Kubernetes" />
 <script type="application/ld+json">
-{"description":"This guide will help you deploy your production lakeFS environment on Kubernetes using a helm chart","headline":"With Kubernetes","@type":"WebPage","url":"/deploy/k8s.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This guide will help you deploy your production lakeFS environment on Kubernetes using a Helm chart.","headline":"With Kubernetes","@type":"WebPage","url":"/deploy/k8s.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -430,8 +430,8 @@
     
 
 <p>lakeFS requires a PostgreSQL database to synchronize actions on your repositories.
-This section assumes you already have a PostgreSQL database accessible from your Kubernetes cluster.
-Instructions for creating the database can be found on the deployment instructions for <a href="/deploy/aws.html#creating-the-database-on-aws-rds">AWS</a>, <a href="/deploy/azure.html#creating-the-database-on-azure-database">Azure</a> and <a href="/deploy/gcp.html#creating-the-database-on-gcp-sql">GCP</a>.</p>
+This section assumes that you already have a PostgreSQL database accessible from your Kubernetes cluster.
+You can find the instructions for creating the database in the deployment guide for <a href="/deploy/aws.html#creating-the-database-on-aws-rds">AWS</a>, <a href="/deploy/azure.html#creating-the-database-on-azure-database">Azure</a> and <a href="/deploy/gcp.html#creating-the-database-on-gcp-sql">GCP</a>.</p>
 
 <div class="toc-block">
       <h2 class="no_toc text-delta" id="table-of-contents">
@@ -470,7 +470,7 @@ Instructions for creating the database can be found on the deployment instructio
       </h2>
     
 
-<p>lakeFS can be easily installed on Kubernetes using a <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">Helm chart</a>.
+<p>You can easily install lakeFS on Kubernetes using a <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">Helm chart</a>.
 To install lakeFS with Helm:</p>
 <ol>
   <li>Copy the Helm values file relevant to your storage provider:</li>
@@ -529,7 +529,7 @@ To install lakeFS with Helm:</p>
       <span class="s">type: azure</span>
       <span class="s">azure:</span>
         <span class="s">auth_method: msi # msi for active directory, access-key for access key </span>
-     <span class="s">#  In case you chose to authenticate via access key unmark the following rows and insert the values from the previous step </span>
+     <span class="s">#  If you chose to authenticate via access key, unmark the following rows and insert the values from the previous step </span>
      <span class="s">#  storage_account: [your storage account]</span>
      <span class="s">#  storage_access_key: [your access key]</span>
 </code></pre></div>    </div>
@@ -540,8 +540,8 @@ To install lakeFS with Helm:</p>
   <li>
     <p>Fill in the missing values and save the file as <code class="language-plaintext highlighter-rouge">conf-values.yaml</code>. For more configuration options, see our Helm chart <a href="https://github.com/treeverse/charts/blob/master/charts/lakefs/README.md#custom-configuration" target="_blank">README</a>.</p>
 
-    <p>The <code class="language-plaintext highlighter-rouge">lakefsConfig</code> parameter is the lakeFS configuration documented <a href="https://docs.lakefs.io/reference/configuration.html">here</a>, but without sensitive information.
-Sensitive information like <code class="language-plaintext highlighter-rouge">databaseConnectionString</code> is given through separate parameters, and the chart will inject them into Kubernetes secrets.</p>
+    <p>The <code class="language-plaintext highlighter-rouge">lakefsConfig</code> parameter is the lakeFS configuration documented <a href="https://docs.lakefs.io/reference/configuration.html">here</a> but without sensitive information.
+Sensitive information like <code class="language-plaintext highlighter-rouge">databaseConnectionString</code> is given through separate parameters, and the chart will inject it into Kubernetes secrets.</p>
   </li>
   <li>
     <p>In the directory where you created <code class="language-plaintext highlighter-rouge">conf-values.yaml</code>, run the following commands:</p>
@@ -556,7 +556,7 @@ Sensitive information like <code class="language-plaintext highlighter-rouge">da
   </li>
 </ol>
 
-<p class="note note-info">You should give your Kubernetes nodes access to all buckets/containers you intend to use lakeFS with.
+<p class="note note-info">You should give your Kubernetes nodes access to all buckets/containers with which you intend to use lakeFS.
 If you can’t provide such access, lakeFS can be configured to use an AWS key-pair, an Azure access key, or a Google Cloud credentials file to authenticate (part of the <code class="language-plaintext highlighter-rouge">lakefsConfig</code> YAML below).</p>
       <h2 id="load-balancing">
         
@@ -567,11 +567,11 @@ If you can’t provide such access, lakeFS can be configured to use an AWS key-p
       </h2>
     
 <p>You should have a load balancer direct requests to the lakeFS server.
-Options to do so include a Kubernetes Service of type <code class="language-plaintext highlighter-rouge">LoadBalancer</code>, or a Kubernetes Ingress.
-By default, lakeFS operates on port 8000, and exposes a <code class="language-plaintext highlighter-rouge">/_health</code> endpoint which you can use for health checks.</p>
+Options to do so include a Kubernetes Service of type <code class="language-plaintext highlighter-rouge">LoadBalancer</code> or a Kubernetes Ingress.
+By default, lakeFS operates on port 8000 and exposes a <code class="language-plaintext highlighter-rouge">/_health</code> endpoint that you can use for health checks.</p>
 
 <p class="note">The NGINX Ingress Controller by default limits the client body size to 1 MiB.
-Some clients use bigger chunks to upload objects, for example multipart upload to lakeFS using the <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> or 
+Some clients use bigger chunks to upload objects - for example, multipart upload to lakeFS using the <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> or 
 a simple PUT request using the <a href="/understand/architecture.html#openapi-server">OpenAPI Server</a>.
 Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-max-body-size">documentation</a> for increasing the limit, or an example of Nginx configuration with <a href="https://docs.min.io/docs/setup-nginx-proxy-with-minio.html">MinIO</a>.</p>
       <h2 id="next-steps">

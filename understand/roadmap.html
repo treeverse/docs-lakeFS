@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Roadmap" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="New features and improvements are lined-up next for lakeFS. We would love you to be part of building lakeFS’s roadmap." />
-<meta property="og:description" content="New features and improvements are lined-up next for lakeFS. We would love you to be part of building lakeFS’s roadmap." />
+<meta name="description" content="New features and improvements lined-up for lakeFS. Become part of building the lakeFS roadmap." />
+<meta property="og:description" content="New features and improvements lined-up for lakeFS. Become part of building the lakeFS roadmap." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Roadmap" />
 <script type="application/ld+json">
-{"description":"New features and improvements are lined-up next for lakeFS. We would love you to be part of building lakeFS’s roadmap.","headline":"Roadmap","@type":"WebPage","url":"/understand/roadmap.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"New features and improvements lined-up for lakeFS. Become part of building the lakeFS roadmap.","headline":"Roadmap","@type":"WebPage","url":"/understand/roadmap.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -478,10 +478,8 @@
       </h3>
     
 
-<p>Since Snowflake supports reading external tables from an object store, we’d like to extend this support to work with lakeFS repositories that are hosted on top of <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html#supported-cloud-storage-services" target="_blank">supported object stores</a>.
-This could be done by utilizing Snowflake’s support for <code class="language-plaintext highlighter-rouge">SymlinkInputFormat</code> similar to how <a href="https://docs.databricks.com/delta/snowflake-integration.html" target="_blank">Delta Lake support is implemented</a>, and later on by having a native integration with Snowflake itself. If you’d like to hear more:</p>
-
-<p><a href="mailto:hello@treeverse.io?subject=using+lakeFS+with+Snowflake" target="_blank" class="btn">Contact us, we’d love to talk about it!</a></p>
+<p>Since Snowflake supports reading external tables from an object store, we’d like to extend this support to work with lakeFS repositories hosted on top of the <a href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html#supported-cloud-storage-services" target="_blank">supported object stores</a>.
+This could be done by utilizing Snowflake’s support for <code class="language-plaintext highlighter-rouge">SymlinkInputFormat</code> similarly to how <a href="https://docs.databricks.com/delta/snowflake-integration.html" target="_blank">Delta Lake support is implemented</a> and later on by having a native integration with Snowflake itself. If you’d like to hear more, <a href="mailto:hello@treeverse.io?subject=using+lakeFS+with+Snowflake" target="_blank" class="btn">contact us, we’d love to talk about it some more!</a></p>
       <h3 id="pluggable-diffmerge-operators">
         
         
@@ -492,19 +490,19 @@ This could be done by utilizing Snowflake’s support for <code class="language-
     
 
 <p>Currently, lakeFS supports merging and comparing references by doing an object-wise comparison. 
-For unstructured data and some forms of tabluar data (namely Hive structured tables), this works fine.</p>
+For unstructured data and some forms of tabluar data (namely, Hive structured tables), this works fine.</p>
 
-<p>However, in some cases, simply creating a union of object modifications from both references isn’t good enough. 
-Modern table formats such as Delta Lake, Hudi and Iceberg rely on a set of manifest or log files that describe the logical structure of the table. 
+<p>However, in some cases simply creating a union of object modifications from both references isn’t good enough. 
+Modern table formats such as Delta Lake, Hudi, and Iceberg rely on a set of manifest or log files that describe the logical structure of the table. 
 In those cases, a merge operation might have to be aware of the structure of the data: 
 generate a new manifest or re-order the log in order for the output to make sense.
 Additionally, the definition of a conflict is also a bit different: 
 simply looking at object names to determine whether or not a conflict occured might not be good enough.</p>
 
-<p>With that in mind, we plan on making the diff and merge operations pluggable. 
+<p>With that in mind, we plan to make the diff and merge operations pluggable. 
 lakeFS already supports injecting custom behavior using hooks. Ideally, we can support this by introducing <code class="language-plaintext highlighter-rouge">on-diff</code> and <code class="language-plaintext highlighter-rouge">on-merge</code> hooks that allow implementing hooks in different languages, possibly utilizing existing code and libraries to aid with understanding these formats.</p>
 
-<p>Once implemented we could support:</p>
+<p>Once implemented, we could support:</p>
       <h4 id="delta-lake-merges-and-diffs-across-branches">
         
         
@@ -516,12 +514,12 @@ lakeFS already supports injecting custom behavior using hooks. Ideally, we can s
 
 <p>Delta lake stores metadata files that represent a <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md#delta-log-entries">logical transaction log that relies on numerical ordering</a>.</p>
 
-<p>Currently, when trying to modify a Delta table from 2 different branches, lakeFS would correctly recognize a conflict: this log diverged into 2 different copies, representing different changes.
-Users would then have to forgo one of the change sets, by either retaining the destination’s branch set of changes, or the source’s branch.</p>
+<p>Currently, when trying to modify a Delta table from two different branches, lakeFS would correctly recognize a conflict: this log diverged into two different copies, representing different changes.
+Users would then have to forgo one of the change sets by either retaining the destination’s branch set of changes or the source’s branch.</p>
 
 <p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h4 id="iceberg-merges-and-diffs-across-branches-high-priority">
         
         
@@ -533,12 +531,12 @@ Users would then have to forgo one of the change sets, by either retaining the d
 
 <p>Iceberg stores metadata files (“manifests”) that represent a <a href="https://iceberg.apache.org/spec/#manifests">snapshot of a given Iceberg table</a>.</p>
 
-<p>Currently, when trying to modify an Iceberg table from 2 different branches, lakeFS would not be able to create a logical snapshot that consists of the changes applied in both references.
-Users would then have to forgo one of the change sets, by either retaining the destination’s branch set of changes, or the source’s branch.</p>
+<p>Currently, when trying to modify an Iceberg table from two different branches, lakeFS would not be able to create a logical snapshot that consists of the changes applied in both references.
+Users would then have to forgo one of the change sets by either retaining the destination’s branch set of changes or the source’s branch.</p>
 
 <p>A much better user experience would be to allow merging snapshots into a new unified set of changes, representing changes made in both refs as a new snapshot.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/3381" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/3381" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="native-spark-outputcommitter">
         
         
@@ -548,18 +546,18 @@ Users would then have to forgo one of the change sets, by either retaining the d
       </h3>
     
 
-<p>Add a Hadoop OutputCommitter that uses existing lakeFS operations for atomic commits that are efficient and safely concurrent.</p>
+<p>We plan to add a Hadoop OutputCommitter that uses existing lakeFS operations for atomic commits that are efficient and safely concurrent.</p>
 
-<p>This has several benefits:</p>
+<p>This comes with several benefits:</p>
 
 <ul>
-  <li>Performance: This committer does metadata operations only, and doesn’t rely on copying data</li>
+  <li>Performance: This committer does metadata operations only and doesn’t rely on copying data.</li>
   <li>Atomicity: A commit in lakeFS is guaranteed to either succeed or fail, but will not leave any intermediate state on failure.</li>
   <li>Traceability: Attaching metadata to each commit means we get quite a lot of information on where data is coming from, how it’s generated, etc. This allows building reproducible pipelines in an easier way.</li>
-  <li>Resilience: Since every Spark write is a commit, it is also undoable by reverting it.</li>
+  <li>Resilience: Since every Spark write is a commit, it’s also undoable by reverting it.</li>
 </ul>
 
-<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/spark-outputcommitter/committer.md" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/spark-outputcommitter/committer.md" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="native-connector-trino">
         
         
@@ -569,14 +567,14 @@ Users would then have to forgo one of the change sets, by either retaining the d
       </h3>
     
 
-<p>Currently, the Trino integration works well using the <a href="/understand/architecture.html#s3-gateway">lakeFS s3 Gateway</a>.</p>
+<p>Currently, the Trino integration works well using the <a href="/understand/architecture.html#s3-gateway">lakeFS S3 Gateway</a>.</p>
 
-<p>While easy to integrate and useful out of the box, due to the S3 protocol, it means that the data itself must pass through the lakeFS server.</p>
+<p>While easy to integrate and useful out-of-the-box, due to the S3 protocol, it means that the data itself must pass through the lakeFS server.</p>
 
-<p>For larger installations, a native integration where lakeFS handles metadata, returning locations in the underlying object store that Trino can then access directly, would allow reducing the operational overhead and increasing the scalability of lakeFS.
+<p>For larger installations, a native integration where lakeFS handles metadata and returns locations in the underlying object store that Trino can then access directly would allow reducing the operational overhead and increasing the scalability of lakeFS.
 This would be done in a similar way to the <a href="/integrations/spark.html">Native Spark integration</a> using the <a href="/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">Hadoop Filesystem implementation</a>.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2357" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/2357" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="improved-streaming-support-for-apache-kafka">
         
         
@@ -588,12 +586,12 @@ This would be done in a similar way to the <a href="/integrations/spark.html">Na
 
 <p>Committing (along with attaching useful information to the commit) makes a lot of sense for batch workloads:</p>
 <ul>
-  <li>run a job or a pipeline on a separate branch and commit</li>
-  <li>record information such as the git hash of the code executed, the versions of frameworks used, and information about the data artifacts</li>
-  <li>once the pipeline has completed successfully, commit and attach the recorded information as metadata</li>
+  <li>run a job or a pipeline on a separate branch and commit,</li>
+  <li>record information such as the git hash of the code executed, the versions of frameworks used, and information about the data artifacts,</li>
+  <li>once the pipeline has completed successfully, commit, and attach the recorded information as metadata.</li>
 </ul>
 
-<p>For streaming however, this is currently less clear: There’s no obvious point in time to commit, as things never actually “finish successfully”.
+<p>For streaming, however, this is currently less clear: There’s no obvious point in time to commit as things never actually “finish successfully”.
 <a href="/using_lakefs/production.html#example-1-rollback---data-ingested-from-a-kafka-stream">The recommended pattern</a> would be to ingest from a stream on a separate branch, periodically committing - storing not only the data added since last commit but also capturing the offset read from the stream, for reproducibility.
 These commits can then be merged into a main branch given they pass all relevant quality checks and other validations using hooks, exposing consumers to validated, clean data.</p>
 
@@ -601,13 +599,13 @@ These commits can then be merged into a main branch given they pass all relevant
 
 <ol>
   <li>Orchestrate the commits and merge operations.</li>
-  <li>figure out how to attach the correct offset read from the stream broker</li>
-  <li>Handle writes coming in while the commit is taking place</li>
+  <li>Figure out how to attach the correct offset read from the stream broker.</li>
+  <li>Handle writes coming in while the commit is taking place.</li>
 </ol>
 
 <p>Ideally, lakeFS should provide tools to automate this, with native support for <a href="https://kafka.apache.org/" target="_blank">Apache Kafka</a>.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2358" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/2358" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h2 id="versioning-capabilities">
         
         
@@ -627,7 +625,7 @@ These commits can then be merged into a main branch given they pass all relevant
 <p>The ability to connect Git commits with lakeFS commits.
 Especially useful for reproducibility: By looking at a set of changes to the <strong>data</strong>, be able to reference (or ever run) the job that produced it.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="support-asyncronous-hooks-high-priority">
         
         
@@ -637,12 +635,11 @@ Especially useful for reproducibility: By looking at a set of changes to the <st
       </h3>
     
 
-<p>support running hooks that might possibly take many minutes to complete. 
+<p>Support running hooks that might possibly take many minutes to complete. 
 This is useful for things such as data quality checks - where we might want to do big queries or scans to ensure the data being merged adheres to certain business rules.</p>
 
 <p>Currently, <code class="language-plaintext highlighter-rouge">pre-commit</code> and <code class="language-plaintext highlighter-rouge">pre-merge</code> hooks in lakeFS are tied to the lifecycle of the API request that triggers the said commit or merge operation.
-In order to support long running hooks, there are enhancements to make to lakeFS APIs in order to support an asynchronous commit and merge operations that are no
-longer tied to the HTTP request that triggered them.</p>
+In order to support long running hooks, there are enhancements to make to lakeFS APIs in order to support an asynchronous commit and merge operations that are no longer tied to the HTTP request that triggered them.</p>
       <h3 id="partial-commits">
         
         
@@ -652,7 +649,7 @@ longer tied to the HTTP request that triggered them.</p>
       </h3>
     
 
-<p>In some cases, lakeFS users might want to commit only a set of staged objects instead of all modifications made to a branch
+<p>In some cases, lakeFS users might want to commit only a set of staged objects instead of all modifications made to a branch.
 This is especially useful when experimenting with multiple data sources, but we only care about an output as opposed to intermediate state.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/2512" target="_blank" class="btn">Track and discuss on GitHub</a></p>
@@ -665,10 +662,9 @@ This is especially useful when experimenting with multiple data sources, but we 
       </h3>
     
 
-<p>Since some users are interested in achieving parity between their Git workflow and their lakeFS workflow, extending the merge behavior to support
-history rewriting in which the changes that occured in the source branch are then reapplied to the HEAD of the destination branch (aka “rebase”) is desired.</p>
+<p>Since some users are interested in achieving parity between their Git workflow and their lakeFS workflow, they would like to extend the merge behavior to support history rewriting in which the changes that occured in the source branch are then reapplied to the HEAD of the destination branch (aka “rebase”).</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/2739" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/2739" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="support-garbage-collection-on-azure-high-priority">
         
         
@@ -681,7 +677,7 @@ history rewriting in which the changes that occured in the source branch are the
 <p>The lakeFS <a href="https://docs.lakefs.io/reference/garbage-collection.html">Garbage Collection</a> capability hard-deletes objects deleted from branches, helping users reduce costs and 
 comply with data privacy policies. Currently, lakeFS only supports Garbage Collection of S3 objects managed by lakeFS. Extending the support to Azure will allow lakeFS users that use Azure as their underlying storage to use this feature.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/3271" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/3271" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h2 id="architecture">
         
         
@@ -699,19 +695,19 @@ comply with data privacy policies. Currently, lakeFS only supports Garbage Colle
       </h3>
     
 
-<p>Currently lakeFS requires a PostgreSQL database. Internally, it is used to store references (branches, tags, etc), uncommitted objects metadata and other metadata such as user management.</p>
+<p>Currently, lakeFS requires a PostgreSQL database. Internally, it’s used to store references (branches, tags, etc.), uncommitted objects metadata, and other metadata such as user management.</p>
 
 <p>Making this store a pluggable component would allow the following:</p>
 
 <ol>
-  <li>Simpler quickstart using <strong>only an object store</strong>: allow running lakeFS without any dependencies. This ref-store will use the underlying object store to also store the references. For S3 (or any object store that doesn’t support any native transaction/compare-and-swap semantics) this will be available only when running in single-instance mode. This is still beneficial for running lakeFS in POC or development mode, removing the need to run and connect multiple Docker containers.</li>
-  <li>Flexible production setup: A PostgreSQL option will still be available, but additional implementations will also be possible:  Using other RDBMS types such as MySQL &amp;emdash; or using managed services such as DynamoDB that lakeFS will be able to manage itself</li>
+  <li>Simpler quickstart using <strong>only an object store</strong>: allow running lakeFS without any dependencies. This ref-store will use the underlying object store to also store the references. For S3 (or any object store that doesn’t support any native transaction/compare-and-swap semantics), this will be available only when running in single-instance mode. This is still beneficial for running lakeFS in POC or development mode, removing the need to run and connect multiple Docker containers.</li>
+  <li>Flexible production setup: A PostgreSQL option will still be available, but additional implementations will also be possible. Using other RDBMS types such as MySQL &amp;emdash; or using managed services such as DynamoDB that lakeFS will be able to manage itself.</li>
   <li>Easier scalability: Scaling RDBMS for very high throughput while keeping it predictable in performance for different loads and access patterns has a very high operational cost.</li>
 </ol>
 
 <p>This release will mark the completion of project <strong><a href="https://docs.google.com/document/d/1jzD7-jun-tdU5BGapmnMBe9ovSzBvTNjXCcVztV07A4/edit?usp=sharing" target="_blank">“lakeFS on the Rocks”</a></strong></p>
 
-<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="ref-store-implementation-for-dynamodb">
         
         
@@ -725,12 +721,12 @@ comply with data privacy policies. Currently, lakeFS only supports Garbage Colle
 This has several advantages for users looking to run lakeFS on AWS:</p>
 
 <ol>
-  <li>DynamoDB is fast to provision and requires very little configuration</li>
-  <li>The operational overhead of maintaining a serverless database is very small</li>
-  <li>Scaling according to usage is much more fine grained, which eliminates a lot of the cost for smaller installations (as opposed to RDS)</li>
+  <li>DynamoDB is fast to provision and requires very little configuration.</li>
+  <li>The operational overhead of maintaining a serverless database is very small.</li>
+  <li>Scaling according to usage is much more fine grained, which eliminates a lot of the cost for smaller installations (as opposed to RDS).</li>
 </ol>
 
-<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="ref-store-implementation-for-rocksdb-for-testing-and-experimentation">
         
         
@@ -741,9 +737,9 @@ This has several advantages for users looking to run lakeFS on AWS:</p>
     
 
 <p>Once we’ve decoupled the ref-store from PostgreSQL, we’d like to create a ref-store implementation that supports running with an embedded RocksDB database.
-While not fit for real world production use, it makes it much easier to try lakeFS when running locally, either by directly executing the binary, or by doing a single <code class="language-plaintext highlighter-rouge">docker run</code> with the right configuration (as opposed to having to use <code class="language-plaintext highlighter-rouge">docker-compose</code> or run PostgreSQL locally).</p>
+While not fit for real world production use, it makes trying lakeFS when running locally easier - either by directly executing the binary or doing a single <code class="language-plaintext highlighter-rouge">docker run</code> with the right configuration (as opposed to having to use <code class="language-plaintext highlighter-rouge">docker-compose</code> or run PostgreSQL locally).</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples" target="_blank" class="btn">Track and discuss on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/metadata_kv/index.md#databases-that-meet-these-requirements-examples" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
 
                 
 

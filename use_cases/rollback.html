@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Rollback" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In this tutorial we will explore how to use lakeFS for rollback operations." />
-<meta property="og:description" content="In this tutorial we will explore how to use lakeFS for rollback operations." />
+<meta name="description" content="In this tutorial, we will explore how to use lakeFS for rollback operations." />
+<meta property="og:description" content="In this tutorial, we will explore how to use lakeFS for rollback operations." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Rollback" />
 <script type="application/ld+json">
-{"description":"In this tutorial we will explore how to use lakeFS for rollback operations.","headline":"Rollback","@type":"WebPage","url":"/use_cases/rollback.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"In this tutorial, we will explore how to use lakeFS for rollback operations.","headline":"Rollback","@type":"WebPage","url":"/use_cases/rollback.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -431,23 +431,23 @@
 
 <p>A rollback operation is used to to fix critical data errors immediately.</p>
 
-<p>What is a critical data error? Think of a situation where erroneous or misformatted data causes a signficant issue with an important service or function. In these situations, the first thing to do is stop the bleeding.</p>
+<p>What is a critical data error? Think of a situation where erroneous or misformatted data causes a signficant issue with an important service or function. In such situations, the first thing to do is stop the bleeding.</p>
 
 <p>Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors.</p>
       <h2 id="why-rollbacks-are-useful">
         
         
-          <a href="#why-rollbacks-are-useful" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Why Rollbacks are Useful
+          <a href="#why-rollbacks-are-useful" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Why Rollbacks Are Useful
         
         
       </h2>
     
 
-<p>A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened and 2) what can be done to prevent it from happening again.</p>
+<p>A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again.</p>
 
-<p>It can be a pressured, stressful situation to deal with  a critical data error. Having the ability to employ a rollback relieves some of the pressure, and makes it more likely you can figure out what happened without creating additional issues.</p>
+<p>It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues.</p>
 
-<p>As a real world example, the <a href="https://devops.com/what-sres-can-learn-from-the-atlassian-outage-of-2022/">14 day outage</a> some Atlassian users experienced in May ‘22 could have been an uninteresting minor incident had rolling back the deleted customer data been an option.</p>
+<p>As a real world example, the <a href="https://devops.com/what-sres-can-learn-from-the-atlassian-outage-of-2022/">14-day outage</a> some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option.</p>
       <h2 id="performing-rollbacks-with-lakefs">
         
         
@@ -475,13 +475,13 @@
       </h3>
     
 
-<p>Say the situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a <code class="language-plaintext highlighter-rouge">revert</code> operation to undo the changes introduced in that sync.</p>
+<p>Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a <code class="language-plaintext highlighter-rouge">revert</code> operation to undo the changes introduced in that sync.</p>
 
 <p><img src="/assets/img/rollback-copy-id.png" alt="Copy Commit ID" /></p>
 
-<p>Step 1: Copy the <code class="language-plaintext highlighter-rouge">commit_id</code> associated with the commit we want to revert. As shown in the screenshot above you can use the <code class="language-plaintext highlighter-rouge">Copy ID to Clipboard</code> button to do this.</p>
+<p>Step 1: Copy the <code class="language-plaintext highlighter-rouge">commit_id</code> associated with the commit we want to revert. As the screenshot above shows, you can use the <code class="language-plaintext highlighter-rouge">Copy ID to Clipboard</code> button to do this.</p>
 
-<p>Step 2: Run the revert command using <a href="/reference/commands.html">lakectl</a>, the lakeFS CLI. In this example this command will be:</p>
+<p>Step 2: Run the revert command using <a href="/reference/commands.html">lakectl</a>, the lakeFS CLI. In this example, the command will be as follows:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d
 </code></pre></div></div>
@@ -490,9 +490,9 @@
 
 <p><img src="/assets/img/rollback-revert-commit.png" alt="Rollback Commit" /></p>
 
-<p>The rollback operation is this simple even if many changes were introduced in a commit, spanning multiple data collections.</p>
+<p>The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections.</p>
 
-<p>In lakeFS, it is always a one-liner to rollback data.</p>
+<p>In lakeFS, rolling back data is always a one-liner.</p>
 
                 
 

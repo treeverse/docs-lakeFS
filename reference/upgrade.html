@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Upgrade lakeFS" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image or downloading the latest version" />
-<meta property="og:description" content="Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image or downloading the latest version" />
+<meta name="description" content="A guide to upgrading lakeFS to the latest version." />
+<meta property="og:description" content="A guide to upgrading lakeFS to the latest version." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Upgrade lakeFS" />
 <script type="application/ld+json">
-{"description":"Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image or downloading the latest version","headline":"Upgrade lakeFS","@type":"WebPage","url":"/reference/upgrade.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"A guide to upgrading lakeFS to the latest version.","headline":"Upgrade lakeFS","@type":"WebPage","url":"/reference/upgrade.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -420,8 +420,8 @@
         
       </h1>
     
-<p>Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image (or downloading the latest version, if you’re using the binary).
-There are cases where the database will require a migration - check whether the <a href="https://github.com/treeverse/lakeFS/releases">release</a> you are upgrading to requires that.</p>
+<p>Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image (or downloading the latest version if you’re using the binary).
+In some cases, the database may require a migration - check whether the <a href="https://github.com/treeverse/lakeFS/releases">release</a> you’re upgrading to requires that.</p>
       <h2 id="when-db-migrations-are-required">
         
         
@@ -439,7 +439,7 @@ There are cases where the database will require a migration - check whether the 
       </h3>
     
 
-<p>In case a migration is required, first stop the running lakeFS service.
+<p>In case migration is required, you first need to stop the running lakeFS service.
 Using the <code class="language-plaintext highlighter-rouge">lakefs</code> binary for the new version, run the following:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs migrate up
@@ -467,7 +467,7 @@ To move your existing data, you will need to run the following upgrade commands.
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs <span class="nt">--version</span>
 </code></pre></div></div>
 
-<p>Migrate data from previous format:</p>
+<p>Migrate data from the previous format:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs migrate db
 </code></pre></div></div>
@@ -495,16 +495,16 @@ To do so, add the following to your configuration (relevant <strong>only</strong
     
 
 <p>We discovered a bug in the way lakeFS is storing objects in the underlying object store.
-It affects only repositories on Azure and GCP, and not all of these.
+It affects only repositories on Azure and GCP, and not all of them.
 <a href="https://github.com/treeverse/lakeFS/issues/2397#issuecomment-908397229">Issue #2397</a> describes the repository storage namespaces patterns 
-which are affected by this bug.</p>
+that are affected by this bug.</p>
 
 <p>When first upgrading to a version greater or equal to v0.50.0, you must follow these steps:</p>
 <ol>
   <li>Stop lakeFS.</li>
-  <li>Perform a data-migration (details below)</li>
+  <li>Perform a data migration (details below)</li>
   <li>Start lakeFS with the new version.</li>
-  <li>After a successful run of the new version, and after validating the objects are accessible, you can delete the old data prefix.</li>
+  <li>After a successful run of the new version and validation that the objects are accessible, you can delete the old data prefix.</li>
 </ol>
 
 <p class="note pb-3">Note: Migrating data is a delicate procedure. The lakeFS team is here to help, reach out to us on Slack.

@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -469,10 +469,10 @@
 
 <p>lakeFS is distributed as a single binary encapsulating several logical services:</p>
 
-<p>The server itself is stateless, meaning you can easily add more instances to handle bigger load.</p>
+<p>The server itself is stateless, meaning you can easily add more instances to handle a bigger load.</p>
 
 <p>lakeFS stores data in an underlying object store (<a href="https://cloud.google.com/storage">GCS</a>, <a href="https://azure.microsoft.com/en-us/services/storage/blobs/">ABS</a>,
-<a href="https://aws.amazon.com/s3/">S3</a> or any S3-compatible stores like <a href="https://min.io/">MinIO</a> or <a href="https://docs.ceph.com/">Ceph</a>), with some of its metadata stored in <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> (see <a href="/understand/versioning-internals.html">Versioning internals</a>).</p>
+<a href="https://aws.amazon.com/s3/">S3</a>, or any S3-compatible stores like <a href="https://min.io/">MinIO</a> or <a href="https://docs.ceph.com/">Ceph</a>), with some of its metadata stored in <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> (see <a href="/understand/versioning-internals.html">Versioning internals</a>).</p>
 
 <!-- The below draw.io diagram source can be found here: https://drive.google.com/file/d/1lctPtGVEmOlCNHi3jiW4XXmyQQFkxzyx/view?usp=sharing -->
 
@@ -486,8 +486,8 @@
       </h2>
     
 
-<p>lakeFS releases includes <a href="https://github.com/treeverse/lakeFS/releases">binaries</a> for common operating systems, a <a href="https://hub.docker.com/r/treeverse/lakefs">containerized option</a> or 
-an <a href="https://artifacthub.io/packages/helm/lakefs/lakefs">Helm chart</a>.
+<p>lakeFS releases include <a href="https://github.com/treeverse/lakeFS/releases">binaries</a> for common operating systems, a <a href="https://hub.docker.com/r/treeverse/lakefs">containerized option</a> or 
+a <a href="https://artifacthub.io/packages/helm/lakefs/lakefs">Helm chart</a>.
 Check out our guides for running lakeFS on <a href="/deploy/k8s.html">K8S</a>, <a href="/deploy/aws.html#on-ecs">ECS</a>, <a href="/deploy/gcp.html#on-google-compute-engine">Google Compute Engine</a> and <a href="../deploy/">more</a>.</p>
       <h3 id="load-balancing">
         
@@ -500,7 +500,7 @@ Check out our guides for running lakeFS on <a href="/deploy/k8s.html">K8S</a>, <
 
 <p>Accessing lakeFS is done using HTTP.
 lakeFS exposes a frontend UI, an <a href="#openapi-server">OpenAPI server</a>, as well as an S3-compatible service (see <a href="#s3-gateway">S3 Gateway</a> below).
-lakeFS uses a single port that serves all 3 endpoints, so for most use-cases a single load-balancer pointing
+lakeFS uses a single port that serves all three endpoints, so for most use cases a single load balancer pointing
 to lakeFS server(s) would do.</p>
       <h2 id="lakefs-components">
         
@@ -519,7 +519,7 @@ to lakeFS server(s) would do.</p>
       </h3>
     
 
-<p>S3 Gateway implements lakeFS’s compatibility with S3. It implements a compatible subset of the S3 API to ensure most data systems can use lakeFS as a drop-in replacement for S3.</p>
+<p>The S3 Gateway implements lakeFS’s compatibility with S3. It implements a compatible subset of the S3 API to ensure most data systems can use lakeFS as a drop-in replacement for S3.</p>
 
 <p>See the <a href="/reference/s3.html">S3 API Reference</a> section for information on supported API operations.</p>
       <h3 id="openapi-server">
@@ -531,7 +531,7 @@ to lakeFS server(s) would do.</p>
       </h3>
     
 
-<p>The Swagger (<a href="https://swagger.io/docs/specification/basic-structure/" target="_blank">OpenAPI</a>) server exposes the full set of lakeFS operations (see <a href="/reference/api.html">Reference</a>). This includes basic CRUD operations against repositories and objects, as well as versioning related operations such as branching, merging, committing and reverting changes to data.</p>
+<p>The Swagger (<a href="https://swagger.io/docs/specification/basic-structure/" target="_blank">OpenAPI</a>) server exposes the full set of lakeFS operations (see <a href="/reference/api.html">Reference</a>). This includes basic CRUD operations against repositories and objects, as well as versioning related operations such as branching, merging, committing, and reverting changes to data.</p>
       <h3 id="storage-adapter">
         
         
@@ -544,7 +544,7 @@ to lakeFS server(s) would do.</p>
 <p>The Storage Adapter is an abstraction layer for communicating with any underlying object store. 
 Its implementations allow compatibility with many types of underlying storage such as S3, GCS, Azure Blob Storage, or non-production usages such as the local storage adapter.</p>
 
-<p>See the <a href="/understand/roadmap.html">roadmap</a> for information on future plans for storage compatibility.</p>
+<p>See the <a href="/understand/roadmap.html">roadmap</a> for information on the future plans for storage compatibility.</p>
       <h3 id="graveler">
         
         
@@ -554,7 +554,7 @@ Its implementations allow compatibility with many types of underlying storage su
       </h3>
     
 
-<p>Graveler handles lakeFS versioning by translating lakeFS addresses to the actual stored objects.
+<p>The Graveler handles lakeFS versioning by translating lakeFS addresses to the actual stored objects.
 To learn about the data model used to store lakeFS metadata, see the <a href="/understand/versioning-internals.html">data model section</a>.</p>
       <h3 id="authentication--authorization-service">
         
@@ -565,11 +565,11 @@ To learn about the data model used to store lakeFS metadata, see the <a href="/u
       </h3>
     
 
-<p>The Auth service handles creation, management and validation of user credentials and <a href="https://en.wikipedia.org/wiki/Role-based_access_control" target="_blank">RBAC policies</a>.</p>
+<p>The Auth service handles the creation, management, and validation of user credentials and <a href="https://en.wikipedia.org/wiki/Role-based_access_control" target="_blank">RBAC policies</a>.</p>
 
-<p>The credential scheme, along with the request signing logic are compatible with AWS IAM (both <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html">SIGv2</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html">SIGv4</a>).</p>
+<p>The credential scheme, along with the request signing logic, are compatible with AWS IAM (both <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html">SIGv2</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html">SIGv4</a>).</p>
 
-<p>Currently, the auth service manages its own database of users and credentials and does not use IAM in any way.</p>
+<p>Currently, the Auth service manages its own database of users and credentials and doesn’t use IAM in any way.</p>
       <h3 id="hooks-engine">
         
         
@@ -579,7 +579,7 @@ To learn about the data model used to store lakeFS metadata, see the <a href="/u
       </h3>
     
 
-<p>The hooks engine enables CI/CD for data by triggering user defined <a href="/setup/hooks.html">Actions</a> that will run during commit/merge.</p>
+<p>The Hooks Engine enables CI/CD for data by triggering user defined <a href="/setup/hooks.html">Actions</a> that will run during commit/merge.</p>
       <h3 id="ui">
         
         
@@ -589,7 +589,7 @@ To learn about the data model used to store lakeFS metadata, see the <a href="/u
       </h3>
     
 
-<p>The UI layer is a simple browser-based client that uses the OpenAPI server. It allows management, exploration and data access to repositories, branches, commits and objects in the system.</p>
+<p>The UI layer is a simple browser-based client that uses the OpenAPI server. It allows management, exploration, and data access to repositories, branches, commits and objects in the system.</p>
       <h2 id="applications">
         
         
@@ -599,7 +599,7 @@ To learn about the data model used to store lakeFS metadata, see the <a href="/u
       </h2>
     
 
-<p>As a rule of thumb, lakeFS supports any s3-compatible application. This means that many common data applications work with lakeFS out of the box.
+<p>As a rule of thumb, lakeFS supports any S3-compatible application. This means that many common data applications work with lakeFS out-of-the-box.
 Check out our <a href="../integrations">integrations</a> to learn more.</p>
       <h2 id="lakefs-clients">
         
@@ -610,7 +610,7 @@ Check out our <a href="../integrations">integrations</a> to learn more.</p>
       </h2>
     
 
-<p>Some data applications benefit from deeper integrations with lakeFS to support different use-cases or enhanced functionality which is provided by lakeFS clients.</p>
+<p>Some data applications benefit from deeper integrations with lakeFS to support different use cases or enhanced functionality provided by lakeFS clients.</p>
       <h3 id="openapi-generated-sdks">
         
         
@@ -621,8 +621,7 @@ Check out our <a href="../integrations">integrations</a> to learn more.</p>
     
 
 <p>OpenAPI specification can be used to generate lakeFS clients for many programming languages.
-For example, the Python <a href="https://pypi.org/project/lakefs-client/">lakefs-client</a> or the <a href="https://search.maven.org/artifact/io.lakefs/api-client">Java client</a> are published 
-with every new lakeFS release.</p>
+For example, the <a href="https://pypi.org/project/lakefs-client/">Python lakefs-client</a> or the <a href="https://search.maven.org/artifact/io.lakefs/api-client">Java client</a> are published with every new lakeFS release.</p>
       <h3 id="lakectl">
         
         
@@ -653,7 +652,7 @@ operations related to lakeFS metadata, at scale. Examples include <a href="/refe
       </h3>
     
 
-<p>Thanks to the <a href="#s3-gateway">S3 Gateway</a>, it is possible to interact with lakeFS using Hadoop’s S3AFIleSystem, 
+<p>Thanks to the <a href="#s3-gateway">S3 Gateway</a>, it’s possible to interact with lakeFS using Hadoop’s S3AFIleSystem, 
 but due to limitations of the S3 API, doing so requires reading and writing data objects through the lakeFS server.
 Using <a href="/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">lakeFSFileSystem</a> increases Spark ETL jobs performance by executing the metadata operations on the lakeFS server,
 and all data operations directly through the same underlying object store that lakeFS uses.</p>

@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Exporting Data" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Use lakeFS Spark client to export lakeFS commit to the object store." />
-<meta property="og:description" content="Use lakeFS Spark client to export lakeFS commit to the object store." />
+<meta name="description" content="Use the lakeFS Spark client to export a lakeFS commit to the object store." />
+<meta property="og:description" content="Use the lakeFS Spark client to export a lakeFS commit to the object store." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Exporting Data" />
 <script type="application/ld+json">
-{"description":"Use lakeFS Spark client to export lakeFS commit to the object store.","headline":"Exporting Data","@type":"WebPage","url":"/reference/export.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Use the lakeFS Spark client to export a lakeFS commit to the object store.","headline":"Exporting Data","@type":"WebPage","url":"/reference/export.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -424,8 +424,8 @@
 a designated object store location.</p>
 
 <p>For instance, the contents <code class="language-plaintext highlighter-rouge">lakefs://example/main</code> might be exported on
-<code class="language-plaintext highlighter-rouge">s3://company-bucket/example/latest</code>.  Clients entirely unaware of lakeFS could use that
-base URL to access latest files on <code class="language-plaintext highlighter-rouge">main</code>.  Clients aware of lakeFS can continue to use
+<code class="language-plaintext highlighter-rouge">s3://company-bucket/example/latest</code>. Clients entirely unaware of lakeFS could use that
+base URL to access latest files on <code class="language-plaintext highlighter-rouge">main</code>. Clients aware of lakeFS can continue to use
 the lakeFS S3 endpoint to access repository files on <code class="language-plaintext highlighter-rouge">s3://example/main</code>, as well as
 other versions and uncommitted versions.</p>
 
@@ -450,13 +450,13 @@ other versions and uncommitted versions.</p>
 <ol id="markdown-toc">
   <li><a href="#exporting-data-with-spark" id="markdown-toc-exporting-data-with-spark">Exporting Data With Spark</a>    <ol>
       <li><a href="#using-spark-submit" id="markdown-toc-using-spark-submit">Using spark-submit</a></li>
-      <li><a href="#using-custom-code-notebookspark" id="markdown-toc-using-custom-code-notebookspark">Using custom code (notebook/spark)</a></li>
+      <li><a href="#using-custom-code-notebookspark" id="markdown-toc-using-custom-code-notebookspark">Using custom code (Notebook/Spark)</a></li>
     </ol>
   </li>
   <li><a href="#successfailure-indications" id="markdown-toc-successfailure-indications">Success/Failure Indications</a></li>
   <li><a href="#export-rounds-spark-success-files" id="markdown-toc-export-rounds-spark-success-files">Export Rounds (Spark success files)</a></li>
   <li><a href="#example" id="markdown-toc-example">Example</a></li>
-  <li><a href="#exporting-data-with-docker" id="markdown-toc-exporting-data-with-docker">Exporting Data With Docker</a></li>
+  <li><a href="#exporting-data-with-docker" id="markdown-toc-exporting-data-with-docker">Exporting Data with Docker</a></li>
 </ol>
 
 </div>
@@ -476,31 +476,31 @@ other versions and uncommitted versions.</p>
         
       </h3>
     
-<p>You can use the export main in 3 different modes:</p>
+<p>You can use the export main in three different modes:</p>
 
 <ol>
   <li>
-    <p>Export all objects from branch <code class="language-plaintext highlighter-rouge">example-branch</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to s3 location <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix/</code>:</p>
+    <p>Export all the objects from branch <code class="language-plaintext highlighter-rouge">example-branch</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to S3 location <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix/</code>:</p>
 
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.... example-repo s3://example-bucket/prefix/ <span class="nt">--branch</span><span class="o">=</span>example-branch
 </code></pre></div>    </div>
   </li>
   <li>
-    <p>Export all objects from a commit <code class="language-plaintext highlighter-rouge">c805e49bafb841a0875f49cd555b397340bbd9b8</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to s3 location <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix/</code>:</p>
+    <p>Export all the objects from a commit <code class="language-plaintext highlighter-rouge">c805e49bafb841a0875f49cd555b397340bbd9b8</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to S3 location <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix/</code>:</p>
 
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.... example-repo s3://example-bucket/prefix/ <span class="nt">--commit_id</span><span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Export only the diff between branch <code class="language-plaintext highlighter-rouge">example-branch</code> and commit <code class="language-plaintext highlighter-rouge">c805e49bafb841a0875f49cd555b397340bbd9b8</code>
-on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to s3 location <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix/</code>:</p>
+on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to S3 location <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix/</code>:</p>
 
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.... example-repo s3://example-bucket/prefix/ <span class="nt">--branch</span><span class="o">=</span>example-branch <span class="nt">--prev_commit_id</span><span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
 </code></pre></div>    </div>
   </li>
 </ol>
 
-<p>The complete <code class="language-plaintext highlighter-rouge">spark-submit</code> command would look like:</p>
+<p>The complete <code class="language-plaintext highlighter-rouge">spark-submit</code> command would look as follows:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--conf</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://&lt;LAKEFS_ENDPOINT&gt;/api/v1 <span class="se">\</span>
   <span class="nt">--conf</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY_ID&gt; <span class="se">\</span>
@@ -510,23 +510,23 @@ on <code class="language-plaintext highlighter-rouge">example-repo</code> reposi
   <span class="nt">--branch</span><span class="o">=</span>example-branch
 </code></pre></div></div>
 
-<p class="note">The command assumes the Spark cluster has permissions to write to <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix</code>.
+<p class="note">The command assumes that the Spark cluster has permissions to write to <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix</code>.
 Otherwise, add <code class="language-plaintext highlighter-rouge">spark.hadoop.fs.s3a.access.key</code> and <code class="language-plaintext highlighter-rouge">spark.hadoop.fs.s3a.secret.key</code> with the proper credentials.</p>
       <h3 id="using-custom-code-notebookspark">
         
         
-          <a href="#using-custom-code-notebookspark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using custom code (notebook/spark)
+          <a href="#using-custom-code-notebookspark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using custom code (Notebook/Spark)
         
         
       </h3>
     
 <p>Set up lakeFS Spark metadata client with the endpoint and credentials as instructed in the previous <a href="/reference/spark-client.html">page</a>.</p>
 
-<p>The client exposes the <code class="language-plaintext highlighter-rouge">Exporter</code> object with 3 export options:</p>
+<p>The client exposes the <code class="language-plaintext highlighter-rouge">Exporter</code> object with three export options:</p>
 
 <ol>
-  <li>Export <em>all</em> objects at the HEAD of a given branch. Does not include
-files that were added to that branch, but were not committed.</li>
+  <li>Export <em>all</em> the objects at the HEAD of a given branch. Does not include
+files that were added to that branch but were not committed.</li>
 </ol>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportAllFromBranch</span><span class="o">(</span><span class="n">branch</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
@@ -542,7 +542,7 @@ files that were added to that branch, but were not committed.</li>
 <ol>
   <li>
     <p>Export just the diff between a commit and the HEAD of a branch.
-This is the ideal option for continuous exports of a branch, as it will change only the files
+This is an ideal option for continuous exports of a branch since it will change only the files
 that have been changed since the previous commit.</p>
 
     <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportFrom</span><span class="o">(</span><span class="n">branch</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">prevCommitID</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
@@ -560,7 +560,7 @@ that have been changed since the previous commit.</p>
 
 <p>When the Spark export operation ends, an additional status file will be added to the root
 object storage destination.
-If all files were exported successfully the file path will be of form: <code class="language-plaintext highlighter-rouge">EXPORT_&lt;commitID&gt;_&lt;ISO-8601-time-UTC&gt;_SUCCESS</code>.
+If all files were exported successfully, the file path will be of the form: <code class="language-plaintext highlighter-rouge">EXPORT_&lt;commitID&gt;_&lt;ISO-8601-time-UTC&gt;_SUCCESS</code>.
 For failures: the form will be<code class="language-plaintext highlighter-rouge">EXPORT_&lt;commitID&gt;_&lt;ISO-8601-time-UTC&gt;_FAILURE</code>, and the file will include a log of the failed files operations.</p>
       <h2 id="export-rounds-spark-success-files">
         
@@ -570,15 +570,15 @@ For failures: the form will be<code class="language-plaintext highlighter-rouge"
         
       </h2>
     
-<p>Some files should be exported before others, e.g. a Spark <code class="language-plaintext highlighter-rouge">_SUCCESS</code> file exported before other files under
+<p>Some files should be exported before others, e.g., a Spark <code class="language-plaintext highlighter-rouge">_SUCCESS</code> file exported before other files under
 the same prefix might send the wrong indication.</p>
 
 <p>The export operation may contain several <em>rounds</em> within the same export.
 A failing round will stop the export of all the files of the next <code class="language-plaintext highlighter-rouge">rounds</code>.</p>
 
 <p>By default, lakeFS will use the <code class="language-plaintext highlighter-rouge">SparkFilter</code> and have 2 <code class="language-plaintext highlighter-rouge">rounds</code> for each export.
-The first round will export any non Spark <code class="language-plaintext highlighter-rouge">_SUCCESS</code> files. Second round will export all Spark’s <code class="language-plaintext highlighter-rouge">_SUCCESS</code> files.
-You may override the default behaviour by passing a custom <code class="language-plaintext highlighter-rouge">filter</code> to the <code class="language-plaintext highlighter-rouge">Exporter</code>.</p>
+The first round will export any non-Spark <code class="language-plaintext highlighter-rouge">_SUCCESS</code> files. Second round will export all Spark’s <code class="language-plaintext highlighter-rouge">_SUCCESS</code> files.
+You may override the default behavior by passing a custom <code class="language-plaintext highlighter-rouge">filter</code> to the <code class="language-plaintext highlighter-rouge">Exporter</code>.</p>
       <h2 id="example">
         
         
@@ -634,32 +634,32 @@ you can alternatively export just the difference between <code class="language-p
       <h2 id="exporting-data-with-docker">
         
         
-          <a href="#exporting-data-with-docker" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Exporting Data With Docker
+          <a href="#exporting-data-with-docker" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Exporting Data with Docker
         
         
       </h2>
     
 
 <p>This option is recommended if you don’t have Spark at your tool-set.
-It does not support distribution across machines, therefore may have a lower performance. 
-Using this method, you can export data from lakeFS to S3 using 3 export options (in a similar way to the Spark export):</p>
+It doesn’t support distribution across machines, therefore may have a lower performance. 
+Using this method, you can export data from lakeFS to S3 using the export options (in a similar way to the Spark export):</p>
 
 <ol>
   <li>
-    <p>Export all objects from a branch <code class="language-plaintext highlighter-rouge">example-branch</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to s3 location <code class="language-plaintext highlighter-rouge">s3://destination-bucket/prefix/</code>:</p>
+    <p>Export all objects from a branch <code class="language-plaintext highlighter-rouge">example-branch</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to S3 location <code class="language-plaintext highlighter-rouge">s3://destination-bucket/prefix/</code>:</p>
 
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.... example-repo s3://destination-bucket/prefix/ <span class="nt">--branch</span><span class="o">=</span><span class="s2">"example-branch"</span>
 </code></pre></div>    </div>
   </li>
   <li>
-    <p>Export all objects from a commit <code class="language-plaintext highlighter-rouge">c805e49bafb841a0875f49cd555b397340bbd9b8</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to s3 location <code class="language-plaintext highlighter-rouge">s3://destination-bucket/prefix/</code>:</p>
+    <p>Export all objects from a commit <code class="language-plaintext highlighter-rouge">c805e49bafb841a0875f49cd555b397340bbd9b8</code> on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to S3 location <code class="language-plaintext highlighter-rouge">s3://destination-bucket/prefix/</code>:</p>
 
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.... example-repo s3://destination-bucket/prefix/ <span class="nt">--commit_id</span><span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Export only the diff between branch <code class="language-plaintext highlighter-rouge">example-branch</code> and commit <code class="language-plaintext highlighter-rouge">c805e49bafb841a0875f49cd555b397340bbd9b8</code>
-on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to s3 location <code class="language-plaintext highlighter-rouge">s3://destination-bucket/prefix/</code>:</p>
+on <code class="language-plaintext highlighter-rouge">example-repo</code> repository to S3 location <code class="language-plaintext highlighter-rouge">s3://destination-bucket/prefix/</code>:</p>
 
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.... example-repo s3://destination-bucket/prefix/ <span class="nt">--branch</span><span class="o">=</span><span class="s2">"example-branch"</span> <span class="nt">--prev_commit_id</span><span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
 </code></pre></div>    </div>

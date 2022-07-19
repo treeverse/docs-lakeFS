@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -465,8 +465,8 @@
       </h3>
     
 
-<p>lakeFS authenticates users from a built-in authentication database, or
-optionally from a configured LDAP server.</p>
+<p>lakeFS authenticates users from a built-in authentication database, or,
+optionally, from a configured LDAP server.</p>
       <h4 id="built-in-database">
         
         
@@ -476,10 +476,10 @@ optionally from a configured LDAP server.</p>
       </h4>
     
 
-<p>The built-in authentication database is always present and active.  Use the
-Web UI at Administration / Users to create users.  Users have an access key
-<code class="language-plaintext highlighter-rouge">AKIA...</code> and an associated secret access key.  These credentials are valid
-to log into the Web UI, or to authenticate programmatic requests to the API
+<p>The built-in authentication database is always present and active. You can use the
+Web UI at Administration / Users to create users. Users have an access key
+<code class="language-plaintext highlighter-rouge">AKIA...</code> and an associated secret access key. These credentials are valid
+for logging into the Web UI or authenticating programmatic requests to the API
 Server or the S3 Gateway.</p>
       <h4 id="ldap-server">
         
@@ -490,11 +490,11 @@ Server or the S3 Gateway.</p>
       </h4>
     
 
-<p>Configure lakeFS to authenticate users on an LDAP server.  Once configured,
-users can additionally log into lakeFS using their credentials LDAP.  These
+<p>Configure lakeFS to authenticate users on an LDAP server. Once configured,
+users can additionally log into lakeFS using their credentials LDAP. These
 users may then generate an access key and a secret access key on the Web UI
-at Administration / My Credentials.  lakeFS generates an internal user once
-logged in via the LDAP server.  Adding this internal user to a group allows
+at Administration / My Credentials. lakeFS generates an internal user once
+logged in via the LDAP server. Adding this internal user to a group allows
 assigning them a different policy.</p>
 
 <p>Configure the LDAP server using these <a href="configuration.html#ldap">fields in
@@ -503,7 +503,7 @@ assigning them a different policy.</p>
 <ul>
   <li><code class="language-plaintext highlighter-rouge">server_endpoint</code>: the <code class="language-plaintext highlighter-rouge">ldaps:</code> (or <code class="language-plaintext highlighter-rouge">ldap:</code>) URL of the LDAP server.</li>
   <li><code class="language-plaintext highlighter-rouge">bind_dn</code>, <code class="language-plaintext highlighter-rouge">bind_password</code>: Credentials for lakeFS to use to query the
-LDAP server for users.  These must identify a user with Basic
+LDAP server for users. They must identify a user with Basic
 Authentication, and are used to convert a user ID attribute to a full
 user DN.</li>
   <li>
@@ -531,15 +531,15 @@ Web UI login page.</li>
   <li>
     <p>Search the LDAP server using the control connection for the user: out of
 all users under <code class="language-plaintext highlighter-rouge">user_base_dn</code> that satisfy <code class="language-plaintext highlighter-rouge">user_filter</code>, there must be
-a single user whose <code class="language-plaintext highlighter-rouge">username_attribute</code> was specified by the user.  Get
+a single user whose <code class="language-plaintext highlighter-rouge">username_attribute</code> was specified by the user. Get
 their DN.</p>
 
-    <p>In our example this might be <code class="language-plaintext highlighter-rouge">uid=joebloggs,ou=Users,dc=treeverse,dc=io</code>
+    <p>In our example, this may be <code class="language-plaintext highlighter-rouge">uid=joebloggs,ou=Users,dc=treeverse,dc=io</code>
 (this entry must have <code class="language-plaintext highlighter-rouge">objectClass: person</code> because of <code class="language-plaintext highlighter-rouge">user_filter</code>).</p>
   </li>
   <li>Attempt to bind the received DN on the LDAP server using the password.</li>
-  <li>On success, the user is authenticated!</li>
-  <li>Create a new internal user with that DN if needed.  When creating a user
+  <li>On success, the user is authenticated.</li>
+  <li>Create a new internal user with that DN if needed. When creating a user,
 add them to the internal group named <code class="language-plaintext highlighter-rouge">default_user_group</code>.</li>
 </ol>
       <h3 id="api-server-authentication">

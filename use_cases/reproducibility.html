@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Reproducibility" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In this tutorial we will explore how to use lakeFS for reproducibility of data." />
-<meta property="og:description" content="In this tutorial we will explore how to use lakeFS for reproducibility of data." />
+<meta name="description" content="In this tutorial, we will explore how to use lakeFS for reproducibility of data." />
+<meta property="og:description" content="In this tutorial, we will explore how to use lakeFS for reproducibility of data." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Reproducibility" />
 <script type="application/ld+json">
-{"description":"In this tutorial we will explore how to use lakeFS for reproducibility of data.","headline":"Reproducibility","@type":"WebPage","url":"/use_cases/reproducibility.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"In this tutorial, we will explore how to use lakeFS for reproducibility of data.","headline":"Reproducibility","@type":"WebPage","url":"/use_cases/reproducibility.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -200,7 +200,7 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -421,16 +421,16 @@
       </h2>
     
 
-<p>Data changes frequently. This makes the task of keeping track of its exact state over time difficult. Often people maintain only one state of their data––its current state.</p>
+<p>Data changes frequently. This makes the task of keeping track of its exact state over time difficult. Oftentimes, people maintain only one state of their data––its current state.</p>
 
-<p>The negative effects of this are numerous. It becomes hard to:</p>
+<p>This has a negative impact on the work, as it becomes hard to:</p>
 <ul>
   <li>Debug a data issue.</li>
-  <li>Validate machine learning training accuracy. (re-running a model over different data gives different results)</li>
+  <li>Validate machine learning training accuracy (re-running a model over different data gives different results).</li>
   <li>Comply with data audits.</li>
 </ul>
 
-<p>In comparison, lakeFS exposes a git-like interface to data that makes it possible to keep track of more than just the current state of data. This makes reproducing its state at any point in time straightforward.</p>
+<p>In comparison, lakeFS exposes a Git-like interface to data that allows keeping track of more than just the current state of data. This makes reproducing its state at any point in time straightforward.</p>
       <h2 id="achieving-reproducibility-with-lakefs">
         
         
@@ -446,20 +446,20 @@
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">df</span> <span class="o">=</span> spark.read.parquet<span class="o">(</span>‘s3://example/main/”<span class="o">)</span>
 </code></pre></div></div>
-<p class="note">Note the code above assumes that all objects in the repository under this path are stored in parquet format. If a different format is used, the applicable Spark read method should be used.</p>
+<p class="note"><strong>Note:</strong> The code above assumes that all objects in the repository under this path are stored in parquet format. If a different format is used, the applicable Spark read method should be used.</p>
 
 <p>In a lakeFS repository, we are capable of taking many commits over the data, making many points in time reproducible.</p>
 
 <p><img src="/assets/img/reproduce-commit-history.png" alt="Commit History" /></p>
 
-<p>In the repository shown above, a new commit is taken each time a model training script is run, and the commit message includes the specific run number.</p>
+<p>In the repository above, a new commit is taken each time a model training script is run, and the commit message includes the specific run number.</p>
 
 <p>If we wanted to re-run the model training script and reproduce the exact same results for a historical run, say run #435, we could copy the commit ID associated with the run and read the data into a dataframe like so:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">df</span> <span class="o">=</span> spark.read.parquet<span class="o">(</span><span class="s2">"s3://example/296e54fbee5e176f3f4f4aeb7e087f9d57515750e8c3d033b8b841778613cb23/training_dataset/”)
 </span></code></pre></div></div>
 
-<p>The ability to reference a specific <code class="language-plaintext highlighter-rouge">commit_id</code> in code makes reproducing the specific state a data collection, or even multiple collections, simple. This has many applications common in data development, such as when doing historical debugging, identifying deltas in a data collection, audit compliance, and more.</p>
+<p>The ability to reference a specific <code class="language-plaintext highlighter-rouge">commit_id</code> in code simplifies reproducing the specific state a data collection or even multiple collections. This has many applications that are common in data development, such as historical debugging, identifying deltas in a data collection, audit compliance, and more.</p>
 
                 
 
