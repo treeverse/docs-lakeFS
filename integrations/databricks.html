@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Databricks" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section explains how to interact with your lakeFS data from Databricks" />
-<meta property="og:description" content="This section explains how to interact with your lakeFS data from Databricks" />
+<meta name="description" content="This section explains how to interact with your lakeFS data from Databricks." />
+<meta property="og:description" content="This section explains how to interact with your lakeFS data from Databricks." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Databricks" />
 <script type="application/ld+json">
-{"description":"This section explains how to interact with your lakeFS data from Databricks","headline":"Databricks","@type":"WebPage","url":"/integrations/databricks.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section explains how to interact with your lakeFS data from Databricks.","headline":"Databricks","@type":"WebPage","url":"/integrations/databricks.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -459,11 +459,11 @@
 <p>For Databricks to work with lakeFS, set the S3 Hadoop configuration to the lakeFS endpoint and credentials:</p>
 
 <ol>
-  <li>In databricks, go to your cluster configuration page.</li>
+  <li>In Databricks, go to your cluster configuration page.</li>
   <li>Click <strong>Edit</strong>.</li>
-  <li>Expand <strong>Advanced Options</strong></li>
-  <li>Under the <strong>Spark</strong> tab, add the following configurations, replacing <code class="language-plaintext highlighter-rouge">&lt;repo-name&gt;</code> with your lakeFS repository name.
-Also replace the credentials and endpoint with those of your lakeFS installation.</li>
+  <li>Expand <strong>Advanced Options</strong>.</li>
+  <li>Under the <strong>Spark</strong> tab, add the following configuration, replacing <code class="language-plaintext highlighter-rouge">&lt;repo-name&gt;</code> with your lakeFS repository name.
+Also, replace the credentials and endpoint with those of your lakeFS installation.</li>
 </ol>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.access.key AKIAIOSFODNN7EXAMPLE
@@ -472,14 +472,13 @@ spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.endpoint https://lakefs.example.com
 spark.hadoop.fs.s3a.path.style.access true
 </code></pre></div></div>
 
-<p>When using DeltaLake tables, the following is also needed in some versions of Databricks:</p>
+<p>When using DeltaLake tables, the following may also be required in some versions of Databricks:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.aws.credentials.provider shaded.databricks.org.apache.hadoop.fs.s3a.TemporaryAWSCredentialsProvider
 spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.session.token lakefs
 </code></pre></div></div>
 
-<p>For more information, see
-the <a href="https://docs.databricks.com/data/data-sources/aws/amazon-s3.html#configuration">documentation</a> from Databricks.</p>
+<p>For more information, please see the <a href="https://docs.databricks.com/data/data-sources/aws/amazon-s3.html#configuration">documentation</a> from Databricks.</p>
       <h3 id="when-running-lakefs-inside-your-vpc">
         
         
@@ -490,7 +489,7 @@ the <a href="https://docs.databricks.com/data/data-sources/aws/amazon-s3.html#co
     
 
 <p>When lakeFS runs inside your private network, your Databricks cluster needs to be able to access it. This can be done by
-setting up a VPC peering between the two VPCs (the one where lakeFS runs, and the one where Databricks runs). For this to
+setting up a VPC peering between the two VPCs (the one where lakeFS runs and the one where Databricks runs). For this to
 work on DeltaLake tables, you would also have to
 disable <a href="https://docs.databricks.com/delta/delta-faq.html#what-does-it-mean-that-delta-lake-supports-multi-cluster-writes">multi-cluster writes</a> with:</p>
 
@@ -505,10 +504,10 @@ disable <a href="https://docs.databricks.com/delta/delta-faq.html#what-does-it-m
       </h4>
     
 
-<p>When using multi-cluster writes, Databricks overrides Delta’s s3-commit action. The new action tries to contact lakeFS
-from servers on Databricks <strong>own</strong> AWS account, which of course will not be able to access your private network. So, if
-you must use multi-cluster writes, your will have to allow access from Databricks’ AWS account to lakeFS.
-We are researching for the best ways to achieve that, and will update here soon.</p>
+<p>When using multi-cluster writes, Databricks overrides Delta’s S3-commit action. The new action tries to contact lakeFS
+from servers on Databricks’ <strong>own</strong> AWS account, which of course won’t be able to access your private network. So, if
+you must use multi-cluster writes, you’ll have to allow access from Databricks’ AWS account to lakeFS.
+If you are trying to achieve that, please <a href="https://lakefs.io/slack">reach out on Slack</a> and the community will try to assist.</p>
       <h2 id="reading-data">
         
         
@@ -518,7 +517,7 @@ We are researching for the best ways to achieve that, and will update here soon.
       </h2>
     
 
-<p>In order for us to access objects in lakeFS we will need to use the lakeFS path
+<p>To access objects in lakeFS. you’ll need to use the lakeFS path
 conventions: <code class="language-plaintext highlighter-rouge">s3a://[REPOSITORY]/[BRANCH]/PATH/TO/OBJECT</code></p>
 
 <p>Here is an example for reading a parquet file from lakeFS to a Spark DataFrame:</p>
@@ -547,7 +546,7 @@ conventions: <code class="language-plaintext highlighter-rouge">s3a://[REPOSITOR
   <span class="o">.</span><span class="py">parquet</span><span class="o">(</span><span class="n">s</span><span class="s">"s3a://${repo}/${branch}/output-path/"</span><span class="o">)</span>
 </code></pre></div></div>
 
-<p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes, or revert them.</p>
+<p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes or revert them.</p>
       <h2 id="case-study-similarweb">
         
         
@@ -556,7 +555,8 @@ conventions: <code class="language-plaintext highlighter-rouge">s3a://[REPOSITOR
         
       </h2>
     
-<p>See how SimilarWeb integrated <a href="https://similarweb.engineering/data-versioning-for-customer-reports-using-databricks-and-lakefs/">lakeFS with DataBricks</a>.</p>
+
+<p>See how SimilarWeb integrated <a href="https://similarweb.engineering/data-versioning-for-customer-reports-using-databricks-and-lakefs/">lakeFS with Databricks</a>.</p>
 
                 
 

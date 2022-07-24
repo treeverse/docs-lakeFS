@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Delta Lake" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section explains how to use Delta Lake with lakeFS" />
-<meta property="og:description" content="This section explains how to use Delta Lake with lakeFS" />
+<meta name="description" content="This section explains how to use Delta Lake with lakeFS." />
+<meta property="og:description" content="This section explains how to use Delta Lake with lakeFS." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Delta Lake" />
 <script type="application/ld+json">
-{"description":"This section explains how to use Delta Lake with lakeFS","headline":"Delta Lake","@type":"WebPage","url":"/integrations/delta.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section explains how to use Delta Lake with lakeFS.","headline":"Delta Lake","@type":"WebPage","url":"/integrations/delta.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -423,7 +423,7 @@
 
 <p><a href="https://delta.io/">Delta Lake</a> is an open file format designed to improve performance and provide transactional guarantees to data lake tables.</p>
 
-<p>lakeFS is format-agnostic, so you can save data in Delta format within a lakeFS repository to get the benefits of both technologies. Specifically:</p>
+<p>lakeFS is format-agnostic, so you can save data in Delta format within a lakeFS repository to reap the benefits of both technologies. Specifically:</p>
 
 <ol>
   <li>ACID operations can now span across many Delta tables.</li>
@@ -457,9 +457,9 @@
       </h2>
     
 
-<p>Most commonly Delta tables are interacted with in a Spark environment given the native integration between Delta Lake and Spark.</p>
+<p>Most commonly, you interact with Delta tables in a Spark environment - given the native integration between Delta Lake and Spark.</p>
 
-<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, we need to set the proper credentials and endpoint in the S3 Hadoop configuration, like we do with any <a href="/integrations/spark.html#configuration">Spark</a> script.</p>
+<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you’d do with any <a href="/integrations/spark.html#configuration">Spark</a> script.</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">)</span>
  <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.access.key"</span><span class="o">,</span> <span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="o">)</span>
@@ -467,7 +467,7 @@
  <span class="nv">sc</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.&lt;repo-name&gt;.endpoint"</span><span class="o">,</span> <span class="s">"https://lakefs.example.com"</span><span class="o">)</span>
 </code></pre></div></div>
 
-<p>Once set, you can now interact with Delta tables using regular Spark path URIs. Make sure you include the lakeFS repository and branch name:</p>
+<p>Once set, you can interact with Delta tables using regular Spark path URIs. Make sure that you include the lakeFS repository and branch name:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">data</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">format</span><span class="o">(</span><span class="s">"delta"</span><span class="o">).</span><span class="py">save</span><span class="o">(</span><span class="s">"s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table"</span><span class="o">)</span>
 </code></pre></div></div>
@@ -481,7 +481,8 @@
         
       </h2>
     
-<p>The <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it will result in conflicts if later attempting to merge one branch into the other. For that reason, production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>.</p>
+
+<p>The <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it would result in conflicts if later attempting to merge one branch into the other. For this reason, production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>.</p>
       <h2 id="read-more">
         
         
@@ -490,6 +491,7 @@
         
       </h2>
     
+
 <p>See <a href="https://lakefs.io/guarantee-consistency-in-your-delta-lake-tables-with-lakefs/">this post on the lakeFS blog</a> that shows how to 
 guarantee data quality in a Delta table by utilizing lakeFS branches.</p>
 

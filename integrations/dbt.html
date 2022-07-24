@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="dbt" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Maintaining environments with dbt and lakeFS." />
-<meta property="og:description" content="Maintaining environments with dbt and lakeFS." />
+<meta name="description" content="This guide covers maintaining environments with dbt and lakeFS." />
+<meta property="og:description" content="This guide covers maintaining environments with dbt and lakeFS." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="dbt" />
 <script type="application/ld+json">
-{"description":"Maintaining environments with dbt and lakeFS.","headline":"dbt","@type":"WebPage","url":"/integrations/dbt.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This guide covers maintaining environments with dbt and lakeFS.","headline":"dbt","@type":"WebPage","url":"/integrations/dbt.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -421,12 +421,12 @@
       </h2>
     
 
-<p>dbt can run on lakeFS with the Spark adapter or the Presto/Trino adapter. 
-Both Spark and Presto use Hive metastore or Glue in order to manage tables and views.
-When creating a branch in lakeFS we receive a logical copy of the data that could be accessed by <code class="language-plaintext highlighter-rouge">s3://my-repo/branch/...</code> 
-In order to run our dbt project on a new created branch we need to have a copy of the metadata as well.</p>
+<p>dbt can run on lakeFS with a Spark adapter or Presto/Trino adapter. 
+Both Spark and Presto use Hive metastore or Glue to manage tables and views.
+When creating a branch in lakeFS, you receive a logical copy of the data that can be accessed by <code class="language-plaintext highlighter-rouge">s3://my-repo/branch/...</code> 
+To run a dbt project on a newly created branch, you need to have a copy of the metadata as well.</p>
 
-<p>The lakectl dbt command generates all the metadata needed in order to work on the new created branch,
+<p>The lakectl dbt command generates all the metadata needed in order to work on the newly created branch,
 continuing from the last state in the source branch.
 The dbt lakectl command does this using dbt commands and lakectl metastore commands.</p>
 
@@ -448,7 +448,7 @@ The dbt lakectl command does this using dbt commands and lakectl metastore comma
   </li>
   <li><a href="#views" id="markdown-toc-views">Views</a>    <ol>
       <li><a href="#using-lakectl" id="markdown-toc-using-lakectl">Using lakectl</a></li>
-      <li><a href="#manually" id="markdown-toc-manually">Manually</a></li>
+      <li><a href="#manual-configuration" id="markdown-toc-manual-configuration">Manual configuration</a></li>
     </ol>
   </li>
   <li><a href="#create-schema" id="markdown-toc-create-schema">Create Schema</a></li>
@@ -464,9 +464,9 @@ The dbt lakectl command does this using dbt commands and lakectl metastore comma
       </h2>
     
 
-<p>In order to run the lakectl-dbt commands you need to configure both dbt and lakectl. 
-Assuming dbt is already configured using either a Spark or Presto/Trino target 
-you will need to add configurations to give lakeFS access to your catalog (metastore).
+<p>To run the lakectl-dbt commands you need to configure both dbt and lakectl. 
+Assuming dbt is already configured, using either a Spark or Presto/Trino target 
+you’ll need to add configurations to give lakeFS access to your catalog (metastore).
 This is done by adding the following configurations to the lakectl configuration file (by default <code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code>)</p>
       <h3 id="hive-metastore">
         
@@ -510,7 +510,7 @@ This is done by adding the following configurations to the lakectl configuration
       </h2>
     
 
-<p>lakectl copies all models materialized as tables and incremental directly on your metastore.
+<p>lakectl copies all the models materialized as tables and incremental directly on your metastore.
 However, copying views should be done manually or with lakectl.</p>
       <h3 id="using-lakectl">
         
@@ -522,26 +522,27 @@ However, copying views should be done manually or with lakectl.</p>
     
 
 <p>The <code class="language-plaintext highlighter-rouge">generate_schema_name</code> macro could be used by lakectl to create models using dbt on a dynamic schema.
-The following command will add a macro to your project allowing lakectl to run dbt on the destination schema using an environment variable</p>
+The following command will add a macro to your project, allowing lakectl to run dbt on the destination schema using an environment variable.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl dbt generate-schema-macro
 </code></pre></div></div>
-      <h3 id="manually">
+      <h3 id="manual-configuration">
         
         
-          <a href="#manually" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Manually
+          <a href="#manual-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Manual configuration
         
         
       </h3>
     
 
-<p>In case you don’t want to add the <code class="language-plaintext highlighter-rouge">generate_schema_name</code> macro to your project
-you could create the views on the destination schema manually.
-For every run:</p>
+<p>If you don’t want to add the <code class="language-plaintext highlighter-rouge">generate_schema_name</code> macro to your project,
+you can create the views on the destination schema manually.</p>
+
+<p>For every run:</p>
 <ul>
-  <li>use the <code class="language-plaintext highlighter-rouge">--skip-views</code> flag</li>
-  <li>change the default schema to be the branch schema in your dbt configuration file</li>
-  <li>run dbt on all views</li>
+  <li>use the <code class="language-plaintext highlighter-rouge">--skip-views</code> flag,</li>
+  <li>change the default schema to be the branch schema in your dbt configuration file,</li>
+  <li>run dbt on all views.</li>
 </ul>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dbt run <span class="nt">--select</span> config.materialized:view
@@ -560,7 +561,7 @@ From your dbt project run:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl dbt create-branch-schema <span class="nt">--branch</span> my-branch <span class="nt">--to-schema</span> my_branch   
 </code></pre></div></div>
 
-<p>Advanced options could be found <a href="/reference/commands.html#lakectl-dbt-create-branch-schema">here</a></p>
+<p>You can find more advanced options <a href="/reference/commands.html#lakectl-dbt-create-branch-schema">here</a>.</p>
 
                 
 

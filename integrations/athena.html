@@ -27,13 +27,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Amazon Athena" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section covers how you can start querying data from lakeFS using Amazon Athena." />
-<meta property="og:description" content="This section covers how you can start querying data from lakeFS using Amazon Athena." />
+<meta name="description" content="This section shows how you can start querying data from lakeFS using Amazon Athena." />
+<meta property="og:description" content="This section shows how you can start querying data from lakeFS using Amazon Athena." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Amazon Athena" />
 <script type="application/ld+json">
-{"description":"This section covers how you can start querying data from lakeFS using Amazon Athena.","headline":"Amazon Athena","@type":"WebPage","url":"/integrations/athena.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section shows how you can start querying data from lakeFS using Amazon Athena.","headline":"Amazon Athena","@type":"WebPage","url":"/integrations/athena.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -425,19 +425,18 @@
 <p>Amazon Athena works directly above S3 and can’t access lakeFS. Tables created using Athena aren’t readable by lakeFS.
 However, tables stored in lakeFS (that were created with <a href="/integrations/glue_hive_metastore.html">glue/hive</a>) can be queried by Athena.</p>
 
-<p>In order to support querying data from lakeFS with Amazon Athena, we will use <code class="language-plaintext highlighter-rouge">create-symlink</code>, one of the <a href="/integrations/glue_hive_metastore.html">metastore commands</a> in <a href="/reference/commands.html">lakectl</a>.
-<code class="language-plaintext highlighter-rouge">create-symlink</code> receives a source table, destination table and the location of the table and does two actions:</p>
+<p>To support querying data from lakeFS with Amazon Athena, we will use <code class="language-plaintext highlighter-rouge">create-symlink</code>, one of the <a href="/integrations/glue_hive_metastore.html">metastore commands</a> in <a href="/reference/commands.html">lakectl</a>.
+<code class="language-plaintext highlighter-rouge">create-symlink</code> receives a source table, destination table, and the table location. It performs two actions:</p>
 <ol>
-  <li>Creates partitioned directories with symlink files in the underlying S3 bucket.</li>
-  <li>Creates a table in Glue catalog with symlink format type and location pointing to the created symlinks.</li>
+  <li>It creates partitioned directories with symlink files in the underlying S3 bucket.</li>
+  <li>It creates a table in Glue catalog with symlink format type and location pointing to the created symlinks.</li>
 </ol>
 
 <p class="note"><strong>Note</strong>
 <code class="language-plaintext highlighter-rouge">.lakectl.yaml</code> file should be configured with the proper hive/glue credentials. <a href="/integrations/glue_hive_metastore.html#configurations">For more information</a></p>
 
 <p>create-symlink receives a table in glue or hive pointing to lakeFS and creates a copy of the table in glue.
-The table data will use the <code class="language-plaintext highlighter-rouge">SymlinkTextInputFormat</code>, which will point to the lakeFS repository storage namespace. Without copying data,
-you will be able to query your data with Athena. However, the symlinks table will only show the data that existed during 
+The table data will use the <code class="language-plaintext highlighter-rouge">SymlinkTextInputFormat</code>, which will point to the lakeFS repository storage namespace. You will be able to query your data with Athena without copying any data. However, the symlinks table will only show the data that existed during 
 the copy. If the table changed in lakeFS, you need to run <code class="language-plaintext highlighter-rouge">create-symlink</code> again for your changed to be reflected in Athena.</p>
       <h3 id="example">
         
@@ -458,12 +457,12 @@ LOCATION <span class="s1">'s3://example/main/my_table'</span><span class="p">;</
 WITH <span class="o">(</span>format <span class="o">=</span> <span class="s1">'PARQUET'</span>, external_location <span class="s1">'s3a://example/main/my_table'</span> <span class="o">)</span><span class="p">;</span>
 </code></pre></div></div>
 
-<p>The repository <code class="language-plaintext highlighter-rouge">example</code> has the s3 storage space <code class="language-plaintext highlighter-rouge">s3://my-bucket/my-repo-prefix/</code>. 
-After inserting some data to it, object structure under <code class="language-plaintext highlighter-rouge">lakefs://example/main/my_table</code> looks like:</p>
+<p>The repository <code class="language-plaintext highlighter-rouge">example</code> has the S3 storage space <code class="language-plaintext highlighter-rouge">s3://my-bucket/my-repo-prefix/</code>. 
+After inserting some data into it, the object structure under <code class="language-plaintext highlighter-rouge">lakefs://example/main/my_table</code> looks as follows:</p>
 
 <p><img src="/assets/img/lakefs_table.png" alt="lakefs_table.png" /></p>
 
-<p>Now we would like to query that table with Athena. We need to use the <code class="language-plaintext highlighter-rouge">create-symlink</code> command as follows:</p>
+<p>To query that table with Athena, you need to use the <code class="language-plaintext highlighter-rouge">create-symlink</code> command as follows:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore create-symlink <span class="se">\</span>
 <span class="nt">--repo</span> example <span class="se">\</span>
@@ -476,10 +475,10 @@ After inserting some data to it, object structure under <code class="language-pl
 <span class="nt">--to-table</span> my_table  
 </code></pre></div></div>
 
-<p>The command will have 2 notable outputs:</p>
+<p>The command will generate two notable outputs:</p>
 
 <ol>
-  <li>For each partition the command will create a symlink file:</li>
+  <li>For each partition, the command will create a symlink file:</li>
 </ol>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜   aws s3 <span class="nb">ls </span>s3://my-bucket/my-repo-prefix/my_table/ <span class="nt">--recursive</span>
