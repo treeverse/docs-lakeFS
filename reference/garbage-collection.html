@@ -594,8 +594,17 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
 
 <p><code class="language-plaintext highlighter-rouge">CLIENT_VERSION</code>s for Spark 2.4.7 can be found <a href="https://mvnrepository.com/artifact/io.lakefs/lakefs-spark-client-247">here</a>, and for Spark 3.0.1 they can be found <a href="https://mvnrepository.com/artifact/io.lakefs/lakefs-spark-client-301">here</a>.</p>
 
-<p>Second, you should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code> and run the following command to make the garbage collector start running:</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
+<p>Running options:</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#aws-option">On AWS</a></li>
+	<li><a href="#azure-option">On Azure</a></li>
+  </ul>
+  <div id="aws-option">
+    <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code> and run the following command to make the garbage collector start running:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://lakefs.example.com:8000/api/v1  <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
@@ -603,7 +612,30 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;S3_SECRET_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
   example-repo us-east-1
-</code></pre></div></div>
+</code></pre></div>    </div>
+  </div>
+
+  <div id="azure-option">
+    <p>You should run the following command to make the garbage collector start running:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://lakefs.example.com:8000/api/v1  <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
+  s3://treeverse-clients-us-east/lakefs-spark-client-312-hadoop3/0.2.0/lakefs-spark-client-312-hadoop3-assembly-0.2.0.jar <span class="se">\</span>
+  example-repo
+</code></pre></div>    </div>
+
+    <p><strong>Notes:</strong></p>
+    <ul>
+      <li>To run GC on Azure, use <code class="language-plaintext highlighter-rouge">lakefs-spark-client-312-hadoop3</code> only. This client is compiled for Spark 3.1.2 with Hadoop 3.2.1, but may work with other Spark versions and higher Hadoop versions. Specifically, this client was tested on Databricks runtime DBR 11.0 (Spark 3.3.0, 3.3.2).</li>
+      <li>GC on Azure is supported from Spark client version &gt;= v0.2.0.</li>
+      <li>In case you don’t have <code class="language-plaintext highlighter-rouge">hadoop-azure</code> package as part of your environment, you should add the package to your spark-submit with <code class="language-plaintext highlighter-rouge">--packages org.apache.hadoop:hadoop-azure:3.2.1</code></li>
+      <li>For GC to work on Azure blob, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/soft-delete-blob-overview">soft delete</a> should be disabled.</li>
+    </ul>
+
+  </div>
       <h2 id="considerations">
         
         
@@ -612,28 +644,29 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
         
       </h2>
     
-<ol>
-  <li>
-    <p>In order for an object to be hard-deleted, it must be deleted from all branches.
+  <ol>
+    <li>
+      <p>In order for an object to be hard-deleted, it must be deleted from all branches.
 You should remove stale branches to prevent them from retaining old objects.
 For example, consider a branch that has been merged to <code class="language-plaintext highlighter-rouge">main</code> and has become stale.
 An object which is later deleted from <code class="language-plaintext highlighter-rouge">main</code> will always be present in the stale branch, preventing it from being hard-deleted.</p>
-  </li>
-  <li>
-    <p>lakeFS will never delete objects outside your repository’s storage namespace.
+    </li>
+    <li>
+      <p>lakeFS will never delete objects outside your repository’s storage namespace.
 In particular, objects that were imported using <code class="language-plaintext highlighter-rouge">lakefs import</code> or <code class="language-plaintext highlighter-rouge">lakectl ingest</code> will not be affected by GC jobs.</p>
-  </li>
-  <li>
-    <p>In cases where deleted objects are brought back to life while a GC job is running, said objects may or may not be
+    </li>
+    <li>
+      <p>In cases where deleted objects are brought back to life while a GC job is running, said objects may or may not be
 deleted. Such actions include:</p>
-    <ol>
-      <li>Reverting a commit in which a file was deleted.</li>
-      <li>Branching out from an old commit.</li>
-      <li>Expanding the retention period of a branch.</li>
-      <li>Creating a branch from an existing branch, where the new branch has a longer retention period.</li>
-    </ol>
-  </li>
-</ol>
+      <ol>
+        <li>Reverting a commit in which a file was deleted.</li>
+        <li>Branching out from an old commit.</li>
+        <li>Expanding the retention period of a branch.</li>
+        <li>Creating a branch from an existing branch, where the new branch has a longer retention period.</li>
+      </ol>
+    </li>
+  </ol>
+</div>
 
                 
 
