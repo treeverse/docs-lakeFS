@@ -435,6 +435,7 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
 <ol class="pb-5" id="markdown-toc">
   <li><a href="#understanding-garbage-collection" id="markdown-toc-understanding-garbage-collection">Understanding Garbage Collection</a>    <ol>
       <li><a href="#what-gets-collected" id="markdown-toc-what-gets-collected">What gets collected</a></li>
+      <li><a href="#what-does-not-get-collected" id="markdown-toc-what-does-not-get-collected">What does <em>not</em> get collected</a></li>
     </ol>
   </li>
   <li><a href="#configuring-gc-rules" id="markdown-toc-configuring-gc-rules">Configuring GC rules</a></li>
@@ -523,6 +524,25 @@ deleted object will no longer be accessible. lakeFS retains all metadata
 about the object, but attempting to read it via the lakeFS API or the S3
 gateway will return HTTP status 410 (“Gone”).</p>
   </li>
+</ul>
+      <h3 id="what-does-not-get-collected">
+        
+        
+          <a href="#what-does-not-get-collected" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What does <em>not</em> get collected
+        
+        
+      </h3>
+    
+
+<p>From the above definition of what gets collected, some objects will <em>not</em> be
+collected regardless of configured GC rules:</p>
+
+<ul>
+  <li>Any object that was <em>uploaded but never committed</em> cannot be collected.  See
+<a href="https://github.com/treeverse/lakeFS/issues/1933">#1933</a> for more details.</li>
+  <li>Any object that is present on a branch HEAD is visible on that branch.
+Commits at the HEAD of a branch are retained, so such an object will not
+be collected.</li>
 </ul>
       <h2 id="configuring-gc-rules">
         
