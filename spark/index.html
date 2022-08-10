@@ -23,17 +23,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>With Docker | lakeFS</title>
+<title>Spark | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="With Docker" />
+<meta property="og:title" content="Spark" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This guide will help you deploy your production lakeFS environment with Docker." />
-<meta property="og:description" content="This guide will help you deploy your production lakeFS environment with Docker." />
+<meta name="description" content="Spark top level. This section indexes finding how to integrate lakeFS with Spark, and also how to use dedicated table formats such as Hudi, Iceberg and Delta Lake." />
+<meta property="og:description" content="Spark top level. This section indexes finding how to integrate lakeFS with Spark, and also how to use dedicated table formats such as Hudi, Iceberg and Delta Lake." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="With Docker" />
+<meta property="twitter:title" content="Spark" />
 <script type="application/ld+json">
-{"description":"This guide will help you deploy your production lakeFS environment with Docker.","headline":"With Docker","@type":"WebPage","url":"/deploy/docker.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Spark top level. This section indexes finding how to integrate lakeFS with Spark, and also how to use dedicated table formats such as Hudi, Iceberg and Delta Lake.","headline":"Spark","@type":"WebPage","url":"/spark/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -188,17 +188,17 @@
                    class="nav-list-link">Add Data</a></li><li class="nav-list-item "><a href="/quickstart/first_commit.html"
                    class="nav-list-link">Commit the Changes</a></li><li class="nav-list-item "><a href="/quickstart/more_quickstart_options.html"
                    class="nav-list-link">More Quickstart Options</a></li></ul></li><li
-            class="nav-list-item"><a href="/spark/"
-           class="nav-list-link">Spark</a></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item active"><a href="/spark/"
+           class="nav-list-link active">Spark</a></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/deploy/"
            class="nav-list-link">Deploy lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/deploy/aws.html"
                    class="nav-list-link">On AWS</a></li><li class="nav-list-item "><a href="/deploy/azure.html"
                    class="nav-list-link">On Azure</a></li><li class="nav-list-item "><a href="/deploy/gcp.html"
                    class="nav-list-link">On GCP</a></li><li class="nav-list-item "><a href="/deploy/k8s.html"
-                   class="nav-list-link">With Kubernetes</a></li><li class="nav-list-item  active"><a href="/deploy/docker.html"
-                   class="nav-list-link active">With Docker</a></li></ul></li><li
+                   class="nav-list-link">With Kubernetes</a></li><li class="nav-list-item "><a href="/deploy/docker.html"
+                   class="nav-list-link">With Docker</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
@@ -400,154 +400,39 @@
         <div id="main-content-wrap" class="main-content-wrap">
             
             
-            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-                <ol class="breadcrumb-nav-list">
-                    
-                    <li class="breadcrumb-nav-list-item"><a href="/deploy/">Deploy lakeFS</a>
-                    </li>
-                    
-                    <li class="breadcrumb-nav-list-item"><span>With Docker</span></li>
-                </ol>
-            </nav>
-            
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="deploy-lakefs-on-docker">
+                <h1 class="no_toc" id="lakefs-with-spark">
         
         
-          <a href="#deploy-lakefs-on-docker" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Deploy lakeFS on Docker
+          <a href="#lakefs-with-spark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS with Spark:
         
         
       </h1>
     
-      <h2 class="no_toc" id="database">
+      <h2 id="looking-to-run-lakefs-with-apache-spark--">
         
         
-          <a href="#database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Database
-        
-        
-      </h2>
-    
-
-<p>lakeFS requires a PostgreSQL database to synchronize actions on your repositories.
-This section assumes that you already have a PostgreSQL database accessible from where you intend to install lakeFS.
-You can find instructions for creating the database in the deployment instructions for <a href="/deploy/aws.html#creating-the-database-on-aws-rds">AWS</a>, <a href="/deploy/azure.html#creating-the-database-on-azure-database">Azure</a> and <a href="/deploy/gcp.html#creating-the-database-on-gcp-sql">GCP</a>.</p>
-
-<div class="toc-block">
-      <h2 class="no_toc text-delta" id="table-of-contents">
-        
-        
-          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+          <a href="#looking-to-run-lakefs-with-apache-spark--" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Looking to run lakeFS with Apache Spark 💫 ?
         
         
       </h2>
     
 
-<ol id="markdown-toc">
-  <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
-  <li><a href="#installing-on-docker" id="markdown-toc-installing-on-docker">Installing on Docker</a></li>
-  <li><a href="#load-balancing" id="markdown-toc-load-balancing">Load balancing</a></li>
-  <li><a href="#next-steps" id="markdown-toc-next-steps">Next Steps</a></li>
-</ol>
-
-</div>
-      <h2 id="prerequisites">
+<p>Visit <a href="/integrations/spark.html#two-tiered-spark-support">Spark-lakeFS integration page</a>.</p>
+      <h2 id="want-to-integrate-lakefs-with-spark-and-deltalake">
         
         
-          <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+          <a href="#want-to-integrate-lakefs-with-spark-and-deltalake" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Want to integrate lakeFS with Spark and DeltaLake?
         
         
       </h2>
     
+<p>Check out <a href="/integrations/delta.html">Configuring DeltaLake with lakeFS</a>.</p>
 
-<p class="no_toc">Users that require S3 access using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual host addressing</a> should <a href="../../setup/virtual-host-addressing.html">configure an S3 Gateway domain</a>.</p>
-      <h2 id="installing-on-docker">
-        
-        
-          <a href="#installing-on-docker" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installing on Docker
-        
-        
-      </h2>
-    
-<p>To deploy using Docker, create a yaml configuration file.
-Here is a minimal example, but you can see the <a href="/reference/configuration.html#example-aws-deployment">reference</a> for the full list of configurations.</p>
-<div class="tabs">
-  <ul>
-  <li><a href="#docker-tabs-1">AWS</a></li>
-  <li><a href="#docker-tabs-2">Google Cloud</a></li>
-  <li><a href="#docker-tabs-3">Microsoft Azure</a></li>
-</ul>
-  <div id="docker-tabs-1">
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DATABASE_CONNECTION_STRING]"</span>
-<span class="na">auth</span><span class="pi">:</span>
-  <span class="na">encrypt</span><span class="pi">:</span>
-    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[ENCRYPTION_SECRET_KEY]"</span>
-<span class="na">blockstore</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">s3</span>
-</code></pre></div>    </div>
-
-  </div>
-  <div id="docker-tabs-2">
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DATABASE_CONNECTION_STRING]"</span>
-<span class="na">auth</span><span class="pi">:</span>
-  <span class="na">encrypt</span><span class="pi">:</span>
-    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[ENCRYPTION_SECRET_KEY]"</span>
-<span class="na">blockstore</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">gs</span>
-<span class="c1"># Uncomment the following lines to give lakeFS access to your buckets using a service account:</span>
-<span class="c1"># gs:</span>
-<span class="c1">#   credentials_json: [YOUR SERVICE ACCOUNT JSON STRING]</span>
-</code></pre></div>    </div>
-
-  </div>
-  <div id="docker-tabs-3">
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@&lt;AZURE_POSTGRES_SERVER_NAME&gt;..."</span>
-<span class="na">auth</span><span class="pi">:</span>
-  <span class="na">encrypt</span><span class="pi">:</span>
-    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;RANDOM_GENERATED_STRING&gt;"</span>
-<span class="na">blockstore</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">azure</span>
-  <span class="na">azure</span><span class="pi">:</span>
-    <span class="na">auth_method</span><span class="pi">:</span> <span class="s">msi</span> <span class="c1"># msi for active directory, access-key for access key </span>
-    <span class="c1">#  In case you chose to authenticate via access key replace unmark the following rows and insert the values from the previous step </span>
-    <span class="c1">#  storage_account: &lt;your storage account&gt;</span>
-    <span class="c1">#  storage_access_key: &lt;your access key&gt;</span>
-</code></pre></div>    </div>
-
-  </div>
-</div>
-
-<p>Save the configuration file locally as <code class="language-plaintext highlighter-rouge">lakefs-config.yaml</code> and run the following command:</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="se">\</span>
-  <span class="nt">--name</span> lakefs <span class="se">\</span>
-  <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-  <span class="nt">-v</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>/lakefs-config.yaml:/etc/lakefs/config.yaml <span class="se">\</span>
-  treeverse/lakefs:latest run <span class="nt">--config</span> /etc/lakefs/config.yaml
-</code></pre></div></div>
-      <h2 id="load-balancing">
-        
-        
-          <a href="#load-balancing" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Load balancing
-        
-        
-      </h2>
-    
-<p>You should have a load balancer direct requests to the lakeFS server.
-By default, lakeFS operates on port 8000, and exposes a <code class="language-plaintext highlighter-rouge">/_health</code> endpoint which you can use for health checks.</p>
-      <h2 id="next-steps">
-        
-        
-          <a href="#next-steps" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Next Steps
-        
-        
-      </h2>
-    
-<p>Your next step is to <a href="/setup/storage/">prepare your storage</a>. If you already have a storage bucket/container, you are ready to <a href="/setup/create-repo.html">create your first lakeFS repository</a>.</p>
+<p>Have questions? want to contribute new features? 
+💻 Join the <a href="https://lakefs.slack.com/">conversation!</a>.</p>
 
                 
 
