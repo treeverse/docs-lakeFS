@@ -23,17 +23,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Import data into lakeFS | lakeFS</title>
+<title>Spark | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Import data into lakeFS" />
+<meta property="og:title" content="Spark" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="To import existing data to lakeFS, you may choose to copy it using S3 CLI or using tools like Apache DistCp." />
-<meta property="og:description" content="To import existing data to lakeFS, you may choose to copy it using S3 CLI or using tools like Apache DistCp." />
+<meta name="description" content="Spark top level. This section indexes finding how to integrate lakeFS with Spark, and also how to use dedicated table formats such as Hudi, Iceberg and Delta Lake." />
+<meta property="og:description" content="Spark top level. This section indexes finding how to integrate lakeFS with Spark, and also how to use dedicated table formats such as Hudi, Iceberg and Delta Lake." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Import data into lakeFS" />
+<meta property="twitter:title" content="Spark" />
 <script type="application/ld+json">
-{"description":"To import existing data to lakeFS, you may choose to copy it using S3 CLI or using tools like Apache DistCp.","headline":"Import data into lakeFS","@type":"WebPage","url":"/v0.70/setup/import.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v0.70/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Spark top level. This section indexes finding how to integrate lakeFS with Spark, and also how to use dedicated table formats such as Hudi, Iceberg and Delta Lake.","headline":"Spark","@type":"WebPage","url":"/v0.70/spark/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v0.70/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -188,8 +188,8 @@
                    class="nav-list-link">Add Data</a></li><li class="nav-list-item "><a href="/v0.70/quickstart/first_commit.html"
                    class="nav-list-link">Commit the Changes</a></li><li class="nav-list-item "><a href="/v0.70/quickstart/more_quickstart_options.html"
                    class="nav-list-link">More Quickstart Options</a></li></ul></li><li
-            class="nav-list-item"><a href="/v0.70/spark/"
-           class="nav-list-link">Spark</a></li><li
+            class="nav-list-item active"><a href="/v0.70/spark/"
+           class="nav-list-link active">Spark</a></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.70/deploy/"
@@ -199,7 +199,7 @@
                    class="nav-list-link">On GCP</a></li><li class="nav-list-item "><a href="/v0.70/deploy/k8s.html"
                    class="nav-list-link">With Kubernetes</a></li><li class="nav-list-item "><a href="/v0.70/deploy/docker.html"
                    class="nav-list-link">With Docker</a></li></ul></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.70/setup/"
            class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
@@ -215,8 +215,8 @@
                         <a href="/v0.70/setup/storage/blob.html"
                            class="nav-list-link">Azure Blob Storage</a>
                     </li></ul></li><li class="nav-list-item "><a href="/v0.70/setup/create-repo.html"
-                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item  active"><a href="/v0.70/setup/import.html"
-                   class="nav-list-link active">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/v0.70/setup/hooks.html"
+                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/v0.70/setup/import.html"
+                   class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/v0.70/setup/hooks.html"
                    class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/v0.70/setup/virtual-host-addressing.html"
                    class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
@@ -400,407 +400,39 @@
         <div id="main-content-wrap" class="main-content-wrap">
             
             
-            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-                <ol class="breadcrumb-nav-list">
-                    
-                    <li class="breadcrumb-nav-list-item"><a href="/v0.70/setup/">Set up lakeFS</a>
-                    </li>
-                    
-                    <li class="breadcrumb-nav-list-item"><span>Import data into lakeFS</span></li>
-                </ol>
-            </nav>
-            
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="import-data-into-lakefs">
+                <h1 class="no_toc" id="lakefs-with-spark">
         
         
-          <a href="#import-data-into-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Import data into lakeFS
+          <a href="#lakefs-with-spark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS with Spark:
         
         
       </h1>
     
-
-<div class="toc-block">
-      <h2 class="no_toc text-delta" id="table-of-contents">
+      <h2 id="looking-to-run-lakefs-with-apache-spark--">
         
         
-          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
-        
-        
-      </h2>
-    
-
-<ol id="markdown-toc">
-  <li><a href="#use-external-tools" id="markdown-toc-use-external-tools">Use external tools</a></li>
-  <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
-      <li><a href="#ui-import" id="markdown-toc-ui-import">UI Import</a>        <ol>
-          <li><a href="#prerequisite" id="markdown-toc-prerequisite">Prerequisite</a></li>
-          <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
-        </ol>
-      </li>
-      <li><a href="#lakectl-ingest" id="markdown-toc-lakectl-ingest">lakectl ingest</a></li>
-      <li><a href="#lakefs-import" id="markdown-toc-lakefs-import">lakefs import</a></li>
-    </ol>
-  </li>
-  <li><a href="#importing-from-public-buckets" id="markdown-toc-importing-from-public-buckets">Importing from public buckets</a></li>
-</ol>
-
-</div>
-      <h2 id="use-external-tools">
-        
-        
-          <a href="#use-external-tools" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use external tools
+          <a href="#looking-to-run-lakefs-with-apache-spark--" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Looking to run lakeFS with Apache Spark 💫 ?
         
         
       </h2>
     
 
-<p>To import existing data to lakeFS, you may choose to copy it using <a href="/v0.70/integrations/aws_cli.html#copy-from-a-local-path-to-lakefs">S3 CLI</a> 
-or tools like <a href="/v0.70/integrations/distcp.html#from-s3-to-lakefs">Apache DistCp</a>. This is the most straightforward way, and we recommend it if it’s applicable to you.</p>
-      <h2 id="zero-copy-import">
+<p>Visit <a href="/v0.70/integrations/spark.html#two-tiered-spark-support">Spark-lakeFS integration page</a>.</p>
+      <h2 id="want-to-integrate-lakefs-with-spark-and-deltalake">
         
         
-          <a href="#zero-copy-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Zero-copy import
-        
-        
-      </h2>
-    
-
-<p>lakeFS supports three ways to ingest objects from the object store without copying the data.
-They differ by the outcome, scale, and ease of use:</p>
-
-<ol>
-  <li>Import from the UI - A UI dialog to trigger an import to a designated import branch. It creates a commit from all imported objects. Easy to use and scales well.</li>
-  <li><code class="language-plaintext highlighter-rouge">lakectl ingest</code> - You can use a simple CLI command to create uncommitted objects in a branch. It will make sequential calls between the CLI and the server, which makes scaling difficult.</li>
-  <li><code class="language-plaintext highlighter-rouge">lakefs import</code> - You can use the lakeFS binary to create a commit from an S3 inventory file. Supported only with lakeFS with S3 storage adapters.
-Requires the greatest setup effort - lakeFS binary with DB access and an S3 inventory file. The most scalable option.</li>
-</ol>
-      <h3 id="ui-import">
-        
-        
-          <a href="#ui-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> UI Import
-        
-        
-      </h3>
-    
-
-<p>Clicking the Import button from any branch will open the following dialog:</p>
-
-<p><img src="/v0.70/assets/img/UI-Import-Dialog.png" alt="ui-import.png" /></p>
-
-<p>If it’s the first import to <code class="language-plaintext highlighter-rouge">my-branch</code>, it will create the import branch named <code class="language-plaintext highlighter-rouge">_my-branch_imported</code>.
-lakeFS will import all objects from the Source URI to the import branch under the given prefix.</p>
-
-<p>Hang tight! It might take several minutes for the operation to complete:</p>
-
-<p><img src="/v0.70/assets/img/ui-import-waiting.png" alt="img.png" /></p>
-
-<p>Once the import is completed, you can merge the changes from the import branch to the source branch.</p>
-
-<p><img src="/v0.70/assets/img/ui-import-completed.png" alt="img.png" /></p>
-      <h4 id="prerequisite">
-        
-        
-          <a href="#prerequisite" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisite
-        
-        
-      </h4>
-    
-
-<p>lakeFS must have permissions to list the objects at the source object store,
-and in the same region of your destination bucket.</p>
-      <h4 id="limitations">
-        
-        
-          <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
-        
-        
-      </h4>
-    
-
-<p>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured on top of S3, you cannot import data from Azure.</p>
-
-<p class="note">Although created by lakeFS, import branches are just like any other branch.
-Authorization policies, CI/CD triggering, branch protection rules and all other lakeFS concepts apply to them
-as they apply to any other branch.</p>
-      <h3 id="lakectl-ingest">
-        
-        
-          <a href="#lakectl-ingest" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakectl ingest
-        
-        
-      </h3>
-    
-
-<p>For cases where copying data is not feasible, the <code class="language-plaintext highlighter-rouge">lakectl</code> command supports ingesting objects from a source object store without actually copying the data itself.
-This is done by listing the source bucket (and optional prefix), and creating pointers to the returned objects in lakeFS.</p>
-
-<p>By doing this, you can take even large sets of objects and have them appear as objects in a lakeFS branch, as if they were written directly to it.</p>
-
-<p>For this to work, make sure that:</p>
-
-<ol>
-  <li>The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> has permissions to list the objects at the source object store.</li>
-  <li>The lakeFS installation has read permissions to the objects being ingested.</li>
-  <li>The source path is <strong>not</strong> a storage namespace used by lakeFS. For example, if <code class="language-plaintext highlighter-rouge">lakefs://my-repo</code> created with storage namespace <code class="language-plaintext highlighter-rouge">s3://my-bucket</code>, then <code class="language-plaintext highlighter-rouge">s3://my-bucket/*</code> cannot be an ingestion source.</li>
-</ol>
-
-<div class="tabs">
-  <ul>
-  <li><a href="#ingest-tabs-1">AWS S3 or S3 API Compatible storage</a></li>
-  <li><a href="#ingest-tabs-2">Azure Blob</a></li>
-  <li><a href="#ingest-tabs-3">Google Cloud Storage</a></li>
-</ul>
-  <div id="ingest-tabs-1">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl ingest <span class="se">\</span>
-  <span class="nt">--from</span> s3://bucket/optional/prefix/ <span class="se">\</span>
-  <span class="nt">--to</span> lakefs://my-repo/ingest-branch/optional/path/
-</code></pre></div>    </div>
-
-    <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command will attempt to use the current user’s existing credentials and respect instance profiles,
-environment variables, and credential files (<a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html" target="_blank">similarly to AWS CLI</a>)
-Specify an endpoint to ingest from other S3 compatible storage solutions, e.g., add <code class="language-plaintext highlighter-rouge">--s3-endpoint-url https://play.min.io</code>.</p>
-  </div>
-  <div id="ingest-tabs-2">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">AZURE_STORAGE_ACCOUNT</span><span class="o">=</span><span class="s2">"storageAccountName"</span>
-<span class="nb">export </span><span class="nv">AZURE_STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="s2">"EXAMPLEroozoo2gaec9fooTieWah6Oshai5Sheofievohthapob0aidee5Shaekahw7loo1aishoonuuquahr3=="</span>
-lakectl ingest <span class="se">\</span>
-   <span class="nt">--from</span> https://storageAccountName.blob.core.windows.net/container/optional/prefix/ <span class="se">\</span>
-   <span class="nt">--to</span> lakefs://my-repo/ingest-branch/optional/path/
-</code></pre></div>    </div>
-
-    <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports storage accounts configured through environment variables as shown above.</p>
-
-    <p class="note"><strong>Note:</strong> Currently, <code class="language-plaintext highlighter-rouge">lakectl import</code> supports the <code class="language-plaintext highlighter-rouge">http://</code> and <code class="language-plaintext highlighter-rouge">https://</code> schemes for Azure storage URIs. <code class="language-plaintext highlighter-rouge">wasb</code>, <code class="language-plaintext highlighter-rouge">abfs</code> or <code class="language-plaintext highlighter-rouge">adls</code> are currently not supported.</p>
-  </div>
-  <div id="ingest-tabs-3">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">GOOGLE_APPLICATION_CREDENTIALS</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.gcs_credentials.json"</span>  <span class="c"># Optional, will fallback to the default configured credentials</span>
-lakectl ingest <span class="se">\</span>
-   <span class="nt">--from</span> gs://bucket/optional/prefix/ <span class="se">\</span>
-   <span class="nt">--to</span> lakefs://my-repo/ingest-branch/optional/path/
-</code></pre></div>    </div>
-
-    <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports the standard <code class="language-plaintext highlighter-rouge">GOOGLE_APPLICATION_CREDENTIALS</code> environment variable <a href="https://cloud.google.com/docs/authentication/getting-started">as described in Google Cloud’s documentation</a>.</p>
-  </div>
-</div>
-      <h3 id="lakefs-import">
-        
-        
-          <a href="#lakefs-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakefs import
-        
-        
-      </h3>
-    
-
-<p>Importing a very large amount of objects (&gt; ~250M) might take some time using <code class="language-plaintext highlighter-rouge">lakectl ingest</code> as described above,
-since it has to paginate through all the objects in the source using API calls.</p>
-
-<p>For S3, we provide a utility as part of the <code class="language-plaintext highlighter-rouge">lakefs</code> binary called <code class="language-plaintext highlighter-rouge">lakefs import</code>.</p>
-
-<p>The lakeFS import tool will use the <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html">S3 Inventory</a> feature to create lakeFS metadata.
-The imported metadata will be committed to a special branch, called <code class="language-plaintext highlighter-rouge">import-from-inventory</code>.</p>
-
-<p class="note">You should not make any changes or commit anything to branch <code class="language-plaintext highlighter-rouge">import-from-inventory</code>: it will be operated on only by lakeFS.
-After importing, you will be able to merge this branch into your main branch.</p>
-      <h4 class="no_toc" id="how-it-works">
-        
-        
-          <a href="#how-it-works" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How it works
-        
-        
-      </h4>
-    
-
-<p>The imported data is not copied to the repository’s dedicated bucket.
-Rather, it will be read directly from your existing bucket when you access it through lakeFS.
-Files created or replaced through lakeFS will then be stored in the repository’s dedicated bucket.</p>
-
-<p>It is important to note that due to the deduplication feature of lakeFS, data will be read from your original bucket even
-when accessing it through other branches. In a sense, your original bucket becomes an initial snapshot of your data.</p>
-
-<p class="note pb-3"><strong>Note:</strong> lakeFS will never make any changes to the import source bucket.</p>
-      <h4 class="no_toc" id="prerequisites">
-        
-        
-          <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
-        
-        
-      </h4>
-    
-
-<ul>
-  <li>Your bucket should have S3 Inventory enabled.</li>
-  <li>The inventory should be in Parquet or ORC format.</li>
-  <li>The inventory must contain (at least) the size, last-modified-at, and e-tag columns.</li>
-  <li>The S3 credentials you provided to lakeFS should have GetObject permissions on the source bucket and on the bucket where the inventory is stored.</li>
-  <li>If you want to use the tool for <a href="#gradual-import">gradual import</a>, you should not delete the data for the most recently imported inventory, until a more recent inventory is successfully imported.</li>
-</ul>
-
-<p class="note note-info">For a step-by-step walkthrough of this process, see the post <a href="https://lakefs.io/3-ways-to-add-data-to-lakefs/">3 Ways to Add Data to lakeFS</a> on our blog.</p>
-      <h4 class="no_toc" id="usage">
-        
-        
-          <a href="#usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
-        
-        
-      </h4>
-    
-
-<p>Import is performed by the <code class="language-plaintext highlighter-rouge">lakefs import</code> command.</p>
-
-<p>Assuming your manifest.json is at <code class="language-plaintext highlighter-rouge">s3://example-bucket/path/to/inventory/YYYY-MM-DDT00-00Z/manifest.json</code>, and your lakeFS configuration YAML is at <code class="language-plaintext highlighter-rouge">config.yaml</code> (see notes below), run the following command to start the import:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs import lakefs://example-repo <span class="nt">-m</span> s3://example-bucket/path/to/inventory/YYYY-MM-DDT00-00Z/manifest.json <span class="nt">--config</span> config.yaml
-</code></pre></div></div>
-
-<p>You will see the progress of your import as it’s performed.
-After the import is finished, a summary will be printed along with suggestions for commands to access your data.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Added or changed objects: 565000
-Deleted objects: 0
-Commit ref: cf349ded0a0e65e20bd3b25ea8d9b656c2870b7f1f32f60eb1d90ca5873b6c03
-
-Import to branch import-from-inventory finished successfully.
-To list imported objects, run:
-	$ lakectl fs ls lakefs://example-repo/cf349ded0a0e65e20bd3b25ea8d9b656c2870b7f1f32f60eb1d90ca5873b6c03/
-To merge the changes to your main branch, run:
-	$ lakectl merge lakefs://example-repo/import-from-inventory lakefs://goo/main
-</code></pre></div></div>
-      <h5 class="no_toc" id="merging-imported-data-to-the-main-branch">
-        
-        
-          <a href="#merging-imported-data-to-the-main-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merging imported data to the main branch
-        
-        
-      </h5>
-    
-
-<p>As previously mentioned, the above command imports data to the dedicated <code class="language-plaintext highlighter-rouge">import-from-inventory</code> branch.
-By adding the <code class="language-plaintext highlighter-rouge">--with-merge</code> flag to the import command, this branch will be automatically merged to your main branch immediately after the import.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs import <span class="nt">--with-merge</span> lakefs://example-repo <span class="nt">-m</span> s3://example-bucket/path/to/inventory/YYYY-MM-DDT00-00Z/manifest.json <span class="nt">--config</span> config.yaml
-</code></pre></div></div>
-      <h5 class="no_toc" id="notes">
-        
-        
-          <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
-        
-        
-      </h5>
-    
-
-<ol>
-  <li>
-    <p>Perform the import from a machine with access to your database, and on the same region of your destination bucket.</p>
-  </li>
-  <li>
-    <p>You can download the <code class="language-plaintext highlighter-rouge">lakefs</code> binary from <a href="https://github.com/treeverse/lakeFS/releases">here</a>. Make sure you choose one compatible with your installation of lakeFS.</p>
-  </li>
-  <li>
-    <p>Use a configuration file like the one used to start your lakeFS installation. This will be used to access your database. An example can be found <a href="../reference/configuration.html#example-aws-deployment">here</a>.</p>
-  </li>
-</ol>
-
-<p class="note"><strong>Warning:</strong> the <em>import-from-inventory</em> branch should only be used by lakeFS. You should not make any operations on it.</p>
-      <h4 class="no_toc" id="gradual-import">
-        
-        
-          <a href="#gradual-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Gradual Import
-        
-        
-      </h4>
-    
-
-<p>Once you switch to using the lakeFS S3-compatible endpoint in all places, you can stop making changes to your original bucket.
-However, if your operation still requires that you work on the original bucket,
-you can repeat using the import API with up-to-date inventories every day, until you complete the onboarding process.</p>
-
-<p>You can specify only the prefixes that require import. lakeFS will merge those prefixes with the previous imported inventory.
-For example, a prefixes-file that contains only the prefix <code class="language-plaintext highlighter-rouge">new/data/</code>. The new commit to <code class="language-plaintext highlighter-rouge">import-from-inventory</code> branch will include all objects from the HEAD of that branch, except for objects with prefix <code class="language-plaintext highlighter-rouge">new/data/</code> that is imported from the inventory.</p>
-      <h4 class="no_toc" id="limitations-1">
-        
-        
-          <a href="#limitations-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
-        
-        
-      </h4>
-    
-
-<p>Note that lakeFS cannot manage your metadata if you make changes to data in the original bucket.
-The following table describes the results of making changes in the original bucket, without importing it to lakeFS:</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Object action in the original bucket</th>
-      <th>ListObjects result in lakeFS</th>
-      <th>GetObject result in lakeFS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Create</td>
-      <td>Object not visible</td>
-      <td>Object not accessible</td>
-    </tr>
-    <tr>
-      <td>Overwrite</td>
-      <td>Object visible with outdated metadata</td>
-      <td>Updated object accessible</td>
-    </tr>
-    <tr>
-      <td>Delete</td>
-      <td>Object visible</td>
-      <td>Object not accessible</td>
-    </tr>
-  </tbody>
-</table></div>
-      <h2 id="importing-from-public-buckets">
-        
-        
-          <a href="#importing-from-public-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing from public buckets
+          <a href="#want-to-integrate-lakefs-with-spark-and-deltalake" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Want to integrate lakeFS with Spark and DeltaLake?
         
         
       </h2>
     
+<p>Check out <a href="/v0.70/integrations/delta.html">Configuring DeltaLake with lakeFS</a>.</p>
 
-<p>lakeFS needs access to the imported location to first list the files to import and later read the files upon users request.</p>
-
-<p>There are some use cases where the user would like to import from a destination which isn’t owned by the account running lakeFS.
-For example, importing public datasets to experiment with lakeFS and Spark.</p>
-
-<p>lakeFS will require additional permissions to read from public buckets. For example, for S3 public buckets,
-the following policy needs to be attached to the lakeFS S3 service-account to allow access to public buckets, while blocking access to other owned buckets:</p>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">   </span><span class="p">{</span><span class="w">
-     </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
-     </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-       </span><span class="p">{</span><span class="w">
-         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PubliclyAccessibleBuckets"</span><span class="p">,</span><span class="w">
-         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"s3:GetBucketVersioning"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListBucketVersions"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:GetObjectVersion"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
-         </span><span class="p">],</span><span class="w">
-         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span><span class="w">
-         </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-           </span><span class="nl">"StringNotEquals"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-             </span><span class="nl">"s3:ResourceAccount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;YourAccountID&gt;"</span><span class="w">
-           </span><span class="p">}</span><span class="w">
-         </span><span class="p">}</span><span class="w">
-       </span><span class="p">}</span><span class="w">
-     </span><span class="p">]</span><span class="w">
-   </span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
+<p>Have questions? want to contribute new features? 
+💻 Join the <a href="https://lakefs.slack.com/">conversation!</a>.</p>
 
                 
 
