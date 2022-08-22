@@ -227,7 +227,7 @@
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.70/using_lakefs/"
            class="nav-list-link">Using lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.70/using_lakefs/data-devenv.html"
-                   class="nav-list-link">In Development</a></li><li class="nav-list-item "><a href="/v0.70/using_lakefs/ci.html"
+                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.70/using_lakefs/ci.html"
                    class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.70/using_lakefs/production.html"
                    class="nav-list-link">In Production</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
@@ -649,7 +649,7 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
   <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
-  s3://treeverse-clients-us-east/lakefs-spark-client-312-hadoop3/0.2.0/lakefs-spark-client-312-hadoop3-assembly-0.2.0.jar <span class="se">\</span>
+  s3://treeverse-clients-us-east/lakefs-spark-client-312-hadoop3/0.2.1/lakefs-spark-client-312-hadoop3-assembly-0.2.1.jar <span class="se">\</span>
   example-repo
 </code></pre></div>    </div>
 
@@ -659,6 +659,7 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
       <li>GC on Azure is supported from Spark client version &gt;= v0.2.0.</li>
       <li>In case you don’t have <code class="language-plaintext highlighter-rouge">hadoop-azure</code> package as part of your environment, you should add the package to your spark-submit with <code class="language-plaintext highlighter-rouge">--packages org.apache.hadoop:hadoop-azure:3.2.1</code></li>
       <li>For GC to work on Azure blob, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/soft-delete-blob-overview">soft delete</a> should be disabled.</li>
+      <li>If you’re running into timeout error calling to lakeFS client in GC, consider adding to the sark-submit command the configuration: <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.api.connection.timeout=TIMEOUT_IN_SECONDS</code>, in order to increase the timeout (the default is 10 seconds).</li>
     </ul>
 
   </div>
