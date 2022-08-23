@@ -438,9 +438,9 @@
 <ol id="markdown-toc">
   <li><a href="#ecosystem" id="markdown-toc-ecosystem">Ecosystem</a>    <ol>
       <li><a href="#repository-templates-easily-use-lakefs-with-your-data-stack-high-priority" id="markdown-toc-repository-templates-easily-use-lakefs-with-your-data-stack-high-priority">Repository Templates: Easily use lakeFS with your data stack <span class="label label-blue">High Priority</span></a></li>
-      <li><a href="#pluggable-diffmerge-operators" id="markdown-toc-pluggable-diffmerge-operators">Pluggable diff/merge operators</a>        <ol>
+      <li><a href="#table-format-support" id="markdown-toc-table-format-support">Table format support</a>        <ol>
           <li><a href="#delta-lake-merges-and-diffs-across-branches" id="markdown-toc-delta-lake-merges-and-diffs-across-branches">Delta Lake merges and diffs across branches</a></li>
-          <li><a href="#iceberg-merges-and-diffs-across-branches-high-priority" id="markdown-toc-iceberg-merges-and-diffs-across-branches-high-priority">Iceberg merges and diffs across branches <span class="label label-blue">High Priority</span></a></li>
+          <li><a href="#iceberg-support-high-priority" id="markdown-toc-iceberg-support-high-priority">Iceberg support <span class="label label-blue">High Priority</span></a></li>
         </ol>
       </li>
       <li><a href="#hadoop-3-support-in-all-lakefs-clients-high-priority" id="markdown-toc-hadoop-3-support-in-all-lakefs-clients-high-priority">Hadoop 3 support in all lakeFS clients <span class="label label-blue">High Priority</span></a></li>
@@ -488,10 +488,10 @@
 Integrate with Spark, Hive Metastore and your other tools.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/3411" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h3 id="pluggable-diffmerge-operators">
+      <h3 id="table-format-support">
         
         
-          <a href="#pluggable-diffmerge-operators" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Pluggable diff/merge operators
+          <a href="#table-format-support" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table format support
         
         
       </h3>
@@ -528,21 +528,22 @@ Users would then have to forgo one of the change sets by either retaining the de
 <p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h4 id="iceberg-merges-and-diffs-across-branches-high-priority">
+      <h4 id="iceberg-support-high-priority">
         
         
-          <a href="#iceberg-merges-and-diffs-across-branches-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Iceberg merges and diffs across branches <span class="label label-blue">High Priority</span>
+          <a href="#iceberg-support-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Iceberg support <span class="label label-blue">High Priority</span>
         
         
       </h4>
     
 
-<p>Iceberg stores metadata files (“manifests”) that represent a <a href="https://iceberg.apache.org/spec/#manifests">snapshot of a given Iceberg table</a>.</p>
+<p>A table in Iceberg points to a single metadata file, containing a “location” property. Iceberg uses this location to store:</p>
+<ol>
+  <li>Manifests describing where the data is stored.</li>
+  <li>The actual data.</li>
+</ol>
 
-<p>Currently, when trying to modify an Iceberg table from two different branches, lakeFS would not be able to create a logical snapshot that consists of the changes applied in both references.
-Users would then have to forgo one of the change sets by either retaining the destination’s branch set of changes or the source’s branch.</p>
-
-<p>A much better user experience would be to allow merging snapshots into a new unified set of changes, representing changes made in both refs as a new snapshot.</p>
+<p>Once a table is created, the location property doesn’t change. Therefore, a branch creation in lakeFS in meaningless, since new data added to this branch will be added to the main branch. There are some workarounds for this, but it is our priority to create an excellent integration with Iceberg.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/3381" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="hadoop-3-support-in-all-lakefs-clients-high-priority">
@@ -649,6 +650,9 @@ These commits can then be merged into a main branch given they pass all relevant
         
       </h3>
     
+<p>Make it easy for users to compose data coming from different sources (lakeFS repositories &amp; references, external object store locations) as input for processing jobs and data science experiments.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/pull/3657" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h2 id="versioning-capabilities">
         
         
@@ -693,7 +697,10 @@ comply with data privacy policies. Currently, lakeFS only supports Garbage Colle
       </h3>
     
 
-<p>Same as above, but for GCP.</p>
+<p>The lakeFS <a href="https://docs.lakefs.io/reference/garbage-collection.html">Garbage Collection</a> capability hard-deletes objects deleted from branches, helping users reduce costs and 
+comply with data privacy policies. Currently, lakeFS only supports Garbage Collection of S3/Azure objects managed by lakeFS. Extending the support to GCP will allow lakeFS users that use GCP as their underlying storage to use this feature.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/3626" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="collaborate-on-your-data">
         
         
