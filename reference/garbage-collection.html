@@ -444,7 +444,10 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
     </ol>
   </li>
   <li><a href="#configuring-gc-rules" id="markdown-toc-configuring-gc-rules">Configuring GC rules</a></li>
-  <li><a href="#running-the-gc-job" id="markdown-toc-running-the-gc-job">Running the GC job</a></li>
+  <li><a href="#running-the-gc-job" id="markdown-toc-running-the-gc-job">Running the GC job</a>    <ol>
+      <li><a href="#networking" id="markdown-toc-networking">Networking</a></li>
+    </ol>
+  </li>
   <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
 </ol>
       <h2 id="understanding-garbage-collection">
@@ -658,10 +661,28 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
       <li>GC on Azure is supported from Spark client version &gt;= v0.2.0.</li>
       <li>In case you don’t have <code class="language-plaintext highlighter-rouge">hadoop-azure</code> package as part of your environment, you should add the package to your spark-submit with <code class="language-plaintext highlighter-rouge">--packages org.apache.hadoop:hadoop-azure:3.2.1</code></li>
       <li>For GC to work on Azure blob, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/soft-delete-blob-overview">soft delete</a> should be disabled.</li>
-      <li>If you’re running into timeout error calling to lakeFS client in GC, consider adding to the sark-submit command the configuration: <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.api.connection.timeout=TIMEOUT_IN_SECONDS</code>, in order to increase the timeout (the default is 10 seconds).</li>
     </ul>
 
   </div>
+      <h3 id="networking">
+        
+        
+          <a href="#networking" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Networking
+        
+        
+      </h3>
+    
+
+  <p>Garbage collection communicates with the lakeFS server.  Very large
+repositories may require increasing a read timeout.  If you run into timeout errors during communication from the Spark job to lakefs consider increasing these timeouts:</p>
+
+  <ul>
+    <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.api.read.timeout_seconds=TIMEOUT_IN_SECONDS</code>
+(default 10) to allow lakeFS more time to respond to requests.</li>
+    <li>Add <code class="language-plaintext highlighter-rouge">-c
+spark.hadoop.lakefs.api.connection.timeout_seconds=TIMEOUT_IN_SECONDS</code>
+(default 10) to wait longer for lakeFS to accept connections.</li>
+  </ul>
       <h2 id="considerations">
         
         
