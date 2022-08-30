@@ -31,13 +31,13 @@
 <meta name="generator" content="Jekyll v3.9.0" />
 <meta property="og:title" content="Exporting Data" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Use the lakeFS Spark client to export a lakeFS commit to the object store." />
-<meta property="og:description" content="Use the lakeFS Spark client to export a lakeFS commit to the object store." />
+<meta name="description" content="Use the lakeFS Spark client or RClone inside Docker to export a lakeFS commit to the object store." />
+<meta property="og:description" content="Use the lakeFS Spark client or RClone inside Docker to export a lakeFS commit to the object store." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Exporting Data" />
 <script type="application/ld+json">
-{"description":"Use the lakeFS Spark client to export a lakeFS commit to the object store.","headline":"Exporting Data","@type":"WebPage","url":"/v0.70/reference/export.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v0.70/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Use the lakeFS Spark client or RClone inside Docker to export a lakeFS commit to the object store.","headline":"Exporting Data","@type":"WebPage","url":"/v0.70/reference/export.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v0.70/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -453,7 +453,10 @@ other versions and uncommitted versions.</p>
 
 <ol id="markdown-toc">
   <li><a href="#exporting-data-with-spark" id="markdown-toc-exporting-data-with-spark">Exporting Data With Spark</a>    <ol>
-      <li><a href="#using-spark-submit" id="markdown-toc-using-spark-submit">Using spark-submit</a></li>
+      <li><a href="#using-spark-submit" id="markdown-toc-using-spark-submit">Using spark-submit</a>        <ol>
+          <li><a href="#networking" id="markdown-toc-networking">Networking</a></li>
+        </ol>
+      </li>
       <li><a href="#using-custom-code-notebookspark" id="markdown-toc-using-custom-code-notebookspark">Using custom code (Notebook/Spark)</a></li>
     </ol>
   </li>
@@ -516,6 +519,27 @@ on <code class="language-plaintext highlighter-rouge">example-repo</code> reposi
 
 <p class="note">The command assumes that the Spark cluster has permissions to write to <code class="language-plaintext highlighter-rouge">s3://example-bucket/prefix</code>.
 Otherwise, add <code class="language-plaintext highlighter-rouge">spark.hadoop.fs.s3a.access.key</code> and <code class="language-plaintext highlighter-rouge">spark.hadoop.fs.s3a.secret.key</code> with the proper credentials.</p>
+      <h4 id="networking">
+        
+        
+          <a href="#networking" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Networking
+        
+        
+      </h4>
+    
+
+<p>Spark export communicates with the lakeFS server.  Very large repositories
+may require increasing a read timeout.  If you run into timeout errors
+during communication from the Spark job to lakefs consider increasing these
+timeouts:</p>
+
+<ul>
+  <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.api.read.timeout_seconds=TIMEOUT_IN_SECONDS</code>
+(default 10) to allow lakeFS more time to respond to requests.</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">-c
+spark.hadoop.lakefs.api.connection.timeout_seconds=TIMEOUT_IN_SECONDS</code>
+(default 10) to wait longer for lakeFS to accept connections.</li>
+</ul>
       <h3 id="using-custom-code-notebookspark">
         
         
