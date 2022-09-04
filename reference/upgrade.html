@@ -250,7 +250,8 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item  active"><a href="/reference/upgrade.html"
-                   class="nav-list-link active">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
+                   class="nav-list-link active">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
+                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
                    class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
@@ -425,7 +426,7 @@
       </h1>
     
 <p>Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image (or downloading the latest version if you’re using the binary).
-In some cases, the database may require a migration - check whether the <a href="https://github.com/treeverse/lakeFS/releases">release</a> you’re upgrading to requires that.</p>
+If you’re upgrading, check whether the <a href="https://github.com/treeverse/lakeFS/releases">release</a> requires a migration.</p>
       <h2 id="when-db-migrations-are-required">
         
         
@@ -434,6 +435,88 @@ In some cases, the database may require a migration - check whether the <a href=
         
       </h2>
     
+      <h3 id="lakefs-0800-or-greater-kv-migration">
+        
+        
+          <a href="#lakefs-0800-or-greater-kv-migration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS 0.80.0 or greater (KV Migration)
+        
+        
+      </h3>
+    
+
+<p>Starting with version 0.80.0, lakeFS has transitioned from using a PostgreSQL based database implementation to a Key-Value datastore interface supporting
+multiple database implementations. More information can be found <a href="link-to-lakefs-on-kv-documentation">here</a>.<br />
+Users upgrading from a previous version of lakeFS must pass through the KV migration version (0.80.0) before upgrading to newer versions of lakeFS.</p>
+
+<blockquote class="note">
+  <p><strong>IMPORTANT: Pre Migrate Requirements</strong></p>
+  <ul>
+    <li><strong>Users using OS environment variables for database configuration must define the <code class="language-plaintext highlighter-rouge">connection_string</code> explicitly or as environment variable before proceeding with the migration.</strong></li>
+    <li><strong>Database storage free capacity of at least twice the amount of the currently used capacity</strong></li>
+    <li>It is strongly recommended to perform these additional steps:
+      <ul>
+        <li>Commit all uncommitted data on branches</li>
+        <li>Create a snapshot of your database</li>
+      </ul>
+    </li>
+    <li>By default, old database tables are not being deleted by the migration process, and should be removed manually after a successful migration.
+To enable table drop as part of the migration, set the <code class="language-plaintext highlighter-rouge">database.drop_tables</code> configuration param to <code class="language-plaintext highlighter-rouge">true</code></li>
+  </ul>
+</blockquote>
+      <h4 id="migration-steps">
+        
+        
+          <a href="#migration-steps" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migration Steps
+        
+        
+      </h4>
+    
+<p>For each lakeFS instance currently running with the database</p>
+<ol>
+  <li>Modify the <code class="language-plaintext highlighter-rouge">database</code> section under lakeFS configuration yaml:
+    <ol>
+      <li>Add <code class="language-plaintext highlighter-rouge">type</code> field with <code class="language-plaintext highlighter-rouge">"postgres"</code> as value</li>
+      <li>Copy the current configuration parameters to a new section called <code class="language-plaintext highlighter-rouge">postgres</code></li>
+    </ol>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">database</span><span class="pi">:</span>
+ <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+ <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://localhost:5432/postgres?sslmode=disable"</span>
+ <span class="na">max_open_connections</span><span class="pi">:</span> <span class="m">20</span>
+   
+ <span class="na">postgres</span><span class="pi">:</span>
+   <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://localhost:5432/postgres?sslmode=disable"</span>
+   <span class="na">max_open_connections</span><span class="pi">:</span> <span class="m">20</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Stop all lakeFS instances</li>
+  <li>
+    <p>Using the <code class="language-plaintext highlighter-rouge">lakefs</code> binary for the new version (0.80.0), run the following:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs migrate up
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>lakeFS will run the migration process, which in the end should display the following message with no errors:</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">time</span><span class="o">=</span><span class="s2">"2022-08-10T14:46:25Z"</span> <span class="nv">level</span><span class="o">=</span>info <span class="nv">msg</span><span class="o">=</span><span class="s2">"KV Migration took 717.629563ms"</span> <span class="nv">func</span><span class="o">=</span><span class="s2">"pkg/logging.(*logrusEntryWrapper).Infof"</span> <span class="nv">file</span><span class="o">=</span><span class="s2">"build/pkg/logging/logger.go:246"</span> <span class="nv">TempDir</span><span class="o">=</span>/tmp/kv_migrate_2913402680
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>It is now possible to remove the old database configuration. The updated configuration should look as such:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">database</span><span class="pi">:</span>
+ <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+   
+ <span class="na">postgres</span><span class="pi">:</span>
+   <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://localhost:5432/postgres?sslmode=disable"</span>
+   <span class="na">max_open_connections</span><span class="pi">:</span> <span class="m">20</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Deploy (or run) the new version of lakeFS.</li>
+</ol>
       <h3 id="lakefs-0300-or-greater">
         
         

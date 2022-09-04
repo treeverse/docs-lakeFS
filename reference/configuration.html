@@ -250,7 +250,8 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
+                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
                    class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
@@ -438,8 +439,8 @@
 <ol id="markdown-toc">
   <li><a href="#reference" id="markdown-toc-reference">Reference</a></li>
   <li><a href="#using-environment-variables" id="markdown-toc-using-environment-variables">Using Environment Variables</a></li>
-  <li><a href="#example-local-development" id="markdown-toc-example-local-development">Example: Local Development</a></li>
-  <li><a href="#example-aws-deployment" id="markdown-toc-example-aws-deployment">Example: AWS Deployment</a></li>
+  <li><a href="#example-local-development-with-postgresql-database" id="markdown-toc-example-local-development-with-postgresql-database">Example: Local Development with PostgreSQL database</a></li>
+  <li><a href="#example-aws-deployment-with-dynamodb-database" id="markdown-toc-example-aws-deployment-with-dynamodb-database">Example: AWS Deployment with DynamoDB database</a></li>
   <li><a href="#example-google-storage" id="markdown-toc-example-google-storage">Example: Google Storage</a></li>
   <li><a href="#example-minio" id="markdown-toc-example-minio">Example: MinIO</a></li>
   <li><a href="#example-azure-blob-storage" id="markdown-toc-example-azure-blob-storage">Example: Azure blob storage</a></li>
@@ -472,15 +473,56 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
 <ul class="ref-list">
   <li><code class="language-plaintext highlighter-rouge">logging.format</code> <code class="language-plaintext highlighter-rouge">(one of ["json", "text"] : "text")</code> - Format to output log message in</li>
   <li><code class="language-plaintext highlighter-rouge">logging.level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Logging level to output</li>
-  <li><code class="language-plaintext highlighter-rouge">logging.audit_log_level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Audit logs level to output. <strong>Please notice that in case you configure this field to be lower than the main logger level, you won’t be able to get the audit logs</strong></li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">logging.audit_log_level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Audit logs level to output.</p>
+
+    <p class="note"><strong>Note:</strong> In case you configure this field to be lower than the main logger level, you won’t be able to get the audit logs</p>
+  </li>
   <li><code class="language-plaintext highlighter-rouge">logging.output</code> <code class="language-plaintext highlighter-rouge">(string : "-")</code> - A path or paths to write logs to. A <code class="language-plaintext highlighter-rouge">-</code> means the standard output, <code class="language-plaintext highlighter-rouge">=</code> means the standard error.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.file_max_size_mb</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - Output file maximum size in megabytes.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.files_keep</code> <code class="language-plaintext highlighter-rouge">(int : 0)</code> - Number of log files to keep, default is all.</li>
   <li><code class="language-plaintext highlighter-rouge">actions.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Setting this to false will block hooks from being executed</li>
-  <li><code class="language-plaintext highlighter-rouge">database.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
-  <li><code class="language-plaintext highlighter-rouge">database.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</li>
-  <li><code class="language-plaintext highlighter-rouge">database.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Sets the maximum number of connections in the idle connection pool</li>
-  <li><code class="language-plaintext highlighter-rouge">database.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused</li>
+  <li><del><code class="language-plaintext highlighter-rouge">database.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</del></li>
+  <li><del><code class="language-plaintext highlighter-rouge">database.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</del></li>
+  <li><del><code class="language-plaintext highlighter-rouge">database.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Sets the maximum number of connections in the idle connection pool</del></li>
+  <li>
+    <p><del><code class="language-plaintext highlighter-rouge">database.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused</del></p>
+
+    <p class="note"><strong>Note:</strong> Deprecated - See <code class="language-plaintext highlighter-rouge">database</code> section</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">database</code> - Configuration section for the lakeFS key-value store database
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string : ["postgres"|"dynamodb"])</code> - lakeFS database type</li>
+      <li><code class="language-plaintext highlighter-rouge">database.postgres</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="postgres"</code>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
+          <li><code class="language-plaintext highlighter-rouge">database.postgres.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</li>
+          <li><code class="language-plaintext highlighter-rouge">database.postgres.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of connections in the idle connection pool</li>
+          <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused <code class="language-plaintext highlighter-rouge">(valid units: ns|us|ms|s|m|h)</code></li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="dynamodb"</code>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.table_name</code> <code class="language-plaintext highlighter-rouge">(string : "kvstore")</code> - Table used to store the data</li>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.read_capacity_units</code> <code class="language-plaintext highlighter-rouge">(int : 1000)</code> - Read capacity units, measured in requests per second</li>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.write_capacity_units</code> <code class="language-plaintext highlighter-rouge">(int : 1000)</code> - Write capacity units, measured in requests per second</li>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">database.dynamodb.scan_limit</code> <code class="language-plaintext highlighter-rouge">(int : )</code> - Maximal number of items per page during scan operation</p>
+
+            <p class="note"><strong>Note:</strong> Refer to the following <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Limit">AWS documentation</a> for further information</p>
+          </li>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Endpoint URL for database instance</li>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_region</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS Region of database instance</li>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS access key ID</li>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS secret access key</p>
+
+            <p class="note"><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">endpoint</code> <code class="language-plaintext highlighter-rouge">aw_region</code> <code class="language-plaintext highlighter-rouge">aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">aws_secret_access_key</code> are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials.</p>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li><code class="language-plaintext highlighter-rouge">listen_address</code> <code class="language-plaintext highlighter-rouge">(string : "0.0.0.0:8000")</code> - A <code class="language-plaintext highlighter-rouge">&lt;host&gt;:&lt;port&gt;</code> structured string representing the address to listen on</li>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Whether to cache access credentials and user policies in-memory. Can greatly improve throughput when enabled.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.size</code> <code class="language-plaintext highlighter-rouge">(int : 1024)</code> - How many items to store in the auth cache. Systems with a very high user count should use a larger value at the expense of ~1kb of memory per cached user.</li>
@@ -598,10 +640,10 @@ local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest
 To set an environment variable, prepend <code class="language-plaintext highlighter-rouge">LAKEFS_</code> to its name, convert it to upper case, and replace <code class="language-plaintext highlighter-rouge">.</code> with <code class="language-plaintext highlighter-rouge">_</code>:</p>
 
 <p>For example, <code class="language-plaintext highlighter-rouge">logging.format</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_FORMAT</code>, <code class="language-plaintext highlighter-rouge">blockstore.s3.region</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_BLOCKSTORE_S3_REGION</code>, etc.</p>
-      <h2 id="example-local-development">
+      <h2 id="example-local-development-with-postgresql-database">
         
         
-          <a href="#example-local-development" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: Local Development
+          <a href="#example-local-development-with-postgresql-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: Local Development with PostgreSQL database
         
         
       </h2>
@@ -611,7 +653,9 @@ To set an environment variable, prepend <code class="language-plaintext highligh
 <span class="na">listen_address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">0.0.0.0:8000"</span>
 
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://localhost:5432/postgres?sslmode=disable"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://localhost:5432/postgres?sslmode=disable"</span>
 
 <span class="na">logging</span><span class="pi">:</span>
   <span class="na">format</span><span class="pi">:</span> <span class="s">text</span>
@@ -631,10 +675,10 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">s3</span><span class="pi">:</span>
     <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
 </code></pre></div></div>
-      <h2 id="example-aws-deployment">
+      <h2 id="example-aws-deployment-with-dynamodb-database">
         
         
-          <a href="#example-aws-deployment" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: AWS Deployment
+          <a href="#example-aws-deployment-with-dynamodb-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: AWS Deployment with DynamoDB database
         
         
       </h2>
@@ -647,7 +691,9 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-"</span>
 
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">dynamodb"</span>
+  <span class="na">dynamodb</span><span class="pi">:</span>
+    <span class="na">table_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">kvstore"</span>
 
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
@@ -677,7 +723,9 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-"</span>
 
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
 
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
@@ -705,7 +753,9 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-"</span>
 
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
 
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
@@ -738,7 +788,9 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-"</span>
 
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
 
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>

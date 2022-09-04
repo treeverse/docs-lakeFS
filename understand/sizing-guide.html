@@ -250,7 +250,8 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
+                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
                    class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
@@ -441,10 +442,8 @@
       <li><a href="#memory-and-cpu-requirements" id="markdown-toc-memory-and-cpu-requirements">Memory and CPU requirements</a></li>
       <li><a href="#network" id="markdown-toc-network">Network</a></li>
       <li><a href="#disk" id="markdown-toc-disk">Disk</a></li>
-      <li><a href="#postgresql-database" id="markdown-toc-postgresql-database">PostgreSQL database</a>        <ol>
+      <li><a href="#lakefs-kv-store" id="markdown-toc-lakefs-kv-store">lakeFS KV Store</a>        <ol>
           <li><a href="#storage" id="markdown-toc-storage">Storage</a></li>
-          <li><a href="#ram-and-shared_buffers" id="markdown-toc-ram-and-shared_buffers">RAM and <code class="language-plaintext highlighter-rouge">shared_buffers</code></a></li>
-          <li><a href="#cpu" id="markdown-toc-cpu">CPU</a></li>
         </ol>
       </li>
     </ol>
@@ -454,9 +453,14 @@
     </ol>
   </li>
   <li><a href="#benchmarks" id="markdown-toc-benchmarks">Benchmarks</a>    <ol>
+      <li><a href="#postgressql" id="markdown-toc-postgressql">PostgresSQL</a></li>
       <li><a href="#random-reads" id="markdown-toc-random-reads">Random reads</a></li>
       <li><a href="#random-writes" id="markdown-toc-random-writes">Random Writes</a></li>
       <li><a href="#branch-creation" id="markdown-toc-branch-creation">Branch creation</a></li>
+      <li><a href="#dynamodb" id="markdown-toc-dynamodb">DynamoDB</a></li>
+      <li><a href="#random-reads-1" id="markdown-toc-random-reads-1">Random reads</a></li>
+      <li><a href="#random-writes-1" id="markdown-toc-random-writes-1">Random Writes</a></li>
+      <li><a href="#branch-creation-1" id="markdown-toc-branch-creation-1">Branch creation</a></li>
     </ol>
   </li>
   <li><a href="#important-metrics" id="markdown-toc-important-metrics">Important metrics</a></li>
@@ -532,17 +536,18 @@ probably the best that could be achieved on a public cloud, so we recommend thos
 For large installations (managing &gt;100 concurrently active branches, with &gt;100M objects per commit),
 we recommend allocating at least 10 GiB - since it’s a caching layer over a relatively slow storage (the object store), 
 see <a href="#important-metrics">Important metrics</a> below to understand how to size this: it should be big enough to hold all commit metadata for actively referenced commits.</p>
-      <h3 id="postgresql-database">
+      <h3 id="lakefs-kv-store">
         
         
-          <a href="#postgresql-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> PostgreSQL database
+          <a href="#lakefs-kv-store" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS KV Store
         
         
       </h3>
     
 
-<p>lakeFS uses a PostgreSQL instance to manage branch references, authentication and authorization information 
-and to keep track of currently uncommitted data across branches.</p>
+<p>lakeFS uses a key-value database to manage branch references, authentication and authorization information 
+and to keep track of currently uncommitted data across branches.<br />
+Please refer to the relevant driver tab for best practices, requirements and benchmarks.</p>
       <h4 id="storage">
         
         
@@ -551,37 +556,45 @@ and to keep track of currently uncommitted data across branches.</p>
         
       </h4>
     
-<p>The dataset stored in PostgreSQL is relatively modest 
-as most metadata is pushed down into the object store. 
+<p>The dataset stored in the metadata store is relatively modest as most metadata is pushed down into the object store. 
 Required storage is mostly a factor of the amount of uncommitted writes across all branches at any given point in time: 
 in the range of 150 MiB per every 100,000 uncommitted writes.</p>
 
 <p>We recommend starting at 10 GiB for a production deployment, as it will likely be more than enough.</p>
-      <h4 id="ram-and-shared_buffers">
-        
-        
-          <a href="#ram-and-shared_buffers" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RAM and <code class="language-plaintext highlighter-rouge">shared_buffers</code>
-        
-        
-      </h4>
-    
-<p>Since the data size is small, it’s recommended to provide enough memory to hold the vast majority of that data in RAM:
-Ideally, configure the <a href="https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS" target="_blank">shared_buffers</a> 
-of your PostgreSQL instances to be large enough to contain the currently active dataset. 
-Pick a database instance with enough RAM to accommodate this buffer size at roughly x4 the size given for <code class="language-plaintext highlighter-rouge">shared_buffers</code>. For example, if an installation has ~500,000 uncommitted writes at any given time, it would require about 750 MiB of <code class="language-plaintext highlighter-rouge">shared_buffers</code> 
+
+<div class="tabs">
+  <ul>
+    <li><a href="#postgres-ram">PostgreSQL</a></li>
+    <li><a href="#dynamodb-ram">DynamoDB</a></li>
+  </ul>
+  <div id="postgres-ram">
+
+    <p><strong>RAM</strong><br />
+Since the data size is small, it’s recommended to provide enough memory to hold the vast majority of that data in RAM.
+Cloud providers will save you the need to tune this parameter - it will be set to a fixed percentage the chosen instance’s available RAM (25% on AWS RDS, 30% on Google Cloud SQL).
+It is recommended that you check with your selected cloud provider for configuration and provisioning information for you database.
+For self-managed database instances follow these best practices</p>
+
+    <p>Ideally, configure the <a href="https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS" target="_blank">shared_buffers</a>
+of your PostgreSQL instances to be large enough to contain the currently active dataset.
+Pick a database instance with enough RAM to accommodate this buffer size at roughly x4 the size given for <code class="language-plaintext highlighter-rouge">shared_buffers</code>. For example, if an installation has ~500,000 uncommitted writes at any given time, it would require about 750 MiB of <code class="language-plaintext highlighter-rouge">shared_buffers</code>
 that would require about 3 GiB of RAM.</p>
 
-<p>Cloud providers will save you the need to tune this parameter - it will be set to a fixed percentage the chosen instance’s available RAM (25% on AWS RDS, 30% on Google Cloud SQL).</p>
-      <h4 id="cpu">
-        
-        
-          <a href="#cpu" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> CPU
-        
-        
-      </h4>
-    
+    <p><strong>CPU</strong><br />
+PostgreSQL CPU cores help scale concurrent requests. 1 CPU core for every 5,000 requests/second is ideal.</p>
+  </div>
+  <div id="dynamodb-ram">
+    <p>lakeFS will create a table on the DB, with the default on-demand setting. No need to specify how much read and write throughput you expect your application to perform, as DynamoDB instantly accommodates your workloads as they ramp up or down.</p>
 
-<p>PostgreSQL CPU cores help scale concurrent requests. 1 CPU core for every 5,000 requests/second is ideal.</p>
+    <p>You can customize the table settings to provisioned capacity which allows you to manage and optimize your costs by allocating read/write capacity in advance (see <a href="https://docs.lakefs.io/understand/sizing-guide.html#benchmarks">Benchmarks</a>)</p>
+
+    <p><strong>RAM</strong><br />
+Managed by AWS.</p>
+
+    <p><strong>CPU</strong><br />
+Managed by AWS.</p>
+  </div>
+</div>
       <h2 id="scaling-factors">
         
         
@@ -601,27 +614,27 @@ that would require about 3 GiB of RAM.</p>
       </h3>
     
 
-<p>Most lakeFS operations are designed to be very low in latency. 
-Assuming a well-tuned local disk cache (see <a href="#storage">Storage</a> above), 
-most critical path operations 
-(writing objects, requesting objects, deleting objects) are designed to complete in <strong>&lt;25ms at p90</strong>. 
-Listing objects obviously requires accessing more data, but should always be on-par with what the underlying object store can provide, 
-and in most cases, it’s actually faster. 
+<p>Most lakeFS operations are designed to be very low in latency.
+Assuming a well-tuned local disk cache (see <a href="#storage">Storage</a> above),
+most critical path operations
+(writing objects, requesting objects, deleting objects) are designed to complete in <strong>&lt;25ms at p90</strong>.
+Listing objects obviously requires accessing more data, but should always be on-par with what the underlying object store can provide,
+and in most cases, it’s actually faster.
 At the worst case, for directory listing with 1,000 common prefixes returned, expect a latency of <strong>75ms at p90</strong>.</p>
 
 <p>Managing branches (creating them, listing them and deleting them) are all constant-time operations, generally taking <strong>&lt;30ms at p90</strong>.</p>
 
-<p>Committing and merging can take longer, as they are proportional to the amount of <strong>changes</strong> introduced. 
-This is what makes lakeFS optimal for large Data Lakes - 
-the amount of changes introduced per commit usually stays relatively stable while the entire data set usually grows over time. 
-This means lakeFS will provide predictable performance: 
+<p>Committing and merging can take longer, as they are proportional to the amount of <strong>changes</strong> introduced.
+This is what makes lakeFS optimal for large Data Lakes -
+the amount of changes introduced per commit usually stays relatively stable while the entire data set usually grows over time.
+This means lakeFS will provide predictable performance:
 committing 100 changes will take roughly the same amount of time whether the resulting commit contains 500 or 500 million objects.</p>
 
 <p>See <a href="/understand/versioning-internals.html">Data Model</a> for more information.</p>
 
-<p>Scaling throughput depends very much on the amount of CPU cores available to lakeFS. 
-In many cases, it’s easier to scale lakeFS across a fleet of smaller cloud instances (or containers) 
-than scale up with machines that have many cores. In fact, lakeFS works well in both cases. 
+<p>Scaling throughput depends very much on the amount of CPU cores available to lakeFS.
+In many cases, it’s easier to scale lakeFS across a fleet of smaller cloud instances (or containers)
+than scale up with machines that have many cores. In fact, lakeFS works well in both cases.
 Most critical path operations scale very well across machines.</p>
       <h2 id="benchmarks">
         
@@ -632,18 +645,32 @@ Most critical path operations scale very well across machines.</p>
       </h2>
     
 
-<p>All benchmarks below were measured using 2 x <a href="https://aws.amazon.com/ec2/instance-types/c5/" target="_blank">c5ad.4xlarge</a> instances 
-on <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions">AWS us-east-1</a>. 
+<div class="tabs">
+  <ul>
+    <li><a href="#postgres-ram">PostgreSQL</a></li>
+    <li><a href="#dynamodb-ram">DynamoDB</a></li>
+  </ul>
+  <div id="postgres-ram">
+      <h3 id="postgressql">
+        
+        
+          <a href="#postgressql" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> PostgresSQL
+        
+        
+      </h3>
+    
+    <p>All benchmarks below were measured using 2 x <a href="https://aws.amazon.com/ec2/instance-types/c5/" target="_blank">c5ad.4xlarge</a> instances
+on <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions">AWS us-east-1</a>.
 Similar results can be achieved on Google Cloud using a <code class="language-plaintext highlighter-rouge">c2-standard-16</code> machine type, with an attached <a href="https://cloud.google.com/compute/docs/disks/local-ssd">local SSD</a>.
 On Azure, you can use a <code class="language-plaintext highlighter-rouge">Standard_F16s_v2</code> virtual machine.</p>
 
-<p>The PostgreSQL instance that was used is a <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html" target="_blank">db.m6g.2xlarge</a>
+    <p>The PostgreSQL instance that was used is a <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html" target="_blank">db.m6g.2xlarge</a>
 (8 vCPUs, 32 GB RAM). Equivalent machines on Google Cloud or Azure should yield similar results.</p>
 
-<p>The example repository we tested against contains the metadata of a large lakeFS installation, 
+    <p>The example repository we tested against contains the metadata of a large lakeFS installation,
 where each commit contains <strong>~180,000,000</strong> objects (representing ~7.5 Petabytes of data).</p>
 
-<p>All tests are reproducible using the <a href="/reference/commands.html#lakectl-abuse">lakectl abuse command</a>, 
+    <p>All tests are reproducible using the <a href="/reference/commands.html#lakectl-abuse">lakectl abuse command</a>,
 so use it to properly size and tune your setup. All tests are accompanied by the relevant <code class="language-plaintext highlighter-rouge">lakectl abuse</code> command that generated them.</p>
       <h3 id="random-reads">
         
@@ -654,23 +681,23 @@ so use it to properly size and tune your setup. All tests are accompanied by the
       </h3>
     
 
-<p>This test generates random read requests to lakeFS, 
+    <p>This test generates random read requests to lakeFS,
 in a given commit. Paths are requested randomly from a file containing a set of preconfigured (and existing) paths.</p>
 
-<p><strong>command executed:</strong></p>
+    <p><strong>command executed:</strong></p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse random-read <span class="se">\</span>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse random-read <span class="se">\</span>
     <span class="nt">--from-file</span> randomly_selected_paths.txt <span class="se">\</span>
     <span class="nt">--amount</span> 500000 <span class="se">\</span>
     <span class="nt">--parallelism</span> 128 <span class="se">\</span>
     lakefs://example-repo/&lt;commit <span class="nb">hash</span><span class="o">&gt;</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and commit hash.</p>
+    <p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and commit hash.</p>
 
-<p><strong>Result Histogram (raw):</strong></p>
+    <p><strong>Result Histogram (raw):</strong></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
 1	0
 2	0
 5	37945
@@ -690,13 +717,13 @@ in a given commit. Paths are requested randomly from a file containing a set of 
 min	3
 max	222
 total	500000
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p>So 50% of all requests took &lt;10ms, while 99.9% of them took &lt;50ms</p>
+    <p>So 50% of all requests took &lt;10ms, while 99.9% of them took &lt;50ms</p>
 
-<p><strong>throughput:</strong></p>
+    <p><strong>throughput:</strong></p>
 
-<p>Average throughput during the experiment was <strong>10851.69 requests/second</strong></p>
+    <p>Average throughput during the experiment was <strong>10851.69 requests/second</strong></p>
       <h3 id="random-writes">
         
         
@@ -706,22 +733,22 @@ total	500000
       </h3>
     
 
-<p>This test generates random write requests to a given lakeFS branch. 
+    <p>This test generates random write requests to a given lakeFS branch.
 All the paths are pre-generated and don’t overwrite each other (as overwrites are relatively rare in a Data Lake setup).</p>
 
-<p><strong>command executed:</strong></p>
+    <p><strong>command executed:</strong></p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse random-write <span class="se">\</span>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse random-write <span class="se">\</span>
     <span class="nt">--amount</span> 500000 <span class="se">\</span>
     <span class="nt">--parallelism</span> 64 <span class="se">\</span>
     lakefs://example-repo/main
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch.</p>
+    <p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch.</p>
 
-<p><strong>Result Histogram (raw):</strong></p>
+    <p><strong>Result Histogram (raw):</strong></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
 1	0
 2	0
 5	30715
@@ -741,13 +768,13 @@ All the paths are pre-generated and don’t overwrite each other (as overwrites 
 min	3
 max	233
 total	500000
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p>So, 50% of all requests took &lt;10ms, while 99.9% of them took &lt;25ms.</p>
+    <p>So, 50% of all requests took &lt;10ms, while 99.9% of them took &lt;25ms.</p>
 
-<p><strong>throughput:</strong></p>
+    <p><strong>throughput:</strong></p>
 
-<p>The average throughput during the experiment was <strong>7595.46 requests/second</strong>.</p>
+    <p>The average throughput during the experiment was <strong>7595.46 requests/second</strong>.</p>
       <h3 id="branch-creation">
         
         
@@ -757,22 +784,22 @@ total	500000
       </h3>
     
 
-<p>This test creates branches from a given reference.</p>
+    <p>This test creates branches from a given reference.</p>
 
-<p><strong>command executed:</strong></p>
+    <p><strong>command executed:</strong></p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse create-branches <span class="se">\</span>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse create-branches <span class="se">\</span>
     <span class="nt">--amount</span> 500000 <span class="se">\</span>
     <span class="nt">--branch-prefix</span> <span class="s2">"benchmark-"</span> <span class="se">\</span>
     <span class="nt">--parallelism</span> 256 <span class="se">\</span>
     lakefs://example-repo/&lt;commit <span class="nb">hash</span><span class="o">&gt;</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and commit hash.</p>
+    <p><strong>Note</strong> lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and commit hash.</p>
 
-<p><strong>Result Histogram (raw):</strong></p>
+    <p><strong>Result Histogram (raw):</strong></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
 1	0
 2	1
 5	5901
@@ -792,13 +819,240 @@ total	500000
 min	2
 max	304
 total	500000
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p>So, 50% of all requests took &lt;15ms, while 99.9% of them took &lt;100ms.</p>
+    <p>So, 50% of all requests took &lt;15ms, while 99.9% of them took &lt;100ms.</p>
 
-<p><strong>throughput:</strong></p>
+    <p><strong>throughput:</strong></p>
 
-<p>The average throughput during the experiment was <strong>7069.03 requests/second</strong>.</p>
+    <p>The average throughput during the experiment was <strong>7069.03 requests/second</strong>.</p>
+  </div>
+  <div id="dynamodb-ram">
+      <h3 id="dynamodb">
+        
+        
+          <a href="#dynamodb" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DynamoDB
+        
+        
+      </h3>
+    
+    <p>All benchmarks below were measured using m5.xlarge instance on AWS us-east-1.</p>
+
+    <p>The DynamoDB table that was used was provisioned with 500/1000 read/write capacity.</p>
+
+    <p>The example repository we tested against contains the metadata of a large lakeFS installation, where each commit contains ~100,000,000 objects (representing ~3.5 Petabytes of data).</p>
+
+    <p>All tests are reproducible using the lakectl abuse command, so use it to properly size and tune your setup. All tests are accompanied by the relevant lakectl abuse command that generated them.</p>
+      <h3 id="random-reads-1">
+        
+        
+          <a href="#random-reads-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Random reads
+        
+        
+      </h3>
+    
+
+    <p>This test generates random read requests to lakeFS,
+in a given commit. Paths are requested randomly from a file containing a set of preconfigured (and existing) paths.</p>
+
+    <p><strong>command executed:</strong></p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse random-read <span class="se">\</span>
+    <span class="nt">--from-file</span> randomly_selected_paths.txt <span class="se">\</span>
+    <span class="nt">--amount</span> 500000 <span class="se">\</span>
+    <span class="nt">--parallelism</span> 128 <span class="se">\</span>
+    lakefs://example-repo/&lt;commit <span class="nb">hash</span><span class="o">&gt;</span>
+</code></pre></div>    </div>
+
+    <p><strong>Result Histogram (raw): Provisioned read capacity units = 1000
+Provisioned write capacity units = 1000</strong></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+1	0
+2	0
+5	0
+7	0
+10	0
+15	0
+25	122
+50	47364
+75	344489
+100	460404
+250	497912
+350	498016
+500	498045
+750	498111
+1000 498176
+5000 499478
+min	18
+max	52272
+total 500000
+</code></pre></div>    </div>
+
+    <p><strong>Result Histogram (raw): Provisioned read capacity units = 500
+Provisioned write capacity units = 500</strong></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+1	0
+2	0
+5	0
+7	0
+10	0
+15	1
+25	2672
+50	239661
+75	420171
+100	470146
+250	486603
+350	486715
+500	486789
+750	487443
+1000	488113
+5000	493201
+min	14
+max	648085
+total	499998
+</code></pre></div>    </div>
+      <h3 id="random-writes-1">
+        
+        
+          <a href="#random-writes-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Random Writes
+        
+        
+      </h3>
+    
+
+    <p>This test generates random write requests to a given lakeFS branch.
+All the paths are pre-generated and don’t overwrite each other (as overwrites are relatively rare in a Data Lake setup).</p>
+
+    <p><strong>command executed:</strong></p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse random-write <span class="se">\</span>
+    <span class="nt">--amount</span> 500000 <span class="se">\</span>
+    <span class="nt">--parallelism</span> 64 <span class="se">\</span>
+    lakefs://example-repo/main
+</code></pre></div>    </div>
+
+    <p><strong>Result Histogram (raw): Provisioned read capacity units = 1000
+Provisioned write capacity units = 1000</strong></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+1	0
+2	0
+5	0
+7	0
+10	0
+15	0
+25	24
+50	239852
+75	458504
+100	485225
+250	493687
+350	493872
+500	493960
+750	496239
+1000	499194
+5000	500000
+min	23
+max	4437
+total	500000
+</code></pre></div>    </div>
+    <p><strong>Result Histogram (raw): Provisioned read capacity units = 500
+Provisioned write capacity units = 500</strong></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+1	0
+2	0
+5	0
+7	0
+10	0
+15	0
+25	174
+50	266460
+75	462641
+100	484486
+250	490633
+350	490856
+500	490984
+750	492973
+1000 495605
+5000 498920
+min	21
+max	50157
+total 500000
+</code></pre></div>    </div>
+      <h3 id="branch-creation-1">
+        
+        
+          <a href="#branch-creation-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Branch creation
+        
+        
+      </h3>
+    
+
+    <p>This test creates branches from a given reference.</p>
+
+    <p><strong>command executed:</strong></p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl abuse create-branches <span class="se">\</span>
+    <span class="nt">--amount</span> 500000 <span class="se">\</span>
+    <span class="nt">--branch-prefix</span> <span class="s2">"benchmark-"</span> <span class="se">\</span>
+    <span class="nt">--parallelism</span> 256 <span class="se">\</span>
+    lakefs://example-repo/&lt;commit <span class="nb">hash</span><span class="o">&gt;</span>
+</code></pre></div>    </div>
+
+    <p><strong>Result Histogram (raw): Provisioned read capacity units = 1000
+Provisioned write capacity units = 1000</strong></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+1	0
+2	0
+5	0
+7	0
+10	0
+15	0
+25	0
+50	628
+75	26153
+100	58099
+250	216160
+350	307078
+500	406165
+750	422898
+1000	431332
+5000	475848
+min	41
+max	430725
+total	490054
+</code></pre></div>    </div>
+
+    <p><strong>Result Histogram (raw): Provisioned read capacity units = 500
+Provisioned write capacity units = 500</strong></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Histogram (ms):
+1	0
+2	0
+5	0
+7	0
+10	0
+15	0
+25	0
+50	3132
+75	155570
+100	292745
+250	384224
+350	397258
+500	431141
+750	441360
+1000 445597
+5000 469538
+min	39
+max	760626
+total 497520
+</code></pre></div>    </div>
+
+  </div>
+</div>
       <h2 id="important-metrics">
         
         
@@ -819,8 +1073,21 @@ Every lakeFS instance exposes a <code class="language-plaintext highlighter-roug
 
 <p><code class="language-plaintext highlighter-rouge">gateway_request_duration_seconds</code> - Histogram of latency per <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> operation.</p>
 
-<p><code class="language-plaintext highlighter-rouge">go_sql_stats_*</code> - Important client-side metrics collected from the PostgreSQL driver. 
-See <a href="https://github.com/dlmiddlecote/sqlstats#exposed-metrics" target="_blank">The full reference here</a>.</p>
+<div class="tabs">
+  <ul>
+    <li><a href="#postgres">PostgreSQL</a></li>
+    <li><a href="#dynamodb">DynamoDB</a></li>
+  </ul>
+  <div id="dynamodb">
+
+    <p><code class="language-plaintext highlighter-rouge">dynamo_request_duration_seconds</code> - Time spent doing DynamoDB requests.</p>
+
+    <p><code class="language-plaintext highlighter-rouge">dynamo_consumed_capacity_total</code> - The capacity units consumed by operation.</p>
+
+    <p><code class="language-plaintext highlighter-rouge">dynamo_failures_total</code> - The total number of errors while working for kv store.</p>
+
+  </div>
+</div>
       <h2 id="reference-architectures">
         
         
@@ -830,7 +1097,7 @@ See <a href="https://github.com/dlmiddlecote/sqlstats#exposed-metrics" target="_
       </h2>
     
 
-<p>Below are a few example architectures for lakeFS deployment.</p>
+<p>Below are a <strong>few example architectures for lakeFS deployment.</strong></p>
       <h3 id="reference-architecture-data-scienceresearch-environment">
         
         

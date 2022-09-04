@@ -250,7 +250,8 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
+                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
                    class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
@@ -416,7 +417,7 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="deploy-lakefs-on-aws">
+                <h1 id="deploy-lakefs-on-aws">
         
         
           <a href="#deploy-lakefs-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Deploy lakeFS on AWS
@@ -424,7 +425,8 @@
         
       </h1>
     
-<p>Expected deployment time: 25 min</p>
+
+<p class="no_toc">Expected deployment time: 25 min</p>
 
 <div class="toc-block">
       <h2 class="no_toc text-delta" id="table-of-contents">
@@ -437,16 +439,27 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
-  <li><a href="#creating-the-database-on-aws-rds" id="markdown-toc-creating-the-database-on-aws-rds">Creating the Database on AWS RDS</a></li>
-  <li><a href="#installation-options" id="markdown-toc-installation-options">Installation Options</a>    <ol>
-      <li><a href="#on-ec2" id="markdown-toc-on-ec2">On EC2</a></li>
-      <li><a href="#on-ecs" id="markdown-toc-on-ecs">On ECS</a></li>
-      <li><a href="#on-eks" id="markdown-toc-on-eks">On EKS</a></li>
+  <li><a href="#deploy-lakefs-on-aws" id="markdown-toc-deploy-lakefs-on-aws">Deploy lakeFS on AWS</a>    <ol>
+      <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
+      <li><a href="#preparing-the-database-for-the-key-value-store" id="markdown-toc-preparing-the-database-for-the-key-value-store">Preparing the Database for the Key Value Store</a>        <ol>
+          <li><a href="#creating-postgresql-database-on-aws-rds" id="markdown-toc-creating-postgresql-database-on-aws-rds">Creating PostgreSQL Database on AWS RDS</a></li>
+          <li><a href="#dynamodb-on-aws" id="markdown-toc-dynamodb-on-aws">DynamoDB on AWS</a></li>
+        </ol>
+      </li>
+      <li><a href="#installation-options" id="markdown-toc-installation-options">Installation Options</a>        <ol>
+          <li><a href="#on-ec2" id="markdown-toc-on-ec2">On EC2</a></li>
+          <li><a href="#on-ecs" id="markdown-toc-on-ecs">On ECS</a>            <ol>
+              <li><a href="#with-postgresql" id="markdown-toc-with-postgresql">With PostgreSQL</a></li>
+              <li><a href="#with-dynamodb" id="markdown-toc-with-dynamodb">With DynamoDB</a></li>
+            </ol>
+          </li>
+          <li><a href="#on-eks" id="markdown-toc-on-eks">On EKS</a></li>
+        </ol>
+      </li>
+      <li><a href="#load-balancing" id="markdown-toc-load-balancing">Load balancing</a></li>
+      <li><a href="#next-steps" id="markdown-toc-next-steps">Next Steps</a></li>
     </ol>
   </li>
-  <li><a href="#load-balancing" id="markdown-toc-load-balancing">Load balancing</a></li>
-  <li><a href="#next-steps" id="markdown-toc-next-steps">Next Steps</a></li>
 </ol>
 
 </div>
@@ -460,16 +473,27 @@
     
 
 <p class="no_toc">Users that require S3 access using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual host addressing</a> should <a href="../../setup/virtual-host-addressing.html">configure an S3 Gateway domain</a>.</p>
-      <h2 id="creating-the-database-on-aws-rds">
+      <h2 id="preparing-the-database-for-the-key-value-store">
         
         
-          <a href="#creating-the-database-on-aws-rds" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Creating the Database on AWS RDS
+          <a href="#preparing-the-database-for-the-key-value-store" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Preparing the Database for the Key Value Store
         
         
       </h2>
     
-<p>lakeFS requires a PostgreSQL database to synchronize actions on your repositories.
-We will show you how to create a database on AWS RDS but you can use any PostgreSQL database as long as it’s accessible by your lakeFS installation.</p>
+
+<p>lakeFS uses a key-value store to synchronize actions on your repositories. Out of the box, this key-value store can rely on DynamoDB or a PostgreSQL DB. As lakeFS open source, you can also write your own implementation and use any other DB
+The following two sections explain how to setup either PostgreSQL or DynamoDB as key-value backing DB</p>
+      <h3 id="creating-postgresql-database-on-aws-rds">
+        
+        
+          <a href="#creating-postgresql-database-on-aws-rds" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Creating PostgreSQL Database on AWS RDS
+        
+        
+      </h3>
+    
+
+<p>We will show you how to create a database on AWS RDS but you can use any PostgreSQL database as long as it’s accessible by your lakeFS installation.</p>
 
 <p>If you already have a database, take note of the connection string and skip to the <a href="#installation-options">next step</a></p>
 
@@ -483,6 +507,18 @@ You may use the default PostgreSQL engine, or <a href="https://docs.aws.amazon.c
   </li>
   <li>Make sure your security group rules allow you to connect to the database instance.</li>
 </ol>
+      <h3 id="dynamodb-on-aws">
+        
+        
+          <a href="#dynamodb-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DynamoDB on AWS
+        
+        
+      </h3>
+    
+
+<p>DynamoDB on AWS does not require any specific preparation, other than properly configuring lakeFS to use it and valid AWS credentials. Please refer to <code class="language-plaintext highlighter-rouge">database.dynamodb</code> section in the <a href="/reference/configuration.html#reference">configuration reference</a> for complete configuration options.
+AWS credentials, for DynamoDB, can also be provided via environment variables, as described in the <a href="/reference/configuration.html#using-environment-variables">configuration reference</a>
+Please refer to <a href="https://aws.amazon.com/dynamodb/getting-started/">AWS documentation</a> for further information on DynamoDB</p>
       <h2 id="installation-options">
         
         
@@ -499,17 +535,29 @@ You may use the default PostgreSQL engine, or <a href="https://docs.aws.amazon.c
         
       </h3>
     
+
 <ol>
   <li>
-    <p>Save the following configuration file as <code class="language-plaintext highlighter-rouge">config.yaml</code>:</p>
+    <p>Edit and save the following configuration file as <code class="language-plaintext highlighter-rouge">config.yaml</code>:</p>
 
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DATABASE_CONNECTION_STRING]"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span> <span class="s">OR "dynamodb"</span>
+
+  <span class="c1"># when using dynamodb</span>
+  <span class="na">dynamodb</span><span class="pi">:</span> 
+    <span class="na">table_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DYNAMODB_TABLE_NAME]"</span>
+    <span class="na">aws_region</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DYNAMODB_REGION]"</span>
+
+  <span class="c1"># when using postgres</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DATABASE_CONNECTION_STRING]"</span>
+
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
     <span class="c1"># replace this with a randomly-generated string:</span>
     <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[ENCRYPTION_SECRET_KEY]"</span>
+
 <span class="na">blockstore</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">s3</span>
   <span class="na">s3</span><span class="pi">:</span>
@@ -518,7 +566,7 @@ You may use the default PostgreSQL engine, or <a href="https://docs.aws.amazon.c
   </li>
   <li><a href="/#downloads">Download the binary</a> to the EC2 instance.</li>
   <li>Run the <code class="language-plaintext highlighter-rouge">lakefs</code> binary on the EC2 instance:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs <span class="nt">--config</span> config.yaml run
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs <span class="nt">--config</span> config.yaml run
 </code></pre></div>    </div>
     <p><strong>Note:</strong> It’s preferable to run the binary as a service using systemd or your operating system’s facilities.</p>
   </li>
@@ -531,13 +579,41 @@ You may use the default PostgreSQL engine, or <a href="https://docs.aws.amazon.c
         
       </h3>
     
-<p>To support container-based environments like AWS ECS, lakeFS can be configured using environment variables. Here is a <code class="language-plaintext highlighter-rouge">docker run</code> 
-command to demonstrate starting lakeFS using Docker:</p>
+
+<p>To support container-based environments like AWS ECS, lakeFS can be configured using environment variables. Here are a couple of <code class="language-plaintext highlighter-rouge">docker run</code> 
+commands to demonstrate starting lakeFS using Docker:</p>
+      <h4 id="with-postgresql">
+        
+        
+          <a href="#with-postgresql" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> With PostgreSQL
+        
+        
+      </h4>
+    
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="se">\</span>
   <span class="nt">--name</span> lakefs <span class="se">\</span>
   <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-  <span class="nt">-e</span> <span class="nv">LAKEFS_DATABASE_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"[DATABASE_CONNECTION_STRING]"</span> <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">LAKEFS_DATABASE_TYPE</span><span class="o">=</span><span class="s2">"postgres"</span> <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">LAKEFS_DATABASE_POSTGRES_CONNECTION_STRING</span><span class="o">=</span><span class="s2">"[DATABASE_CONNECTION_STRING]"</span> <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">LAKEFS_AUTH_ENCRYPT_SECRET_KEY</span><span class="o">=</span><span class="s2">"[ENCRYPTION_SECRET_KEY]"</span> <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"s3"</span> <span class="se">\</span>
+  treeverse/lakefs:latest run
+</code></pre></div></div>
+      <h4 id="with-dynamodb">
+        
+        
+          <a href="#with-dynamodb" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> With DynamoDB
+        
+        
+      </h4>
+    
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="se">\</span>
+  <span class="nt">--name</span> lakefs <span class="se">\</span>
+  <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
+  <span class="nt">-e</span> LAKEFS_DATABASE_TYPE: <span class="s2">"dynamodb"</span> <span class="se">\</span>
+  <span class="nt">-e</span> <span class="nv">LAKEFS_DATABASE_DYNAMODB_TABLE_NAME</span><span class="o">=</span><span class="s2">"[DYNAMODB_TABLE_NAME]"</span> <span class="se">\</span>
   <span class="nt">-e</span> <span class="nv">LAKEFS_AUTH_ENCRYPT_SECRET_KEY</span><span class="o">=</span><span class="s2">"[ENCRYPTION_SECRET_KEY]"</span> <span class="se">\</span>
   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"s3"</span> <span class="se">\</span>
   treeverse/lakefs:latest run
@@ -552,6 +628,7 @@ command to demonstrate starting lakeFS using Docker:</p>
         
       </h3>
     
+
 <p>See <a href="/deploy/k8s.html">Kubernetes Deployment</a>.</p>
       <h2 id="load-balancing">
         
@@ -561,6 +638,7 @@ command to demonstrate starting lakeFS using Docker:</p>
         
       </h2>
     
+
 <p>Depending on how you chose to install lakeFS, you should have a load balancer direct requests to the lakeFS server.<br />
 By default, lakeFS operates on port 8000, and exposes a <code class="language-plaintext highlighter-rouge">/_health</code> endpoint which you can use for health checks.</p>
       <h3 class="no_toc" id="notes-for-using-an-aws-application-load-balancer">
@@ -586,6 +664,7 @@ By default, lakeFS operates on port 8000, and exposes a <code class="language-pl
         
       </h2>
     
+
 <p>Your next step is to <a href="/setup/storage/">prepare your storage</a>. If you already have a storage bucket/container, you’re ready to <a href="/setup/create-repo.html">create your first lakeFS repository</a>.</p>
 
                 
