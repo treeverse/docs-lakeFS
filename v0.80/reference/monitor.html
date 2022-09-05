@@ -458,8 +458,10 @@
         
       </h2>
     
+
 <p>lakeFS exposes metrics through the same port used by the lakeFS service, using the standard <code class="language-plaintext highlighter-rouge">/metrics</code> path.
 An example <code class="language-plaintext highlighter-rouge">prometheus.yml</code> could look like this:</p>
+
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">scrape_configs</span><span class="pi">:</span>
 <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">lakeFS</span>
   <span class="na">scrape_interval</span><span class="pi">:</span> <span class="s">10s</span>
@@ -476,6 +478,7 @@ An example <code class="language-plaintext highlighter-rouge">prometheus.yml</co
         
       </h2>
     
+
 <p>By default, Prometheus exports metrics with OS process information like memory and CPU.
 It also includes Go-specific metrics such as details about GC and a number of goroutines.
 You can learn about these default metrics in this <a href="https://povilasv.me/prometheus-go-metrics/" target="_blank">post</a>.</p>
@@ -520,9 +523,19 @@ You can learn about these default metrics in this <a href="https://povilasv.me/p
       <td><br /><strong>operation</strong>: operation name<br /><strong>error</strong>: “true” if error, “false” otherwise</td>
     </tr>
     <tr>
-      <td>go_sql_stats_*</td>
-      <td><a href="https://golang.org/pkg/database/sql/#DB.Stats" target="_blank">Go DB stats</a> metrics have this prefix.<br /><a href="https://github.com/dlmiddlecote/sqlstats" target="_blank">dlmiddlecote/sqlstats</a> is used to expose them.</td>
-      <td> </td>
+      <td>dynamo_request_duration_seconds</td>
+      <td>Time spent doing DynamoDB requests</td>
+      <td><strong>operation</strong>: DynamoDB operation name</td>
+    </tr>
+    <tr>
+      <td>dynamo_consumed_capacity_total</td>
+      <td>The capacity units consumed by operation</td>
+      <td><strong>operation</strong>: DynamoDB operation name</td>
+    </tr>
+    <tr>
+      <td>dynamo_failures_total</td>
+      <td>The total number of errors while working for kv store</td>
+      <td><strong>operation</strong>: DynamoDB operation name</td>
     </tr>
   </tbody>
 </table></div>
@@ -534,6 +547,7 @@ You can learn about these default metrics in this <a href="https://povilasv.me/p
         
       </h2>
     
+
 <p class="note"><strong>Note:</strong> when using Prometheus functions like <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#rate" target="_blank">rate</a>
 or <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#increase" target="_blank">increase</a>, results are extrapolated and may not be exact.</p>
       <h3 id="99th-percentile-of-api-request-latencies">
@@ -544,6 +558,7 @@ or <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#inc
         
       </h3>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sum by (operation)(histogram_quantile(0.99, rate(api_request_duration_seconds_bucket[1m])))
 </code></pre></div></div>
       <h3 id="50th-percentile-of-s3-compatible-api-latencies">
@@ -554,6 +569,7 @@ or <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#inc
         
       </h3>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sum by (operation)(histogram_quantile(0.5, rate(gateway_request_duration_seconds_bucket[1m])))
 </code></pre></div></div>
       <h3 id="number-of-errors-in-outgoing-s3-requests">
@@ -564,6 +580,7 @@ or <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#inc
         
       </h3>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sum by (operation) (increase(s3_operation_duration_seconds_count{error="true"}[1m]))
 </code></pre></div></div>
       <h3 id="number-of-open-connections-to-the-database">
@@ -574,6 +591,7 @@ or <a href="https://prometheus.io/docs/prometheus/latest/querying/functions/#inc
         
       </h3>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go_sql_stats_connections_open
 </code></pre></div></div>
       <h3 id="example-grafana-dashboard">
