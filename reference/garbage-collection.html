@@ -460,7 +460,7 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
       </h2>
     
 
-<p>For every branch, the GC job retains deleted objects for the number of days defined for the branch.
+<p>For every branch, the GC job retains deletes objects for the number of days defined for the branch.
 In the absence of a branch-specific rule, the default rule for the repository is used.
 If an object is present in more than one branch ancestry, it’s retained according to the rule with the largest number of days between those branches.
 That is, it’s hard-deleted only after the retention period has ended for all relevant branches.</p>
@@ -494,7 +494,7 @@ objects on each branch. If a branch is configured to retain objects for a
 given number of days, any object that was accessible from the HEAD of a
 branch in that past number of days will be retained.</p>
 
-<p>The garbage collection process proceeds in two main phases:</p>
+<p>The garbage collection process proceeds in three main phases:</p>
 
 <ul>
   <li>
@@ -524,7 +524,7 @@ objects accessible on some retained commits.</p>
     <p>In the example, all objects of commit <code class="language-plaintext highlighter-rouge">2022-03-12</code>, for instance, are
 retained. This <em>includes</em> objects added in previous commits. However,
 objects added in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-14</code> which were overwritten or
-committed in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
+deleted in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
 and will be garbage collected.</p>
   </li>
   <li>
@@ -543,15 +543,13 @@ gateway will return HTTP status 410 (“Gone”).</p>
       </h3>
     
 
-<p>From the above definition of what gets collected, some objects will <em>not</em> be
-collected regardless of configured GC rules:</p>
-
+<p>Some objects will <em>not</em> be collected regardless of configured GC rules:</p>
 <ul>
+  <li>Any object that is accessible from any branch’s HEAD.</li>
   <li>Any object that was <em>uploaded but never committed</em> cannot be collected.  See
 <a href="https://github.com/treeverse/lakeFS/issues/1933">#1933</a> for more details.</li>
-  <li>Any object that is present on a branch HEAD is visible on that branch.
-Commits at the HEAD of a branch are retained, so such an object will not
-be collected.</li>
+  <li>Objects stored outside the repository’s <a href="/glossary.html#storage-namespace">storage namespace</a>.
+For example, objects imported using the lakeFS import UI are not collected.</li>
 </ul>
       <h2 id="configuring-gc-rules">
         
