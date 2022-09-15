@@ -290,7 +290,8 @@
            class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/understand/architecture.html"
                    class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/understand/model.html"
                    class="nav-list-link">Model</a></li><li class="nav-list-item "><a href="/understand/versioning-internals.html"
-                   class="nav-list-link">Versioning Internals</a></li><li class="nav-list-item "><a href="/understand/sizing-guide.html"
+                   class="nav-list-link">Versioning Internals</a></li><li class="nav-list-item "><a href="/understand/kv-in-a-nutshell.html"
+                   class="nav-list-link">KV in a Nutshell</a></li><li class="nav-list-item "><a href="/understand/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/understand/roadmap.html"
                    class="nav-list-link">Roadmap</a></li></ul></li><li
             class="nav-list-item"><a href="/commitment.html"
@@ -439,16 +440,8 @@ More information can be found <a href="https://github.com/treeverse/lakeFS/issue
       </h2>
     
 
-<p>Starting at version 0.80.0, lakeFS abandoned the tight coupling to <a href="https://en.wikipedia.org/wiki/PostgreSQL">PostgreSQL</a> and moved all database operations to work over <a href="https://en.wikipedia.org/wiki/Key%E2%80%93value_database">Key-Value Store</a></p>
-
-<p>While SQL databases, and Postgres among them, have their obvious advantages, we felt that the tight coupling to Postgres is limiting our users and so, lakeFS with Key Value Store is introduced.
-Our KV Store implements a generic interface, with methods for <code class="language-plaintext highlighter-rouge">Get</code>, <code class="language-plaintext highlighter-rouge">Set</code>, <code class="language-plaintext highlighter-rouge">Compare-and-Set</code>, <code class="language-plaintext highlighter-rouge">Delete</code> and <code class="language-plaintext highlighter-rouge">Scan</code>. Each entry is represented by a [<code class="language-plaintext highlighter-rouge">partition</code>, <code class="language-plaintext highlighter-rouge">key</code>, <code class="language-plaintext highlighter-rouge">value</code>] triplet. All these fields are generic byte-array, and the using module has maximal flexibility on the format to use for each field</p>
-
-<p>Under the hood, our KV implementation relies on a backing DB, which persists the data. Theoretically, it could be any type of database and out of the box, we already implemented drivers for <a href="https://en.wikipedia.org/wiki/Amazon_DynamoDB">DynamoDB</a>, for AWS users, and <a href="https://en.wikipedia.org/wiki/PostgreSQL">PostgreSQL</a>, using its relational nature to store a KV Store. More databases will be supported in the future, and lakeFS users and contributors can develop their own driver to use their own favorite database. For experimenting purposes, an in-memory KV store can be used, though it obviously lack the persistency aspect</p>
-
-<p>In order to store ref store objects (that is <code class="language-plaintext highlighter-rouge">Repositories</code>, <code class="language-plaintext highlighter-rouge">Branches</code>, <code class="language-plaintext highlighter-rouge">Commits</code>, <code class="language-plaintext highlighter-rouge">Tags</code>, and <code class="language-plaintext highlighter-rouge">Uncommitted Objects</code>), lakeFS implements another layer over the generic KV Store, which supports serialization and deserialization of these objects as <a href="https://en.wikipedia.org/wiki/Protocol_Buffers">protobuf</a>. As this layer relies on the generic interface of the KV Store layer, it is totally agnostic to whichever store implementation is in use, gaining our users the maximal flexibility</p>
-
-<p>For further reading, please refer to our <a href="https://github.com/treeverse/lakeFS/blob/master/design/accepted/metadata_kv/index.md">KV Design</a></p>
+<p>Starting at version 0.80.0, lakeFS abandoned the tight coupling to <a href="https://en.wikipedia.org/wiki/PostgreSQL">PostgreSQL</a> and moved all database operations to work over <a href="https://en.wikipedia.org/wiki/Key%E2%80%93value_database">Key-Value Store</a>
+To better understand how lakeFS uses KV Store, please refer to <a href="../understand/kv-in-a-nutshell.html">KV in a Nutshell</a></p>
 
                 
 
