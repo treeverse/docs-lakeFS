@@ -493,7 +493,7 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   </li>
   <li><code class="language-plaintext highlighter-rouge">database</code> - Configuration section for the lakeFS key-value store database
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string : ["postgres"|"dynamodb"])</code> - lakeFS database type</li>
+      <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string ["postgres"|"dynamodb"|"local"] : )</code> - lakeFS database type</li>
       <li><code class="language-plaintext highlighter-rouge">database.postgres</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="postgres"</code>
         <ul>
           <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
@@ -516,11 +516,16 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
           <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_region</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS Region of database instance</li>
           <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_profile</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS named profile to use</li>
           <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS access key ID</li>
-          <li>
-            <p><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS secret access key</p>
-
-            <p class="note"><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">endpoint</code> <code class="language-plaintext highlighter-rouge">aw_region</code> <code class="language-plaintext highlighter-rouge">aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">aws_secret_access_key</code> are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials.</p>
-          </li>
+          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS secret access key</li>
+          <li><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">endpoint</code> <code class="language-plaintext highlighter-rouge">aws_region</code> <code class="language-plaintext highlighter-rouge">aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">aws_secret_access_key</code> are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials.</li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">database.local</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="local"</code>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">database.local.path</code> <code class="language-plaintext highlighter-rouge">(string : "~/lakefs/metadata")</code> - Local path on the filesystem to store embedded KV metadata, like branches and uncommitted entries</li>
+          <li><code class="language-plaintext highlighter-rouge">database.local.sync_writes</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - Ensure each write is written to the disk. Disable to increase performance</li>
+          <li><code class="language-plaintext highlighter-rouge">database.local.prefetch_size</code> <code class="language-plaintext highlighter-rouge">(int: 256)</code> - How many items to prefetch when iterating over embedded KV records</li>
+          <li><code class="language-plaintext highlighter-rouge">database.local.enable_logging</code> <code class="language-plaintext highlighter-rouge">(bool: false)</code> - Enable trace logging for local driver</li>
         </ul>
       </li>
     </ul>
@@ -545,8 +550,8 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.user_base_dn</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - Base DN for searching for users.  Search looks for users in the subtree below this.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.default_user_group</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Create all LDAP users in this group.  Defaults to <code class="language-plaintext highlighter-rouge">Viewers</code>.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.ldap.user_filter</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Additional filter for users.</li>
-  <li><code class="language-plaintext highlighter-rouge">auth.oidc.enabled</code> <code class="language-plaintext highlighter-rouge">(boolean : false)</code> - Set to true to enable authentication with an external OIDC provider.</li>
-  <li><code class="language-plaintext highlighter-rouge">auth.oidc.is_default_login</code> <code class="language-plaintext highlighter-rouge">(boolean : false)</code> - If true, the lakeFS login page will redirect to the external provider by default.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Set to true to enable authentication with an external OIDC provider.</li>
+  <li><code class="language-plaintext highlighter-rouge">auth.oidc.is_default_login</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - If true, the lakeFS login page will redirect to the external provider by default.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.oidc.client_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - OIDC client ID.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.oidc.client_secret</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - OIDC client secret.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.oidc.url</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - The base URL of your OIDC compatible identity provider.</li>
@@ -573,10 +578,10 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.credentials.secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a static set of credential</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.credentials.session_token</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a static session token</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, custom endpoint for the AWS S3 API (https://s3_compatible_service_endpoint:port)</li>
-  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.force_path_style</code> <code class="language-plaintext highlighter-rouge">(boolean : false)</code> - When true, use path-style S3 URLs (https://<host>/<bucket> instead of https://<bucket>.<host>)</host></bucket></bucket></host></li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.force_path_style</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - When true, use path-style S3 URLs (https://<host>/<bucket> instead of https://<bucket>.<host>)</host></bucket></bucket></host></li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.streaming_chunk_size</code> <code class="language-plaintext highlighter-rouge">(int : 1048576)</code> - Object chunk size to buffer before streaming to blockstore (use a lower value for less reliable networks). Minimum is 8192.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.streaming_chunk_timeout</code> <code class="language-plaintext highlighter-rouge">(time duration : "60s")</code> - Per object chunk timeout for blockstore streaming operations (use a larger value for less reliable networks).</li>
-  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.discover_bucket_region</code> <code class="language-plaintext highlighter-rouge">(boolean : true)</code> - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API).</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.discover_bucket_region</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API).</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.skip_verify_certificate_test_only</code> <code class="language-plaintext highlighter-rouge">(boolean: false)</code> - Skip certificate verification while connecting to the storage endpoint. Should be used only for testing.</li>
   <li><code class="language-plaintext highlighter-rouge">committed.local_cache</code> - an object describing the local (on-disk) cache of metadata from
 permanent storage:
@@ -626,9 +631,9 @@ representing the S3 endpoint used by S3 clients to call this server
 local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual-host addressing</a>.</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - AWS region we’re pretending to be in, it should match the region configuration used in AWS SDK clients</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.fallback_url</code> <code class="language-plaintext highlighter-rouge">(string)</code> - If specified, requests with a non-existing repository will be forwarded to this URL. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an <a href="https://github.com/gaul/s3proxy">S3Proxy</a> instance.</li>
-  <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(boolean : true)</code> - Whether to periodically collect anonymous usage statistics</li>
+  <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Whether to periodically collect anonymous usage statistics</li>
   <li><code class="language-plaintext highlighter-rouge">security.audit_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 12h)</code> - Duration in which we check for security audit.</li>
-  <li><code class="language-plaintext highlighter-rouge">ui.enable</code> <code class="language-plaintext highlighter-rouge">(boolean: true)</code> - Whether to server the embedded UI from the binary</li>
+  <li><code class="language-plaintext highlighter-rouge">ui.enable</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - Whether to server the embedded UI from the binary</li>
 </ul>
       <h2 id="using-environment-variables">
         

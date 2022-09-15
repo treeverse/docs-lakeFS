@@ -442,40 +442,11 @@ For a production suitable deployment, learn how to <a href="../deploy/index.html
     
 
 <ol id="markdown-toc">
-  <li><a href="#docker-on-windows" id="markdown-toc-docker-on-windows">Docker on Windows</a></li>
   <li><a href="#on-kubernetes-with-helm" id="markdown-toc-on-kubernetes-with-helm">On Kubernetes with Helm</a></li>
   <li><a href="#using-the-binary" id="markdown-toc-using-the-binary">Using the Binary</a></li>
 </ol>
 
 </div>
-      <h2 id="docker-on-windows">
-        
-        
-          <a href="#docker-on-windows" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Docker on Windows
-        
-        
-      </h2>
-    
-
-<p>To run a local lakeFS instance using <a href="https://docs.docker.com/compose/" target="_blank">Docker Compose</a>:</p>
-
-<ol>
-  <li>
-    <p>Ensure that you have Docker installed on your computer and that compose version is 1.25.04 or higher. For more information, please see this <a href="https://github.com/treeverse/lakeFS/issues/894">issue</a>.</p>
-  </li>
-  <li>
-    <p>Run the following command in your terminal:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Invoke-WebRequest https://compose.lakefs.io | Select-Object <span class="nt">-ExpandProperty</span> Content | docker-compose <span class="nt">-f</span> - up
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Check your installation by opening <a href="http://127.0.0.1:8000/setup" target="_blank">http://127.0.0.1:8000/setup</a> in your web browser.</p>
-  </li>
-  <li>
-    <p>You’re now ready to <a href="/quickstart/repository.html">create your first repository</a> in lakeFS.</p>
-  </li>
-</ol>
       <h2 id="on-kubernetes-with-helm">
         
         
@@ -516,29 +487,24 @@ helm <span class="nb">install </span>my-lakefs lakefs/lakefs
     <p><a href="/#downloads" class="btn btn-green" target="_blank">Download lakefs</a></p>
   </li>
   <li>
-    <p>Install and configure <a href="https://www.postgresql.org/download/" target="_blank">PostgreSQL</a></p>
-  </li>
-  <li>
     <p>Create a configuration file:</p>
 
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://localhost:5432/postgres?sslmode=disable"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">local</span>
+  <span class="na">local</span><span class="pi">:</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">~/lakefs/metadata"</span>
     
 <span class="na">blockstore</span><span class="pi">:</span> 
   <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">local"</span>
   <span class="na">local</span><span class="pi">:</span>
-    <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">~/lakefs_data"</span>
-    
-<span class="na">auth</span><span class="pi">:</span>
-  <span class="na">encrypt</span><span class="pi">:</span>
-    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">a</span><span class="nv"> </span><span class="s">random</span><span class="nv"> </span><span class="s">string</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">should</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">kept</span><span class="nv"> </span><span class="s">secret"</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">~/lakefs/data"</span>
 </code></pre></div>    </div>
   </li>
   <li>
-    <p>Create a local directory to store objects:</p>
+    <p>Create a local directories to store objects and metadata:</p>
 
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> ~/lakefs_data
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> ~/lakefs/data ~/lakefs/metadata
 </code></pre></div>    </div>
   </li>
   <li>
