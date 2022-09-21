@@ -447,6 +447,8 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
   </li>
   <li><a href="#configuring-gc-rules" id="markdown-toc-configuring-gc-rules">Configuring GC rules</a></li>
   <li><a href="#running-the-gc-job" id="markdown-toc-running-the-gc-job">Running the GC job</a>    <ol>
+      <li><a href="#first-run" id="markdown-toc-first-run">First run</a></li>
+      <li><a href="#performance" id="markdown-toc-performance">Performance</a></li>
       <li><a href="#networking" id="markdown-toc-networking">Networking</a></li>
     </ol>
   </li>
@@ -664,6 +666,52 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
     </ul>
 
   </div>
+
+  <p>The list of expired objects is written in Parquet format in the storage
+namespace of the bucket under
+<code class="language-plaintext highlighter-rouge">_lakefs/retention/gc/addresses/run_id=RUN_ID</code>, where RUN_ID identifies the
+run.</p>
+      <h3 id="first-run">
+        
+        
+          <a href="#first-run" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> First run
+        
+        
+      </h3>
+    
+
+  <p>To create a list of objects to delete you can</p>
+
+  <ul>
+    <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.debug.gc.no_delete=true</code> to disable object
+deletion.</li>
+  </ul>
+
+  <p>Nothing will be deleted.  The list of expired objects will still be created
+and may be examined.</p>
+      <h3 id="performance">
+        
+        
+          <a href="#performance" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Performance
+        
+        
+      </h3>
+    
+
+  <p>Garbage collection reads many commits.  It uses Spark to spread the load of
+reading the contents of all of these commits.  For very large jobs running
+on very large clusters, you may want to tweak this load.  To do this:</p>
+
+  <ul>
+    <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.gc.range.num_partitions=RANGE_PARTITIONS</code>
+(default 50) to spread the initial load of reading commits across more
+Spark executors.</li>
+    <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.gc.address.num_partitions=RANGE_PARTITIONS</code>
+(default 200) to spread the load of reading all objects included in a
+commit across more Spark executors.</li>
+  </ul>
+
+  <p>Normally this should not be needed.</p>
       <h3 id="networking">
         
         
