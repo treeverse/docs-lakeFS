@@ -250,12 +250,10 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
-                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item "><a href="/glossary.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
-                   class="nav-list-link">OIDC support</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -443,11 +441,10 @@
       <li><a href="#repository" id="markdown-toc-repository">Repository</a></li>
       <li><a href="#commits" id="markdown-toc-commits">Commits</a></li>
       <li><a href="#branches" id="markdown-toc-branches">Branches</a></li>
-      <li><a href="#staging-area" id="markdown-toc-staging-area">Staging Area</a></li>
       <li><a href="#tags" id="markdown-toc-tags">Tags</a></li>
-      <li><a href="#ref-expressions" id="markdown-toc-ref-expressions">Ref expressions</a></li>
       <li><a href="#history" id="markdown-toc-history">History</a></li>
       <li><a href="#merge" id="markdown-toc-merge">Merge</a></li>
+      <li><a href="#ref-expressions" id="markdown-toc-ref-expressions">Ref expressions</a></li>
     </ol>
   </li>
   <li><a href="#concepts-unique-to-lakefs" id="markdown-toc-concepts-unique-to-lakefs">Concepts unique to lakeFS</a>    <ol>
@@ -469,27 +466,10 @@ defines the common concepts of lakeFS.</p>
       </h2>
     
 
-<p>lakeFS is an object store and borrows concepts from S3.</p>
-
-<p>An <em>object store</em> links objects to paths. An <em>object</em> holds:</p>
-
-<ul>
-  <li>Some <em>contents</em>, with unlimited size and format.</li>
-  <li>Some <em>metadata</em>, including
-    <ul>
-      <li><em>size</em> in bytes,</li>
-      <li>the <em>creation time</em>, a timestamp with seconds resolution,</li>
-      <li>a <em>checksum</em> string which uniquely identifies the contents,</li>
-      <li>some <em>user metadata</em>, a small map of strings to strings.</li>
-    </ul>
-  </li>
-</ul>
-
-<p>Similarly to many object stores, lakeFS objects are immutable and never rewritten. They can
-be entirely replaced or deleted, but not modified.</p>
+<p>lakeFS is an interface to manage objects in an object store.</p>
 
 <p class="note">The actual data itself is not stored inside lakeFS directly but in an <a href="#concepts-unique-to-lakefs">underlying object store</a>.
-lakeFS will manage these writes and store a pointer to the object in its metadata database.</p>
+lakeFS manages pointers and additional metadata about these objects.</p>
       <h2 id="version-control">
         
         
@@ -499,7 +479,7 @@ lakeFS will manage these writes and store a pointer to the object in its metadat
       </h2>
     
 
-<p>lakeFS borrows its concepts for version control from Git.</p>
+<p>lakeFS is spearheading version control semantics for data. Most of these concepts will be familiar to Git users:</p>
       <h3 id="repository">
         
         
@@ -509,8 +489,9 @@ lakeFS will manage these writes and store a pointer to the object in its metadat
       </h3>
     
 
-<p>In lakeFS, a <em>repository</em> is a logical namespace used to group together objects, branches, and commits.
-It can be considered the lakeFS analog of a bucket in an object store. Since it has version control qualities, it’s also analogous to a repository in Git.</p>
+<p>In lakeFS, a <em>repository</em> is a set of related objects (or collections of objects). In many cases, these represent tables of <a href="https://lakefs.io/hudi-iceberg-and-delta-lake-data-lake-table-formats-compared/" target="_blank">various formats</a> for tabular data, semi-structured data such as JSON or log files - or a set of unstructured objects such as images, videos, sensor data, etc.</p>
+
+<p>lakeFS represents repositories as a logical namespace used to group together objects, branches, and commits - analogous to a repository in Git.</p>
       <h3 id="commits">
         
         
@@ -519,24 +500,17 @@ It can be considered the lakeFS analog of a bucket in an object store. Since it 
         
       </h3>
     
-<p>Commits are immutable “checkpoints” containing an entire snapshot of a repository at a given point in time.
-This is very similar to commits in Git. Each commit contains metadata - the committer, timestamp, a commit message, as well as arbitrary key/value pairs you can choose to add.
-Using commits, you can view your Data Lake at a certain point in its history and you’re guaranteed that the data you see is exactly is it was at the point of committing it.</p>
 
-<p>Every repository has exactly one <em>initial commit</em> with no parents. A commit with more than one parent is
-a <em>merge commit</em>. Currently lakeFS only supports merge commits with two parents.</p>
-      <h4 class="no_toc" id="identifying-commits">
-        
-        
-          <a href="#identifying-commits" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Identifying commits
-        
-        
-      </h4>
-    
+<p>Using commits, you can view a <a href="#repository">repository</a> at a certain point in its history and you’re guaranteed that the data you see is exactly as it was at the point of committing it.</p>
 
-<p>A commit is identified by its <em>commit ID</em>, a digest of all contents of the commit. Commit IDs are by nature long,
-so you may use a unique prefix to abbreviate them. A commit may also be identified by using a textual definition,
-called a <em>ref</em>. Examples of refs include tags, branch names, and expressions.</p>
+<p>These commits are immutable “checkpoints” containing all contents of a repository at a given point in the repository’s history.</p>
+
+<p>Each commit contains metadata - the committer, timestamp, a commit message, as well as arbitrary key/value pairs you can choose to add.</p>
+
+<p class="note"><strong>Identifying Commits</strong><br /><br />
+  A commit is identified by its <em>commit ID</em>, a digest of all contents of the commit. <br />
+  Commit IDs are by nature long, so you may use a unique prefix to abbreviate them. A commit may also be identified by using a textual definition, called a <em>ref</em>. <br /><br />
+  Examples of refs include tags, branch names, and expressions.</p>
       <h3 id="branches">
         
         
@@ -545,32 +519,12 @@ called a <em>ref</em>. Examples of refs include tags, branch names, and expressi
         
       </h3>
     
-<p><em>Branches</em> are similar in concept to <a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging" target="_blank">Git branches</a>.
-It is a mutable pointer to a commit and its staging area (see <a href="#staging-area">below</a>). A branch in lakeFS is a consistent snapshot of the entire repository,
-which is isolated from other branches and their changes.</p>
 
-<p>Example branches:</p>
+<p>Branches in lakeFS allow users to create their own “isolated” view of the repository.</p>
 
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">main</code>, the trunk.</li>
-  <li><code class="language-plaintext highlighter-rouge">staging</code>, maybe ahead of <code class="language-plaintext highlighter-rouge">main</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">dev:joe-bugfix-1234</code> for Joe to fix issue 1234.</li>
-</ul>
-      <h3 id="staging-area">
-        
-        
-          <a href="#staging-area" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Staging Area
-        
-        
-      </h3>
-    
+<p>Changes on one branch do not appear on other branches. Users can take changes from one branch and apply it to another by <a href="#merge">merging</a> them.</p>
 
-<p>The <em>staging area</em> is where your changes appear before they are committed.
-Unlike Git, every branch in lakeFS has its own staging area.
-Uncommitted changes are visible to all users with read permissions, for example using the <em>Uncommitted Changes</em> tab in the UI.</p>
-
-<p>When you commit these changes, a new commit is added to the commit history, and the changes disappear from the staging area.
-This operation is atomic: readers will either see all your committed changes or none at all.</p>
+<p>Under the hood, branches are simply a pointer to a <a href="#commits">commit</a> along with a set of uncommitted changes.</p>
       <h3 id="tags">
         
         
@@ -580,13 +534,39 @@ This operation is atomic: readers will either see all your committed changes or 
       </h3>
     
 
-<p>A <em>tag</em> is an immutable pointer to a single commit. Tags have readable names. Since tags
-are commits, a repository can be read from any tag. Example tags:</p>
+<p>Tags are a way to give a meaningful name to a specific commit. 
+Using tags allow users to reference specific releases, experiments or versions by using a human friendly name.</p>
+
+<p>Example tags:</p>
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">v2.3</code> to mark a release.</li>
   <li><code class="language-plaintext highlighter-rouge">dev:jane-before-v2.3-merge</code> to mark Jane’s private temporary point.</li>
 </ul>
+      <h3 id="history">
+        
+        
+          <a href="#history" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> History
+        
+        
+      </h3>
+    
+
+<p>The <em>history</em> of the branch is the list of commits from the branch tip through the first
+parent of each commit. Histories go back in time.</p>
+      <h3 id="merge">
+        
+        
+          <a href="#merge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merge
+        
+        
+      </h3>
+    
+
+<p><em>Merging</em> is the way to integrate changes from a branch into another branch.
+The result of a merge is a new commit, with the destination as the first parent and the source as the second.</p>
+
+<p class="note">To learn more about how merging works in lakeFS, see <a href="/understand/versioning-internals.html#merging-changes-to-data">versioning internals</a></p>
       <h3 id="ref-expressions">
         
         
@@ -614,139 +594,6 @@ parent.  So <code class="language-plaintext highlighter-rouge">&lt;ref&gt;~N</co
     </ul>
   </li>
 </ul>
-      <h3 id="history">
-        
-        
-          <a href="#history" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> History
-        
-        
-      </h3>
-    
-
-<p>The <em>history</em> of the branch is the list of commits from the branch tip through the first
-parent of each commit. Histories go back in time.</p>
-      <h3 id="merge">
-        
-        
-          <a href="#merge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merge
-        
-        
-      </h3>
-    
-
-<p><em>Merging</em> is the way to integrate changes from a branch into another branch.
-The result of a merge is a new commit, with the destination as the first parent and the source as the second.</p>
-
-<p class="note">Unlike Git, lakeFS doesn’t apply a diff algorithm while merging.
-This is because lakeFS is used for unstructured data, where it makes little sense to merge multiple changes into a single object.</p>
-      <h4 class="no_toc" id="how-it-works">
-        
-        
-          <a href="#how-it-works" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How it works
-        
-        
-      </h4>
-    
-
-<p>To merge a <em>merge source</em> (a commit) into a <em>merge destination</em> (another commit), lakeFS first
-finds the <a href="https://git-scm.com/docs/git-merge-base#_description">merge base</a> the nearest common parent of the two commits.
-It can now perform a <em>three-way merge</em>, by examining the presence and identity of files in each commit. In the table
-below, “A”, “B” and “C” are possible file contents, “X” is a missing file, and “conflict”
-(which only appears as a result) is a merge failure.</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th style="text-align: center"><strong>In base</strong></th>
-      <th style="text-align: center"><strong>In source</strong></th>
-      <th style="text-align: center"><strong>In destination</strong></th>
-      <th style="text-align: center"><strong>Result</strong></th>
-      <th style="text-align: left"><strong>Comment</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: left">Unchanged file</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: left">Files changed on both sides in same way</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">C</td>
-      <td style="text-align: center">conflict</td>
-      <td style="text-align: left">Files changed on both sides differently</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: left">File changed only on one branch</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: left">File changed only on one branch</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: left">Files deleted on both sides</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">conflict</td>
-      <td style="text-align: left">File changed on one side, deleted on the other</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">conflict</td>
-      <td style="text-align: left">File changed on one side, deleted on the other</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: left">File deleted on one side</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: left">File deleted on one side</td>
-    </tr>
-  </tbody>
-</table></div>
-
-<p>The API and lakectl allow passing an optional <code class="language-plaintext highlighter-rouge">strategy</code> flag with the following values:</p>
-<ul>
-  <li>dest-wins - in case of a conflict, merge will pick the destination object.</li>
-  <li>source-wins - in case of a conflict, merge will pick the source object.
-If the strategy is set, it will affect all the objects in the merge, there is currently no way to treat each conflict differently.</li>
-</ul>
-
-<p>As a format-agnostic system, lakeFS currently merges by complete files. Format-specific and
-other user-defined merge strategies for handling conflicts are on the roadmap.</p>
       <h2 id="concepts-unique-to-lakefs">
         
         

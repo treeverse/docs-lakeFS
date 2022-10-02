@@ -250,12 +250,10 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
-                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item  active"><a href="/glossary.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item  active"><a href="/glossary.html"
                    class="nav-list-link active">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
-                   class="nav-list-link">OIDC support</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -483,11 +481,8 @@
         
       </h3>
     
-<p>Branches are similar in concept to Git branches. When creating a new branch, we are actually creating a consistent snapshot of the entire repository, which is isolated from other branches and their changes.</p>
 
-<p>A branch is a mutable pointer to a commit and uncommitted changes in its staging area (i.e., mutable storage where users can create, update, and delete objects). When a user creates a commit from a branch, all the files from the staging area will be merged into the contents of the current branch, generating a new set of objects. The pointer is updated to reference the new set of objects. The new branch tip is set to the latest commit and the previous branch tip serves as the commit’s parent.</p>
-
-<p>Just like in Git, a branch spans a repository. Learn more about the <a href="./understand/branching-model.md">lakeFS branching model</a>.</p>
+<p>Branches in lakeFS allow users to create their own “isolated” view of the repository. <a href="/understand/model.html#branches">Read more</a>.</p>
       <h3 id="collection">
         
         
@@ -505,7 +500,8 @@
         
       </h3>
     
-<p>A commit is a point-in-time immutable snapshot of a branch. It’s a collection of object metadata and data, including paths and the object contents and metadata. Commits have their own commit metadata. Every repository has one initial commit with no parent commits. If a commit has more than one parent, it is a merge commit. lakeFS supports only merge commits with two parents.</p>
+
+<p>Using commits, you can view a <a href="/understand/model.html#repository">repository</a> at a certain point in its history and you’re guaranteed that the data you see is exactly as it was at the point of committing it. <a href="/understand/model.html#commits">Read More</a></p>
       <h3 id="cross-collection-consistency">
         
         
@@ -619,7 +615,7 @@
         
       </h3>
     
-<p>lakeFS merge command, similar to git merge functionality, allows you to merge data branches. Once you commit data, you can review it and then merge the committed data into the target branch. A merge generates a commit on the target branch with all your changes. lakeFS guarantees atomic merges that are fast, given they don’t involve copying data.</p>
+<p>lakeFS merge command, similar to git merge functionality, allows you to merge data branches. Once you commit data, you can review it and then merge the committed data into the target branch. A merge generates a commit on the target branch with all your changes. lakeFS guarantees atomic merges that are fast, given they don’t involve copying data. <a href="/understand/model.html#merge">Read More</a>.</p>
       <h3 id="repository">
         
         
@@ -628,7 +624,8 @@
         
       </h3>
     
-<p>A repository is a collection of objects with common history tracking. lakeFS manages versions of the repository identified by their commits.</p>
+
+<p>In lakeFS, a <em>repository</em> is a set of related objects (or collections of objects). <a href="/understand/model.html#repository">Read More</a></p>
       <h3 id="rollback">
         
         
@@ -665,12 +662,8 @@ lakeFS uses it to store the repository’s objects and some of its metadata.</p>
         
       </h3>
     
-<p>A tag is an immutable pointer to a single commit. Tags have readable names. Because tags are commits, a repository can be read from any tag. Example tags:</p>
 
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">v2.3</code> to mark a release</li>
-  <li><code class="language-plaintext highlighter-rouge">dev:jane-before-v2.3-merge</code> to mark Jane’s private temporary point.</li>
-</ul>
+<p>Tags are a way to give a meaningful name to a specific commit. <a href="/understand/model.html#tags">Read More</a></p>
 
                 
 

@@ -250,12 +250,10 @@
                    class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/database-migration.html"
-                   class="nav-list-link">Database Migration</a></li><li class="nav-list-item "><a href="/glossary.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item  active"><a href="/reference/authentication.html"
                    class="nav-list-link active">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/oidc.html"
-                   class="nav-list-link">OIDC support</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -449,6 +447,14 @@
           <li><a href="#s3-gateway-authentication" id="markdown-toc-s3-gateway-authentication">S3 Gateway Authentication</a></li>
         </ol>
       </li>
+      <li><a href="#oidc-support" id="markdown-toc-oidc-support">OIDC support</a>        <ol>
+          <li><a href="#configuring-lakefs-server-for-oidc" id="markdown-toc-configuring-lakefs-server-for-oidc">Configuring lakeFS server for OIDC</a></li>
+        </ol>
+      </li>
+      <li><a href="#user-permissions" id="markdown-toc-user-permissions">User permissions</a>        <ol>
+          <li><a href="#using-a-different-claim-name" id="markdown-toc-using-a-different-claim-name">Using a different claim name</a></li>
+        </ol>
+      </li>
     </ol>
   </li>
 </ol>
@@ -581,6 +587,87 @@ add them to the internal group named <code class="language-plaintext highlighter
 Clients such as the AWS SDK that implement these authentication methods should work without modification.</p>
 
 <p>See <a href="/integrations/aws_cli.html">this example for authenticating with the AWS CLI</a>.</p>
+      <h2 id="oidc-support">
+        
+        
+          <a href="#oidc-support" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> OIDC support
+        
+        
+      </h2>
+    
+
+<p>OpenID Connect (OIDC) is a simple identity layer on top of the OAuth 2.0 protocol.
+You can configure lakeFS to enable OIDC to manage your lakeFS users externally. 
+Essentially, once configured, this enables you the benefit of OpenID connect, such as a single sign-on (SSO), etc.</p>
+      <h3 id="configuring-lakefs-server-for-oidc">
+        
+        
+          <a href="#configuring-lakefs-server-for-oidc" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring lakeFS server for OIDC
+        
+        
+      </h3>
+    
+
+<p>To support OIDC, add the following to your <a href="/reference/configuration.html">lakeFS configuration</a>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">client_id</span><span class="pi">:</span> <span class="s">example-client-id</span>
+    <span class="na">client_secret</span><span class="pi">:</span> <span class="s">exampleSecretValue</span>
+    <span class="na">callback_base_url</span><span class="pi">:</span> <span class="s">https://lakefs.example.com</span>       <span class="c1"># The scheme, domain (and port) of your lakeFS installation</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">https://my-account.oidc-provider-example.com</span>
+    <span class="na">default_initial_groups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">Developers"</span><span class="pi">]</span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">name</span>                      <span class="c1">#  Optional: use the value from this claim as the user's display name </span>
+</code></pre></div></div>
+
+<p>Your login page will now include a link to sign in using the 
+OIDC provider. When a user first logs in through the provider, a corresponding user is created in lakeFS.</p>
+      <h4 class="no_toc" id="notes">
+        
+        
+          <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
+        
+        
+      </h4>
+    
+<ol>
+  <li>As always, you may choose to provide these configurations using <a href="/reference/configuration.html#using-environment-variables">environment variables</a>.</li>
+  <li>You may already have other configuration values under the <em>auth</em> key, so make sure you combine them correctly.</li>
+</ol>
+      <h2 id="user-permissions">
+        
+        
+          <a href="#user-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User permissions
+        
+        
+      </h2>
+    
+
+<p>Authorization is still managed via <a href="/reference/authorization.html">lakeFS groups and policies</a>.</p>
+
+<p>By default, an externally managed user is assigned to the lakeFS groups configured in the <em>default_initial_groups</em> property above.
+For a user to be assigned to other groups, add the <em>initial_groups</em> claim to their <strong>ID token</strong> claims. The claim should contain a
+comma-separated list of group names.</p>
+
+<p>Once the user has been created, you can manage their permissions from the Administration pages in the lakeFS UI or using <em>lakectl</em>.</p>
+      <h3 id="using-a-different-claim-name">
+        
+        
+          <a href="#using-a-different-claim-name" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using a different claim name
+        
+        
+      </h3>
+    
+
+<p>To supply the initial groups using another claim from your ID token, you can use the <code class="language-plaintext highlighter-rouge">auth.oidc.initial_groups_claim_name</code> 
+lakeFS configuration. For example, to take the initial groups from the <em>roles</em> claim, add:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="c1"># ... Other OIDC configurations</span>
+    <span class="na">initial_groups_claim_name</span><span class="pi">:</span> <span class="s">roles</span>
+</code></pre></div></div>
 
                 
 
