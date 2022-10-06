@@ -428,10 +428,10 @@
 <p class="note"><strong>Note:</strong> The quickstart section is for learning purposes. The installations below will not persist your data.
 Instead, it will spin-up a database in a docker container, which will be discarded later.<br /><br />
 For a production suitable deployment, learn how to <a href="../deploy/index.html">deploy lakeFS on your cloud</a>.</p>
-      <h2 class="no_toc" id="using-docker-compose">
+      <h2 class="no_toc" id="using-docker">
         
         
-          <a href="#using-docker-compose" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Docker Compose
+          <a href="#using-docker" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Docker
         
         
       </h2>
@@ -480,39 +480,10 @@ For a production suitable deployment, learn how to <a href="../deploy/index.html
       </h2>
     
 
-<p>To modify the local deployment, for example, in order to use your local lakeFS against S3 storage (as opposed to the local storage), you can either:</p>
-<ol>
-  <li>
-    <p>Pass or expose the variables using this syntax:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl https://compose.lakefs.io | <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span>s3 <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>YourAccessKeyValue <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>YourSecretKeyValue docker-compose <span class="nt">-f</span> - up
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Download the configuration file https://compose.lakefs.io, modify it and then run the container with the modified copy:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose <span class="nt">-f</span> modified-docker-compose.yml up
-</code></pre></div>    </div>
-
-    <p>For example, to run against S3 instead of local storage, change:</p>
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
-- <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="k">${</span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="k">:-</span><span class="nv">local</span><span class="k">}</span>
-...
-- <span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID</span><span class="o">=</span><span class="k">${</span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="k">:-}</span>
-- <span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_SECRET_KEY</span><span class="o">=</span><span class="k">${</span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="k">:-}</span>
-...
-</code></pre></div>    </div>
-    <p>To:</p>
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
-- <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span>s3
-...
-- <span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID</span><span class="o">=</span><span class="c">###</span>
-- <span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_SECRET_KEY</span><span class="o">=</span><span class="c">###</span>
-...
-</code></pre></div>    </div>
-    <p>Note that if you only stop/start the container as opposed to remove the a previous run, lakeFS will try to identify repositories that use different storange namespaces, and prevert running.</p>
-  </li>
-</ol>
+<p>To modify the local deployment, for example, in order to use your local lakeFS against S3 storage (as opposed to the local storage), run the command with local parameters:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'s3'</span> <span class="nt">-e</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s1">'YourAccessKeyValue'</span> <span class="nt">-e</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s1">'YourSecretKeyValue'</span>  treeverse/lakefs run <span class="nt">--local-settings</span>
+</code></pre></div></div>
+<p>Note using the <code class="language-plaintext highlighter-rouge">bash--local-settings</code> flag, metadata is being stored locally in the lakeFS container. Therefore, avoid using this flag for production usages.</p>
       <h2 id="next-steps">
         
         
