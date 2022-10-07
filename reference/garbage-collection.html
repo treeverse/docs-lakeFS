@@ -445,12 +445,17 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
   </li>
   <li><a href="#configuring-gc-rules" id="markdown-toc-configuring-gc-rules">Configuring GC rules</a></li>
   <li><a href="#running-the-gc-job" id="markdown-toc-running-the-gc-job">Running the GC job</a>    <ol>
-      <li><a href="#first-run" id="markdown-toc-first-run">First run</a></li>
-      <li><a href="#performance" id="markdown-toc-performance">Performance</a></li>
-      <li><a href="#networking" id="markdown-toc-networking">Networking</a></li>
+      <li><a href="#gc-job-options" id="markdown-toc-gc-job-options">GC job options</a>        <ol>
+          <li><a href="#mark-only-mode" id="markdown-toc-mark-only-mode">Mark only mode</a></li>
+          <li><a href="#sweep-only-mode" id="markdown-toc-sweep-only-mode">Sweep only mode</a></li>
+          <li><a href="#performance" id="markdown-toc-performance">Performance</a></li>
+          <li><a href="#networking" id="markdown-toc-networking">Networking</a></li>
+        </ol>
+      </li>
     </ol>
   </li>
   <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
+  <li><a href="#gc-backup-and-restore" id="markdown-toc-gc-backup-and-restore">GC backup and restore</a></li>
 </ol>
       <h2 id="understanding-garbage-collection">
         
@@ -622,7 +627,7 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
 
 <p><code class="language-plaintext highlighter-rouge">CLIENT_VERSION</code>s for Spark 2.4.7 can be found <a href="https://mvnrepository.com/artifact/io.lakefs/lakefs-spark-client-247">here</a>, and for Spark 3.0.1 they can be found <a href="https://mvnrepository.com/artifact/io.lakefs/lakefs-spark-client-301">here</a>.</p>
 
-<p>Running options:</p>
+<p>Running instructions:</p>
 
 <div class="tabs">
   <ul>
@@ -666,34 +671,71 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
   </div>
 
   <p>The list of expired objects is written in Parquet format in the storage
-namespace of the bucket under
-<code class="language-plaintext highlighter-rouge">_lakefs/retention/gc/addresses/run_id=RUN_ID</code>, where RUN_ID identifies the
-run.</p>
-      <h3 id="first-run">
+namespace of the bucket under <code class="language-plaintext highlighter-rouge">_lakefs/retention/gc/addresses/mark_id=MARK_ID</code>, where MARK_ID identifies the run.</p>
+
+  <p><strong>Note:</strong> if you are running lakeFS Spark client of version &lt; v0.4.0, this file is located under <code class="language-plaintext highlighter-rouge">_lakefs/retention/gc/addresses/run_id=RUN_ID</code>,
+where RUN_ID identifies the run.</p>
+      <h3 id="gc-job-options">
         
         
-          <a href="#first-run" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> First run
+          <a href="#gc-job-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GC job options
         
         
       </h3>
     
 
-  <p>To create a list of objects to delete you can</p>
+  <p>By default, GC first creates a list of expired objects according to your retention rules and then hard-deletes those objects. 
+However, you can use GC options to break the GC job down into two stages:</p>
+  <ol>
+    <li>Mark stage: GC will mark the expired objects to hard-delete, <strong>without</strong> deleting them.</li>
+    <li>Sweep stage: GC will hard-delete objects marked by a previous mark-only GC run.</li>
+  </ol>
 
+  <p>By breaking GC into these stages, you can pause and create a backup of the objects that GC is about to sweep and later 
+restore them. You can use the <a href="#gc-backup-and-restore">GC backup and restore</a> utility to do that.</p>
+      <h4 id="mark-only-mode">
+        
+        
+          <a href="#mark-only-mode" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Mark only mode
+        
+        
+      </h4>
+    
+
+  <p>To make GC run the mark stage only, add the following properties to your spark-submit command:</p>
+  <div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">spark.hadoop.lakefs.gc.do_sweep</span><span class="p">=</span><span class="s">false</span>
+<span class="py">spark.hadoop.lakefs.gc.mark_id</span><span class="p">=</span><span class="s">&lt;MARK_ID&gt; # Replace &lt;MARK_ID&gt; with your own identification string. This MARK_ID will enable you to start a sweep (actual deletion) run later</span>
+</code></pre></div>  </div>
+  <p>Running in mark only mode, GC will write the addresses of the expired objects to delete to the following location: <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code> as a parquet.</p>
+
+  <p><strong>Notes:</strong></p>
   <ul>
-    <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.debug.gc.no_delete=true</code> to disable object
-deletion.</li>
+    <li>Mark only mode is only available from v0.4.0 of lakeFS Spark client.</li>
+    <li>The <code class="language-plaintext highlighter-rouge">spark.hadoop.lakefs.debug.gc.no_delete</code> property has been deprecated with v0.4.0.</li>
   </ul>
+      <h4 id="sweep-only-mode">
+        
+        
+          <a href="#sweep-only-mode" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sweep only mode
+        
+        
+      </h4>
+    
 
-  <p>Nothing will be deleted.  The list of expired objects will still be created
-and may be examined.</p>
-      <h3 id="performance">
+  <p>To make GC run the sweep stage only, add the following properties to your spark-submit command:</p>
+  <div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">spark.hadoop.lakefs.gc.do_mark</span><span class="p">=</span><span class="s">false</span>
+<span class="py">spark.hadoop.lakefs.gc.mark_id</span><span class="p">=</span><span class="s">&lt;MARK_ID&gt; # Replace &lt;MARK_ID&gt; with the identifier you used on a previous mark-only run</span>
+</code></pre></div>  </div>
+  <p>Running in sweep only mode, GC will hard-delete the expired objects marked by a mark-only run and listed in: <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</p>
+
+  <p><strong>Note:</strong> Mark only mode is only available from v0.4.0 of lakeFS Spark client.</p>
+      <h4 id="performance">
         
         
           <a href="#performance" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Performance
         
         
-      </h3>
+      </h4>
     
 
   <p>Garbage collection reads many commits.  It uses Spark to spread the load of
@@ -710,13 +752,13 @@ commit across more Spark executors.</li>
   </ul>
 
   <p>Normally this should not be needed.</p>
-      <h3 id="networking">
+      <h4 id="networking">
         
         
           <a href="#networking" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Networking
         
         
-      </h3>
+      </h4>
     
 
   <p>Garbage collection communicates with the lakeFS server.  Very large
@@ -737,6 +779,7 @@ spark.hadoop.lakefs.api.connection.timeout_seconds=TIMEOUT_IN_SECONDS</code>
         
       </h2>
     
+
   <ol>
     <li>
       <p>In order for an object to be hard-deleted, it must be deleted from all branches.
@@ -759,6 +802,131 @@ deleted. Such actions include:</p>
       </ol>
     </li>
   </ol>
+      <h2 id="gc-backup-and-restore">
+        
+        
+          <a href="#gc-backup-and-restore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GC backup and restore
+        
+        
+      </h2>
+    
+
+  <p>GC was created to hard-delete objects from your underlying objects store according to your retention rules. However, when you start
+using the feature you may want to first gain confidence in the decisions GC makes. The GC backup and restore utility helps you do that.</p>
+
+  <p>This utility is a Spark application that uses <a href="https://hadoop.apache.org/docs/current/hadoop-distcp/DistCp.html">distCp</a> under the hood to copy objects marked by GC as expired from one location to another.</p>
+
+  <p><strong>Use-cases:</strong></p>
+  <ul>
+    <li>Backup: copy expired objects from your repository’s storage namespace to an external location before running GC in <a href="#sweep-only-mode">sweep only mode</a>.</li>
+    <li>Restore: copy objects that were hard-deleted by GC from an external location you used for saving your backup into your repository’s storage namespace.</li>
+  </ul>
+      <h3 class="no_toc" id="running-gc-backup-and-restore">
+        
+        
+          <a href="#running-gc-backup-and-restore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running GC backup and restore
+        
+        
+      </h3>
+    
+
+  <p>You can run GC backup and restore using <code class="language-plaintext highlighter-rouge">spark-submit</code> or using your preferred method of running Spark programs. 
+Currently, GC backup and restore is available for Spark 3.1.2 and 3.2.1, but it may work for other versions.</p>
+
+  <p>First, download the lakeFS Spark client Uber-jar. The Uber-jar can be found on a public S3 location:
+<code class="language-plaintext highlighter-rouge">http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-312-hadoop3/${CLIENT_VERSION}/lakefs-spark-client-312-hadoop3-assembly-${CLIENT_VERSION}.jar
+</code>
+<strong>Note</strong> GC backup and restore is available from version 0.5.0 of lakeFS Spark client.</p>
+
+  <p>Running instructions:</p>
+      <h4 class="no_toc" id="backup">
+        
+        
+          <a href="#backup" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Backup
+        
+        
+      </h4>
+    
+
+  <div class="tabs">
+    <ul>
+    <li><a href="#aws-option">On AWS</a></li>
+	<li><a href="#azure-option">On Azure</a></li>
+  </ul>
+    <div id="aws-option">
+
+      <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code>
+Program arguments:</p>
+      <ul>
+        <li><em>location of expired objects list</em>: the path of an expired objects parquet created by a <a href="#mark-only-mode">mark-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a mark-only run this file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
+        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace include the data you are backing up.</li>
+        <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
+        <li><em>storage type</em>: s3</li>
+      </ul>
+
+      <p>Run the following command to make the garbage collector start running:</p>
+      <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
+  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
+  expired-objects-list-location storage-namespace backup-external-location s3 
+</code></pre></div>      </div>
+    </div>
+
+    <div id="azure-option">
+      <p>You should run the following command to make the garbage collector start running:</p>
+
+      <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
+  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
+  expired-objects-list-location storage-namespace backup-external-location azure
+</code></pre></div>      </div>
+      <h4 class="no_toc" id="restore">
+        
+        
+          <a href="#restore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Restore
+        
+        
+      </h4>
+    
+
+      <div class="tabs">
+        <ul>
+    <li><a href="#aws-option">On AWS</a></li>
+	<li><a href="#azure-option">On Azure</a></li>
+  </ul>
+        <div id="aws-option">
+
+          <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code>
+Program arguments:</p>
+          <ul>
+            <li><em>location of objects to restore list</em>: the path for a list of object that were hard-deleted by a <a href="#sweep-only-mode">sweep-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a sweep only run the file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
+            <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
+            <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace include the data you are backing up.</li>
+            <li><em>storage type</em>: s3</li>
+          </ul>
+
+          <p>Run the following command to make the garbage collector start running:</p>
+          <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
+  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
+  objects-to-restore-list-location backup-external-location storage-namespace s3 
+</code></pre></div>          </div>
+        </div>
+
+        <div id="azure-option">
+          <p>You should run the following command to make the garbage collector start running:</p>
+
+          <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
+  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
+  objects-to-restore-list-location backup-external-location storage-namespace azure
+</code></pre></div>          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
                 
