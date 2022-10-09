@@ -27,17 +27,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Set up lakeFS | lakeFS</title>
+<title>Merging Reference | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Set up lakeFS" />
+<meta property="og:title" content="Merging Reference" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Git-like capabilities for your object storage" />
-<meta property="og:description" content="Git-like capabilities for your object storage" />
+<meta name="description" content="Using lakeFS, you can merge different commits and references into a branch. The purpose of this document is to explain how to use this feature." />
+<meta property="og:description" content="Using lakeFS, you can merge different commits and references into a branch. The purpose of this document is to explain how to use this feature." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Set up lakeFS" />
+<meta property="twitter:title" content="Merging Reference" />
 <script type="application/ld+json">
-{"description":"Git-like capabilities for your object storage","headline":"Set up lakeFS","@type":"WebPage","url":"/setup/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Using lakeFS, you can merge different commits and references into a branch. The purpose of this document is to explain how to use this feature.","headline":"Merging Reference","@type":"WebPage","url":"/reference/merge.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -203,10 +203,10 @@
                    class="nav-list-link">On GCP</a></li><li class="nav-list-item "><a href="/deploy/k8s.html"
                    class="nav-list-link">With Kubernetes</a></li><li class="nav-list-item "><a href="/deploy/docker.html"
                    class="nav-list-link">With Docker</a></li></ul></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/setup/"
-           class="nav-list-link active">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+           class="nav-list-link">Set up lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/setup/storage/"
                    class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
@@ -237,7 +237,7 @@
                    class="nav-list-link">Isolated Environment</a></li><li class="nav-list-item "><a href="/use_cases/rollback.html"
                    class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/use_cases/reproducibility.html"
                    class="nav-list-link">Reproducibility</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/reference/"
            class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/api.html"
@@ -253,8 +253,8 @@
                    class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/merge.html"
-                   class="nav-list-link">Merging Reference</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item  active"><a href="/reference/merge.html"
+                   class="nav-list-link active">Merging Reference</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -404,41 +404,188 @@
         <div id="main-content-wrap" class="main-content-wrap">
             
             
+            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb-nav-list">
+                    
+                    <li class="breadcrumb-nav-list-item"><a href="/reference/">Reference</a>
+                    </li>
+                    
+                    <li class="breadcrumb-nav-list-item"><span>Merging Reference</span></li>
+                </ol>
+            </nav>
+            
             
             <div id="main-content" class="main-content" role="main">
                 
-                <p>Once you install lakeFS, you need to take a few simple steps to start working. The first one is to <a href="/setup/storage/">create a bucket/container</a> in your underlying storage.
-If you already have one, you’re ready to <a href="/setup/create-repo.html">create your first lakeFS repository</a>.</p>
+                <h1 id="merge">
+        
+        
+          <a href="#merge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merge
+        
+        
+      </h1>
+    
+
+<p>The merge operation in lakeFS is similar to Git. It incorporates changes from a <em>merge source</em> (a commit/reference) into a <em>merge destination</em> (a <strong>branch</strong>).</p>
+      <h2 id="how-does-it-work">
+        
+        
+          <a href="#how-does-it-work" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How does it work?
+        
+        
+      </h2>
+    
+
+<p>lakeFS first finds the <a href="https://git-scm.com/docs/git-merge-base#_description">merge base</a>: the nearest common ancestor of the two commits.
+It can now perform a <em>three-way merge</em>, by examining the presence and identity of files in each commit. In the table
+below, “A”, “B” and “C” are possible file contents, “X” is a missing file, and “conflict”
+(which only appears as a result) is a merge failure.</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>In base</strong></th>
+      <th style="text-align: center"><strong>In source</strong></th>
+      <th style="text-align: center"><strong>In destination</strong></th>
+      <th style="text-align: center"><strong>Result</strong></th>
+      <th style="text-align: left"><strong>Comment</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: left">Unchanged file</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: left">Files changed on both sides in same way</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">conflict</td>
+      <td style="text-align: left">Files changed on both sides differently</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: left">File changed only on one branch</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: left">File changed only on one branch</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: left">Files deleted on both sides</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">conflict</td>
+      <td style="text-align: left">File changed on one side, deleted on the other</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">conflict</td>
+      <td style="text-align: left">File changed on one side, deleted on the other</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: left">File deleted on one side</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: left">File deleted on one side</td>
+    </tr>
+  </tbody>
+</table></div>
+      <h2 id="merge-strategies">
+        
+        
+          <a href="#merge-strategies" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merge Strategies
+        
+        
+      </h2>
+    
+
+<p>The <a href="/reference/api.html">API</a> and <a href="/reference/commands.html#lakectl-merge"><code class="language-plaintext highlighter-rouge">lakectl</code></a> allow passing an optional <code class="language-plaintext highlighter-rouge">strategy</code> flag with the following values:</p>
+      <h3 id="source-wins">
+        
+        
+          <a href="#source-wins" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">source-wins</code>
+        
+        
+      </h3>
+    
+
+<p>In case of a conflict, merge will pick the source objects.</p>
+      <h4 id="example">
+        
+        
+          <a href="#example" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example
+        
+        
+      </h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl merge lakefs://example-repo/validated-data lakefs://example-repo/production <span class="nt">--strategy</span> source-wins
+</code></pre></div></div>
+<p>When a merge conflict arises, the conflicting objects in the <code class="language-plaintext highlighter-rouge">validated-data</code> branch will be chosen to end up in <code class="language-plaintext highlighter-rouge">production</code>.</p>
+      <h3 id="dest-wins">
+        
+        
+          <a href="#dest-wins" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">dest-wins</code>
+        
+        
+      </h3>
+    
+
+<p>In case of a conflict, merge will pick the destination objects.</p>
+      <h4 id="example-1">
+        
+        
+          <a href="#example-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example
+        
+        
+      </h4>
+    
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl merge lakefs://example-repo/validated-data lakefs://example-repo/production <span class="nt">--strategy</span> dest-wins
+</code></pre></div></div>
+<p>When a merge conflict arises, the conflicting objects in the <code class="language-plaintext highlighter-rouge">production</code> branch will be chosen to end up in <code class="language-plaintext highlighter-rouge">validated-data</code>. The <code class="language-plaintext highlighter-rouge">production</code> branch will not be affected by object changes from <code class="language-plaintext highlighter-rouge">validated-data</code> conflicting objects.</p>
+
+<p>The strategy will affect all conflicting objects in the merge if it is set. Currently it is not possible to treat conflicts individually.</p>
+
+<p>As a format-agnostic system, lakeFS currently merges by complete files. Format-specific and
+other user-defined merge strategies for handling conflicts are on the roadmap.</p>
 
                 
 
-                
-                <hr>
-                <div class="toc-block">
-                    <h2 class="text-delta">Table of contents</h2>
-                    <ul>
-                        <li>
-                            <a href="/setup/storage/">Prepare Your Storage</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/setup/create-repo.html">Create a Repository</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/setup/import.html">Import data into lakeFS</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/setup/hooks.html">Hooks</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/setup/virtual-host-addressing.html">S3 Virtual-host addressing (advanced)</a>
-                        </li>
-                        
-                    </ul>
-                </div>
                 
 
 
