@@ -859,12 +859,12 @@ Currently, GC backup and restore is available for Spark 3.1.2 and 3.2.1, but it 
 Program arguments:</p>
       <ul>
         <li><em>location of expired objects list</em>: the path of an expired objects parquet created by a <a href="#mark-only-mode">mark-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a mark-only run this file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace include the data you are backing up.</li>
+        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace includes the data you are backing up.</li>
         <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
         <li><em>storage type</em>: s3</li>
       </ul>
 
-      <p>Run the following command to make the garbage collector start running:</p>
+      <p>Run the following command to make run backup process:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
@@ -879,12 +879,12 @@ Program arguments:</p>
 Program arguments:</p>
       <ul>
         <li><em>location of expired objects list</em>: the path of an expired objects parquet created by a <a href="#mark-only-mode">mark-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a mark-only run this file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace include the data you are backing up.</li>
+        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace includes the data you are backing up.</li>
         <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
         <li><em>storage type</em>: s3</li>
       </ul>
 
-      <p>Run the following command to make the garbage collector start running:</p>
+      <p>Run the following command to make run backup process:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
@@ -911,8 +911,8 @@ Program arguments:</p>
 Program arguments:</p>
         <ul>
           <li><em>location of objects to restore list</em>: the path for a list of object that were hard-deleted by a <a href="#sweep-only-mode">sweep-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a sweep only run the file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-          <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
-          <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace include the data you are backing up.</li>
+          <li><em>external location to restore from</em>: A storage location outside your lakeFS storage namespace you used for backup.</li>
+          <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you previously ran GC for.</li>
           <li><em>storage type</em>: s3</li>
         </ul>
 
@@ -930,12 +930,12 @@ Program arguments:</p>
 Program arguments:</p>
         <ul>
           <li><em>location of objects to restore list</em>: the path for a list of object that were hard-deleted by a <a href="#sweep-only-mode">sweep-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a sweep only run the file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-          <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
-          <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace include the data you are backing up.</li>
-          <li><em>storage type</em>: s3</li>
+          <li><em>external location to restore from</em>: A storage location outside your lakeFS storage namespace you used for backup.</li>
+          <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you previously ran GC for.</li>
+          <li><em>storage type</em>: azure</li>
         </ul>
 
-        <p>Run the following command to make the garbage collector start running:</p>
+        <p>Run the following command to make the restore process start running:</p>
 
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
