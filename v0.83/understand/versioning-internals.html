@@ -253,7 +253,8 @@
                    class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/v0.83/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/v0.83/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/v0.83/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/v0.83/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/v0.83/reference/merge.html"
+                   class="nav-list-link">Merge</a></li><li class="nav-list-item "><a href="/v0.83/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -281,7 +282,8 @@
                    class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/mapreduce.html"
                    class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/v0.83/integrations/dremio.html"
-                   class="nav-list-link">Dremio</a></li></ul></li><li
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v0.83/integrations/iceberg.html"
+                   class="nav-list-link">Iceberg</a></li></ul></li><li
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/understand/"
@@ -440,7 +442,6 @@
   <li><a href="#sstable-file-format-graveler-file" id="markdown-toc-sstable-file-format-graveler-file">SSTable File Format (“Graveler File”)</a></li>
   <li><a href="#constructing-a-consistent-view-of-the-keyspace-ie-a-commit" id="markdown-toc-constructing-a-consistent-view-of-the-keyspace-ie-a-commit">Constructing a consistent view of the keyspace (i.e., a commit)</a></li>
   <li><a href="#representing-references-and-uncommitted-metadata" id="markdown-toc-representing-references-and-uncommitted-metadata">Representing references and uncommitted metadata</a></li>
-  <li><a href="#merging-changes-to-data" id="markdown-toc-merging-changes-to-data">Merging changes to data</a></li>
 </ol>
 
 </div>
@@ -557,115 +558,6 @@ File identity is calculated based on the identity of the ValueRecords the file c
 <p>Luckily, this is also much smaller set of metadata compared to the committed metadata.</p>
 
 <p>References and uncommitted metadata are currently stored on a key-value store (See <a href="/v0.83/reference/configuration.html">supported databases</a>) for consistency guarantees.</p>
-      <h2 id="merging-changes-to-data">
-        
-        
-          <a href="#merging-changes-to-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merging changes to data
-        
-        
-      </h2>
-    
-
-<p>lakeFS allows merging a <em>merge source</em> (a commit) into a <em>merge destination</em> (another commit).</p>
-
-<p>lakeFS first finds the <a href="https://git-scm.com/docs/git-merge-base#_description">merge base</a> the nearest common parent of the two commits.
-It can now perform a <em>three-way merge</em>, by examining the presence and identity of files in each commit. In the table
-below, “A”, “B” and “C” are possible file contents, “X” is a missing file, and “conflict”
-(which only appears as a result) is a merge failure.</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th style="text-align: center"><strong>In base</strong></th>
-      <th style="text-align: center"><strong>In source</strong></th>
-      <th style="text-align: center"><strong>In destination</strong></th>
-      <th style="text-align: center"><strong>Result</strong></th>
-      <th style="text-align: left"><strong>Comment</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: left">Unchanged file</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: left">Files changed on both sides in same way</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">C</td>
-      <td style="text-align: center">conflict</td>
-      <td style="text-align: left">Files changed on both sides differently</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: left">File changed only on one branch</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: left">File changed only on one branch</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: left">Files deleted on both sides</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">conflict</td>
-      <td style="text-align: left">File changed on one side, deleted on the other</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">conflict</td>
-      <td style="text-align: left">File changed on one side, deleted on the other</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: left">File deleted on one side</td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: left">File deleted on one side</td>
-    </tr>
-  </tbody>
-</table></div>
-
-<p>The API and lakectl allow passing an optional <code class="language-plaintext highlighter-rouge">strategy</code> flag with the following values:</p>
-<ul>
-  <li>dest-wins - in case of a conflict, merge will pick the destination object.</li>
-  <li>source-wins - in case of a conflict, merge will pick the source object.
-If the strategy is set, it will affect all the objects in the merge, there is currently no way to treat each conflict differently.</li>
-</ul>
-
-<p>As a format-agnostic system, lakeFS currently merges by complete files. Format-specific and
-other user-defined merge strategies for handling conflicts are on the roadmap.</p>
 
                 
 

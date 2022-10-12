@@ -253,7 +253,8 @@
                    class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/v0.83/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/v0.83/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/v0.83/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/v0.83/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/v0.83/reference/merge.html"
+                   class="nav-list-link">Merge</a></li><li class="nav-list-item "><a href="/v0.83/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -281,7 +282,8 @@
                    class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/mapreduce.html"
                    class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/v0.83/integrations/dremio.html"
-                   class="nav-list-link">Dremio</a></li></ul></li><li
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v0.83/integrations/iceberg.html"
+                   class="nav-list-link">Iceberg</a></li></ul></li><li
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/understand/"
@@ -475,12 +477,28 @@
 
 <p>The server itself is stateless, meaning you can easily add more instances to handle a bigger load.</p>
 
-<p>lakeFS stores data in an underlying object store (<a href="https://cloud.google.com/storage">GCS</a>, <a href="https://azure.microsoft.com/en-us/services/storage/blobs/">ABS</a>,
-<a href="https://aws.amazon.com/s3/">S3</a>, or any S3-compatible stores like <a href="https://min.io/">MinIO</a> or <a href="https://docs.ceph.com/">Ceph</a>), with some of its metadata stored in <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> (see <a href="/v0.83/understand/versioning-internals.html">Versioning internals</a>).</p>
+<p>The following underlying object stores (or any S3-compatible store) can be used by lakeFS to store data:</p>
 
-<!-- The below draw.io diagram source can be found here: https://drive.google.com/file/d/1lctPtGVEmOlCNHi3jiW4XXmyQQFkxzyx/view?usp=sharing -->
+<ul>
+  <li><a href="https://cloud.google.com/storage">Google Cloud Storage</a> (<a href="/v0.83/setup/storage/gcs.html">Prepare Your GCS Bucket</a>)</li>
+  <li><a href="https://azure.microsoft.com/en-us/services/storage/blobs/">Azure Blob Storage</a> (<a href="/v0.83/setup/storage/blob.html">Prepare Your Blob Storage Container</a>)</li>
+  <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (<a href="/v0.83/setup/storage/s3.html">Prepare Your AWS S3 Bucket</a>)</li>
+  <li><a href="https://min.io/">MinIO</a> (<a href="/v0.83/integrations/minio.html">Using lakeFS with MinIO</a>)</li>
+  <li><a href="https://docs.ceph.com/">Ceph</a></li>
+</ul>
 
-<p><img src="/v0.83/assets/img/arch.png" alt="Architecture" /></p>
+<p>In additional a Key Value storage is used for storing metadata:</p>
+
+<ul>
+  <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></li>
+  <li><a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB</a></li>
+</ul>
+
+<p>Instructions of how to deploy such database on AWS can be found <a href="../deploy/aws.html#preparing-the-database-for-the-key-value-store">here</a>.</p>
+
+<p>Additional information on the data format can be found in <a href="/v0.83/understand/versioning-internals.html">Versioning internals</a>.</p>
+
+<p><img src="/v0.83/assets/img/architecture.png" alt="Architecture" /></p>
       <h2 id="ways-to-deploy-lakefs">
         
         

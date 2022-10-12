@@ -253,7 +253,8 @@
                    class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/v0.83/glossary.html"
                    class="nav-list-link">lakeFS Glossary</a></li><li class="nav-list-item "><a href="/v0.83/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/v0.83/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/v0.83/reference/spark-client.html"
+                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/v0.83/reference/merge.html"
+                   class="nav-list-link">Merge</a></li><li class="nav-list-item "><a href="/v0.83/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -281,7 +282,8 @@
                    class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/mapreduce.html"
                    class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/v0.83/integrations/dremio.html"
-                   class="nav-list-link">Dremio</a></li></ul></li><li
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v0.83/integrations/iceberg.html"
+                   class="nav-list-link">Iceberg</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/understand/"
@@ -432,54 +434,135 @@
   <li>From the S3 Administration console, choose <code class="language-plaintext highlighter-rouge">Create Bucket</code>.</li>
   <li>Make sure that you:
     <ol>
-      <li>Block public access.</li>
-      <li>Disable Object Locking.</li>
+      <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html">Block public access</a>.</li>
+      <li><strong>Disable</strong> <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock-console.html">Object Lock</a>.</li>
     </ol>
-  </li>
-  <li>
-    <p>lakeFS requires permissions to interact with your bucket. The following is a minimal bucket policy. To add it, go to the <code class="language-plaintext highlighter-rouge">Permissions</code> tab, and paste it as :</p>
-
-    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Policy1590051531320"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="p">{</span><span class="w">
-      </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Stmt1590051522178"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-         </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:GetObjectVersion"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:PutObject"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:GetBucketVersioning"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="p">,</span><span class="w">
-         </span><span class="s2">"s3:ListBucketVersions"</span><span class="w">
-      </span><span class="p">],</span><span class="w">
-      </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-      </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::&lt;BUCKET_NAME&gt;"</span><span class="p">,</span><span class="w"> </span><span class="s2">"arn:aws:s3:::&lt;BUCKET_NAME_WITH_PATH_PREFIX&gt;/*"</span><span class="p">],</span><span class="w">
-      </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;"</span><span class="p">]</span><span class="w">
-      </span><span class="p">}</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">]</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre></div>    </div>
-
-    <p>Replace <code class="language-plaintext highlighter-rouge">&lt;ACCOUNT_ID&gt;</code>, <code class="language-plaintext highlighter-rouge">&lt;BUCKET_NAME&gt;</code> and <code class="language-plaintext highlighter-rouge">&lt;IAM_ROLE&gt;</code> with values relevant to your environment.
-<code class="language-plaintext highlighter-rouge">IAM_ROLE</code> should be the role assumed by your lakeFS installation.</p>
-
-    <p>Alternatively, if you use an AWS user’s key-pair to authenticate lakeFS to AWS, change the policy’s Principal to be the user:</p>
-
-    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-   </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;"</span><span class="p">]</span><span class="w">
- </span><span class="p">}</span><span class="w">
-</span></code></pre></div>    </div>
   </li>
 </ol>
 
-<p>You’re now ready to <a href="/v0.83/setup/create-repo.html">create your first lakeFS repository</a>.</p>
+<p>There are two types of S3 bucket permission policies that can be used: the default <a href="#permission-policy">permission
+policy</a> and the <a href="#metadata-permissions-policy-advanced">metadata-only</a> permission policy.
+Pick the one that best describes your use case and to add it, go to the <code class="language-plaintext highlighter-rouge">Permissions</code> tab, and paste it.</p>
+      <h2 id="permission-policy">
+        
+        
+          <a href="#permission-policy" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Permission Policy
+        
+        
+      </h2>
+    
+
+<p>By setting this bucket policy you’ll be able to perform metadata operations as well as to upload/download objects to/from your bucket using lakeFS.
+To upload or download an object to your storage namespace using lakeFS, you can use the <a href="/v0.83/reference/api.html">API</a>, the CLI tool
+<a href="../../reference#lakectl-fs"><code class="language-plaintext highlighter-rouge">lakectl</code></a>, the <a href="/v0.83/reference/spark-client.html">Spark metadata client</a>,
+or the <a href="/v0.83/integrations/spark.html#access-lakefs-using-the-s3a-gateway">S3 gateway</a>.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+   </span><span class="nl">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;POLICY_ID&gt;"</span><span class="p">,</span><span class="w">
+   </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+   </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSObjects"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:PutObject"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::&lt;STORAGE_NAMESPACE&gt;/*"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;"</span><span class="p">]</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSBucket"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::&lt;BUCKET&gt;"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;"</span><span class="p">]</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<ul>
+  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;STORAGE_NAMESPACE&gt;</code> with your <a href="/v0.83/understand/model.html#concepts-unique-to-lakefs">storage namespace</a> which will be in the form of <code class="language-plaintext highlighter-rouge">&lt;BUCKET_NAME&gt;/&lt;PATH&gt;</code> (<code class="language-plaintext highlighter-rouge">PATH</code> can be empty).</li>
+  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;ACCOUNT_ID&gt;</code> and <code class="language-plaintext highlighter-rouge">&lt;IAM_ROLE&gt;</code> with values relevant to your environment.</li>
+  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;BUCKET&gt;</code> with the <strong>bucket</strong> that lakeFS is managing.</li>
+  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;POLICY_ID&gt;</code> with a string ID of your choice.</li>
+  <li><code class="language-plaintext highlighter-rouge">IAM_ROLE</code> should be the role assumed by your lakeFS installation.</li>
+</ul>
+
+<p>Alternatively, if you use an AWS user’s key-pair to authenticate lakeFS to AWS, change the policy’s Principal to be the user:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+   </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;"</span><span class="p">]</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div><hr />
+
+<p>You’re now ready to <a href="/v0.83/setup/create-repo.html">create your first lakeFS repository</a>.</p><hr />
+      <h2 id="metadata-permissions-policy-advanced">
+        
+        
+          <a href="#metadata-permissions-policy-advanced" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Metadata Permissions Policy (advanced)
+        
+        
+      </h2>
+    
+
+<p>lakeFS requires permissions to access the <code class="language-plaintext highlighter-rouge">_lakefs</code> prefix under your storage namespace, in which the metadata
+objects are stored (<a href="/v0.83/understand/versioning-internals.html#constructing-a-consistent-view-of-the-keyspace-ie-a-commit">learn more</a>).<br />
+By setting this policy you’ll be able to perform only metadata operations through lakeFS, meaning that you’ll <strong>not</strong> be able
+to use lakeFS to upload or download objects. Specifically you won’t be able to:</p>
+<ul>
+  <li>Upload objects using the lakeFS GUI</li>
+  <li>Upload objects through Spark using the S3 gateway</li>
+  <li>Run <code class="language-plaintext highlighter-rouge">lakectl fs</code> commands (unless using the <code class="language-plaintext highlighter-rouge">--direct</code> flag)</li>
+</ul>
+
+<p>This permission is useful if you upload/download objects to/from your bucket using external tools.
+For example, you can use the <a href="/v0.83/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>
+to directly access your S3 bucket while performing metadata operations through lakeFS on the objects in that bucket.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;POLICY_ID&gt;"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSObjects"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+         </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+         </span><span class="s2">"s3:PutObject"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+         </span><span class="s2">"arn:aws:s3:::&lt;STORAGE_NAMESPACE&gt;/_lakefs/*"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;"</span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+     </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSBucket"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+           </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
+           </span><span class="s2">"s3:GetBucketLocation"</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::&lt;BUCKET&gt;"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+           </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;"</span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+     </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 
                 
 
