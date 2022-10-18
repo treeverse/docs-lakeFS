@@ -438,25 +438,26 @@
 
 <ol id="markdown-toc">
   <li><a href="#ecosystem" id="markdown-toc-ecosystem">Ecosystem</a>    <ol>
-      <li><a href="#repository-templates-easily-use-lakefs-with-your-data-stack-high-priority" id="markdown-toc-repository-templates-easily-use-lakefs-with-your-data-stack-high-priority">Repository Templates: Easily use lakeFS with your data stack <span class="label label-blue">High Priority</span></a></li>
       <li><a href="#table-format-support" id="markdown-toc-table-format-support">Table format support</a>        <ol>
-          <li><a href="#delta-lake-merges-and-diffs-across-branches" id="markdown-toc-delta-lake-merges-and-diffs-across-branches">Delta Lake merges and diffs across branches</a></li>
           <li><a href="#iceberg-support-high-priority" id="markdown-toc-iceberg-support-high-priority">Iceberg support <span class="label label-blue">High Priority</span></a></li>
+          <li><a href="#metastore-integration-hooks" id="markdown-toc-metastore-integration-hooks">Metastore integration hooks</a></li>
+          <li><a href="#delta-lake-merges-and-diffs-across-branches" id="markdown-toc-delta-lake-merges-and-diffs-across-branches">Delta Lake merges and diffs across branches</a></li>
         </ol>
       </li>
       <li><a href="#hadoop-3-support-in-all-lakefs-clients-high-priority" id="markdown-toc-hadoop-3-support-in-all-lakefs-clients-high-priority">Hadoop 3 support in all lakeFS clients <span class="label label-blue">High Priority</span></a></li>
-      <li><a href="#native-spark-outputcommitter" id="markdown-toc-native-spark-outputcommitter">Native Spark OutputCommitter</a></li>
-      <li><a href="#native-connector-trino" id="markdown-toc-native-connector-trino">Native connector: Trino</a></li>
+      <li><a href="#native-spark-outputcommitter-high-priority" id="markdown-toc-native-spark-outputcommitter-high-priority">Native Spark OutputCommitter <span class="label label-blue">High Priority</span></a></li>
+      <li><a href="#hadoopfs-support-azure-blob-storage" id="markdown-toc-hadoopfs-support-azure-blob-storage">HadoopFS: Support Azure Blob Storage</a></li>
+      <li><a href="#sync-a-lakefs-reference-or-part-of-it-with-a-local-directory" id="markdown-toc-sync-a-lakefs-reference-or-part-of-it-with-a-local-directory">Sync a lakeFS reference (or part of it) with a local directory</a></li>
       <li><a href="#improved-streaming-support-for-apache-kafka" id="markdown-toc-improved-streaming-support-for-apache-kafka">Improved streaming support for Apache Kafka</a></li>
-      <li><a href="#user-management-using-oidc-providers-high-priority" id="markdown-toc-user-management-using-oidc-providers-high-priority">User management using OIDC providers <span class="label label-blue">High Priority</span></a></li>
-      <li><a href="#reproducible-data-images" id="markdown-toc-reproducible-data-images">Reproducible data images</a></li>
+      <li><a href="#native-connector-trino" id="markdown-toc-native-connector-trino">Native connector: Trino</a></li>
     </ol>
   </li>
   <li><a href="#versioning-capabilities" id="markdown-toc-versioning-capabilities">Versioning Capabilities</a>    <ol>
-      <li><a href="#support-asynchronous-hooks-high-priority" id="markdown-toc-support-asynchronous-hooks-high-priority">Support asynchronous hooks <span class="label label-blue">High Priority</span></a></li>
-      <li><a href="#support-garbage-collection-on-azure-high-priority" id="markdown-toc-support-garbage-collection-on-azure-high-priority">Support Garbage Collection on Azure <span class="label label-blue">High Priority</span></a></li>
+      <li><a href="#garbage-collection-for-uncommitted-stale-objects-high-priority" id="markdown-toc-garbage-collection-for-uncommitted-stale-objects-high-priority">Garbage collection for uncommitted stale objects <span class="label label-blue">High Priority</span></a></li>
       <li><a href="#garbage-collection-on-google-cloud-platform" id="markdown-toc-garbage-collection-on-google-cloud-platform">Garbage Collection on Google Cloud Platform</a></li>
-      <li><a href="#collaborate-on-your-data" id="markdown-toc-collaborate-on-your-data">Collaborate on your data</a></li>
+      <li><a href="#incremental-garbage-collection-high-priority" id="markdown-toc-incremental-garbage-collection-high-priority">Incremental Garbage Collection <span class="label label-blue">High Priority</span></a></li>
+      <li><a href="#support-long-running-hooks" id="markdown-toc-support-long-running-hooks">Support long running hooks</a></li>
+      <li><a href="#git-integration" id="markdown-toc-git-integration">Git Integration</a></li>
     </ol>
   </li>
 </ol>
@@ -470,19 +471,6 @@
         
       </h2>
     
-      <h3 id="repository-templates-easily-use-lakefs-with-your-data-stack-high-priority">
-        
-        
-          <a href="#repository-templates-easily-use-lakefs-with-your-data-stack-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Repository Templates: Easily use lakeFS with your data stack <span class="label label-blue">High Priority</span>
-        
-        
-      </h3>
-    
-
-<p>A wizard will walk you through launching a repository tailored for your use case.
-Integrate with Spark, Hive Metastore and your other tools.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/3411" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="table-format-support">
         
         
@@ -500,29 +488,12 @@ Modern table formats such as Delta Lake, Hudi, and Iceberg rely on a set of mani
 In those cases, a merge operation might have to be aware of the structure of the data: 
 generate a new manifest or re-order the log in order for the output to make sense.
 Additionally, the definition of a conflict is also a bit different: 
-simply looking at object names to determine whether or not a conflict occured might not be good enough.</p>
+simply looking at object names to determine whether or not a conflict occurred might not be good enough.</p>
 
 <p>With that in mind, we plan to make the diff and merge operations pluggable. 
 lakeFS already supports injecting custom behavior using hooks. Ideally, we can support this by introducing <code class="language-plaintext highlighter-rouge">on-diff</code> and <code class="language-plaintext highlighter-rouge">on-merge</code> hooks that allow implementing hooks in different languages, possibly utilizing existing code and libraries to aid with understanding these formats.</p>
 
 <p>Once this is done, one may implement:</p>
-      <h4 id="delta-lake-merges-and-diffs-across-branches">
-        
-        
-          <a href="#delta-lake-merges-and-diffs-across-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Delta Lake merges and diffs across branches
-        
-        
-      </h4>
-    
-
-<p>Delta lake stores metadata files that represent a <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md#delta-log-entries">logical transaction log that relies on numerical ordering</a>.</p>
-
-<p>Currently, when trying to modify a Delta table from two different branches, lakeFS would correctly recognize a conflict: this log diverged into two different copies, representing different changes.
-Users would then have to forgo one of the change sets by either retaining the destination’s branch set of changes or the source’s branch.</p>
-
-<p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h4 id="iceberg-support-high-priority">
         
         
@@ -541,6 +512,41 @@ Users would then have to forgo one of the change sets by either retaining the de
 <p>Once a table is created, the location property doesn’t change. Therefore, a branch creation in lakeFS in meaningless, since new data added to this branch will be added to the main branch. There are some workarounds for this, but it is our priority to create an excellent integration with Iceberg.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/3381" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+      <h4 id="metastore-integration-hooks">
+        
+        
+          <a href="#metastore-integration-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Metastore integration hooks
+        
+        
+      </h4>
+    
+
+<p>Allow lakeFS users that query and manipulate data using Hive Metastore to automate the integration between both components.</p>
+
+<ol>
+  <li>Creating a branch/tag with a predefined naming convention will result in automatic creation of metastore tables (for a predefined set of table names)</li>
+  <li>Deleting a branch/tag with a predefined naming convention will result in automatic deletion of metastore tables (for a predefined set of table names)</li>
+  <li>Merging a branch into another branch will result in metastore changes between branches being applied to the metastore for modified tables defined on the destination branch</li>
+</ol>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/3069" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+      <h4 id="delta-lake-merges-and-diffs-across-branches">
+        
+        
+          <a href="#delta-lake-merges-and-diffs-across-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Delta Lake merges and diffs across branches
+        
+        
+      </h4>
+    
+
+<p>Delta lake stores metadata files that represent a <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md#delta-log-entries">logical transaction log that relies on numerical ordering</a>.</p>
+
+<p>Currently, when trying to modify a Delta table from two different branches, lakeFS would correctly recognize a conflict: this log diverged into two different copies, representing different changes.
+Users would then have to forgo one of the change sets by either retaining the destination’s branch set of changes or the source’s branch.</p>
+
+<p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="hadoop-3-support-in-all-lakefs-clients-high-priority">
         
         
@@ -558,10 +564,10 @@ Users would then have to forgo one of the change sets by either retaining the de
 </ol>
 
 <p>In particular, all features will support Hadoop versions 3.x.</p>
-      <h3 id="native-spark-outputcommitter">
+      <h3 id="native-spark-outputcommitter-high-priority">
         
         
-          <a href="#native-spark-outputcommitter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native Spark OutputCommitter
+          <a href="#native-spark-outputcommitter-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native Spark OutputCommitter <span class="label label-blue">High Priority</span>
         
         
       </h3>
@@ -579,23 +585,28 @@ Users would then have to forgo one of the change sets by either retaining the de
 </ul>
 
 <p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/spark-outputcommitter/committer.md" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h3 id="native-connector-trino">
+      <h3 id="hadoopfs-support-azure-blob-storage">
         
         
-          <a href="#native-connector-trino" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native connector: Trino
+          <a href="#hadoopfs-support-azure-blob-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> HadoopFS: Support Azure Blob Storage
         
         
       </h3>
     
 
-<p>Currently, the Trino integration works well using the <a href="/understand/architecture.html#s3-gateway">lakeFS S3 Gateway</a>.</p>
+<p>Extend the lakeFS HadoopFilesystem to support working directly with Azure Blob Storage.</p>
+      <h3 id="sync-a-lakefs-reference-or-part-of-it-with-a-local-directory">
+        
+        
+          <a href="#sync-a-lakefs-reference-or-part-of-it-with-a-local-directory" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sync a lakeFS reference (or part of it) with a local directory
+        
+        
+      </h3>
+    
 
-<p>While easy to integrate and useful out-of-the-box, due to the S3 protocol, it means that the data itself must pass through the lakeFS server.</p>
+<p>Support working locally with data stored on lakeFS from a specific reference.</p>
 
-<p>For larger installations, a native integration where lakeFS handles metadata and returns locations in the underlying object store that Trino can then access directly would allow reducing the operational overhead and increasing the scalability of lakeFS.
-This would be done in a similar way to the <a href="/integrations/spark.html">Native Spark integration</a> using the <a href="/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">Hadoop Filesystem implementation</a>.</p>
-
-<p><a href="https://github.com/treeverse/lakeFS/issues/2357" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+<p><a href="https://github.com/treeverse/lakeFS/issues/4095" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="improved-streaming-support-for-apache-kafka">
         
         
@@ -627,27 +638,23 @@ These commits can then be merged into a main branch given they pass all relevant
 <p>Ideally, lakeFS should provide tools to automate this, with native support for <a href="https://kafka.apache.org/" target="_blank">Apache Kafka</a>.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/2358" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h3 id="user-management-using-oidc-providers-high-priority">
+      <h3 id="native-connector-trino">
         
         
-          <a href="#user-management-using-oidc-providers-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User management using OIDC providers <span class="label label-blue">High Priority</span>
+          <a href="#native-connector-trino" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native connector: Trino
         
         
       </h3>
     
 
-<p>Allow admins to manage their users externally using any OIDC-compatible provider.</p>
-      <h3 id="reproducible-data-images">
-        
-        
-          <a href="#reproducible-data-images" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Reproducible data images
-        
-        
-      </h3>
-    
-<p>Make it easy for users to compose data coming from different sources (lakeFS repositories &amp; references, external object store locations) as input for processing jobs and data science experiments.</p>
+<p>Currently, the Trino integration works well using the <a href="/understand/architecture.html#s3-gateway">lakeFS S3 Gateway</a>.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/pull/3657" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+<p>While easy to integrate and useful out-of-the-box, due to the S3 protocol, it means that the data itself must pass through the lakeFS server.</p>
+
+<p>For larger installations, a native integration where lakeFS handles metadata and returns locations in the underlying object store that Trino can then access directly would allow reducing the operational overhead and increasing the scalability of lakeFS.
+This would be done in a similar way to the <a href="/integrations/spark.html">Native Spark integration</a> using the <a href="/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">Hadoop Filesystem implementation</a>.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2357" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h2 id="versioning-capabilities">
         
         
@@ -656,33 +663,20 @@ These commits can then be merged into a main branch given they pass all relevant
         
       </h2>
     
-      <h3 id="support-asynchronous-hooks-high-priority">
+      <h3 id="garbage-collection-for-uncommitted-stale-objects-high-priority">
         
         
-          <a href="#support-asynchronous-hooks-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support asynchronous hooks <span class="label label-blue">High Priority</span>
-        
-        
-      </h3>
-    
-
-<p>Support running hooks that might possibly take many minutes to complete. 
-This is useful for things such as data quality checks - where we might want to do big queries or scans to ensure the data being merged adheres to certain business rules.</p>
-
-<p>Currently, <code class="language-plaintext highlighter-rouge">pre-commit</code> and <code class="language-plaintext highlighter-rouge">pre-merge</code> hooks in lakeFS are tied to the lifecycle of the API request that triggers the said commit or merge operation.
-In order to support long running hooks, there are enhancements to make to lakeFS APIs in order to support an asynchronous commit and merge operations that are no longer tied to the HTTP request that triggered them.</p>
-      <h3 id="support-garbage-collection-on-azure-high-priority">
-        
-        
-          <a href="#support-garbage-collection-on-azure-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support Garbage Collection on Azure <span class="label label-blue">High Priority</span>
+          <a href="#garbage-collection-for-uncommitted-stale-objects-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Garbage collection for uncommitted stale objects <span class="label label-blue">High Priority</span>
         
         
       </h3>
     
 
-<p>The lakeFS <a href="https://docs.lakefs.io/reference/garbage-collection.html">Garbage Collection</a> capability hard-deletes objects deleted from branches, helping users reduce costs and 
-comply with data privacy policies. Currently, lakeFS only supports Garbage Collection of S3 objects managed by lakeFS. Extending the support to Azure will allow lakeFS users that use Azure as their underlying storage to use this feature.</p>
+<p>Support deleting objects that don’t belong to any commit and were deleted on the target branch.</p>
 
-<p><a href="https://github.com/treeverse/lakeFS/issues/3271" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+<p>This is commonly used for objects that were staged and then deleted or moved.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/pull/4015" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="garbage-collection-on-google-cloud-platform">
         
         
@@ -696,18 +690,45 @@ comply with data privacy policies. Currently, lakeFS only supports Garbage Colle
 comply with data privacy policies. Currently, lakeFS only supports Garbage Collection of S3/Azure objects managed by lakeFS. Extending the support to GCP will allow lakeFS users that use GCP as their underlying storage to use this feature.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/3626" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h3 id="collaborate-on-your-data">
+      <h3 id="incremental-garbage-collection-high-priority">
         
         
-          <a href="#collaborate-on-your-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Collaborate on your data
+          <a href="#incremental-garbage-collection-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Incremental Garbage Collection <span class="label label-blue">High Priority</span>
         
         
       </h3>
     
 
-<p>Use lakeFS to comment, review and request changes before your data reaches consumers.</p>
+<p>Support running the Garbage Collection Spark job incrementally: take into account commits and references scanned and collected on previous runs to avoid traversing the entire graph on each execution.</p>
+      <h3 id="support-long-running-hooks">
+        
+        
+          <a href="#support-long-running-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support long running hooks
+        
+        
+      </h3>
+    
 
-<p><a href="https://github.com/treeverse/lakeFS/pull/3741" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+<p>Support running hooks that might possibly take many minutes to complete. 
+This is useful for things such as data quality checks - where we might want to do big queries or scans to ensure the data being merged adheres to certain business rules.</p>
+
+<p>Currently, <code class="language-plaintext highlighter-rouge">pre-commit</code> and <code class="language-plaintext highlighter-rouge">pre-merge</code> hooks in lakeFS are tied to the lifecycle of the API request that triggers the said commit or merge operation.
+In order to support long running hooks, there are enhancements to make to lakeFS APIs in order to support an asynchronous commit and merge operations that are no longer tied to the HTTP request that triggered them.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/3020" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+      <h3 id="git-integration">
+        
+        
+          <a href="#git-integration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Git Integration
+        
+        
+      </h3>
+    
+
+<p>Support an integration between a lakeFS repository and a Git repository. 
+Allow versioning data assets along with the code that was used to modify/generate them.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/2073" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
 
                 
 
