@@ -456,7 +456,10 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
     </ol>
   </li>
   <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
-  <li><a href="#gc-backup-and-restore" id="markdown-toc-gc-backup-and-restore">GC backup and restore</a></li>
+  <li><a href="#gc-backup-and-restore" id="markdown-toc-gc-backup-and-restore">GC backup and restore</a>    <ol>
+      <li><a href="#job-options" id="markdown-toc-job-options">Job options</a></li>
+    </ol>
+  </li>
 </ol>
       <h2 id="understanding-garbage-collection">
         
@@ -822,6 +825,19 @@ using the feature you may want to first gain confidence in the decisions GC make
     <li>Backup: copy expired objects from your repository’s storage namespace to an external location before running GC in <a href="#sweep-only-mode">sweep only mode</a>.</li>
     <li>Restore: copy objects that were hard-deleted by GC from an external location you used for saving your backup into your repository’s storage namespace.</li>
   </ul>
+      <h3 id="job-options">
+        
+        
+          <a href="#job-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Job options
+        
+        
+      </h3>
+    
+
+  <ul>
+    <li>This will only work with Hadoop versions &gt; 3.1.3, and so require a Hadoop 3 client.</li>
+    <li>Note that the utility is not fast due to distcp performance limitations. You may prefer backup your whole storage namespace with <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10">AzCopy</a> / <a href="https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html">aws cp</a> / <a href="https://rclone.org/">rclone</a>.</li>
+  </ul>
       <h3 class="no_toc" id="running-gc-backup-and-restore">
         
         
@@ -865,7 +881,7 @@ Program arguments:</p>
         <li><em>storage type</em>: s3</li>
       </ul>
 
-      <p>Run the following command to make run backup process:</p>
+      <p>To start the backup process, run:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
@@ -885,7 +901,7 @@ Program arguments:</p>
         <li><em>storage type</em>: s3</li>
       </ul>
 
-      <p>Run the following command to make run backup process:</p>
+      <p>To start the backup process, run:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
@@ -917,7 +933,7 @@ Program arguments:</p>
           <li><em>storage type</em>: s3</li>
         </ul>
 
-        <p>Run the following command to make the garbage collector start running:</p>
+        <p>To start the restore process, run:</p>
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
@@ -936,8 +952,7 @@ Program arguments:</p>
           <li><em>storage type</em>: azure</li>
         </ul>
 
-        <p>Run the following command to make the restore process start running:</p>
-
+        <p>To start the restore process, run:</p>
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
