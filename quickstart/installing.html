@@ -480,11 +480,47 @@ For a production suitable deployment, learn how to <a href="../deploy/index.html
         
       </h2>
     
-
+      <h3 id="using-aws-s3-storage">
+        
+        
+          <a href="#using-aws-s3-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using AWS S3 Storage
+        
+        
+      </h3>
+    
 <p>To modify the local deployment, for example, in order to use your local lakeFS against S3 storage (as opposed to the local storage), run the command with local parameters:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'s3'</span> <span class="nt">-e</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s1">'YourAccessKeyValue'</span> <span class="nt">-e</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s1">'YourSecretKeyValue'</span>  treeverse/lakefs run <span class="nt">--local-settings</span>
 </code></pre></div></div>
-<p>Note using the <code class="language-plaintext highlighter-rouge">bash--local-settings</code> flag, metadata is being stored locally in the lakeFS container. Therefore, avoid using this flag for production usages.</p>
+      <h3 id="using-azure-blob-storage">
+        
+        
+          <a href="#using-azure-blob-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Azure Blob Storage
+        
+        
+      </h3>
+    
+<p>To modify the local deployment in order to use your local lakeFS against Azure Blob Storage (as opposed to the local storage), run the command with local parameters:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'azure'</span> <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCOUNT</span><span class="o">=</span><span class="s1">'YourAzureStorageAccountName'</span> <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="s1">'YourAzureStorageAccessKey'</span> treeverse/lakefs run <span class="nt">--local-settings</span>
+</code></pre></div></div>
+      <h3 id="using-google-cloud-storage">
+        
+        
+          <a href="#using-google-cloud-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Google Cloud Storage
+        
+        
+      </h3>
+    
+<p>To modify the local deployment in order to use your local lakeFS against Google Cloud Storage (as opposed to the local storage), run the command with local parameters:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'gs'</span> <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_GS_CREDENTIALS_JSON</span><span class="o">=</span><span class="s1">'YourGoogleServiceAccountKeyJSON'</span> treeverse/lakefs run <span class="nt">--local-settings</span>
+</code></pre></div></div>
+<p>where you will replace <code class="language-plaintext highlighter-rouge">YourGoogleServiceAccountKeyJSON</code> with JSON string that contains your Google service account key.</p>
+
+<p>If you want to use the JSON file that contains your Google service account key instead of JSON string (as in the previous command) then go to the directory where JSON file is stored and run the command with local parameters:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="nt">-v</span> <span class="nv">$PWD</span>:/myfiles <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'gs'</span> <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_GS_CREDENTIALS_FILE</span><span class="o">=</span><span class="s1">'/myfiles/YourGoogleServiceAccountKey.json'</span> treeverse/lakefs run <span class="nt">--local-settings</span>
+</code></pre></div></div>
+<p>This command will mount your present working directory (PWD) within the container and will read the JSON file from your PWD.</p>
+
+<p>Note using the <code class="language-plaintext highlighter-rouge">--local-settings</code> flag, metadata is being stored locally in the lakeFS container. Therefore, avoid using this flag for production usages.</p>
       <h2 id="next-steps">
         
         
