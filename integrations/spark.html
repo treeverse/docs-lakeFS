@@ -442,7 +442,10 @@
       <li><a href="#per-bucket-configuration" id="markdown-toc-per-bucket-configuration">Per-bucket configuration</a></li>
     </ol>
   </li>
-  <li><a href="#use-the-lakefs-specific-hadoop-filesystem" id="markdown-toc-use-the-lakefs-specific-hadoop-filesystem">Use the lakeFS-specific Hadoop FileSystem</a></li>
+  <li><a href="#use-the-lakefs-hadoop-filesystem" id="markdown-toc-use-the-lakefs-hadoop-filesystem">Use the lakeFS Hadoop FileSystem</a>    <ol>
+      <li><a href="#notes-for-the-lakefs-hadoop-filesystem" id="markdown-toc-notes-for-the-lakefs-hadoop-filesystem">Notes for the lakeFS Hadoop FileSystem</a></li>
+    </ol>
+  </li>
   <li><a href="#case-study-similarweb" id="markdown-toc-case-study-similarweb">Case Study: SimilarWeb</a></li>
 </ol>
 
@@ -467,7 +470,7 @@ not on the command line or inlined in code where they might be exposed.</p>
 
 <ul>
   <li>Using the <a href="#use-the-s3-gateway">S3 gateway</a>: get started quickly!</li>
-  <li>Using the <a href="#use-the-lakefs-specific-hadoop-filesystem">lakeFS-specific Hadoop FileSystem</a>: fully unlock the performance of lakeFS.</li>
+  <li>Using the <a href="#use-the-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a>: fully unlock the performance of lakeFS.</li>
 </ul>
       <h2 id="use-the-s3-gateway">
         
@@ -660,10 +663,10 @@ conventions:</p>
 </code></pre></div></div>
 
 <p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes or revert them.</p>
-      <h2 id="use-the-lakefs-specific-hadoop-filesystem">
+      <h2 id="use-the-lakefs-hadoop-filesystem">
         
         
-          <a href="#use-the-lakefs-specific-hadoop-filesystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use the lakeFS-specific Hadoop FileSystem
+          <a href="#use-the-lakefs-hadoop-filesystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use the lakeFS Hadoop FileSystem
         
         
       </h2>
@@ -672,8 +675,6 @@ conventions:</p>
 <p>If you’re using lakeFS on top of S3, this mode will enhance your application’s performance.
 In this mode, Spark will read and write objects directly from S3, reducing the load on the lakeFS server.
 It will still access the lakeFS server for metadata operations.</p>
-
-<p>Since data will not be sent to the lakeFS server, using this mode maximizes data security.</p>
 
 <p>After configuring the lakeFS Hadoop FileSystem below, use URIs of the form <code class="language-plaintext highlighter-rouge">lakefs://example-repo/ref/path/to/data</code> to
 interact with your data on lakeFS.</p>
@@ -698,7 +699,7 @@ interact with your data on lakeFS.</p>
     <p>The jar is also available on a public S3 location: <code class="language-plaintext highlighter-rouge">s3://treeverse-clients-us-east/hadoop/hadoop-lakefs-assembly-0.1.8.jar</code></p>
   </li>
   <li>
-    <p>Configure S3A filesystem with your S3 credentials (<strong>not</strong> the lakeFS credentials).
+    <p>Configure the S3A filesystem with your S3 credentials (<strong>not</strong> the lakeFS credentials).
 Additionally, supply the <code class="language-plaintext highlighter-rouge">fs.lakefs.*</code> configurations to allow Spark to access metadata on lakeFS:</p>
 
     <div class="table-wrapper"><table>
@@ -716,10 +717,6 @@ Additionally, supply the <code class="language-plaintext highlighter-rouge">fs.l
         <tr>
           <td><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code></td>
           <td>Set to the AWS S3 secret key</td>
-        </tr>
-        <tr>
-          <td><code class="language-plaintext highlighter-rouge">fs.s3a.endpoint</code></td>
-          <td>Set to the AWS S3-compatible endpoint</td>
         </tr>
         <tr>
           <td><code class="language-plaintext highlighter-rouge">fs.lakefs.impl</code></td>
@@ -858,6 +855,19 @@ Amazon provides <a href="https://docs.aws.amazon.com/general/latest/gr/s3.html">
 </code></pre></div></div>
 
 <p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes or revert them.</p>
+      <h3 id="notes-for-the-lakefs-hadoop-filesystem">
+        
+        
+          <a href="#notes-for-the-lakefs-hadoop-filesystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes for the lakeFS Hadoop FileSystem
+        
+        
+      </h3>
+    
+
+<ul>
+  <li>Since data will not be sent to the lakeFS server, using this mode maximizes data security.</li>
+  <li>The FileSystem implementation is tested with the latest Spark 2.X (Hadoop 2) and Spark 3.X (Hadoop 3) Bitnami images.</li>
+</ul>
       <h2 id="case-study-similarweb">
         
         
