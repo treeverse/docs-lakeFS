@@ -225,18 +225,19 @@
                    class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/v0.83/using_lakefs/"
-           class="nav-list-link">Using lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/using_lakefs/data-devenv.html"
-                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.83/using_lakefs/ci.html"
-                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.83/using_lakefs/production.html"
+            </svg></a><a href="/v0.83/data_lifecycle_management/"
+           class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/data-devenv.html"
+                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/ci.html"
+                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/production.html"
                    class="nav-list-link">In Production</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/use_cases/"
            class="nav-list-link">Use Cases</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/use_cases/iso_env.html"
-                   class="nav-list-link">Isolated Environment</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/rollback.html"
+                   class="nav-list-link">Isolated Dev/Test Environment</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/rollback.html"
                    class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/reproducibility.html"
-                   class="nav-list-link">Reproducibility</a></li></ul></li><li
+                   class="nav-list-link">Reproducibility</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/cicd_for_data.html"
+                   class="nav-list-link">CI/CD for data lakes</a></li></ul></li><li
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/reference/"
@@ -279,8 +280,7 @@
                    class="nav-list-link">dbt</a></li><li class="nav-list-item "><a href="/v0.83/integrations/glue_hive_metastore.html"
                    class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/v0.83/integrations/glue_etl.html"
                    class="nav-list-link">Glue ETL</a></li><li class="nav-list-item "><a href="/v0.83/integrations/kakfa.html"
-                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/mapreduce.html"
-                   class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
+                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/v0.83/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v0.83/integrations/iceberg.html"
                    class="nav-list-link">Iceberg</a></li></ul></li><li
@@ -525,6 +525,7 @@
       <li><a href="#lakectl-doctor" id="markdown-toc-lakectl-doctor">lakectl doctor</a></li>
       <li><a href="#lakectl-fs" id="markdown-toc-lakectl-fs">lakectl fs</a></li>
       <li><a href="#lakectl-fs-cat" id="markdown-toc-lakectl-fs-cat">lakectl fs cat</a></li>
+      <li><a href="#lakectl-fs-download" id="markdown-toc-lakectl-fs-download">lakectl fs download</a></li>
       <li><a href="#lakectl-fs-help" id="markdown-toc-lakectl-fs-help">lakectl fs help</a></li>
       <li><a href="#lakectl-fs-ls" id="markdown-toc-lakectl-fs-ls">lakectl fs ls</a></li>
       <li><a href="#lakectl-fs-rm" id="markdown-toc-lakectl-fs-rm">lakectl fs rm</a></li>
@@ -3242,6 +3243,33 @@ Simply type dbt help [path to command] for full details.</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  -d, --direct   read directly from backing store (faster but requires more credentials)
   -h, --help     help for cat
 </code></pre></div></div>
+      <h3 id="lakectl-fs-download">
+        
+        
+          <a href="#lakectl-fs-download" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakectl fs download
+        
+        
+      </h3>
+    
+
+<p>Download object(s) from a given repository path</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs download &lt;path uri&gt; [&lt;destination path&gt;] [flags]
+</code></pre></div></div>
+      <h4 class="no_toc" id="options-85">
+        
+        
+          <a href="#options-85" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+        
+        
+      </h4>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  -d, --direct         read directly from backing store (requires credentials)
+  -h, --help           help for download
+  -p, --parallel int   max concurrent downloads (default 6)
+  -r, --recursive      recursively all objects under path
+</code></pre></div></div>
       <h3 id="lakectl-fs-help">
         
         
@@ -3266,10 +3294,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs help [command] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-85">
+      <h4 class="no_toc" id="options-86">
         
         
-          <a href="#options-85" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-86" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3290,10 +3318,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs ls &lt;path uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-86">
+      <h4 class="no_toc" id="options-87">
         
         
-          <a href="#options-86" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-87" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3315,10 +3343,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs rm &lt;path uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-87">
+      <h4 class="no_toc" id="options-88">
         
         
-          <a href="#options-87" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-88" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3343,10 +3371,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs stage &lt;path uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-88">
+      <h4 class="no_toc" id="options-89">
         
         
-          <a href="#options-88" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-89" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3373,10 +3401,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs stat &lt;path uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-89">
+      <h4 class="no_toc" id="options-90">
         
         
-          <a href="#options-89" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-90" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3397,10 +3425,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs upload &lt;path uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-90">
+      <h4 class="no_toc" id="options-91">
         
         
-          <a href="#options-90" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-91" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3422,10 +3450,10 @@ Simply type fs help [path to command] for full details.</p>
     
 
 <p>Manage the garbage collection policy</p>
-      <h4 class="no_toc" id="options-91">
+      <h4 class="no_toc" id="options-92">
         
         
-          <a href="#options-91" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-92" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3457,10 +3485,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc delete-config &lt;repository uri&gt;
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-92">
+      <h4 class="no_toc" id="options-93">
         
         
-          <a href="#options-92" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-93" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3492,10 +3520,10 @@ Simply type fs help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc get-config &lt;repository uri&gt;
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-93">
+      <h4 class="no_toc" id="options-94">
         
         
-          <a href="#options-93" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-94" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3528,10 +3556,10 @@ Simply type gc help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc help [command] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-94">
+      <h4 class="no_toc" id="options-95">
         
         
-          <a href="#options-94" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-95" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3587,10 +3615,10 @@ Example configuration file:
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc set-config &lt;repository uri&gt; -f config.json
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-95">
+      <h4 class="no_toc" id="options-96">
         
         
-          <a href="#options-95" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-96" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3623,10 +3651,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl help [command] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-96">
+      <h4 class="no_toc" id="options-97">
         
         
-          <a href="#options-96" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-97" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3647,10 +3675,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl ingest --from &lt;object store URI&gt; --to &lt;lakeFS path URI&gt; [--dry-run] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-97">
+      <h4 class="no_toc" id="options-98">
         
         
-          <a href="#options-97" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-98" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3686,10 +3714,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl log &lt;branch uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-98">
+      <h4 class="no_toc" id="options-99">
         
         
-          <a href="#options-98" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-99" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3726,10 +3754,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl merge &lt;source ref&gt; &lt;destination ref&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-99">
+      <h4 class="no_toc" id="options-100">
         
         
-          <a href="#options-99" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-100" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3748,10 +3776,10 @@ Simply type lakectl help [path to command] for full details.</p>
     
 
 <p>Manage metastore commands</p>
-      <h4 class="no_toc" id="options-100">
+      <h4 class="no_toc" id="options-101">
         
         
-          <a href="#options-100" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-101" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3782,10 +3810,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore copy [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-101">
+      <h4 class="no_toc" id="options-102">
         
         
-          <a href="#options-101" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-102" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3828,10 +3856,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore copy-all [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-102">
+      <h4 class="no_toc" id="options-103">
         
         
-          <a href="#options-102" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-103" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3871,10 +3899,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore copy-schema [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-103">
+      <h4 class="no_toc" id="options-104">
         
         
-          <a href="#options-103" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-104" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3913,10 +3941,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore create-symlink [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-104">
+      <h4 class="no_toc" id="options-105">
         
         
-          <a href="#options-104" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-105" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3946,10 +3974,10 @@ Simply type lakectl help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore diff [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-105">
+      <h4 class="no_toc" id="options-106">
         
         
-          <a href="#options-105" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-106" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -3991,10 +4019,10 @@ Simply type metastore help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore help [command] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-106">
+      <h4 class="no_toc" id="options-107">
         
         
-          <a href="#options-106" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-107" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4027,10 +4055,10 @@ will be transformed to location s3://repo-param/bucket-param/path/to/table</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore import-all [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-107">
+      <h4 class="no_toc" id="options-108">
         
         
-          <a href="#options-107" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-108" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4063,10 +4091,10 @@ will be transformed to location s3://repo-param/bucket-param/path/to/table</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl refs-dump &lt;repository uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-108">
+      <h4 class="no_toc" id="options-109">
         
         
-          <a href="#options-108" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-109" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4113,10 +4141,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 cp s3://bucket/_lakefs/refs_manifest.json - | lakectl refs-restore lakefs://my-bare-repository --manifest -
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-109">
+      <h4 class="no_toc" id="options-110">
         
         
-          <a href="#options-109" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-110" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4135,10 +4163,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
     
 
 <p>Manage and explore repos</p>
-      <h4 class="no_toc" id="options-110">
+      <h4 class="no_toc" id="options-111">
         
         
-          <a href="#options-110" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-111" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4170,10 +4198,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl repo create lakefs://some-repo-name s3://some-bucket-name
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-111">
+      <h4 class="no_toc" id="options-112">
         
         
-          <a href="#options-111" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-112" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4208,10 +4236,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl create-bare lakefs://some-repo-name s3://some-bucket-name
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-112">
+      <h4 class="no_toc" id="options-113">
         
         
-          <a href="#options-112" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-113" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4233,10 +4261,10 @@ Since a bare repo is expected, in case of transient failure, delete the reposito
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl repo delete &lt;repository uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-113">
+      <h4 class="no_toc" id="options-114">
         
         
-          <a href="#options-113" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-114" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4269,10 +4297,10 @@ Simply type repo help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl repo help [command] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-114">
+      <h4 class="no_toc" id="options-115">
         
         
-          <a href="#options-114" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-115" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4293,10 +4321,10 @@ Simply type repo help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl repo list [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-115">
+      <h4 class="no_toc" id="options-116">
         
         
-          <a href="#options-115" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-116" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4319,10 +4347,10 @@ Simply type repo help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl show &lt;repository uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-116">
+      <h4 class="no_toc" id="options-117">
         
         
-          <a href="#options-116" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-117" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4352,10 +4380,10 @@ Simply type repo help [path to command] for full details.</p>
     
 
 <p>Create delete and list tags within a lakeFS repository</p>
-      <h4 class="no_toc" id="options-117">
+      <h4 class="no_toc" id="options-118">
         
         
-          <a href="#options-117" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-118" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4387,10 +4415,10 @@ Simply type repo help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag create lakefs://example-repo/example-tag lakefs://example-repo/2397cc9a9d04c20a4e5739b42c1dd3d8ba655c0b3a3b974850895a13d8bf9917
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-118">
+      <h4 class="no_toc" id="options-119">
         
         
-          <a href="#options-118" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-119" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4412,10 +4440,10 @@ Simply type repo help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag delete &lt;tag uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-119">
+      <h4 class="no_toc" id="options-120">
         
         
-          <a href="#options-119" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-120" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4447,10 +4475,10 @@ Simply type tag help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag help [command] [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-120">
+      <h4 class="no_toc" id="options-121">
         
         
-          <a href="#options-120" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-121" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4482,10 +4510,10 @@ Simply type tag help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag list lakefs://&lt;repository&gt;
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-121">
+      <h4 class="no_toc" id="options-122">
         
         
-          <a href="#options-121" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-122" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4508,10 +4536,10 @@ Simply type tag help [path to command] for full details.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl tag show &lt;tag uri&gt; [flags]
 </code></pre></div></div>
-      <h4 class="no_toc" id="options-122">
+      <h4 class="no_toc" id="options-123">
         
         
-          <a href="#options-122" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
+          <a href="#options-123" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Options
         
         
       </h4>
@@ -4523,7 +4551,7 @@ Simply type tag help [path to command] for full details.</p>
                 
 
                 
-
+                
 
             </div>
         </div>

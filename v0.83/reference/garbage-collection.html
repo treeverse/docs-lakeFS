@@ -225,18 +225,19 @@
                    class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/v0.83/using_lakefs/"
-           class="nav-list-link">Using lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/using_lakefs/data-devenv.html"
-                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.83/using_lakefs/ci.html"
-                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.83/using_lakefs/production.html"
+            </svg></a><a href="/v0.83/data_lifecycle_management/"
+           class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/data-devenv.html"
+                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/ci.html"
+                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/production.html"
                    class="nav-list-link">In Production</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/use_cases/"
            class="nav-list-link">Use Cases</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/use_cases/iso_env.html"
-                   class="nav-list-link">Isolated Environment</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/rollback.html"
+                   class="nav-list-link">Isolated Dev/Test Environment</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/rollback.html"
                    class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/reproducibility.html"
-                   class="nav-list-link">Reproducibility</a></li></ul></li><li
+                   class="nav-list-link">Reproducibility</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/cicd_for_data.html"
+                   class="nav-list-link">CI/CD for data lakes</a></li></ul></li><li
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/reference/"
@@ -279,8 +280,7 @@
                    class="nav-list-link">dbt</a></li><li class="nav-list-item "><a href="/v0.83/integrations/glue_hive_metastore.html"
                    class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/v0.83/integrations/glue_etl.html"
                    class="nav-list-link">Glue ETL</a></li><li class="nav-list-item "><a href="/v0.83/integrations/kakfa.html"
-                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/mapreduce.html"
-                   class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
+                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/v0.83/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v0.83/integrations/iceberg.html"
                    class="nav-list-link">Iceberg</a></li></ul></li><li
@@ -457,7 +457,10 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
     </ol>
   </li>
   <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
-  <li><a href="#gc-backup-and-restore" id="markdown-toc-gc-backup-and-restore">GC backup and restore</a></li>
+  <li><a href="#gc-backup-and-restore" id="markdown-toc-gc-backup-and-restore">GC backup and restore</a>    <ol>
+      <li><a href="#job-options" id="markdown-toc-job-options">Job options</a></li>
+    </ol>
+  </li>
 </ol>
       <h2 id="understanding-garbage-collection">
         
@@ -640,6 +643,7 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
     <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code> and run the following command to make the garbage collector start running:</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
+  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://lakefs.example.com:8000/api/v1  <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
@@ -654,11 +658,12 @@ http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark
     <p>You should run the following command to make the garbage collector start running:</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
+  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:3.2.1 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://lakefs.example.com:8000/api/v1  <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
-  s3://treeverse-clients-us-east/lakefs-spark-client-312-hadoop3/0.5.0/lakefs-spark-client-312-hadoop3-assembly-0.5.0.jar <span class="se">\</span>
+  s3://treeverse-clients-us-east/lakefs-spark-client-312-hadoop3/0.5.1/lakefs-spark-client-312-hadoop3-assembly-0.5.1.jar <span class="se">\</span>
   example-repo
 </code></pre></div>    </div>
 
@@ -791,7 +796,7 @@ An object which is later deleted from <code class="language-plaintext highlighte
     </li>
     <li>
       <p>lakeFS will never delete objects outside your repository’s storage namespace.
-In particular, objects that were imported using <code class="language-plaintext highlighter-rouge">lakefs import</code> or <code class="language-plaintext highlighter-rouge">lakectl ingest</code> will not be affected by GC jobs.</p>
+In particular, objects that were imported using <code class="language-plaintext highlighter-rouge">lakectl ingest</code> or <code class="language-plaintext highlighter-rouge">UI Import Wizard</code> will not be affected by GC jobs.</p>
     </li>
     <li>
       <p>In cases where deleted objects are brought back to life while a GC job is running, said objects may or may not be
@@ -823,6 +828,19 @@ using the feature you may want to first gain confidence in the decisions GC make
     <li>Backup: copy expired objects from your repository’s storage namespace to an external location before running GC in <a href="#sweep-only-mode">sweep only mode</a>.</li>
     <li>Restore: copy objects that were hard-deleted by GC from an external location you used for saving your backup into your repository’s storage namespace.</li>
   </ul>
+      <h3 id="job-options">
+        
+        
+          <a href="#job-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Job options
+        
+        
+      </h3>
+    
+
+  <ul>
+    <li>This will only work with Hadoop versions &gt; 3.1.3, and so require a Hadoop 3 client.</li>
+    <li>Note that the utility is not fast due to distcp performance limitations. You may prefer backup your whole storage namespace with <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10">AzCopy</a> / <a href="https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html">aws cp</a> / <a href="https://rclone.org/">rclone</a>.</li>
+  </ul>
       <h3 class="no_toc" id="running-gc-backup-and-restore">
         
         
@@ -838,7 +856,7 @@ Currently, GC backup and restore is available for Spark 3.1.2 and 3.2.1, but it 
   <p>First, download the lakeFS Spark client Uber-jar. The Uber-jar can be found on a public S3 location:
 <code class="language-plaintext highlighter-rouge">http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-312-hadoop3/${CLIENT_VERSION}/lakefs-spark-client-312-hadoop3-assembly-${CLIENT_VERSION}.jar
 </code>
-<strong>Note</strong> GC backup and restore is available from version 0.5.0 of lakeFS Spark client.</p>
+<strong>Note</strong> GC backup and restore is available from version 0.5.1 of lakeFS Spark client.</p>
 
   <p>Running instructions:</p>
       <h4 class="no_toc" id="backup">
@@ -866,7 +884,7 @@ Program arguments:</p>
         <li><em>storage type</em>: s3</li>
       </ul>
 
-      <p>Run the following command to make run backup process:</p>
+      <p>To start the backup process, run:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
@@ -886,7 +904,7 @@ Program arguments:</p>
         <li><em>storage type</em>: s3</li>
       </ul>
 
-      <p>Run the following command to make run backup process:</p>
+      <p>To start the backup process, run:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
@@ -918,8 +936,9 @@ Program arguments:</p>
           <li><em>storage type</em>: s3</li>
         </ul>
 
-        <p>Run the following command to make the garbage collector start running:</p>
+        <p>To start the restore process, run:</p>
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
@@ -937,9 +956,9 @@ Program arguments:</p>
           <li><em>storage type</em>: azure</li>
         </ul>
 
-        <p>Run the following command to make the restore process start running:</p>
-
+        <p>To start the restore process, run:</p>
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
   objects-to-restore-list-location backup-external-location storage-namespace azure
@@ -952,7 +971,7 @@ Program arguments:</p>
                 
 
                 
-
+                
 
             </div>
         </div>

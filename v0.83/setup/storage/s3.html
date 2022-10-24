@@ -225,18 +225,19 @@
                    class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/v0.83/using_lakefs/"
-           class="nav-list-link">Using lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/using_lakefs/data-devenv.html"
-                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.83/using_lakefs/ci.html"
-                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.83/using_lakefs/production.html"
+            </svg></a><a href="/v0.83/data_lifecycle_management/"
+           class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/data-devenv.html"
+                   class="nav-list-link">In Test</a></li><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/ci.html"
+                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/v0.83/data_lifecycle_management/production.html"
                    class="nav-list-link">In Production</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/use_cases/"
            class="nav-list-link">Use Cases</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.83/use_cases/iso_env.html"
-                   class="nav-list-link">Isolated Environment</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/rollback.html"
+                   class="nav-list-link">Isolated Dev/Test Environment</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/rollback.html"
                    class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/reproducibility.html"
-                   class="nav-list-link">Reproducibility</a></li></ul></li><li
+                   class="nav-list-link">Reproducibility</a></li><li class="nav-list-item "><a href="/v0.83/use_cases/cicd_for_data.html"
+                   class="nav-list-link">CI/CD for data lakes</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.83/reference/"
@@ -279,8 +280,7 @@
                    class="nav-list-link">dbt</a></li><li class="nav-list-item "><a href="/v0.83/integrations/glue_hive_metastore.html"
                    class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/v0.83/integrations/glue_etl.html"
                    class="nav-list-link">Glue ETL</a></li><li class="nav-list-item "><a href="/v0.83/integrations/kakfa.html"
-                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/mapreduce.html"
-                   class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
+                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/v0.83/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/v0.83/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v0.83/integrations/iceberg.html"
                    class="nav-list-link">Iceberg</a></li></ul></li><li
@@ -431,34 +431,13 @@
     
 
 <ol>
-  <li>From the S3 Administration console, choose <code class="language-plaintext highlighter-rouge">Create Bucket</code>.</li>
-  <li>Make sure that you:
-    <ol>
-      <li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html">Block public access</a>.</li>
-      <li><strong>Disable</strong> <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock-console.html">Object Lock</a>.</li>
-    </ol>
-  </li>
+  <li>From the S3 Administration console, choose <em>Create Bucket</em>.</li>
+  <li>Make sure that you block public access and disable object lock.</li>
+  <li>Use the following as your bucket policy, filling in the placeholders:</li>
 </ol>
 
-<p>There are two types of S3 bucket permission policies that can be used: the default <a href="#permission-policy">permission
-policy</a> and the <a href="#metadata-permissions-policy-advanced">metadata-only</a> permission policy.
-Pick the one that best describes your use case and to add it, go to the <code class="language-plaintext highlighter-rouge">Permissions</code> tab, and paste it.</p>
-      <h2 id="permission-policy">
-        
-        
-          <a href="#permission-policy" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Permission Policy
-        
-        
-      </h2>
-    
-
-<p>By setting this bucket policy you’ll be able to perform metadata operations as well as to upload/download objects to/from your bucket using lakeFS.
-To upload or download an object to your storage namespace using lakeFS, you can use the <a href="/v0.83/reference/api.html">API</a>, the CLI tool
-<a href="../../reference#lakectl-fs"><code class="language-plaintext highlighter-rouge">lakectl</code></a>, the <a href="/v0.83/reference/spark-client.html">Spark metadata client</a>,
-or the <a href="/v0.83/integrations/spark.html#access-lakefs-using-the-s3a-gateway">S3 gateway</a>.</p>
-
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-   </span><span class="nl">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;POLICY_ID&gt;"</span><span class="p">,</span><span class="w">
+   </span><span class="nl">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSPolicy"</span><span class="p">,</span><span class="w">
    </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
    </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
       </span><span class="p">{</span><span class="w">
@@ -470,7 +449,7 @@ or the <a href="/v0.83/integrations/spark.html#access-lakefs-using-the-s3a-gatew
             </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
          </span><span class="p">],</span><span class="w">
          </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::&lt;STORAGE_NAMESPACE&gt;/*"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::&lt;BUCKET_NAME_AND_PREFIX&gt;/*"</span><span class="p">],</span><span class="w">
          </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE&gt;"</span><span class="p">]</span><span class="w">
          </span><span class="p">}</span><span class="w">
@@ -492,28 +471,36 @@ or the <a href="/v0.83/integrations/spark.html#access-lakefs-using-the-s3a-gatew
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 <ul>
-  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;STORAGE_NAMESPACE&gt;</code> with your <a href="/v0.83/understand/model.html#concepts-unique-to-lakefs">storage namespace</a> which will be in the form of <code class="language-plaintext highlighter-rouge">&lt;BUCKET_NAME&gt;/&lt;PATH&gt;</code> (<code class="language-plaintext highlighter-rouge">PATH</code> can be empty).</li>
-  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;ACCOUNT_ID&gt;</code> and <code class="language-plaintext highlighter-rouge">&lt;IAM_ROLE&gt;</code> with values relevant to your environment.</li>
-  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;BUCKET&gt;</code> with the <strong>bucket</strong> that lakeFS is managing.</li>
-  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;POLICY_ID&gt;</code> with a string ID of your choice.</li>
-  <li><code class="language-plaintext highlighter-rouge">IAM_ROLE</code> should be the role assumed by your lakeFS installation.</li>
+  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;BUCKET_NAME&gt;</code>, <code class="language-plaintext highlighter-rouge">&lt;ACCOUNT_ID&gt;</code> and <code class="language-plaintext highlighter-rouge">&lt;IAM_ROLE&gt;</code> with values relevant to your environment.</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;BUCKET_NAME_AND_PREFIX&gt;</code> can be the bucket name. If you want to minimize the bucket policy permissions, use the bucket name together with a prefix (e.g. <code class="language-plaintext highlighter-rouge">example-bucket/a/b/c</code>).
+ This way, lakeFS will be able to create repositories only under this specific path (see: <a href="/v0.83/glossary.html#storage-namespace">Storage Namespace</a>).</li>
+  <li>lakeFS will try to assume the role <code class="language-plaintext highlighter-rouge">&lt;IAM_ROLE&gt;</code>.</li>
 </ul>
 
-<p>Alternatively, if you use an AWS user’s key-pair to authenticate lakeFS to AWS, change the policy’s Principal to be the user:</p>
+<p><span style="font-size:1.3em;" class="mt-2">
+You’re now ready to <a href="/v0.83/setup/create-repo.html">create your first lakeFS repository</a>.
+</span></p>
+      <h3 id="alternative-use-an-aws-user">
+        
+        
+          <a href="#alternative-use-an-aws-user" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Alternative: use an AWS user
+        
+        
+      </h3>
+    
 
+<p>lakeFS can authenticate with your AWS account using an AWS user, using an access key and secret. To allow this, change the policy’s Principal accordingly:</p>
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
    </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;"</span><span class="p">]</span><span class="w">
  </span><span class="p">}</span><span class="w">
-</span></code></pre></div></div><hr />
-
-<p>You’re now ready to <a href="/v0.83/setup/create-repo.html">create your first lakeFS repository</a>.</p><hr />
-      <h2 id="metadata-permissions-policy-advanced">
+</span></code></pre></div></div>
+      <h3 id="advanced-minimal-permissions">
         
         
-          <a href="#metadata-permissions-policy-advanced" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Metadata Permissions Policy (advanced)
+          <a href="#advanced-minimal-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Advanced: minimal permissions
         
         
-      </h2>
+      </h3>
     
 
 <p>lakeFS requires permissions to access the <code class="language-plaintext highlighter-rouge">_lakefs</code> prefix under your storage namespace, in which the metadata
@@ -527,7 +514,7 @@ to use lakeFS to upload or download objects. Specifically you won’t be able to
 </ul>
 
 <p>This permission is useful if you upload/download objects to/from your bucket using external tools.
-For example, you can use the <a href="/v0.83/integrations/spark.html#access-lakefs-using-the-lakefs-specific-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>
+For example, you can use the <a href="/v0.83/integrations/spark.html#use-the-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>
 to directly access your S3 bucket while performing metadata operations through lakeFS on the objects in that bucket.</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
@@ -564,10 +551,21 @@ to directly access your S3 bucket while performing metadata operations through l
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-                
+<p><span style="font-size:1.3em;">
+You’re now ready to <a href="/v0.83/setup/create-repo.html">create your first lakeFS repository</a>.
+</span></p>
 
                 
 
+                
+                
+                <div style="float: right" class="mt-5">
+
+                    <a type="button" class="btn btn-outline-primary" href="../create-repo.html">
+                        Next: Create your first repository <i class="fa fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                
 
             </div>
         </div>
