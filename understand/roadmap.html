@@ -439,15 +439,18 @@
 
 <ol id="markdown-toc">
   <li><a href="#ecosystem" id="markdown-toc-ecosystem">Ecosystem</a>    <ol>
+      <li><a href="#native-spark-outputcommitter-high-priority" id="markdown-toc-native-spark-outputcommitter-high-priority">Native Spark OutputCommitter <span class="label label-blue">High Priority</span></a></li>
       <li><a href="#table-format-support" id="markdown-toc-table-format-support">Table format support</a>        <ol>
           <li><a href="#iceberg-support-high-priority" id="markdown-toc-iceberg-support-high-priority">Iceberg support <span class="label label-blue">High Priority</span></a></li>
           <li><a href="#metastore-integration-hooks" id="markdown-toc-metastore-integration-hooks">Metastore integration hooks</a></li>
           <li><a href="#delta-lake-merges-and-diffs-across-branches" id="markdown-toc-delta-lake-merges-and-diffs-across-branches">Delta Lake merges and diffs across branches</a></li>
         </ol>
       </li>
-      <li><a href="#hadoop-3-support-in-all-lakefs-clients-high-priority" id="markdown-toc-hadoop-3-support-in-all-lakefs-clients-high-priority">Hadoop 3 support in all lakeFS clients <span class="label label-blue">High Priority</span></a></li>
-      <li><a href="#native-spark-outputcommitter-high-priority" id="markdown-toc-native-spark-outputcommitter-high-priority">Native Spark OutputCommitter <span class="label label-blue">High Priority</span></a></li>
-      <li><a href="#hadoopfs-support-azure-blob-storage" id="markdown-toc-hadoopfs-support-azure-blob-storage">HadoopFS: Support Azure Blob Storage</a></li>
+      <li><a href="#improved-azure-support" id="markdown-toc-improved-azure-support">Improved Azure Support</a>        <ol>
+          <li><a href="#hadoopfs-support-azure-blob-storage" id="markdown-toc-hadoopfs-support-azure-blob-storage">HadoopFS: Support Azure Blob Storage</a></li>
+          <li><a href="#support-azure-cosmosdb-as-backend-kv-store" id="markdown-toc-support-azure-cosmosdb-as-backend-kv-store">Support Azure CosmosDB as backend KV store</a></li>
+        </ol>
+      </li>
       <li><a href="#sync-a-lakefs-reference-or-part-of-it-with-a-local-directory" id="markdown-toc-sync-a-lakefs-reference-or-part-of-it-with-a-local-directory">Sync a lakeFS reference (or part of it) with a local directory</a></li>
       <li><a href="#improved-streaming-support-for-apache-kafka" id="markdown-toc-improved-streaming-support-for-apache-kafka">Improved streaming support for Apache Kafka</a></li>
       <li><a href="#native-connector-trino" id="markdown-toc-native-connector-trino">Native connector: Trino</a></li>
@@ -472,6 +475,27 @@
         
       </h2>
     
+      <h3 id="native-spark-outputcommitter-high-priority">
+        
+        
+          <a href="#native-spark-outputcommitter-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native Spark OutputCommitter <span class="label label-blue">High Priority</span>
+        
+        
+      </h3>
+    
+
+<p>We plan to add a Hadoop OutputCommitter that uses existing lakeFS operations for atomic commits that are efficient and safely concurrent.</p>
+
+<p>This comes with several benefits:</p>
+
+<ul>
+  <li>Performance: This committer does metadata operations only and doesn’t rely on copying data.</li>
+  <li>Atomicity: A commit in lakeFS is guaranteed to either succeed or fail, but will not leave any intermediate state on failure.</li>
+  <li>Traceability: Attaching metadata to each commit means we get quite a lot of information on where data is coming from, how it’s generated, etc. This allows building reproducible pipelines in an easier way.</li>
+  <li>Resilience: Since every Spark write is a commit, it’s also undoable by reverting it.</li>
+</ul>
+
+<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/spark-outputcommitter/committer.md" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="table-format-support">
         
         
@@ -548,56 +572,40 @@ Users would then have to forgo one of the change sets by either retaining the de
 <p>A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!).</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/3380" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h3 id="hadoop-3-support-in-all-lakefs-clients-high-priority">
+      <h3 id="improved-azure-support">
         
         
-          <a href="#hadoop-3-support-in-all-lakefs-clients-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hadoop 3 support in all lakeFS clients <span class="label label-blue">High Priority</span>
-        
-        
-      </h3>
-    
-
-<p>We intend to test, verify and document the version support matrix for our Hadoop-based clients:</p>
-<ol>
-  <li><a href="https://github.com/treeverse/lakeFS/tree/master/clients/hadoopfs">lakeFS Hadoop Filesystem</a></li>
-  <li><a href="https://github.com/treeverse/lakeFS/tree/master/clients/spark">Spark metadata client</a></li>
-  <li><a href="https://github.com/treeverse/hadoop-router-fs">RouterFS</a></li>
-</ol>
-
-<p>In particular, all features will support Hadoop versions 3.x.</p>
-      <h3 id="native-spark-outputcommitter-high-priority">
-        
-        
-          <a href="#native-spark-outputcommitter-high-priority" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Native Spark OutputCommitter <span class="label label-blue">High Priority</span>
+          <a href="#improved-azure-support" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Improved Azure Support
         
         
       </h3>
     
-
-<p>We plan to add a Hadoop OutputCommitter that uses existing lakeFS operations for atomic commits that are efficient and safely concurrent.</p>
-
-<p>This comes with several benefits:</p>
-
-<ul>
-  <li>Performance: This committer does metadata operations only and doesn’t rely on copying data.</li>
-  <li>Atomicity: A commit in lakeFS is guaranteed to either succeed or fail, but will not leave any intermediate state on failure.</li>
-  <li>Traceability: Attaching metadata to each commit means we get quite a lot of information on where data is coming from, how it’s generated, etc. This allows building reproducible pipelines in an easier way.</li>
-  <li>Resilience: Since every Spark write is a commit, it’s also undoable by reverting it.</li>
-</ul>
-
-<p><a href="https://github.com/treeverse/lakeFS/blob/master/design/open/spark-outputcommitter/committer.md" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
-      <h3 id="hadoopfs-support-azure-blob-storage">
+      <h4 id="hadoopfs-support-azure-blob-storage">
         
         
           <a href="#hadoopfs-support-azure-blob-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> HadoopFS: Support Azure Blob Storage
         
         
-      </h3>
+      </h4>
     
 
 <p>Extend the lakeFS HadoopFilesystem to support working directly with Azure Blob Storage.</p>
 
 <p><a href="https://github.com/treeverse/lakeFS/issues/4385" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
+      <h4 id="support-azure-cosmosdb-as-backend-kv-store">
+        
+        
+          <a href="#support-azure-cosmosdb-as-backend-kv-store" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Support Azure CosmosDB as backend KV store
+        
+        
+      </h4>
+    
+
+<p>Allow Azure users to use a serverless database such as CosmosDB as their backing KV for lakeFS metadata.</p>
+
+<p>This will also allow auto-provisioning of a CosmosDB database and table as part of the Helm installation process, similar to how its done for DynamoDB on AWS.</p>
+
+<p><a href="https://github.com/treeverse/lakeFS/issues/4458" target="_blank" class="btn">Track and discuss it on GitHub</a></p>
       <h3 id="sync-a-lakefs-reference-or-part-of-it-with-a-local-directory">
         
         
