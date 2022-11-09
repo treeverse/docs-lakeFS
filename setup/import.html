@@ -37,7 +37,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Import data into lakeFS" />
 <script type="application/ld+json">
-{"description":"Import existing data into a lakeFS repository","headline":"Import data into lakeFS","@type":"WebPage","url":"/setup/import.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Import existing data into a lakeFS repository","@type":"WebPage","headline":"Import data into lakeFS","url":"/setup/import.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -445,8 +445,15 @@
         </ol>
       </li>
       <li><a href="#importing-using-lakectl-cli" id="markdown-toc-importing-using-lakectl-cli">Importing using lakectl cli</a>        <ol>
-          <li><a href="#prerequisites-1" id="markdown-toc-prerequisites-1">Prerequisites</a></li>
-          <li><a href="#using-the-lakectl-ingest-command" id="markdown-toc-using-the-lakectl-ingest-command">Using the <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command</a></li>
+          <li><a href="#using-the-lakectl-import-command" id="markdown-toc-using-the-lakectl-import-command">Using the <code class="language-plaintext highlighter-rouge">lakectl import</code> command</a>            <ol>
+              <li><a href="#usage" id="markdown-toc-usage">Usage</a></li>
+            </ol>
+          </li>
+          <li><a href="#using-the-lakectl-ingest-command" id="markdown-toc-using-the-lakectl-ingest-command">Using the <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command</a>            <ol>
+              <li><a href="#prerequisites-1" id="markdown-toc-prerequisites-1">Prerequisites</a></li>
+              <li><a href="#usage-1" id="markdown-toc-usage-1">Usage</a></li>
+            </ol>
+          </li>
         </ol>
       </li>
       <li><a href="#limitations-to-importing-data" id="markdown-toc-limitations-to-importing-data">Limitations to importing data</a></li>
@@ -490,7 +497,7 @@ and in the same region of your destination bucket.</p>
 
 <ol>
   <li><a href="#importing-using-the-lakefs-ui">Importing using the lakeFS UI</a> - A UI dialog to trigger an import to a designated import branch. It creates a commit from all imported objects.</li>
-  <li><a href="#importing-using-lakectl-cli">Importing using lakectl cli</a> - You can use a the <a href="/reference/commands.html#lakectl"><code class="language-plaintext highlighter-rouge">lakectl</code> CLI command</a> to create uncommitted objects in a branch. It will make sequential calls between the CLI and the server.</li>
+  <li><a href="#importing-using-lakectl-cli">Importing using lakectl cli</a> - You can use the <a href="/reference/commands.html#lakectl"><code class="language-plaintext highlighter-rouge">lakectl</code> CLI command</a> to create uncommitted objects in a branch. It will make sequential calls between the CLI and the server.</li>
 </ol>
       <h4 id="using-the-import-wizard">
         
@@ -505,7 +512,7 @@ and in the same region of your destination bucket.</p>
 
 <p><img src="/assets/img/UI-Import-Dialog.png" alt="Import dialog example configured with S3" /></p>
 
-<p>If it’s the first import to the selected branch, it will create the import branch named <code class="language-plaintext highlighter-rouge">&lt;branch_name&gt;_imported</code>.
+<p>If it’s the first import to the selected branch, it will create the import branch named <code class="language-plaintext highlighter-rouge">_&lt;branch_name&gt;_imported</code>.
 lakeFS will import all objects from the Source URI to the import branch under the given prefix.</p>
 
 <p>The UI will update periodically with the amount of objects imported. How long it takes depends on the amount of objects to be imported but will roughly be a few thousand objects per second.</p>
@@ -524,22 +531,56 @@ lakeFS will import all objects from the Source URI to the import branch under th
       </h3>
     
 
-<p>The <code class="language-plaintext highlighter-rouge">lakectl</code> command supports ingesting objects from an external source.
-This is done by listing the source bucket (and optional prefix), and creating pointers to the returned objects in lakeFS.</p>
-      <h4 id="prerequisites-1">
+<p>The <code class="language-plaintext highlighter-rouge">lakectl</code> cli supports <em>import</em> and <em>ingest</em> commands to import objects from an external source.</p>
+
+<ul>
+  <li>The <em>import</em> command acts the same as the UI import wizard. It imports (zero copy) and commits the changes on <code class="language-plaintext highlighter-rouge">_&lt;branch_name&gt;_imported</code> branch with an optional flag to also merge the changes to <code class="language-plaintext highlighter-rouge">&lt;branch_name&gt;</code>.</li>
+  <li>The <em>Ingest</em> is listing the source bucket (and optional prefix) from the client, and creating pointers to the returned objects in lakeFS. The objects will be staged on the branch.</li>
+</ul>
+      <h4 id="using-the-lakectl-import-command">
         
         
-          <a href="#prerequisites-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+          <a href="#using-the-lakectl-import-command" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the <code class="language-plaintext highlighter-rouge">lakectl import</code> command
         
         
       </h4>
     
+      <h5 id="usage">
+        
+        
+          <a href="#usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
+        
+        
+      </h5>
+    
 
-<ol>
-  <li>The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> has permissions to list the objects at the source object store.</li>
-  <li><em>recommended</em>: The lakeFS installation has read permissions to the objects being ingested (to support downloading them directly from the lakeFS server)</li>
-  <li>The source path is <strong>not</strong> a storage namespace used by lakeFS. For example, if <code class="language-plaintext highlighter-rouge">lakefs://my-repo</code> created with storage namespace <code class="language-plaintext highlighter-rouge">s3://my-bucket</code>, then <code class="language-plaintext highlighter-rouge">s3://my-bucket/*</code> cannot be an ingestion source.</li>
-</ol>
+<div class="tabs">
+  <ul>
+  <li><a href="#import-tabs-1">AWS S3 or S3 API Compatible storage</a></li>
+  <li><a href="#import-tabs-2">Azure Blob</a></li>
+  <li><a href="#import-tabs-3">Google Cloud Storage</a></li>
+</ul>
+  <div id="import-tabs-1">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
+  <span class="nt">--from</span> s3://bucket/optional/prefix/ <span class="se">\</span>
+  <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
+</code></pre></div>    </div>
+  </div>
+  <div id="import-tabs-2">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
+   <span class="nt">--from</span> https://storageAccountName.blob.core.windows.net/container/optional/prefix/ <span class="se">\</span>
+   <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
+</code></pre></div>    </div>
+  </div>
+  <div id="import-tabs-3">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
+   <span class="nt">--from</span> gs://bucket/optional/prefix/ <span class="se">\</span>
+   <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
+</code></pre></div>    </div>
+  </div>
+</div>
+
+<p>The imported objects will be committed to <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> branch. If the branch does not exist, it will be created. The flag <code class="language-plaintext highlighter-rouge">--merge</code> will merge the branch <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> to  <code class="language-plaintext highlighter-rouge">my-branch</code> after a successful import.</p>
       <h4 id="using-the-lakectl-ingest-command">
         
         
@@ -547,6 +588,28 @@ This is done by listing the source bucket (and optional prefix), and creating po
         
         
       </h4>
+    
+      <h5 id="prerequisites-1">
+        
+        
+          <a href="#prerequisites-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+        
+        
+      </h5>
+    
+
+<ol>
+  <li>The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> has permissions to list the objects at the source object store.</li>
+  <li><em>Recommended</em>: The lakeFS installation has read permissions to the objects being ingested (to support downloading them directly from the lakeFS server)</li>
+  <li>The source path is <strong>not</strong> a storage namespace used by lakeFS. For example, if <code class="language-plaintext highlighter-rouge">lakefs://my-repo</code> created with storage namespace <code class="language-plaintext highlighter-rouge">s3://my-bucket</code>, then <code class="language-plaintext highlighter-rouge">s3://my-bucket/*</code> cannot be an ingestion source.</li>
+</ol>
+      <h5 id="usage-1">
+        
+        
+          <a href="#usage-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
+        
+        
+      </h5>
     
 
 <div class="tabs">
