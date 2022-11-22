@@ -25,17 +25,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Architecture | lakeFS</title>
+<title>Performance Best Practices | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Architecture" />
+<meta property="og:title" content="Performance Best Practices" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="lakeFS architecture overview. Learn more about lakeFS components, including its S3 API gateway." />
-<meta property="og:description" content="lakeFS architecture overview. Learn more about lakeFS components, including its S3 API gateway." />
+<meta name="description" content="This section suggests performance best practices to work with lakeFS." />
+<meta property="og:description" content="This section suggests performance best practices to work with lakeFS." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Architecture" />
+<meta property="twitter:title" content="Performance Best Practices" />
 <script type="application/ld+json">
-{"description":"lakeFS architecture overview. Learn more about lakeFS components, including its S3 API gateway.","@type":"WebPage","headline":"Architecture","url":"/understand/architecture.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section suggests performance best practices to work with lakeFS.","@type":"WebPage","headline":"Performance Best Practices","url":"/understand/performance-best-practices.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -285,12 +285,12 @@
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/understand/"
-           class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item  active"><a href="/understand/architecture.html"
-                   class="nav-list-link active">Architecture</a></li><li class="nav-list-item "><a href="/understand/model.html"
+           class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/understand/architecture.html"
+                   class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/understand/model.html"
                    class="nav-list-link">Model</a></li><li class="nav-list-item "><a href="/understand/versioning-internals.html"
                    class="nav-list-link">Versioning Internals</a></li><li class="nav-list-item "><a href="/understand/kv-in-a-nutshell.html"
-                   class="nav-list-link">KV in a Nutshell</a></li><li class="nav-list-item "><a href="/understand/performance-best-practices.html"
-                   class="nav-list-link">Performance Best Practices</a></li><li class="nav-list-item "><a href="/understand/sizing-guide.html"
+                   class="nav-list-link">KV in a Nutshell</a></li><li class="nav-list-item  active"><a href="/understand/performance-best-practices.html"
+                   class="nav-list-link active">Performance Best Practices</a></li><li class="nav-list-item "><a href="/understand/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/understand/roadmap.html"
                    class="nav-list-link">Roadmap</a></li></ul></li><li
             class="nav-list-item"><a href="/commitment.html"
@@ -410,17 +410,17 @@
                     <li class="breadcrumb-nav-list-item"><a href="/understand/">Understanding lakeFS</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Architecture</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Performance Best Practices</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="architecture-overview">
+                <h1 class="no_toc" id="performance-best-practices">
         
         
-          <a href="#architecture-overview" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Architecture Overview
+          <a href="#performance-best-practices" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Performance Best Practices
         
         
       </h1>
@@ -438,28 +438,12 @@
 
 <ol id="markdown-toc">
   <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
-  <li><a href="#ways-to-deploy-lakefs" id="markdown-toc-ways-to-deploy-lakefs">Ways to deploy lakeFS</a>    <ol>
-      <li><a href="#load-balancing" id="markdown-toc-load-balancing">Load Balancing</a></li>
-    </ol>
-  </li>
-  <li><a href="#lakefs-components" id="markdown-toc-lakefs-components">lakeFS Components</a>    <ol>
-      <li><a href="#s3-gateway" id="markdown-toc-s3-gateway">S3 Gateway</a></li>
-      <li><a href="#openapi-server" id="markdown-toc-openapi-server">OpenAPI Server</a></li>
-      <li><a href="#storage-adapter" id="markdown-toc-storage-adapter">Storage Adapter</a></li>
-      <li><a href="#graveler" id="markdown-toc-graveler">Graveler</a></li>
-      <li><a href="#authentication--authorization-service" id="markdown-toc-authentication--authorization-service">Authentication &amp; Authorization Service</a></li>
-      <li><a href="#hooks-engine" id="markdown-toc-hooks-engine">Hooks Engine</a></li>
-      <li><a href="#ui" id="markdown-toc-ui">UI</a></li>
-    </ol>
-  </li>
-  <li><a href="#applications" id="markdown-toc-applications">Applications</a></li>
-  <li><a href="#lakefs-clients" id="markdown-toc-lakefs-clients">lakeFS Clients</a>    <ol>
-      <li><a href="#openapi-generated-sdks" id="markdown-toc-openapi-generated-sdks">OpenAPI Generated SDKs</a></li>
-      <li><a href="#lakectl" id="markdown-toc-lakectl">lakectl</a></li>
-      <li><a href="#spark-metadata-client" id="markdown-toc-spark-metadata-client">Spark Metadata Client</a></li>
-      <li><a href="#lakefs-hadoop-filesystem" id="markdown-toc-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a></li>
-    </ol>
-  </li>
+  <li><a href="#avoid-huge-commits" id="markdown-toc-avoid-huge-commits">Avoid huge commits</a></li>
+  <li><a href="#avoid-concurrent-commitsmerges" id="markdown-toc-avoid-concurrent-commitsmerges">Avoid concurrent commits/merges</a></li>
+  <li><a href="#use-zero-copy-import" id="markdown-toc-use-zero-copy-import">Use zero-copy import</a></li>
+  <li><a href="#read-data-using-the-commit-id" id="markdown-toc-read-data-using-the-commit-id">Read data using the commit ID</a></li>
+  <li><a href="#operate-directly-on-the-storage" id="markdown-toc-operate-directly-on-the-storage">Operate directly on the storage</a></li>
+  <li><a href="#zero-copy" id="markdown-toc-zero-copy">Zero-copy</a></li>
 </ol>
 
 </div>
@@ -471,212 +455,84 @@
         
       </h2>
     
-
-<p>lakeFS is distributed as a single binary encapsulating several logical services:</p>
-
-<p>The server itself is stateless, meaning you can easily add more instances to handle a bigger load.</p>
-
-<p>The following underlying object stores (or any S3-compatible store) can be used by lakeFS to store data:</p>
-
+<p>Use this guide to achieve the best performance with lakeFS.</p>
+      <h2 id="avoid-huge-commits">
+        
+        
+          <a href="#avoid-huge-commits" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Avoid huge commits
+        
+        
+      </h2>
+    
+<p>If you’re having issues with slow commits, consider performing smaller commits. The more objects in the commit, the longer the commit will take to complete.
+Moreover, a commit should represent a meaningful point in your data’s lifecycle, so limiting the commit size will create a more comprehensible commit history.
+As a rule of thumb, try to keep your commits smaller than 1M objects.</p>
+      <h2 id="avoid-concurrent-commitsmerges">
+        
+        
+          <a href="#avoid-concurrent-commitsmerges" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Avoid concurrent commits/merges
+        
+        
+      </h2>
+    
+<p>Just like in Git, branch history is composed by commits and is linear by nature. 
+Concurrent commits/merges on the same branch result in a race. The first operation will finish successfully while the rest will retry.</p>
+      <h2 id="use-zero-copy-import">
+        
+        
+          <a href="#use-zero-copy-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use zero-copy import
+        
+        
+      </h2>
+    
+<p>To import object into lakeFS, either a single time or regularly, lakeFS offers a <a href="https://docs.lakefs.io/setup/import.html#zero-copy-import">zero-copy import</a> feature.
+Use this feature to import a large number of objects to lakeFS, instead of simply copying them into your repository.
+This feature will create a reference to the existing objects on your bucket and avoids the copy.</p>
+      <h2 id="read-data-using-the-commit-id">
+        
+        
+          <a href="#read-data-using-the-commit-id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Read data using the commit ID
+        
+        
+      </h2>
+    
+<p>In cases where you are only interested in reading committed data:</p>
 <ul>
-  <li><a href="https://cloud.google.com/storage">Google Cloud Storage</a> (<a href="/setup/storage/gcs.html">Prepare Your GCS Bucket</a>)</li>
-  <li><a href="https://azure.microsoft.com/en-us/services/storage/blobs/">Azure Blob Storage</a> (<a href="/setup/storage/blob.html">Prepare Your Blob Storage Container</a>)</li>
-  <li><a href="https://aws.amazon.com/s3/">AWS S3</a> (<a href="/setup/storage/s3.html">Prepare Your AWS S3 Bucket</a>)</li>
-  <li><a href="https://min.io/">MinIO</a> (<a href="/integrations/minio.html">Using lakeFS with MinIO</a>)</li>
-  <li><a href="https://docs.ceph.com/">Ceph</a></li>
+  <li>Use a commit ID (or a tag ID) in your path (e.g: <code class="language-plaintext highlighter-rouge">lakefs://repo/a1b2c3</code>).</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">@</code> before the path  <code class="language-plaintext highlighter-rouge">lakefs://repo/main@/path</code>.</li>
 </ul>
 
-<p>In additional a Key Value storage is used for storing metadata:</p>
-
+<p>When accessing data using the branch name (e.g. <code class="language-plaintext highlighter-rouge">lakefs://repo/main/path</code>) lakeFS will also try to fetch uncommitted data, which may result in reduced performance.
+For more information, see <a href="https://docs.lakefs.io/understand/versioning-internals.html#representing-references-and-uncommitted-metadata">how uncommitted data is managed in lakeFS</a></p>
+      <h2 id="operate-directly-on-the-storage">
+        
+        
+          <a href="#operate-directly-on-the-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operate directly on the storage
+        
+        
+      </h2>
+    
+<p>Sometimes, storage operations can become a bottleneck. For example, when your data pipelines upload many big objects.
+In such cases, it can be beneficial to perform only versioning operations on lakeFS, while performing storage reads/writes directly on the object store.
+lakeFS offers multiple ways to do that:</p>
 <ul>
-  <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></li>
-  <li><a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB</a></li>
+  <li>The <a href="https://docs.lakefs.io/reference/commands.html#lakectl-fs-upload"><code class="language-plaintext highlighter-rouge">lakectl upload --direct</code></a> command (or <a href="https://docs.lakefs.io/reference/commands.html#lakectl-fs-download">download</a>).</li>
+  <li>The lakeFS <a href="https://docs.lakefs.io/integrations/spark.html#use-the-lakefs-hadoop-filesystem">Hadoop Filesystem</a>.</li>
+  <li>The <a href="https://docs.lakefs.io/reference/api.html#/objects/stageObject">staging API</a> which can be used to add lakeFS references to objects after having written them to the storage.</li>
 </ul>
 
-<p>Instructions of how to deploy such database on AWS can be found <a href="../deploy/aws.html#preparing-the-database-for-the-key-value-store">here</a>.</p>
-
-<p>Additional information on the data format can be found in <a href="/understand/versioning-internals.html">Versioning internals</a>.</p>
-
-<p><img src="/assets/img/architecture.png" alt="Architecture" /></p>
-      <h2 id="ways-to-deploy-lakefs">
+<p>Accessing the object store directly is a faster way to interact with your data.</p>
+      <h2 id="zero-copy">
         
         
-          <a href="#ways-to-deploy-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ways to deploy lakeFS
+          <a href="#zero-copy" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Zero-copy
         
         
       </h2>
     
-
-<p>lakeFS releases include <a href="https://github.com/treeverse/lakeFS/releases">binaries</a> for common operating systems, a <a href="https://hub.docker.com/r/treeverse/lakefs">containerized option</a> or 
-a <a href="https://artifacthub.io/packages/helm/lakefs/lakefs">Helm chart</a>.
-Check out our guides for running lakeFS on <a href="/deploy/k8s.html">K8S</a>, <a href="/deploy/aws.html#on-ecs">ECS</a>, <a href="/deploy/gcp.html#on-google-compute-engine">Google Compute Engine</a> and <a href="../deploy/">more</a>.</p>
-      <h3 id="load-balancing">
-        
-        
-          <a href="#load-balancing" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Load Balancing
-        
-        
-      </h3>
-    
-
-<p>Accessing lakeFS is done using HTTP.
-lakeFS exposes a frontend UI, an <a href="#openapi-server">OpenAPI server</a>, as well as an S3-compatible service (see <a href="#s3-gateway">S3 Gateway</a> below).
-lakeFS uses a single port that serves all three endpoints, so for most use cases a single load balancer pointing
-to lakeFS server(s) would do.</p>
-      <h2 id="lakefs-components">
-        
-        
-          <a href="#lakefs-components" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Components
-        
-        
-      </h2>
-    
-      <h3 id="s3-gateway">
-        
-        
-          <a href="#s3-gateway" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> S3 Gateway
-        
-        
-      </h3>
-    
-
-<p>The S3 Gateway implements lakeFS’s compatibility with S3. It implements a compatible subset of the S3 API to ensure most data systems can use lakeFS as a drop-in replacement for S3.</p>
-
-<p>See the <a href="/reference/s3.html">S3 API Reference</a> section for information on supported API operations.</p>
-      <h3 id="openapi-server">
-        
-        
-          <a href="#openapi-server" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> OpenAPI Server
-        
-        
-      </h3>
-    
-
-<p>The Swagger (<a href="https://swagger.io/docs/specification/basic-structure/" target="_blank">OpenAPI</a>) server exposes the full set of lakeFS operations (see <a href="/reference/api.html">Reference</a>). This includes basic CRUD operations against repositories and objects, as well as versioning related operations such as branching, merging, committing, and reverting changes to data.</p>
-      <h3 id="storage-adapter">
-        
-        
-          <a href="#storage-adapter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Storage Adapter
-        
-        
-      </h3>
-    
-
-<p>The Storage Adapter is an abstraction layer for communicating with any underlying object store. 
-Its implementations allow compatibility with many types of underlying storage such as S3, GCS, Azure Blob Storage, or non-production usages such as the local storage adapter.</p>
-
-<p>See the <a href="/understand/roadmap.html">roadmap</a> for information on the future plans for storage compatibility.</p>
-      <h3 id="graveler">
-        
-        
-          <a href="#graveler" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Graveler
-        
-        
-      </h3>
-    
-
-<p>The Graveler handles lakeFS versioning by translating lakeFS addresses to the actual stored objects.
-To learn about the data model used to store lakeFS metadata, see the <a href="/understand/versioning-internals.html">data model section</a>.</p>
-      <h3 id="authentication--authorization-service">
-        
-        
-          <a href="#authentication--authorization-service" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication &amp; Authorization Service
-        
-        
-      </h3>
-    
-
-<p>The Auth service handles the creation, management, and validation of user credentials and <a href="https://en.wikipedia.org/wiki/Role-based_access_control" target="_blank">RBAC policies</a>.</p>
-
-<p>The credential scheme, along with the request signing logic, are compatible with AWS IAM (both <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html">SIGv2</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html">SIGv4</a>).</p>
-
-<p>Currently, the Auth service manages its own database of users and credentials and doesn’t use IAM in any way.</p>
-      <h3 id="hooks-engine">
-        
-        
-          <a href="#hooks-engine" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hooks Engine
-        
-        
-      </h3>
-    
-
-<p>The Hooks Engine enables CI/CD for data by triggering user defined <a href="/setup/hooks.html">Actions</a> that will run during commit/merge.</p>
-      <h3 id="ui">
-        
-        
-          <a href="#ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> UI
-        
-        
-      </h3>
-    
-
-<p>The UI layer is a simple browser-based client that uses the OpenAPI server. It allows management, exploration, and data access to repositories, branches, commits and objects in the system.</p>
-      <h2 id="applications">
-        
-        
-          <a href="#applications" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Applications
-        
-        
-      </h2>
-    
-
-<p>As a rule of thumb, lakeFS supports any S3-compatible application. This means that many common data applications work with lakeFS out-of-the-box.
-Check out our <a href="../integrations">integrations</a> to learn more.</p>
-      <h2 id="lakefs-clients">
-        
-        
-          <a href="#lakefs-clients" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Clients
-        
-        
-      </h2>
-    
-
-<p>Some data applications benefit from deeper integrations with lakeFS to support different use cases or enhanced functionality provided by lakeFS clients.</p>
-      <h3 id="openapi-generated-sdks">
-        
-        
-          <a href="#openapi-generated-sdks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> OpenAPI Generated SDKs
-        
-        
-      </h3>
-    
-
-<p>OpenAPI specification can be used to generate lakeFS clients for many programming languages.
-For example, the <a href="https://pypi.org/project/lakefs-client/">Python lakefs-client</a> or the <a href="https://search.maven.org/artifact/io.lakefs/api-client">Java client</a> are published with every new lakeFS release.</p>
-      <h3 id="lakectl">
-        
-        
-          <a href="#lakectl" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakectl
-        
-        
-      </h3>
-    
-
-<p><a href="/reference/commands.html">lakectl</a> is a CLI tool that enables lakeFS operations using the lakeFS API from your preferred terminal.</p>
-      <h3 id="spark-metadata-client">
-        
-        
-          <a href="#spark-metadata-client" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Spark Metadata Client
-        
-        
-      </h3>
-    
-
-<p>The lakeFS <a href="/reference/spark-client.html">Spark Metadata Client</a> makes it easy to perform
-operations related to lakeFS metadata, at scale. Examples include <a href="/reference/garbage-collection.html">garbage collection</a> or <a href="/reference/export.html">exporting data from lakeFS</a>.</p>
-      <h3 id="lakefs-hadoop-filesystem">
-        
-        
-          <a href="#lakefs-hadoop-filesystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Hadoop FileSystem
-        
-        
-      </h3>
-    
-
-<p>Thanks to the <a href="#s3-gateway">S3 Gateway</a>, it’s possible to interact with lakeFS using Hadoop’s S3AFIleSystem, 
-but due to limitations of the S3 API, doing so requires reading and writing data objects through the lakeFS server.
-Using <a href="/integrations/spark.html#use-the-lakefs-hadoop-filesystem">lakeFSFileSystem</a> increases Spark ETL jobs performance by executing the metadata operations on the lakeFS server,
-and all data operations directly through the same underlying object store that lakeFS uses.</p>
+<p>lakeFS provides a zero-copy mechanism to data. Instead of copying the data, we can check out to a new branch. 
+Creating a new branch will take constant time as the new branch points to the same data as its parent.
+It will also lower the storage cost.</p>
 
                 
 
