@@ -1037,575 +1037,575 @@
     "url": "/#what-else-does-lakefs-do",
     "relUrl": "/#what-else-does-lakefs-do"
   },"173": {
-    "doc": "Install lakeFS",
-    "title": "Install lakeFS",
-    "content": "Note: The quickstart section is for learning purposes. The installations described in this section will not persist your data. For a production suitable deployment, deploy lakeFS on your cloud. ",
-    "url": "/quickstart/installing.html",
-    "relUrl": "/quickstart/installing.html"
-  },"174": {
-    "doc": "Install lakeFS",
-    "title": "Using Docker",
-    "content": "To run a local lakeFS instance using Docker: . | Ensure that you have Docker installed on your computer. | Run the following command in your terminal: . docker run --pull always -p 8000:8000 treeverse/lakefs run --local-settings . | Check your installation by opening http://127.0.0.1:8000/setup in your web browser. | Create your first repository in lakeFS. | . ",
-    "url": "/quickstart/installing.html#using-docker",
-    "relUrl": "/quickstart/installing.html#using-docker"
-  },"175": {
-    "doc": "Install lakeFS",
-    "title": "Other methods",
-    "content": "You can try lakeFS: . | With the lakeFS Playground. | On Kubernetes. | By running the binary directly. | . Feeling ready for production? Deploy lakeFS on your cloud account. ",
-    "url": "/quickstart/installing.html#other-methods",
-    "relUrl": "/quickstart/installing.html#other-methods"
-  },"176": {
-    "doc": "Install lakeFS",
-    "title": "Modifying the local deployment to run against your cloud data",
-    "content": "Using AWS S3 Storage . To modify the local deployment, for example, in order to use your local lakeFS against S3 storage (as opposed to the local storage), run the command with local parameters: . docker run --pull always -p 8000:8000 -e LAKEFS_BLOCKSTORE_TYPE='s3' -e AWS_ACCESS_KEY_ID='YourAccessKeyValue' -e AWS_SECRET_ACCESS_KEY='YourSecretKeyValue' treeverse/lakefs run --local-settings . Using Azure Blob Storage . To modify the local deployment in order to use your local lakeFS against Azure Blob Storage (as opposed to the local storage), run the command with local parameters: . docker run --pull always -p 8000:8000 -e LAKEFS_BLOCKSTORE_TYPE='azure' -e LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCOUNT='YourAzureStorageAccountName' -e LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCESS_KEY='YourAzureStorageAccessKey' treeverse/lakefs run --local-settings . Using Google Cloud Storage . To modify the local deployment in order to use your local lakeFS against Google Cloud Storage (as opposed to the local storage), run the command with local parameters: . docker run --pull always -p 8000:8000 -e LAKEFS_BLOCKSTORE_TYPE='gs' -e LAKEFS_BLOCKSTORE_GS_CREDENTIALS_JSON='YourGoogleServiceAccountKeyJSON' treeverse/lakefs run --local-settings . where you will replace YourGoogleServiceAccountKeyJSON with JSON string that contains your Google service account key. If you want to use the JSON file that contains your Google service account key instead of JSON string (as in the previous command) then go to the directory where JSON file is stored and run the command with local parameters: . docker run --pull always -p 8000:8000 -v $PWD:/myfiles -e LAKEFS_BLOCKSTORE_TYPE='gs' -e LAKEFS_BLOCKSTORE_GS_CREDENTIALS_FILE='/myfiles/YourGoogleServiceAccountKey.json' treeverse/lakefs run --local-settings . This command will mount your present working directory (PWD) within the container and will read the JSON file from your PWD. Note using the --local-settings flag, metadata is being stored locally in the lakeFS container. Therefore, avoid using this flag for production usages. Follow the video below to quickly spin up a local lakeFS environment. ",
-    "url": "/quickstart/installing.html#modifying-the-local-deployment-to-run-against-your-cloud-data",
-    "relUrl": "/quickstart/installing.html#modifying-the-local-deployment-to-run-against-your-cloud-data"
-  },"177": {
-    "doc": "Install lakeFS",
-    "title": "Next steps",
-    "content": "Now that your lakeFS is running, try creating a repository. ",
-    "url": "/quickstart/installing.html#next-steps",
-    "relUrl": "/quickstart/installing.html#next-steps"
-  },"178": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Isolated Dev/Test Environment",
     "content": " ",
     "url": "/use_cases/iso_env.html",
     "relUrl": "/use_cases/iso_env.html"
-  },"179": {
+  },"174": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Why do I need multiple environments?",
     "content": "When working with a data lake, it’s useful to have replicas of your production environment. These replicas allow you to test and understand changes to your data without impacting the consumers of the production data. Running ETL and transformation jobs directly in production is a guaranteed way to have data issues flow into dashboards, ML models, and other consumers sooner or later. The most common approach to avoid making changes directly in production is to create and maintain multiple data environments. Dev environment to develop the data pipelines and test environment where pipeline changes are implemented before pushing it to production. The issue with this approach is that it’s time-consuming and costly to maintain these separate dev/test environments. And for larger teams it forces multiple people to share these environments, requiring significant co-ordination. ",
     "url": "/use_cases/iso_env.html#why-do-i-need-multiple-environments",
     "relUrl": "/use_cases/iso_env.html#why-do-i-need-multiple-environments"
-  },"180": {
+  },"175": {
     "doc": "Isolated Dev/Test Environment",
     "title": "How do I create dev/test environments with lakeFS?",
     "content": "lakeFS makes creating isolated dev/test environments instantaneous. This frees you from spending time on environment maintenance and makes it possible to create as many environments as needed. In a lakeFS repository, data is always located on a branch. You can think of each branch in lakeFS as its own environment. This is because branches are isolated, meaning changes on one branch have no effect other branches. Objects that remain unchanged between two branches are not copied, but rather shared to both branches via metadata pointers that lakeFS manages. If you make a change on one branch and want it reflected on another, you can perform a merge operation to update one branch with the changes from another. Let’s see an example of using multiple lakeFS branches for isolation. ",
     "url": "/use_cases/iso_env.html#how-do-i-create-devtest-environments-with-lakefs",
     "relUrl": "/use_cases/iso_env.html#how-do-i-create-devtest-environments-with-lakefs"
-  },"181": {
+  },"176": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Using branches as environments",
     "content": "The key difference when using lakeFS for isolated data environments is that you can create them immediately before testing a change. And once new data is merged into production, you can delete the branch - effectively deleting the old environment. This is different from creating a long-living test environment used as a staging area to test all the updates. With lakeFS, we create a new branch for each change to production that we want to make. One benefit of this is the ability to test multiple changes at one time. ",
     "url": "/use_cases/iso_env.html#using-branches-as-environments",
     "relUrl": "/use_cases/iso_env.html#using-branches-as-environments"
-  },"182": {
+  },"177": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Creating Dev/Test Environments with lakeFS",
     "content": "lakeFS supports UI, CLI (lakectl commandline utility) and several client API integrations to run the Git-like operations. Let us explore how to create dev/test environments using each of these options below. ",
     "url": "/use_cases/iso_env.html#creating-devtest-environments-with-lakefs",
     "relUrl": "/use_cases/iso_env.html#creating-devtest-environments-with-lakefs"
-  },"183": {
+  },"178": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Using lakeFS Playground UI",
     "content": "In this tutorial, we will use lakeFS playground to create dev/test data environments. Playground allows you to spin up a lakeFS instance in a click, create different data environments by simply branching out of your data repository and develop &amp; test data pipelines in these isolated branches. First, let us spin up a playground instance. Once you have a live environment, login to your instance with access and secret keys. Then, you can work with the sample data repository my-repo that is created for you. Click on my-repo and notice that by default, the repo has a main branch created and sample_data preloaded to work with. You can create a new branch (say, test-env) by going to the Branches tab and clicking Create Branch. Once it is successful, you will see two branches under the repo: main and test-env. Now you can add, modify or delete objects under the test-env branch without affecting the data in the main branch. ",
     "url": "/use_cases/iso_env.html#using-lakefs-playground-ui",
     "relUrl": "/use_cases/iso_env.html#using-lakefs-playground-ui"
-  },"184": {
+  },"179": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Using lakeFS Python Client API and Jupyter notebook",
     "content": "This use case shows how to create dev/test data environments using lakeFS branches. The following tutorial will use an existing lakeFS environment (i.e., playground), a jupyter notebook, and python lakefs_client API to demonstrate integration of lakeFS with Spark. You can run this tutorial on your local machine. Follow the tutorial video below to get started with the playground and jupyter notebook, or follow the instructions on this page. Prerequisites . To instantly spin up a lakeFS environment and to work with sample data, use lakeFS playground. To use lakeFS with your own production data or to run it in your own machine, check out Quickstart guide. Before getting started, you will need docker installed on your machine. Once you have docker installed and a lakeFS instance running, you can access the lakeFS demo notebooks by cloning the lakeFS-samples git repo. Follow along the steps below to create dev/test environment with lakeFS. | Start by cloning the lakeFS samples Git repository: git clone https://github.com/treeverse/lakeFS-samples.git &amp;&amp; cd 03-apache-spark-python-demo . | Run following commands to download and run Docker container which includes Python, Spark, Jupyter Notebook, JDK, Hadoop binaries, lakeFS Python client and Airflow (Docker image size is around 4.5GB): docker build -t lakefs-spark-python-demo . docker run -d -p 8888:8888 -p 4040:4040 -p 8080:8080 --user root -e GRANT_SUDO=yes -v $PWD:/home/jovyan -v $PWD/jupyter_notebook_config.py:/home/jovyan/.jupyter/jupyter_notebook_config.py --name lakefs-spark-python-demo lakefs-spark-python-demo . | Open JupyterLab UI http://127.0.0.1:8888/ in your web browser. | . Once you have successfully completed setup then open “Spark Demo” notebook from JupyterLab UI and follow the instructions in the notebook. Configuring lakeFS python client . Setup lakeFS access credentials for the lakeFS instance running. If you are using lakeFS playground, use the access key, secret key and endpoint details you received in your email. If you are running lakeFS using everything bagel docker, these details are found in docker-compose.yaml file under lakefs_setup section. lakefsAccessKey = '&lt;lakeFS Access Key&gt;' lakefsSecretKey = '&lt;lakeFS Secret Key&gt;' lakefsEndPoint = '&lt;lakeFS Endpoint URL&gt;' # e.g. 'https://expert-robin.lakefs-demo.io/' . Next, setup the storage namespace to a location in the bucket you have configured. The storage namespace is a location in the underlying storage where data for this repository will be stored. If you are using the lakeFS playground, you can find the storage namespace under the repository name. storageNamespace = 's3://&lt;S3 Bucket Name&gt;/' # e.g. \"s3://treeverse-demo-lakefs-storage-production/user_expert-robin/my-repo\" . You can use lakeFS through the UI, API or lakectl commandline. For this use-case, we use python lakefs_client to run lakeFS core operations. import lakefs_client from lakefs_client import models from lakefs_client.client import LakeFSClient # lakeFS credentials and endpoint configuration = lakefs_client.Configuration() configuration.username = lakefsAccessKey configuration.password = lakefsSecretKey configuration.host = lakefsEndPoint client = LakeFSClient(configuration) . lakeFS can be configured to work with Spark in two ways: . | Access lakeFS using the S3A gateway | Access lakeFS using the lakeFS-specific Hadoop FileSystem | . Upload the sample data to main branch . To upload an object to the my-repo, use the following command. import os contentToUpload = open(os.path.expanduser('~')+'/lakefs_test.csv', 'rb') client.objects.upload_object( repository=\"my-repo\", branch=\"main\", path=fileName, content=contentToUpload) . Once uploaded, commit the changes to the main branch and attach some metadata to the commit as well. client.commits.commit( repository=\"my-repo\", branch=\"main\", commit_creation=models.CommitCreation( message='Added my first object!', metadata={'using': 'python_api'})) . In this example, we use lakeFS S3A gateway to read data from the storage bucket. dataPath = f\"s3a://my-repo/main/lakefs_test.csv\" df = spark.read.csv(dataPath) df.show() . Create a test branch . Let us start by creating a new branch test-env on the example repo my-repo. client.branches.create_branch( repository=\"my-repo\", branch_creation=models.BranchCreation( name=\"test-env\", source=\"main\")) . Now we can use Spark to write the csv file from main branch as a Parquet file to the test-env of our lakeFS repo. Suppose we accidentally write the dataframe back to “test-env” branch again, this time in append mode. df.write.mode('overwrite').parquet('s3a://my-repo/test-env/') df.write.mode('append').parquet('s3a://my-repo/test-env/') . What happens if we re-read in the data on both branches and perform a count on the resulting DataFrames? There will be twice as many rows in test-env branch. That is, we accidentally duplicated our data! Oh no! . Data duplication introduce errors into our data analytics, BI and machine learning efforts, hence we would like to avoid duplicating our data. On the main branch however, there is still just the original data - untouched by our spark code. This shows the utility of branch-based isolated environments with lakeFS. You can safely continue working with the data from main which is unharmed due to lakeFS isolation capabilities. ",
     "url": "/use_cases/iso_env.html#using-lakefs-python-client-api-and-jupyter-notebook",
     "relUrl": "/use_cases/iso_env.html#using-lakefs-python-client-api-and-jupyter-notebook"
-  },"185": {
+  },"180": {
     "doc": "Isolated Dev/Test Environment",
     "title": "Case Study: Enigma",
     "content": "Learn how Enigma increased Data Engineers efficiency using lakeFS’ branching to achieve islated development and staging environments. ",
     "url": "/use_cases/iso_env.html#case-study-enigma",
     "relUrl": "/use_cases/iso_env.html#case-study-enigma"
-  },"186": {
+  },"181": {
     "doc": "Kafka",
     "title": "Using lakeFS with Kafka",
     "content": "Apache Kafka provides a unified, high-throughput, low-latency platform for handling real-time data feeds. Different distributions of Kafka offer different methods for exporting data to S3 called Kafka Sink Connectors. The most commonly used Connector for S3 is Confluent’s S3 Sink Connector. Add the following to connector.properties file for lakeFS support: . # Your lakeFS repository s3.bucket.name=example-repo # Your lakeFS S3 endpoint and credentials store.url=https://lakefs.example.com aws.access.key.id=AKIAIOSFODNN7EXAMPLE aws.secret.access.key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY # main being the branch we want to write to topics.dir=main/topics . ",
     "url": "/integrations/kakfa.html#using-lakefs-with-kafka",
     "relUrl": "/integrations/kakfa.html#using-lakefs-with-kafka"
-  },"187": {
+  },"182": {
     "doc": "Kafka",
     "title": "Kafka",
     "content": " ",
     "url": "/integrations/kakfa.html",
     "relUrl": "/integrations/kakfa.html"
-  },"188": {
+  },"183": {
     "doc": "Kubeflow",
     "title": "Using lakeFS with Kubeflow pipelines",
     "content": "Kubeflow is a project dedicated to making deployments of ML workflows on Kubernetes simple, portable, and scalable. A Kubeflow pipeline is a portable and scalable definition of an ML workflow composed of steps. Each step in the pipeline is an instance of a component represented as an instance of ContainerOp. ",
     "url": "/integrations/kubeflow.html#using-lakefs-with-kubeflow-pipelines",
     "relUrl": "/integrations/kubeflow.html#using-lakefs-with-kubeflow-pipelines"
-  },"189": {
+  },"184": {
     "doc": "Kubeflow",
     "title": "Table of contents",
     "content": ". | Add pipeline steps for lakeFS operations . | Function-based ContainerOps | Non-function-based ContainerOps | . | Add the lakeFS steps to your pipeline | . ",
     "url": "/integrations/kubeflow.html#table-of-contents",
     "relUrl": "/integrations/kubeflow.html#table-of-contents"
-  },"190": {
+  },"185": {
     "doc": "Kubeflow",
     "title": "Add pipeline steps for lakeFS operations",
     "content": "To integrate lakeFS into your Kubeflow pipeline, you need to create Kubeflow components that perform lakeFS operations. Currently, there are two methods to create lakeFS ContainerOps: . | Implement a function-based ContainerOp that uses lakeFS’s Python API to invoke lakeFS operations. | Implement a ContainerOp that uses the lakectl CLI docker image to invoke lakeFS operations. | . Function-based ContainerOps . To implement a function-based component that invokes lakeFS operations, you should use the Python OpenAPI client lakeFS provides. See the example below that demonstrates how to make the client’s package available to your ContainerOp. Example operations . Create a new branch: A function-based ContainerOp that creates a branch called example-branch based on the main branch of example-repo. from kfp import components def create_branch(repo_name, branch_name, source_branch): import lakefs_client from lakefs_client import models from lakefs_client.client import LakeFSClient # lakeFS credentials and endpoint configuration = lakefs_client.Configuration() configuration.username = 'AKIAIOSFODNN7EXAMPLE' configuration.password = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY' configuration.host = 'https://lakefs.example.com' client = LakeFSClient(configuration) client.branches.create_branch(repository=repo_name, branch_creation=models.BranchCreation(name=branch_name, source=source_branch)) # Convert the function to a lakeFS pipeline step. create_branch_op = components.func_to_container_op( func=create_branch, packages_to_install=['lakefs_client==&lt;lakeFS version&gt;']) # Type in the lakeFS version you are using . You can invoke any lakeFS operation supported by lakeFS OpenAPI. For example, you could implement a commit and merge function-based ContainerOps. Check out the full API reference. Non-function-based ContainerOps . To implement a non-function based ContainerOp, you should use the treeverse/lakectl docker image. With this image, you can run lakeFS CLI commands to execute the desired lakeFS operation. For lakectl to work with Kubeflow, you will need to pass your lakeFS configurations as environment variables named: . | LAKECTL_CREDENTIALS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE | LAKECTL_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY | LAKECTL_SERVER_ENDPOINT_URL: https://lakefs.example.com | . Example operations . | Commit changes to a branch: A ContainerOp that commits uncommitted changes to example-branch on example-repo. from kubernetes.client.models import V1EnvVar def commit_op(): return dsl.ContainerOp( name='commit', image='treeverse/lakectl', arguments=['commit', 'lakefs://example-repo/example-branch', '-m', 'commit message']).add_env_variable(V1EnvVar(name='LAKECTL_CREDENTIALS_ACCESS_KEY_ID',value='AKIAIOSFODNN7EXAMPLE')).add_env_variable(V1EnvVar(name='LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY',value='wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY')).add_env_variable(V1EnvVar(name='LAKECTL_SERVER_ENDPOINT_URL',value='https://lakefs.example.com')) . | Merge two lakeFS branches: A ContainerOp that merges example-branch into the main branch of example-repo. def merge_op(): return dsl.ContainerOp( name='merge', image='treeverse/lakectl', arguments=['merge', 'lakefs://example-repo/example-branch', 'lakefs://example-repo/main']).add_env_variable(V1EnvVar(name='LAKECTL_CREDENTIALS_ACCESS_KEY_ID',value='AKIAIOSFODNN7EXAMPLE')).add_env_variable(V1EnvVar(name='LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY',value='wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY')).add_env_variable(V1EnvVar(name='LAKECTL_SERVER_ENDPOINT_URL',value='https://lakefs.example.com')) . | . You can invoke any lakeFS operation supported by lakectl by implementing it as a ContainerOp. Check out the complete CLI reference for the list of supported operations. Note The lakeFS Kubeflow integration that uses lakectl is supported on lakeFS version &gt;= v0.43.0. ",
     "url": "/integrations/kubeflow.html#add-pipeline-steps-for-lakefs-operations",
     "relUrl": "/integrations/kubeflow.html#add-pipeline-steps-for-lakefs-operations"
-  },"191": {
+  },"186": {
     "doc": "Kubeflow",
     "title": "Add the lakeFS steps to your pipeline",
     "content": "Add the steps created in the previous step to your pipeline before compiling it. Example pipeline . A pipeline that implements a simple ETL that has steps for branch creation and commits. def lakectl_pipeline(): create_branch_task = create_branch_op('example-repo', 'example-branch', 'main') # A function-based component extract_task = example_extract_op() commit_task = commit_op() transform_task = example_transform_op() commit_task = commit_op() load_task = example_load_op() . Note It’s recommended to store credentials as Kubernetes secrets and pass them as environment variables to Kubeflow operations using V1EnvVarSource. ",
     "url": "/integrations/kubeflow.html#add-the-lakefs-steps-to-your-pipeline",
     "relUrl": "/integrations/kubeflow.html#add-the-lakefs-steps-to-your-pipeline"
-  },"192": {
+  },"187": {
     "doc": "Kubeflow",
     "title": "Kubeflow",
     "content": " ",
     "url": "/integrations/kubeflow.html",
     "relUrl": "/integrations/kubeflow.html"
-  },"193": {
+  },"188": {
     "doc": "Internal database structure",
     "title": "Internal database structure",
     "content": " ",
     "url": "/understand/how/kv.html",
     "relUrl": "/understand/how/kv.html"
-  },"194": {
+  },"189": {
     "doc": "Internal database structure",
     "title": "Table of contents",
     "content": ". | Optimistic Locking with KV | DB Transactions and Atomic Updates | So, Which Approach is Better? | . Starting at version 0.80.2, lakeFS abandoned the tight coupling to PostgreSQL and moved all database operations to work over Key-Value Store . While SQL databases, and Postgres among them, have their obvious advantages, we felt that the tight coupling to Postgres is limiting our users and so, lakeFS with Key Value Store is introduced. Our KV Store implements a generic interface, with methods for Get, Set, Compare-and-Set, Delete and Scan. Each entry is represented by a [partition, key, value] triplet. All these fields are generic byte-array, and the using module has maximal flexibility on the format to use for each field . Under the hood, our KV implementation relies on a backing DB, which persists the data. Theoretically, it could be any type of database and out of the box, we already implemented drivers for DynamoDB, for AWS users, and PostgreSQL, using its relational nature to store a KV Store. More databases will be supported in the future, and lakeFS users and contributors can develop their own driver to use their own favorite database. For experimenting purposes, an in-memory KV store can be used, though it obviously lack the persistency aspect . In order to store its metadata objects (that is Repositories, Branches, Commits, Tags, and Uncommitted Objects), lakeFS implements another layer over the generic KV Store, which supports serialization and deserialization of these objects as protobuf. As this layer relies on the generic interface of the KV Store layer, it is totally agnostic to whichever store implementation is in use, gaining our users the maximal flexibility . For further reading, please refer to our KV Design . ",
     "url": "/understand/how/kv.html#table-of-contents",
     "relUrl": "/understand/how/kv.html#table-of-contents"
-  },"195": {
+  },"190": {
     "doc": "Internal database structure",
     "title": "Optimistic Locking with KV",
     "content": "One important key difference between SQL databases and Key Value Store is the ability to lock resources. While this is a common practice with relational databases, Key Value stores not always support this ability. When designing our KV Store, we tried to support the most simplistic straight-forward interface, with flexibility in backing DB selection, and so, we decided not to support locking. This decision brought some concurrency challenges we had to overcome. Let us take a look at a common lakeFS flow, Commit, during which several database operations are performed: . | All relevant (Branch correlated) uncommitted objects are collected and marked as committed | A new Commit object is created | The relevant Branch is updated to point to the new commit | . The Commit flow includes multiple database accesses and modifications, and is very sensitive to concurrent executions: If 2 Commit flows run in parallel, we must guarantee correctness of the data. lakeFS with PostgreSQL simply locks the Branch for the entire Commit operation, preventing concurrent execution of such flows. Now, with KV Store replacing the SQL database, this easy solution is no longer available. Instead, we implemented an Optimistic Locking algorithm, which leverages the KV Store Compare-And-Set (CAS) functionality to remember the Branch state at the beginning of the Commit flow, and updating the branch at the end, only if it remains unchanged, using CAS, with the former Branch state, used as a comparison criteria. If the sampled Branch state and the current state differ, it could only mean that another, later, Commit is in progress, causing the first Commit to fail, and give the later Commit a chance to complete. Here’s a running example: . | Commit A sets the StagingToken to tokenA and samples the Branch, | Commit B sets the StagingToken to tokenB and samples the Branch, | Commit A finishes, tries to update the Branch and fails due to the recent modification by Commit B - the StagingToken is set to tokenB and not tokenA as expected by Commit A, | Commit B finishes and updates the branch, as tokenB is set as StagingToken and it matches the flow expectation | . An important detail to note, is that as a Commit starts, and the StagingToken is set a new value, the former value is added to a list of ‘still valid’ StagingTokens - SealedToken - on the Branch, which makes sure no StagingToken and no object are lost due to a failed Commit . You can read more on the Commit Flow in the dedicated section in the KV Design . ",
     "url": "/understand/how/kv.html#optimistic-locking-with-kv",
     "relUrl": "/understand/how/kv.html#optimistic-locking-with-kv"
-  },"196": {
+  },"191": {
     "doc": "Internal database structure",
     "title": "DB Transactions and Atomic Updates",
     "content": "Another notable difference is the existence of DB transactions with PostgreSQL, ability that our KV Store lacks. This ability was leveraged by lakeFS to construct several DB updates, into one “atomic” operation - each failure, in each step, rolled back the entire operation, keeping the DB consistent and clean. With KV Store, this ability is gone, and we had to come up with various solutions. As a starting point, the DB consistency is, obviously, not anything we can risk. On the other hand, maintaining the DB clean, and as a result smaller, is something that can be sacrificed, at least as a first step. Let us take a look at a relatively simple flow of a new Repository creation: A brand new Repository has 3 objects: The Repository object itself, an initial Branch object and an initial Commit, which the Branch points to. With SQL DB, it was as simple as creating all 3 objects in the DB under one transaction (at this order). Any failure resulted in a rollback and no redundant leftovers in our DB. With no transaction in KV Store, if for example the Branch creation fails, it will leave the Repository without an initial Branch (or a Branch at all), yet the Repository will be accessible. Trying to delete the Repository as a response to Branch creation failure is ony a partial solution as this operation can fail as well. To mitigate this we introduced a per-Repository-partition, which holds all repository related objects (the Branch and Commit in this scenario). The partition key can only be derived from the specificRepository instance itself. In addition we first create the Repository objects, the Commit and the Branch, under the Repository’s partition key, and then the Repository is created. The Repository and its objects will be accessible only after a successful creation of all 3 entities. A failure in this flow might leave some dangling objects, but consistency is maintained. The number of such dangling objects is not expected to be significant, and we plan to implement a cleaning algorithm to keep our KV Store neat and clean . ",
     "url": "/understand/how/kv.html#db-transactions-and-atomic-updates",
     "relUrl": "/understand/how/kv.html#db-transactions-and-atomic-updates"
-  },"197": {
+  },"192": {
     "doc": "Internal database structure",
     "title": "So, Which Approach is Better?",
     "content": "This documents provides a peek into lakeFS’ new database approach - Key Value Store instead of a Relational SQL. It discusses the challenges we faced, and the solutions we provided to overcome these challenges. Considering the fact that lakeFS over with relational database did work, you might ask yourself why did we bother to develop another solution. The simple answer, is that while PostgreSQL was not a bad option, it was the only option, and any drawback of PostgreSQL, reflected on our users: . | PostgreSQL can only scale vertically and that is a limitation. At some point this might not hold. | PostgreSQL is not a managed solution, meaning that users had to take care of all maintenance tasks, including the above mentioned scale (when needed) | As an unmanaged database, scaling means downtime - is that acceptable? | It might even get to the point that your organization is not willing to work with PostgreSQL due to various business considerations | . If none of the above apply, and you have no seemingly reason to switch from PostgreSQL, it can definitely still be used as an excellent option for the backing database for lakeFS’s KV Store. If you do need another solution, you have DynamoDB support, out of the box. DynamoDB, as a fully managed solution, with horizontal scalability support and optimized partitions support, answers all the pain-points specified above. It is definitely an option to consider, if you need to overcome these And, of course, you can always decide to implement your own KV Store driver to use your database of choice - we would love to add your contribution to lakeFS . ",
     "url": "/understand/how/kv.html#so-which-approach-is-better",
     "relUrl": "/understand/how/kv.html#so-which-approach-is-better"
-  },"198": {
+  },"193": {
     "doc": "Merge",
     "title": "Merge",
     "content": "The merge operation in lakeFS is similar to Git. It incorporates changes from a merge source (a commit/reference) into a merge destination (a branch). ",
     "url": "/understand/how/merge.html",
     "relUrl": "/understand/how/merge.html"
-  },"199": {
+  },"194": {
     "doc": "Merge",
     "title": "How does it work?",
     "content": "lakeFS first finds the merge base: the nearest common ancestor of the two commits. It can now perform a three-way merge, by examining the presence and identity of files in each commit. In the table below, “A”, “B” and “C” are possible file contents, “X” is a missing file, and “conflict” (which only appears as a result) is a merge failure. | In base | In source | In destination | Result | Comment | . | A | A | A | A | Unchanged file | . | A | B | B | B | Files changed on both sides in same way | . | A | B | C | conflict | Files changed on both sides differently | . | A | A | B | B | File changed only on one branch | . | A | B | A | B | File changed only on one branch | . | A | X | X | X | Files deleted on both sides | . | A | B | X | conflict | File changed on one side, deleted on the other | . | A | X | B | conflict | File changed on one side, deleted on the other | . | A | A | X | X | File deleted on one side | . | A | X | A | X | File deleted on one side | . ",
     "url": "/understand/how/merge.html#how-does-it-work",
     "relUrl": "/understand/how/merge.html#how-does-it-work"
-  },"200": {
+  },"195": {
     "doc": "Merge",
     "title": "Merge Strategies",
     "content": "The API and lakectl allow passing an optional strategy flag with the following values: . source-wins . In case of a conflict, merge will pick the source objects. Example . lakectl merge lakefs://example-repo/validated-data lakefs://example-repo/production --strategy source-wins . When a merge conflict arises, the conflicting objects in the validated-data branch will be chosen to end up in production. dest-wins . In case of a conflict, merge will pick the destination objects. Example . lakectl merge lakefs://example-repo/validated-data lakefs://example-repo/production --strategy dest-wins . When a merge conflict arises, the conflicting objects in the production branch will be chosen to end up in validated-data. The production branch will not be affected by object changes from validated-data conflicting objects. The strategy will affect all conflicting objects in the merge if it is set. Currently it is not possible to treat conflicts individually. As a format-agnostic system, lakeFS currently merges by complete files. Format-specific and other user-defined merge strategies for handling conflicts are on the roadmap. ",
     "url": "/understand/how/merge.html#merge-strategies",
     "relUrl": "/understand/how/merge.html#merge-strategies"
-  },"201": {
+  },"196": {
     "doc": "Migrating away from lakeFS",
     "title": "Migrating away from lakeFS",
     "content": " ",
     "url": "/howto/migrate-away.html",
     "relUrl": "/howto/migrate-away.html"
-  },"202": {
+  },"197": {
     "doc": "Migrating away from lakeFS",
     "title": "Copying data from a lakeFS repository to an S3 bucket",
     "content": "The simplest way to migrate away from lakeFS is by copying data from a lakeFS repository to an S3 bucket (or any other object store). For smaller repositories, you can do this by using the AWS CLI or rclone. For larger repositories, running distcp with lakeFS as the source is also an option. ",
     "url": "/howto/migrate-away.html#copying-data-from-a-lakefs-repository-to-an-s3-bucket",
     "relUrl": "/howto/migrate-away.html#copying-data-from-a-lakefs-repository-to-an-s3-bucket"
-  },"203": {
+  },"198": {
     "doc": "Model",
     "title": "Model",
     "content": " ",
     "url": "/understand/model.html",
     "relUrl": "/understand/model.html"
-  },"204": {
+  },"199": {
     "doc": "Model",
     "title": "Table of contents",
     "content": ". | Objects | Version Control . | Repository | Commits | Branches | Tags | History | Merge | Ref expressions | . | Concepts unique to lakeFS . | lakefs protocol URIs | . | . lakeFS blends concepts from object stores such as S3 with concepts from Git. This reference defines the common concepts of lakeFS. ",
     "url": "/understand/model.html#table-of-contents",
     "relUrl": "/understand/model.html#table-of-contents"
-  },"205": {
+  },"200": {
     "doc": "Model",
     "title": "Objects",
     "content": "lakeFS is an interface to manage objects in an object store. The actual data itself is not stored inside lakeFS directly but in an underlying object store. lakeFS manages pointers and additional metadata about these objects. ",
     "url": "/understand/model.html#objects",
     "relUrl": "/understand/model.html#objects"
-  },"206": {
+  },"201": {
     "doc": "Model",
     "title": "Version Control",
     "content": "lakeFS is spearheading version control semantics for data. Most of these concepts will be familiar to Git users: . Repository . In lakeFS, a repository is a set of related objects (or collections of objects). In many cases, these represent tables of various formats for tabular data, semi-structured data such as JSON or log files - or a set of unstructured objects such as images, videos, sensor data, etc. lakeFS represents repositories as a logical namespace used to group together objects, branches, and commits - analogous to a repository in Git. Commits . Using commits, you can view a repository at a certain point in its history and you’re guaranteed that the data you see is exactly as it was at the point of committing it. These commits are immutable “checkpoints” containing all contents of a repository at a given point in the repository’s history. Each commit contains metadata - the committer, timestamp, a commit message, as well as arbitrary key/value pairs you can choose to add. Identifying Commits A commit is identified by its commit ID, a digest of all contents of the commit. Commit IDs are by nature long, so you may use a unique prefix to abbreviate them. A commit may also be identified by using a textual definition, called a ref. Examples of refs include tags, branch names, and expressions. Branches . Branches in lakeFS allow users to create their own “isolated” view of the repository. Changes on one branch do not appear on other branches. Users can take changes from one branch and apply it to another by merging them. Under the hood, branches are simply a pointer to a commit along with a set of uncommitted changes. Tags . Tags are a way to give a meaningful name to a specific commit. Using tags allow users to reference specific releases, experiments or versions by using a human friendly name. Example tags: . | v2.3 to mark a release. | dev:jane-before-v2.3-merge to mark Jane’s private temporary point. | . History . The history of the branch is the list of commits from the branch tip through the first parent of each commit. Histories go back in time. Merge . Merging is the way to integrate changes from a branch into another branch. The result of a merge is a new commit, with the destination as the first parent and the source as the second. To learn more about how merging works in lakeFS, see the merge reference . Ref expressions . lakeFS also supports expressions for creating a ref. These are similar to revisions in Git; indeed all ~ and ^ examples at the end of that section will work unchanged in lakeFS. | A branch or a tag are ref expressions. | If &lt;ref&gt; is a ref expression, then: . | &lt;ref&gt;^ is a ref expression referring to its first parent. | &lt;ref&gt;^N is a ref expression referring to its N’th parent; in particular &lt;ref&gt;^1 is the same as &lt;ref&gt;^. | &lt;ref&gt;~ is a ref expression referring to its first parent; in particular &lt;ref&gt;~ is the same as &lt;ref&gt;^ and &lt;ref&gt;~. | &lt;ref&gt;~N is a ref expression referring to its N’th parent, always traversing to the first parent. So &lt;ref&gt;~N is the same as &lt;ref&gt;^^...^ with N consecutive carets ^. | . | . ",
     "url": "/understand/model.html#version-control",
     "relUrl": "/understand/model.html#version-control"
-  },"207": {
+  },"202": {
     "doc": "Model",
     "title": "Concepts unique to lakeFS",
     "content": "The underlying storage is a location in an object store where lakeFS keeps your objects and some immutable metadata. When creating a lakeFS repository, you assign it with a storage namespace. The repository’s storage namespace is a location in the underlying storage where data for this repository will be stored. We sometimes refer to underlying storage as physical. The path used to store the contents of an object is then termed a physical path. Once lakeFS saves an object in the underlying storage it is never modified, except to remove it entirely during some cleanups. A lot of what lakeFS does is to manage how lakeFS paths translate to physical paths on the object store. This mapping is generally not straightforward. Importantly (and contrary to many object stores), lakeFS may map multiple paths to the same object on backing storage, and always does this for objects that are unchanged across versions. lakefs protocol URIs . lakeFS uses a specific format for path URIs. The URI lakefs://&lt;REPO&gt;/&lt;REF&gt;/&lt;KEY&gt; is a path to objects in the given repo and ref expression under key. This is used both for path prefixes and for full paths. In similar fashion, lakefs://&lt;REPO&gt;/&lt;REF&gt; identifies the repository at a ref expression, and lakefs://&lt;REPO&gt; identifes a repo. ",
     "url": "/understand/model.html#concepts-unique-to-lakefs",
     "relUrl": "/understand/model.html#concepts-unique-to-lakefs"
-  },"208": {
+  },"203": {
     "doc": "Monitoring using Prometheus",
     "title": "Monitoring using Prometheus",
     "content": " ",
     "url": "/reference/monitor.html",
     "relUrl": "/reference/monitor.html"
-  },"209": {
+  },"204": {
     "doc": "Monitoring using Prometheus",
     "title": "Table of contents",
     "content": ". | Example prometheus.yml | Metrics exposed by lakeFS | Example queries . | 99th percentile of API request latencies | 50th percentile of S3-compatible API latencies | Number of errors in outgoing S3 requests | Number of open connections to the database | Example Grafana dashboard | . | . ",
     "url": "/reference/monitor.html#table-of-contents",
     "relUrl": "/reference/monitor.html#table-of-contents"
-  },"210": {
+  },"205": {
     "doc": "Monitoring using Prometheus",
     "title": "Example prometheus.yml",
     "content": "lakeFS exposes metrics through the same port used by the lakeFS service, using the standard /metrics path. An example prometheus.yml could look like this: . scrape_configs: - job_name: lakeFS scrape_interval: 10s metrics_path: /metrics static_configs: - targets: - lakefs.example.com:8000 . ",
     "url": "/reference/monitor.html#example-prometheusyml",
     "relUrl": "/reference/monitor.html#example-prometheusyml"
-  },"211": {
+  },"206": {
     "doc": "Monitoring using Prometheus",
     "title": "Metrics exposed by lakeFS",
     "content": "By default, Prometheus exports metrics with OS process information like memory and CPU. It also includes Go-specific metrics such as details about GC and a number of goroutines. You can learn about these default metrics in this post. In addition, lakeFS exposes the following metrics to help monitor your deployment: . | Name in Prometheus | Description | Labels | . | api_requests_total | lakeFS API requests (counter) | code: http statusmethod: http method | . | api_request_duration_seconds | Durations of lakeFS API requests (histogram) | operation: name of API operationcode: http status | . | gateway_request_duration_seconds | lakeFS S3-compatible endpoint request (histogram) | operation: name of gateway operationcode: http status | . | s3_operation_duration_seconds | Outgoing S3 operations (histogram) | operation: operation nameerror: “true” if error, “false” otherwise | . | gs_operation_duration_seconds | Outgoing Google Storage operations (histogram) | operation: operation nameerror: “true” if error, “false” otherwise | . | azure_operation_duration_seconds | Outgoing Azure storage operations (histogram) | operation: operation nameerror: “true” if error, “false” otherwise | . | dynamo_request_duration_seconds | Time spent doing DynamoDB requests | operation: DynamoDB operation name | . | dynamo_consumed_capacity_total | The capacity units consumed by operation | operation: DynamoDB operation name | . | dynamo_failures_total | The total number of errors while working for kv store | operation: DynamoDB operation name | . | pgxpool_acquire_count | PostgreSQL cumulative count of successful acquires from the pool | db_name default to the kv table name (kv) | . | pgxpool_acquire_duration_ns | PostgreSQL total duration of all successful acquires from the pool in nanoseconds | db_name default to the kv table name (kv) | . | pgxpool_acquired_conns | PostgreSQL number of currently acquired connections in the pool | db_name default to the kv table name (kv) | . | pgxpool_canceled_acquire_count | PostgreSQL cumulative count of acquires from the pool that were canceled by a context | db_name default to the kv table name (kv) | . | pgxpool_constructing_conns | PostgreSQL number of conns with construction in progress in the pool | db_name default to the kv table name (kv) | . | pgxpool_empty_acquire | PostgreSQL cumulative count of successful acquires from the pool that waited for a resource to be released or constructed because the pool was empty | db_name default to the kv table name (kv) | . | pgxpool_idle_conns | PostgreSQL number of currently idle conns in the pool | db_name default to the kv table name (kv) | . | pgxpool_max_conns | PostgreSQL maximum size of the pool | db_name default to the kv table name (kv) | . | pgxpool_total_conns | PostgreSQL total number of resources currently in the pool | db_name default to the kv table name (kv) | . ",
     "url": "/reference/monitor.html#metrics-exposed-by-lakefs",
     "relUrl": "/reference/monitor.html#metrics-exposed-by-lakefs"
-  },"212": {
+  },"207": {
     "doc": "Monitoring using Prometheus",
     "title": "Example queries",
     "content": "Note: when using Prometheus functions like rate or increase, results are extrapolated and may not be exact. 99th percentile of API request latencies . sum by (operation)(histogram_quantile(0.99, rate(api_request_duration_seconds_bucket[1m]))) . 50th percentile of S3-compatible API latencies . sum by (operation)(histogram_quantile(0.5, rate(gateway_request_duration_seconds_bucket[1m]))) . Number of errors in outgoing S3 requests . sum by (operation) (increase(s3_operation_duration_seconds_count{error=\"true\"}[1m])) . Number of open connections to the database . go_sql_stats_connections_open . Example Grafana dashboard . ",
     "url": "/reference/monitor.html#example-queries",
     "relUrl": "/reference/monitor.html#example-queries"
-  },"213": {
+  },"208": {
     "doc": "More Quickstart Options",
     "title": "More Quickstart Options",
     "content": "Note: The quickstart section is for learning purposes. The installations described in this section will not persist your data. For a production suitable deployment, deploy lakeFS on your cloud. ",
     "url": "/quickstart/more_quickstart_options.html",
     "relUrl": "/quickstart/more_quickstart_options.html"
-  },"214": {
+  },"209": {
     "doc": "More Quickstart Options",
     "title": "Table of contents",
     "content": ". | With the lakeFS Playground | On Kubernetes with Helm | Using the Binary | lakeFS “Everything Bagel” | . ",
     "url": "/quickstart/more_quickstart_options.html#table-of-contents",
     "relUrl": "/quickstart/more_quickstart_options.html#table-of-contents"
-  },"215": {
+  },"210": {
     "doc": "More Quickstart Options",
     "title": "With the lakeFS Playground",
     "content": "Spin up a lakeFS installation in seconds. Your installation will be available for 7 days. Take me to the playground . ",
     "url": "/quickstart/more_quickstart_options.html#with-the-lakefs-playground",
     "relUrl": "/quickstart/more_quickstart_options.html#with-the-lakefs-playground"
-  },"216": {
+  },"211": {
     "doc": "More Quickstart Options",
     "title": "On Kubernetes with Helm",
     "content": ". | Install lakeFS on a Kubernetes cluster using Helm: # Add the lakeFS Helm repository helm repo add lakefs https://charts.lakefs.io # Deploy lakeFS with helm release \"my-lakefs\" helm install my-lakefs lakefs/lakefs . | The printed output will help you forward a port to lakeFS, so you can access it from your browser at http://127.0.0.1:8000/setup. | Move on to create your first repository in lakeFS. | . ",
     "url": "/quickstart/more_quickstart_options.html#on-kubernetes-with-helm",
     "relUrl": "/quickstart/more_quickstart_options.html#on-kubernetes-with-helm"
-  },"217": {
+  },"212": {
     "doc": "More Quickstart Options",
     "title": "Using the Binary",
     "content": "Alternatively, you may opt to run the lakefs binary directly on your computer. | Download the lakeFS binary for your operating system: . Download lakefs . | Create a configuration file: . --- database: type: local local: path: \"~/lakefs/metadata\" blockstore: type: \"local\" local: path: \"~/lakefs/data\" . | Create a local directories to store objects and metadata: . mkdir -p ~/lakefs/data ~/lakefs/metadata . | Run the server: ./lakefs --config /path/to/config.yaml run . | Check your installation by opening http://127.0.0.1:8000/setup in your web browser. | You are now ready to create your first repository in lakeFS. | . ",
     "url": "/quickstart/more_quickstart_options.html#using-the-binary",
     "relUrl": "/quickstart/more_quickstart_options.html#using-the-binary"
-  },"218": {
+  },"213": {
     "doc": "More Quickstart Options",
     "title": "lakeFS “Everything Bagel”",
     "content": "This Docker Compose application includes lakeFS together with other common data tools like Spark, dbt, Trino, Hive, and Jupyter. Run the following commands to get the Bagel running: . | Clone the lakeFS repo: git clone https://github.com/treeverse/lakeFS.git | Start the Docker containers: cd lakeFS/deployments/compose &amp;&amp; docker compose up -d | . Once the environment is running, open the UI for lakeFS by navigating to http://localhost:8000 in your browser. The login credentials can be found in the docker_compose.yml file in the lakefs-setup section. Once you are logged in, you should see a page that looks like below. Note that a repository called example is already created. If your lakeFS installation doesn’t have this repository, click the Create Repository button to do so: . ",
     "url": "/quickstart/more_quickstart_options.html#lakefs-everything-bagel",
     "relUrl": "/quickstart/more_quickstart_options.html#lakefs-everything-bagel"
-  },"219": {
+  },"214": {
     "doc": "On-Prem",
     "title": "On-Prem deployment",
     "content": "⏰ Expected deployment time: 25 min . ",
     "url": "/deploy/onprem.html#on-prem-deployment",
     "relUrl": "/deploy/onprem.html#on-prem-deployment"
-  },"220": {
+  },"215": {
     "doc": "On-Prem",
     "title": "Table of contents",
     "content": ". | Prerequisites | Setting up a database | Setting up a lakeFS Server | Create the admin user | Create your first repository | . ",
     "url": "/deploy/onprem.html#table-of-contents",
     "relUrl": "/deploy/onprem.html#table-of-contents"
-  },"221": {
+  },"216": {
     "doc": "On-Prem",
     "title": "Prerequisites",
     "content": "To use lakeFS, you’ll need to have access to an S3-compatible object store such as MinIO . For more information on how to set up MinIO, see the official deployment guide . ",
     "url": "/deploy/onprem.html#prerequisites",
     "relUrl": "/deploy/onprem.html#prerequisites"
-  },"222": {
+  },"217": {
     "doc": "On-Prem",
     "title": "Setting up a database",
     "content": "lakeFS requires a PostgreSQL database to synchronize actions on your repositories. This section assumes that you already have a PostgreSQL &gt;= 11.0 database accessible. ",
     "url": "/deploy/onprem.html#setting-up-a-database",
     "relUrl": "/deploy/onprem.html#setting-up-a-database"
-  },"223": {
+  },"218": {
     "doc": "On-Prem",
     "title": "Setting up a lakeFS Server",
     "content": ". | Linux | Docker | Kubernetes | . Connect to your host using SSH: . | Create a config.yaml on your VM, with the following parameters: . --- database: type: \"postgres\" postgres: connection_string: \"[DATABASE_CONNECTION_STRING]\" auth: encrypt: # replace this with a randomly-generated string. Make sure to keep it safe! secret_key: \"[ENCRYPTION_SECRET_KEY]\" blockstore: type: s3 s3: force_path_style: true endpoint: http://&lt;minio_endpoint&gt; discover_bucket_region: false credentials: access_key_id: &lt;minio_access_key&gt; secret_access_key: &lt;minio_secret_key&gt; . ⚠️ Notice that the lakeFS Blockstore type is set to s3 - This configuration works with S3-compatible storage engines such as MinIO. | Download the binary to the server. | Run the lakefs binary: . lakefs --config config.yaml run . | . Note: It’s preferable to run the binary as a service using systemd or your operating system’s facilities. To support container-based environments, you can configure lakeFS using environment variables. Here is a docker run command to demonstrate starting lakeFS using Docker: . docker run \\ --name lakefs \\ -p 8000:8000 \\ -e LAKEFS_DATABASE_TYPE=\"postgres\" \\ -e LAKEFS_DATABASE_POSTGRES_CONNECTION_STRING=\"[DATABASE_CONNECTION_STRING]\" \\ -e LAKEFS_AUTH_ENCRYPT_SECRET_KEY=\"[ENCRYPTION_SECRET_KEY]\" \\ -e LAKEFS_BLOCKSTORE_TYPE=\"s3\" \\ -e LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE=\"true\" \\ -e LAKEFS_BLOCKSTORE_S3_ENDPOINT=\"http://&lt;minio_endpoint&gt;\" \\ -e LAKEFS_BLOCKSTORE_S3_DISCOVER_BUCKET_REGION=\"false\" \\ -e LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID=\"&lt;minio_access_key&gt;\" \\ -e LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY=\"&lt;minio_secret_key&gt;\" \\ treeverse/lakefs:latest run . ⚠️ Notice that the lakeFS Blockstore type is set to s3 - This configuration works with S3-compatible storage engines such as MinIO. See the reference for a complete list of environment variables. You can install lakeFS on Kubernetes using a Helm chart. To install lakeFS with Helm: . | Copy the Helm values file relevant for S3-Compatible storage (MinIO in this example): . secrets: # replace this with the connection string of the database you created in a previous step: databaseConnectionString: [DATABASE_CONNECTION_STRING] # replace this with a randomly-generated string authEncryptSecretKey: [ENCRYPTION_SECRET_KEY] lakefsConfig: | blockstore: type: s3 s3: force_path_style: true endpoint: http://&lt;minio_endpoint&gt; discover_bucket_region: false credentials: access_key_id: &lt;minio_access_key&gt; secret_access_key: &lt;minio_secret_key&gt; . ⚠️ Notice that the lakeFS Blockstore type is set to s3 - This configuration works with S3-compatible storage engines such as MinIO. | Fill in the missing values and save the file as conf-values.yaml. For more configuration options, see our Helm chart README. The lakefsConfig parameter is the lakeFS configuration documented here but without sensitive information. Sensitive information like databaseConnectionString is given through separate parameters, and the chart will inject it into Kubernetes secrets. | In the directory where you created conf-values.yaml, run the following commands: . # Add the lakeFS repository helm repo add lakefs https://charts.lakefs.io # Deploy lakeFS helm install my-lakefs lakefs/lakefs -f conf-values.yaml . my-lakefs is the Helm Release name. ",
     "url": "/deploy/onprem.html#setting-up-a-lakefs-server",
     "relUrl": "/deploy/onprem.html#setting-up-a-lakefs-server"
-  },"224": {
+  },"219": {
     "doc": "On-Prem",
     "title": "Load balancing",
     "content": "To configure a load balancer to direct requests to the lakeFS servers you can use the LoadBalancer Service type or a Kubernetes Ingress. By default, lakeFS operates on port 8000 and exposes a /_health endpoint that you can use for health checks. 💡 The NGINX Ingress Controller by default limits the client body size to 1 MiB. Some clients use bigger chunks to upload objects - for example, multipart upload to lakeFS using the S3-compatible Gateway or a simple PUT request using the OpenAPI Server. Checkout Nginx documentation for increasing the limit, or an example of Nginx configuration with MinIO. | . ",
     "url": "/deploy/onprem.html#load-balancing",
     "relUrl": "/deploy/onprem.html#load-balancing"
-  },"225": {
+  },"220": {
     "doc": "On-Prem",
     "title": "Create the admin user",
     "content": "When you first open the lakeFS UI, you will be asked to create an initial admin user. | open http://&lt;lakefs-host&gt;/ in your browser. If you haven’t set up a load balancer, this will likely be http://&lt;instance ip address&gt;:8000/ | On first use, you’ll be redirected to the setup page: . | Follow the steps to create an initial administrator user. Save the credentials you’ve received somewhere safe, you won’t be able to see them again! . | Follow the link and go to the login screen. Use the credentials from the previous step to log in. | . ",
     "url": "/deploy/onprem.html#create-the-admin-user",
     "relUrl": "/deploy/onprem.html#create-the-admin-user"
-  },"226": {
+  },"221": {
     "doc": "On-Prem",
     "title": "Create your first repository",
     "content": ". | Use the credentials from the previous step to log in | Click Create Repository and choose Blank Repository. | Under Storage Namespace, enter a path to your desired location on the object store. This is where data written to this repository will be stored. | Click Create Repository | You should now have a configured repository, ready to use! . | . Congratulations! Your environment is now ready 🤩 . ",
     "url": "/deploy/onprem.html#create-your-first-repository",
     "relUrl": "/deploy/onprem.html#create-your-first-repository"
-  },"227": {
+  },"222": {
     "doc": "On-Prem",
     "title": "On-Prem",
     "content": " ",
     "url": "/deploy/onprem.html",
     "relUrl": "/deploy/onprem.html"
-  },"228": {
+  },"223": {
     "doc": "Performance Best Practices",
     "title": "Performance Best Practices",
     "content": " ",
     "url": "/understand/performance-best-practices.html",
     "relUrl": "/understand/performance-best-practices.html"
-  },"229": {
+  },"224": {
     "doc": "Performance Best Practices",
     "title": "Table of contents",
     "content": ". | Overview | Avoid huge commits | Avoid concurrent commits/merges | Use zero-copy import | Read data using the commit ID | Operate directly on the storage | Zero-copy | . ",
     "url": "/understand/performance-best-practices.html#table-of-contents",
     "relUrl": "/understand/performance-best-practices.html#table-of-contents"
-  },"230": {
+  },"225": {
     "doc": "Performance Best Practices",
     "title": "Overview",
     "content": "Use this guide to achieve the best performance with lakeFS. ",
     "url": "/understand/performance-best-practices.html#overview",
     "relUrl": "/understand/performance-best-practices.html#overview"
-  },"231": {
+  },"226": {
     "doc": "Performance Best Practices",
     "title": "Avoid huge commits",
     "content": "If you’re having issues with slow commits, consider performing smaller commits. The more objects in the commit, the longer the commit will take to complete. Moreover, a commit should represent a meaningful point in your data’s lifecycle, so limiting the commit size will create a more comprehensible commit history. As a rule of thumb, try to keep your commits smaller than 1M objects. ",
     "url": "/understand/performance-best-practices.html#avoid-huge-commits",
     "relUrl": "/understand/performance-best-practices.html#avoid-huge-commits"
-  },"232": {
+  },"227": {
     "doc": "Performance Best Practices",
     "title": "Avoid concurrent commits/merges",
     "content": "Just like in Git, branch history is composed by commits and is linear by nature. Concurrent commits/merges on the same branch result in a race. The first operation will finish successfully while the rest will retry. ",
     "url": "/understand/performance-best-practices.html#avoid-concurrent-commitsmerges",
     "relUrl": "/understand/performance-best-practices.html#avoid-concurrent-commitsmerges"
-  },"233": {
+  },"228": {
     "doc": "Performance Best Practices",
     "title": "Use zero-copy import",
     "content": "To import object into lakeFS, either a single time or regularly, lakeFS offers a zero-copy import feature. Use this feature to import a large number of objects to lakeFS, instead of simply copying them into your repository. This feature will create a reference to the existing objects on your bucket and avoids the copy. ",
     "url": "/understand/performance-best-practices.html#use-zero-copy-import",
     "relUrl": "/understand/performance-best-practices.html#use-zero-copy-import"
-  },"234": {
+  },"229": {
     "doc": "Performance Best Practices",
     "title": "Read data using the commit ID",
     "content": "In cases where you are only interested in reading committed data: . | Use a commit ID (or a tag ID) in your path (e.g: lakefs://repo/a1b2c3). | Add @ before the path lakefs://repo/main@/path. | . When accessing data using the branch name (e.g. lakefs://repo/main/path) lakeFS will also try to fetch uncommitted data, which may result in reduced performance. For more information, see how uncommitted data is managed in lakeFS . ",
     "url": "/understand/performance-best-practices.html#read-data-using-the-commit-id",
     "relUrl": "/understand/performance-best-practices.html#read-data-using-the-commit-id"
-  },"235": {
+  },"230": {
     "doc": "Performance Best Practices",
     "title": "Operate directly on the storage",
     "content": "Sometimes, storage operations can become a bottleneck. For example, when your data pipelines upload many big objects. In such cases, it can be beneficial to perform only versioning operations on lakeFS, while performing storage reads/writes directly on the object store. lakeFS offers multiple ways to do that: . | The lakectl upload --direct command (or download). | The lakeFS Hadoop Filesystem. | The staging API which can be used to add lakeFS references to objects after having written them to the storage. | . Accessing the object store directly is a faster way to interact with your data. ",
     "url": "/understand/performance-best-practices.html#operate-directly-on-the-storage",
     "relUrl": "/understand/performance-best-practices.html#operate-directly-on-the-storage"
-  },"236": {
+  },"231": {
     "doc": "Performance Best Practices",
     "title": "Zero-copy",
     "content": "lakeFS provides a zero-copy mechanism to data. Instead of copying the data, we can check out to a new branch. Creating a new branch will take constant time as the new branch points to the same data as its parent. It will also lower the storage cost. ",
     "url": "/understand/performance-best-practices.html#zero-copy",
     "relUrl": "/understand/performance-best-practices.html#zero-copy"
-  },"237": {
+  },"232": {
     "doc": "Presto/Trino",
     "title": "Using lakeFS with Presto/Trino",
     "content": "Presto and Trino are a distributed SQL query engines designed to query large data sets distributed over one or more heterogeneous data sources. ",
     "url": "/integrations/presto_trino.html#using-lakefs-with-prestotrino",
     "relUrl": "/integrations/presto_trino.html#using-lakefs-with-prestotrino"
-  },"238": {
+  },"233": {
     "doc": "Presto/Trino",
     "title": "Table of contents",
     "content": ". | Using lakeFS with Presto/Trino . | | Configuration . | Configure the Hive connector | Configure Hive | . | Examples . | Example with schema | Example with External table | Example of copying a table with metastore tools: | . | . | . Querying data in lakeFS from Presto/Trino is similar to querying data in S3 from Presto/Trino. It is done using the Presto Hive connector or Trino Hive connector. Note In the following examples, we set AWS credentials at runtime for clarity. In production, these properties should be set using one of Hadoop’s standard ways of Authenticating with S3. ",
     "url": "/integrations/presto_trino.html#table-of-contents",
     "relUrl": "/integrations/presto_trino.html#table-of-contents"
-  },"239": {
+  },"234": {
     "doc": "Presto/Trino",
     "title": "Configuration",
     "content": "Configure the Hive connector . Create /etc/catalog/hive.properties with the following contents to mount the hive-hadoop2 connector as the hive catalog, replacing example.net:9083 with the correct host and port for your Hive Metastore Thrift service: . connector.name=hive-hadoop2 hive.metastore.uri=thrift://example.net:9083 . Add the lakeFS configurations to /etc/catalog/hive.properties in the corresponding S3 configuration properties: . hive.s3.aws-access-key=AKIAIOSFODNN7EXAMPLE hive.s3.aws-secret-key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY hive.s3.endpoint=https://lakefs.example.com hive.s3.path-style-access=true . Configure Hive . Presto/Trino uses Hive Metastore Service (HMS) or a compatible implementation of the Hive Metastore such as AWS Glue Data Catalog to write data to S3. In case you are using Hive Metastore, you will need to configure Hive as well. In file hive-site.xml add to the configuration: . &lt;configuration&gt; ... &lt;property&gt; &lt;name&gt;fs.s3a.access.key&lt;/name&gt; &lt;value&gt;AKIAIOSFODNN7EXAMPLE&lt;/value&gt;&lt;/property&gt; &lt;property&gt; &lt;name&gt;fs.s3a.secret.key&lt;/name&gt; &lt;value&gt;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&lt;/value&gt; &lt;/property&gt; &lt;property&gt; &lt;name&gt;fs.s3a.endpoint&lt;/name&gt; &lt;value&gt;https://lakefs.example.com&lt;/value&gt; &lt;/property&gt; &lt;property&gt; &lt;name&gt;fs.s3a.path.style.access&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;/property&gt; &lt;/configuration&gt; . ",
     "url": "/integrations/presto_trino.html#configuration",
     "relUrl": "/integrations/presto_trino.html#configuration"
-  },"240": {
+  },"235": {
     "doc": "Presto/Trino",
     "title": "Examples",
     "content": "Here are some examples based on examples from the Presto Hive connector examples and Trino Hive connector examples . Example with schema . Create a new schema named main that will store tables in a lakeFS repository named example branch: master: . CREATE SCHEMA main WITH (location = 's3a://example/main') . Create a new Hive table named page_views in the web schema stored using the ORC file format, partitioned by date and country, and bucketed by user into 50 buckets (note that Hive requires the partition columns to be the last columns in the table): . CREATE TABLE main.page_views ( view_time timestamp, user_id bigint, page_url varchar, ds date, country varchar ) WITH ( format = 'ORC', partitioned_by = ARRAY['ds', 'country'], bucketed_by = ARRAY['user_id'], bucket_count = 50 ) . Example with External table . Create an external Hive table named request_logs that points at existing data in lakeFS: . CREATE TABLE main.request_logs ( request_time timestamp, url varchar, ip varchar, user_agent varchar ) WITH ( format = 'TEXTFILE', external_location = 's3a://example/main/data/logs/' ) . Example of copying a table with metastore tools: . Copy the created table page_views on schema main to schema example_branch with location s3a://example/example_branch/page_views/ . lakectl metastore copy --from-schema main --from-table page_views --to-branch example_branch . ",
     "url": "/integrations/presto_trino.html#examples",
     "relUrl": "/integrations/presto_trino.html#examples"
-  },"241": {
+  },"236": {
     "doc": "Presto/Trino",
     "title": "Presto/Trino",
     "content": " ",
     "url": "/integrations/presto_trino.html",
     "relUrl": "/integrations/presto_trino.html"
-  },"242": {
+  },"237": {
     "doc": "In Production",
     "title": "In Production",
     "content": "Errors with data in production inevitably occur. When they do, they best thing we can do is remove the erroneous data, understand why the issue happened, and deploy changes that prevent it from occurring again. Example 1: RollBack! - Data ingested from a Kafka stream . If you introduce a new code version to production and discover it has a critical bug, you can simply roll back to the previous version. But you also need to roll back the results of running it. Similar to Git, lakeFS allows you to revert your commits in case they introduced low-quality data. Revert in lakeFS is an atomic action that prevents the data consumers from receiving low quality data until the issue is resolved. As previously mentioned, with lakeFS the recommended branching schema is to ingest data to a dedicated branch. When streaming data, we can decide to merge the incoming data to main at a given time interval or checkpoint, depending on how we chose to write it from Kafka. You can run quality tests for each merge (as discussed in the During Deployment section). Alas, tests are not perfect and we might still introduce low quality data to our main branch at some point. In such a case, we can revert the bad commits from main to the last known high quality commit. This will record new commits reversing the effect of the bad commits. Reverting commits using the CLI . lakectl branch revert lakefs://example-repo/main 20c30c96 ababea32 . Note lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch. Example 2: Troubleshoot - Reproduce a bug in production . You upgraded spark and deployed changes in production. A few days or weeks later, you identify a data quality issue, a performance degradation, or an increase to your infra costs. Something that requires investigation and fixing (aka, a bug). lakeFS allows you to open a branch of your lake from the specific merge/commit that introduced the changes to production. Using the metadata saved on the merge/commit you can reproduce all aspects of the environment, then reproduce the issue on the branch and debug it. Meanwhile, you can revert the main to a previous point in time, or keep it as is, depending on the use case . Reading from a historic version (a previous commit) using Spark . // represents the data as existed at commit \"11eef40b\": spark.read.parquet(\"s3://example-repo/11eef40b/events/by-date\") . Example 3: Cross collection consistency . We often need consistency between different data collections. A few examples may be: . | To join different collections in order to create a unified view of an account, a user or another entity we measure. | To introduce the same data in different formats | To introduce the same data with a different leading index or sorting due to performance considerations | . lakeFS will help ensure you introduce only consistent data to your consumers by exposing the new collections and their join in one atomic action to main. Once you consumed the collections on a different branch, and only when both are synchronized, we calculated the join and merged to main. In this example you can see two data sets (Sales data and Marketing data) consumed each to its own independent branch, and after the write of both data sets is completed, they are merged to a different branch (leads branch) where the join ETL runs and creates a joined collection by account. The joined table is then merged to main. The same logic can apply if the data is ingested in streaming, using standard formats, or formats that allow upsert/delete such as Apache Hudi, Delta Lake or Iceberg. ",
     "url": "/understand/data_lifecycle_management/production.html",
     "relUrl": "/understand/data_lifecycle_management/production.html"
-  },"243": {
+  },"238": {
     "doc": "In Production",
     "title": "Case Study: Windward",
     "content": "See how Windward is using lakeFS’ isolation and atomic commits to achieve consistency on top of S3. ",
     "url": "/understand/data_lifecycle_management/production.html#case-study-windward",
     "relUrl": "/understand/data_lifecycle_management/production.html#case-study-windward"
-  },"244": {
+  },"239": {
     "doc": "Protect Branches",
     "title": "Branch Protection Rules",
     "content": "Define branch protection rules to prevent direct changes and commits to specific branches. Only merges are allowed into protected branches. Together with the power of pre-merge hooks, you can run validations on your data before it reaches your important branches and is exposed to consumers. You can create rules for a specific branch or any branch that matches a name pattern you specify with glob syntax (supporting ? and * wildcards). ",
     "url": "/howto/protect-branches.html#branch-protection-rules",
     "relUrl": "/howto/protect-branches.html#branch-protection-rules"
-  },"245": {
+  },"240": {
     "doc": "Protect Branches",
     "title": "How it works",
     "content": "When at least one protection rule applies to a branch, the branch is protected. The following operations will fail on protected branches: . | Object write operations: upload and delete objects. | Branch operations: commit and reset uncommitted changes. | . To operate on a protected branch, merge commits from other branches into it. Use pre-merge hooks to validate the changes before they are merged. Reverting a previous commit using lakectl branch revert is allowed on a protected branch. ",
     "url": "/howto/protect-branches.html#how-it-works",
     "relUrl": "/howto/protect-branches.html#how-it-works"
-  },"246": {
+  },"241": {
     "doc": "Protect Branches",
     "title": "Managing branch protection rules",
     "content": "This section explains how to use the lakeFS UI to manage rules. You can also use the command line. Reaching the branch protection rules page . | On lakeFS, navigate to the main page of the repository. | Click on the Settings tab. | In the left menu, click Branches. | . Adding a rule . To add a new rule, click the Add button. In the dialog, enter the branch name pattern and then click Create. Deleting a rule . To delete a rule, click the Delete button next to it. ",
     "url": "/howto/protect-branches.html#managing-branch-protection-rules",
     "relUrl": "/howto/protect-branches.html#managing-branch-protection-rules"
-  },"247": {
+  },"242": {
     "doc": "Protect Branches",
     "title": "Protect Branches",
     "content": " ",
     "url": "/howto/protect-branches.html",
     "relUrl": "/howto/protect-branches.html"
-  },"248": {
+  },"243": {
     "doc": "Python",
     "title": "Table of contents",
     "content": ". | Boto vs. lakeFS SDK | Using the lakeFS SDK . | Installing | Initializing | Usage Examples | . | Using Boto . | Initializing | Usage Examples | . | . ",
     "url": "/integrations/python.html#table-of-contents",
     "relUrl": "/integrations/python.html#table-of-contents"
-  },"249": {
+  },"244": {
     "doc": "Python",
     "title": "Boto vs. lakeFS SDK",
     "content": "To interact with lakeFS from Python: . | Use Boto to perform object operations through the lakeFS S3 gateway. | Use the lakeFS SDK to perform versioning and other lakeFS-specific operations. | . ",
     "url": "/integrations/python.html#boto-vs-lakefs-sdk",
     "relUrl": "/integrations/python.html#boto-vs-lakefs-sdk"
-  },"250": {
+  },"245": {
     "doc": "Python",
     "title": "Using the lakeFS SDK",
     "content": "Installing . Install the Python client using pip: . pip install 'lakefs_client==&lt;lakeFS version&gt;' . Initializing . Here’s how to instantiate a client: . import lakefs_client from lakefs_client import models from lakefs_client.client import LakeFSClient # lakeFS credentials and endpoint configuration = lakefs_client.Configuration() configuration.username = 'AKIAIOSFODNN7EXAMPLE' configuration.password = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY' configuration.host = 'http://localhost:8000' client = LakeFSClient(configuration) . Usage Examples . Now that you have a client object, you can use it to interact with the API. Creating a repository . repo = models.RepositoryCreation(name='example-repo', storage_namespace='s3://storage-bucket/repos/example-repo', default_branch='main') client.repositories.create_repository(repo) # output: # {'creation_date': 1617532175, # 'default_branch': 'main', # 'id': 'example-repo', # 'storage_namespace': 's3://storage-bucket/repos/example-repo'} . Creating a branch, uploading files, committing changes . List the repository branches: . client.branches.list_branches('example-repo') # output: # [{'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'main'}] . Create a new branch: . client.branches.create_branch(repository='example-repo', branch_creation=models.BranchCreation(name='experiment-aggregations1', source='main')) # output: # 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656' . List again to see your newly created branch: . client.branches.list_branches('example-repo').results # output: # [{'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'experiment-aggregations1'}, {'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'main'}] . Great. Now, let’s upload a file into your new branch: . with open('file.csv', 'rb') as f: client.objects.upload_object(repository='example-repo', branch='experiment-aggregations1', path='path/to/file.csv', content=f) # output: # {'checksum': '0d3b39380e2500a0f60fb3c09796fdba', # 'mtime': 1617534834, # 'path': 'path/to/file.csv', # 'path_type': 'object', # 'physical_address': 'local://example-repo/1865650a296c42e28183ad08e9b068a3', # 'size_bytes': 18} . Diffing a single branch will show all the uncommitted changes on that branch: . client.branches.diff_branch(repository='example-repo', branch='experiment-aggregations1').results # output: # [{'path': 'path/to/file.csv', 'path_type': 'object', 'type': 'added'}] . As expected, our change appears here. Let’s commit it and attach some arbitrary metadata: . client.commits.commit( repository='example-repo', branch='experiment-aggregations1', commit_creation=models.CommitCreation(message='Added a CSV file!', metadata={'using': 'python_api'})) # output: # {'committer': 'barak', # 'creation_date': 1617535120, # 'id': 'e80899a5709509c2daf797c69a6118be14733099f5928c14d6b65c9ac2ac841b', # 'message': 'Added a CSV file!', # 'meta_range_id': '', # 'metadata': {'using': 'python_api'}, # 'parents': ['cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656']} . Diffing again, this time there should be no uncommitted files: . client.branches.diff_branch(repository='example-repo', branch='experiment-aggregations1').results # output: # [] . Merging changes from a branch into main . Let’s diff between your branch and the main branch: . client.refs.diff_refs(repository='example-repo', left_ref='main', right_ref='experiment-aggregations1').results # output: # [{'path': 'path/to/file.csv', 'path_type': 'object', 'type': 'added'}] . Looks like you have a change. Let’s merge it: . client.refs.merge_into_branch(repository='example-repo', source_ref='experiment-aggregations1', destination_branch='main') # output: # {'reference': 'd0414a3311a8c1cef1ef355d6aca40db72abe545e216648fe853e25db788fa2e', # 'summary': {'added': 1, 'changed': 0, 'conflict': 0, 'removed': 0}} . Let’s diff again - there should be no changes as all changes are on our main branch already: . client.refs.diff_refs(repository='example-repo', left_ref='main', right_ref='experiment-aggregations1').results # output: # [] . Python Client documentation . For the documentation of lakeFS’s Python package, see https://pydocs.lakefs.io . Full API reference . For a full reference of the lakeFS API, see lakeFS API . ",
     "url": "/integrations/python.html#using-the-lakefs-sdk",
     "relUrl": "/integrations/python.html#using-the-lakefs-sdk"
-  },"251": {
+  },"246": {
     "doc": "Python",
     "title": "Using Boto",
     "content": "💡 To use Boto with lakeFS alongside S3, check out Boto S3 Router. It will route requests to either S3 or lakeFS according to the provided bucket name. lakeFS exposes an S3-compatible API, so you can use Boto to interact with your objects on lakeFS. Initializing . Create a Boto3 S3 client with your lakeFS endpoint and key-pair: . import boto3 s3 = boto3.client('s3', endpoint_url='https://lakefs.example.com', aws_access_key_id='AKIAIOSFODNN7EXAMPLE', aws_secret_access_key='wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY') . The client is now configured to operate on your lakeFS installation. Usage Examples . Put an object into lakeFS . Use a branch name and a path to put an object in lakeFS: . with open('/local/path/to/file_0', 'rb') as f: s3.put_object(Body=f, Bucket='example-repo', Key='main/example-file.parquet') . You can now commit this change using the lakeFS UI or CLI. List objects . List the branch objects starting with a prefix: . list_resp = s3.list_objects_v2(Bucket='example-repo', Prefix='main/example-prefix') for obj in list_resp['Contents']: print(obj['Key']) . Or, use a lakeFS commit ID to list objects for a specific commit: . list_resp = s3.list_objects_v2(Bucket='example-repo', Prefix='c7a632d74f/example-prefix') for obj in list_resp['Contents']: print(obj['Key']) . Get object metadata . Get object metadata using branch and path: . s3.head_object(Bucket='example-repo', Key='main/example-file.parquet') # output: # {'ResponseMetadata': {'RequestId': '72A9EBD1210E90FA', # 'HostId': '', # 'HTTPStatusCode': 200, # 'HTTPHeaders': {'accept-ranges': 'bytes', # 'content-length': '1024', # 'etag': '\"2398bc5880e535c61f7624ad6f138d62\"', # 'last-modified': 'Sun, 24 May 2020 10:42:24 GMT', # 'x-amz-request-id': '72A9EBD1210E90FA', # 'date': 'Sun, 24 May 2020 10:45:42 GMT'}, # 'RetryAttempts': 0}, # 'AcceptRanges': 'bytes', # 'LastModified': datetime.datetime(2020, 5, 24, 10, 42, 24, tzinfo=tzutc()), # 'ContentLength': 1024, # 'ETag': '\"2398bc5880e535c61f7624ad6f138d62\"', # 'Metadata': {}} . ",
     "url": "/integrations/python.html#using-boto",
     "relUrl": "/integrations/python.html#using-boto"
-  },"252": {
+  },"247": {
     "doc": "Python",
     "title": "Python",
     "content": " ",
     "url": "/integrations/python.html",
     "relUrl": "/integrations/python.html"
-  },"253": {
+  },"248": {
     "doc": "Create a Repository",
     "title": "Create a Repository",
     "content": "A repository contains all of your objects, including the revision history. You can consider it as the lakeFS analog of a bucket in an object store. Since it has version control qualities, it is also analogous to a repository in Git. ",
     "url": "/quickstart/repository.html",
     "relUrl": "/quickstart/repository.html"
-  },"254": {
+  },"249": {
     "doc": "Create a Repository",
     "title": "Create the first user",
     "content": "When you first open the lakeFS UI, you will be asked to create an initial admin user. | Open http://127.0.0.1:8000/ in your web browser. | Follow the steps to create an initial administrator user. Save the credentials you’ve received somewhere safe, you won’t be able to see them again! . | Follow the link and go to the login screen: . | . ",
     "url": "/quickstart/repository.html#create-the-first-user",
     "relUrl": "/quickstart/repository.html#create-the-first-user"
-  },"255": {
+  },"250": {
     "doc": "Create a Repository",
     "title": "Create the repository",
     "content": ". | Use the credentials from the previous step to log in as an administrator. | Click Create Repository and choose Blank Repository. | Fill in the repository name. | Under Storage Namespace, enter local://. In this tutorial, the underlying storage for lakeFS is the local disk. Accordingly, the value for Storage Namespace should simply be local://. For a deployment that uses an object store as the underlying storage, this would be a location in the store - for example, s3://example-bucket/prefix. | Click Create Repository. | . Next steps . You’ve just created your first lakeFS repository! You can now add some data to it. ",
     "url": "/quickstart/repository.html#create-the-repository",
     "relUrl": "/quickstart/repository.html#create-the-repository"
-  },"256": {
+  },"251": {
     "doc": "Reproducibility",
     "title": "The Benefits of Reproducible Data",
     "content": "Data changes frequently. This makes the task of keeping track of its exact state over time difficult. Oftentimes, people maintain only one state of their data––its current state. This has a negative impact on the work, as it becomes hard to: . | Debug a data issue. | Validate machine learning training accuracy (re-running a model over different data gives different results). | Comply with data audits. | . In comparison, lakeFS exposes a Git-like interface to data that allows keeping track of more than just the current state of data. This makes reproducing its state at any point in time straightforward. ",
     "url": "/use_cases/reproducibility.html#the-benefits-of-reproducible-data",
     "relUrl": "/use_cases/reproducibility.html#the-benefits-of-reproducible-data"
-  },"257": {
+  },"252": {
     "doc": "Reproducibility",
     "title": "Achieving Reproducibility with lakeFS",
     "content": "To make data reproducible, we recommend taking a new commit of your lakeFS repository every time the data in it changes. As long as there’s a commit taken, the process to reproduce a given state is as simple as reading the data from a path that includes the unique commit_id generated for each commit. To read data at it’s current state, we can use a static path containing the repository and branch names. To give an example, if you have a repository named example with a branch named main, reading the latest state of this data into a Spark Dataframe is always: . df = spark.read.parquet(‘s3://example/main/”) . Note: The code above assumes that all objects in the repository under this path are stored in parquet format. If a different format is used, the applicable Spark read method should be used. In a lakeFS repository, we are capable of taking many commits over the data, making many points in time reproducible. In the repository above, a new commit is taken each time a model training script is run, and the commit message includes the specific run number. If we wanted to re-run the model training script and reproduce the exact same results for a historical run, say run #435, we could copy the commit ID associated with the run and read the data into a dataframe like so: . df = spark.read.parquet(\"s3://example/296e54fbee5e176f3f4f4aeb7e087f9d57515750e8c3d033b8b841778613cb23/training_dataset/”) . The ability to reference a specific commit_id in code simplifies reproducing the specific state a data collection or even multiple collections. This has many applications that are common in data development, such as historical debugging, identifying deltas in a data collection, audit compliance, and more. ",
     "url": "/use_cases/reproducibility.html#achieving-reproducibility-with-lakefs",
     "relUrl": "/use_cases/reproducibility.html#achieving-reproducibility-with-lakefs"
-  },"258": {
+  },"253": {
     "doc": "Reproducibility",
     "title": "Reproducibility",
     "content": " ",
     "url": "/use_cases/reproducibility.html",
     "relUrl": "/use_cases/reproducibility.html"
-  },"259": {
+  },"254": {
     "doc": "Roadmap",
     "title": "Roadmap",
     "content": " ",
     "url": "/roadmap.html",
     "relUrl": "/roadmap.html"
-  },"260": {
+  },"255": {
     "doc": "Roadmap",
     "title": "Table of contents",
     "content": ". | Ecosystem . | Native Spark OutputCommitter High Priority | Table format support . | Iceberg support High Priority | Metastore integration hooks | Delta Lake merges and diffs across branches | . | Improved Azure Support . | HadoopFS: Support Azure Blob Storage | Support Azure CosmosDB as backend KV store | . | Sync a lakeFS reference (or part of it) with a local directory | Improved streaming support for Apache Kafka | Native connector: Trino | . | Versioning Capabilities . | Garbage collection for uncommitted stale objects High Priority | Garbage Collection on Google Cloud Platform | Incremental Garbage Collection High Priority | Support long running hooks | Git Integration | . | . ",
     "url": "/roadmap.html#table-of-contents",
     "relUrl": "/roadmap.html#table-of-contents"
-  },"261": {
+  },"256": {
     "doc": "Roadmap",
     "title": "Ecosystem",
     "content": "Native Spark OutputCommitter High Priority . We plan to add a Hadoop OutputCommitter that uses existing lakeFS operations for atomic commits that are efficient and safely concurrent. This comes with several benefits: . | Performance: This committer does metadata operations only and doesn’t rely on copying data. | Atomicity: A commit in lakeFS is guaranteed to either succeed or fail, but will not leave any intermediate state on failure. | Traceability: Attaching metadata to each commit means we get quite a lot of information on where data is coming from, how it’s generated, etc. This allows building reproducible pipelines in an easier way. | Resilience: Since every Spark write is a commit, it’s also undoable by reverting it. | . Track and discuss it on GitHub . Table format support . Currently, lakeFS supports merging and comparing references by doing an object-wise comparison. For unstructured data and some forms of tabluar data (namely, Hive structured tables), this works fine. However, in some cases simply creating a union of object modifications from both references isn’t good enough. Modern table formats such as Delta Lake, Hudi, and Iceberg rely on a set of manifest or log files that describe the logical structure of the table. In those cases, a merge operation might have to be aware of the structure of the data: generate a new manifest or re-order the log in order for the output to make sense. Additionally, the definition of a conflict is also a bit different: simply looking at object names to determine whether or not a conflict occurred might not be good enough. With that in mind, we plan to make the diff and merge operations pluggable. lakeFS already supports injecting custom behavior using hooks. Ideally, we can support this by introducing on-diff and on-merge hooks that allow implementing hooks in different languages, possibly utilizing existing code and libraries to aid with understanding these formats. Once this is done, one may implement: . Iceberg support High Priority . A table in Iceberg points to a single metadata file, containing a “location” property. Iceberg uses this location to store: . | Manifests describing where the data is stored. | The actual data. | . Once a table is created, the location property doesn’t change. Therefore, a branch creation in lakeFS in meaningless, since new data added to this branch will be added to the main branch. There are some workarounds for this, but it is our priority to create an excellent integration with Iceberg. Track and discuss it on GitHub . Metastore integration hooks . Allow lakeFS users that query and manipulate data using Hive Metastore to automate the integration between both components. | Creating a branch/tag with a predefined naming convention will result in automatic creation of metastore tables (for a predefined set of table names) | Deleting a branch/tag with a predefined naming convention will result in automatic deletion of metastore tables (for a predefined set of table names) | Merging a branch into another branch will result in metastore changes between branches being applied to the metastore for modified tables defined on the destination branch | . Track and discuss it on GitHub . Delta Lake merges and diffs across branches . Delta lake stores metadata files that represent a logical transaction log that relies on numerical ordering. Currently, when trying to modify a Delta table from two different branches, lakeFS would correctly recognize a conflict: this log diverged into two different copies, representing different changes. Users would then have to forgo one of the change sets by either retaining the destination’s branch set of changes or the source’s branch. A much better user experience would be to allow merging this log into a new unified set of changes, representing changes made in both branches as a new set of log files (and potentially, data files too!). Track and discuss it on GitHub . Improved Azure Support . HadoopFS: Support Azure Blob Storage . Extend the lakeFS HadoopFilesystem to support working directly with Azure Blob Storage. Track and discuss it on GitHub . Support Azure CosmosDB as backend KV store . Allow Azure users to use a serverless database such as CosmosDB as their backing KV for lakeFS metadata. This will also allow auto-provisioning of a CosmosDB database and table as part of the Helm installation process, similar to how its done for DynamoDB on AWS. Track and discuss it on GitHub . Sync a lakeFS reference (or part of it) with a local directory . Support working locally with data stored on lakeFS from a specific reference. Track and discuss it on GitHub . Improved streaming support for Apache Kafka . Committing (along with attaching useful information to the commit) makes a lot of sense for batch workloads: . | run a job or a pipeline on a separate branch and commit, | record information such as the git hash of the code executed, the versions of frameworks used, and information about the data artifacts, | once the pipeline has completed successfully, commit, and attach the recorded information as metadata. | . For streaming, however, this is currently less clear: There’s no obvious point in time to commit as things never actually “finish successfully”. The recommended pattern would be to ingest from a stream on a separate branch, periodically committing - storing not only the data added since last commit but also capturing the offset read from the stream, for reproducibility. These commits can then be merged into a main branch given they pass all relevant quality checks and other validations using hooks, exposing consumers to validated, clean data. In practice, implementing such a workflow is a little challenging. Users need to: . | Orchestrate the commits and merge operations. | Figure out how to attach the correct offset read from the stream broker. | Handle writes coming in while the commit is taking place. | . Ideally, lakeFS should provide tools to automate this, with native support for Apache Kafka. Track and discuss it on GitHub . Native connector: Trino . Currently, the Trino integration works well using the lakeFS S3 Gateway. While easy to integrate and useful out-of-the-box, due to the S3 protocol, it means that the data itself must pass through the lakeFS server. For larger installations, a native integration where lakeFS handles metadata and returns locations in the underlying object store that Trino can then access directly would allow reducing the operational overhead and increasing the scalability of lakeFS. This would be done in a similar way to the Native Spark integration using the Hadoop Filesystem implementation. Track and discuss it on GitHub . ",
     "url": "/roadmap.html#ecosystem",
     "relUrl": "/roadmap.html#ecosystem"
-  },"262": {
+  },"257": {
     "doc": "Roadmap",
     "title": "Versioning Capabilities",
     "content": "Garbage collection for uncommitted stale objects High Priority . Support deleting objects that don’t belong to any commit and were deleted on the target branch. This is commonly used for objects that were staged and then deleted or moved. Track and discuss it on GitHub . Garbage Collection on Google Cloud Platform . The lakeFS Garbage Collection capability hard-deletes objects deleted from branches, helping users reduce costs and comply with data privacy policies. Currently, lakeFS only supports Garbage Collection of S3/Azure objects managed by lakeFS. Extending the support to GCP will allow lakeFS users that use GCP as their underlying storage to use this feature. Track and discuss it on GitHub . Incremental Garbage Collection High Priority . Support running the Garbage Collection Spark job incrementally: take into account commits and references scanned and collected on previous runs to avoid traversing the entire graph on each execution. Track and discuss it on GitHub . Support long running hooks . Support running hooks that might possibly take many minutes to complete. This is useful for things such as data quality checks - where we might want to do big queries or scans to ensure the data being merged adheres to certain business rules. Currently, pre-commit and pre-merge hooks in lakeFS are tied to the lifecycle of the API request that triggers the said commit or merge operation. In order to support long running hooks, there are enhancements to make to lakeFS APIs in order to support an asynchronous commit and merge operations that are no longer tied to the HTTP request that triggered them. Track and discuss it on GitHub . Git Integration . Support an integration between a lakeFS repository and a Git repository. Allow versioning data assets along with the code that was used to modify/generate them. Track and discuss it on GitHub . ",
     "url": "/roadmap.html#versioning-capabilities",
     "relUrl": "/roadmap.html#versioning-capabilities"
-  },"263": {
+  },"258": {
     "doc": "Rollback",
     "title": "Rollbacks",
     "content": " ",
     "url": "/use_cases/rollback.html#rollbacks",
     "relUrl": "/use_cases/rollback.html#rollbacks"
-  },"264": {
+  },"259": {
     "doc": "Rollback",
     "title": "What Is a Rollback?",
     "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a signficant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
     "url": "/use_cases/rollback.html#what-is-a-rollback",
     "relUrl": "/use_cases/rollback.html#what-is-a-rollback"
-  },"265": {
+  },"260": {
     "doc": "Rollback",
     "title": "Why Rollbacks Are Useful",
     "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
     "url": "/use_cases/rollback.html#why-rollbacks-are-useful",
     "relUrl": "/use_cases/rollback.html#why-rollbacks-are-useful"
-  },"266": {
+  },"261": {
     "doc": "Rollback",
     "title": "Performing Rollbacks with lakeFS",
     "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
     "url": "/use_cases/rollback.html#performing-rollbacks-with-lakefs",
     "relUrl": "/use_cases/rollback.html#performing-rollbacks-with-lakefs"
-  },"267": {
+  },"262": {
     "doc": "Rollback",
     "title": "Rollback",
     "content": " ",
     "url": "/use_cases/rollback.html",
     "relUrl": "/use_cases/rollback.html"
+  },"263": {
+    "doc": "Run lakeFS",
+    "title": "Run lakeFS",
+    "content": "Note: The quickstart section is for learning purposes. The installations described in this section will not persist your data. For a production suitable deployment, deploy lakeFS on your cloud. ",
+    "url": "/quickstart/run.html",
+    "relUrl": "/quickstart/run.html"
+  },"264": {
+    "doc": "Run lakeFS",
+    "title": "Running locally with Docker",
+    "content": "To run a local lakeFS instance using Docker: . | Ensure that you have Docker installed on your computer. | Run the following command in your terminal: . docker run --pull always -p 8000:8000 treeverse/lakefs run --local-settings . | Check your installation by opening http://127.0.0.1:8000/setup in your web browser. | Create your first repository in lakeFS. | . Learn more by following this video tutorial: . ",
+    "url": "/quickstart/run.html#running-locally-with-docker",
+    "relUrl": "/quickstart/run.html#running-locally-with-docker"
+  },"265": {
+    "doc": "Run lakeFS",
+    "title": "Running locally with Docker, connected to an object store",
+    "content": "You can alternatively connect a local lakeFS docker container to your cloud storage: . | AWS S3 | Azure Blob Storage | Google Cloud Storage | MinIO | . To modify the local deployment, for example, in order to use your local lakeFS against S3 storage (as opposed to the local storage), run the command with local parameters: . docker run --pull always -p 8000:8000 \\ -e LAKEFS_BLOCKSTORE_TYPE='s3' \\ -e AWS_ACCESS_KEY_ID='YourAccessKeyValue' \\ -e AWS_SECRET_ACCESS_KEY='YourSecretKeyValue' \\ treeverse/lakefs run --local-settings . To modify the local deployment in order to use your local lakeFS against Azure Blob Storage (as opposed to the local storage), run the command with local parameters: . docker run --pull always -p 8000:8000 \\ -e LAKEFS_BLOCKSTORE_TYPE='azure' \\ -e LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCOUNT='YourAzureStorageAccountName' \\ -e LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCESS_KEY='YourAzureStorageAccessKey' \\ treeverse/lakefs run --local-settings . To modify the local deployment in order to use your local lakeFS against Google Cloud Storage (as opposed to the local storage), run the command with local parameters: . docker run --pull always -p 8000:8000 \\ -e LAKEFS_BLOCKSTORE_TYPE='gs' \\ -e LAKEFS_BLOCKSTORE_GS_CREDENTIALS_JSON='YourGoogleServiceAccountKeyJSON' \\ treeverse/lakefs run --local-settings . where you will replace YourGoogleServiceAccountKeyJSON with JSON string that contains your Google service account key. If you want to use the JSON file that contains your Google service account key instead of JSON string (as in the previous command) then go to the directory where JSON file is stored and run the command with local parameters: . docker run --pull always -p 8000:8000 \\ -v $PWD:/myfiles \\ -e LAKEFS_BLOCKSTORE_TYPE='gs' \\ -e LAKEFS_BLOCKSTORE_GS_CREDENTIALS_FILE='/myfiles/YourGoogleServiceAccountKey.json' \\ treeverse/lakefs run --local-settings . This command will mount your present working directory (PWD) within the container and will read the JSON file from your PWD. To use lakeFS with MinIO (or other S3-compatible object storage), use the following example: . docker run --pull always -p 8000:8000 \\ -e LAKEFS_BLOCKSTORE_TYPE='s3' \\ -e LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE='true' \\ -e LAKEFS_BLOCKSTORE_S3_ENDPOINT='http://&lt;minio_endpoint&gt;' \\ -e LAKEFS_BLOCKSTORE_S3_DISCOVER_BUCKET_REGION='false' \\ -e LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID='&lt;minio_access_key&gt;' \\ -e LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY='&lt;minio_secret_key&gt;' \\ treeverse/lakefs run --local-settings . ",
+    "url": "/quickstart/run.html#running-locally-with-docker-connected-to-an-object-store",
+    "relUrl": "/quickstart/run.html#running-locally-with-docker-connected-to-an-object-store"
+  },"266": {
+    "doc": "Run lakeFS",
+    "title": "Other methods",
+    "content": "You can try lakeFS: . | With the lakeFS Playground. | On Kubernetes. | By running the binary directly. | . Feeling ready for production? Deploy lakeFS on your cloud account. ",
+    "url": "/quickstart/run.html#other-methods",
+    "relUrl": "/quickstart/run.html#other-methods"
+  },"267": {
+    "doc": "Run lakeFS",
+    "title": "Next steps",
+    "content": "Now that your lakeFS is running, try creating a repository. ",
+    "url": "/quickstart/run.html#next-steps",
+    "relUrl": "/quickstart/run.html#next-steps"
   },"268": {
     "doc": "S3 Supported API",
     "title": "S3-Supported API",
