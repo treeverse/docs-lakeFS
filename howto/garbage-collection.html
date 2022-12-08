@@ -841,6 +841,13 @@ using the feature you may want to first gain confidence in the decisions GC make
     <li>Backup: copy expired objects from your repository’s storage namespace to an external location before running GC in <a href="#sweep-only-mode">sweep only mode</a>.</li>
     <li>Restore: copy objects that were hard-deleted by GC from an external location you used for saving your backup into your repository’s storage namespace.</li>
   </ul>
+
+  <p><strong>Notes</strong></p>
+  <ul>
+    <li>GC backup and restore is available from version 0.5.2 of lakeFS Spark client.</li>
+    <li>It is compatible with Hadoop API versions 3.1.3 and higher.</li>
+    <li>Note that the utility is not fast due to distcp performance limitations. You may prefer to backup your whole storage namespace with <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10">AzCopy</a> / <a href="https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html">aws cp</a> / <a href="https://rclone.org/">rclone</a>.</li>
+  </ul>
       <h3 id="job-options">
         
         
@@ -849,11 +856,38 @@ using the feature you may want to first gain confidence in the decisions GC make
         
       </h3>
     
+      <h4 class="no_toc" id="enabled-by-default">
+        
+        
+          <a href="#enabled-by-default" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Enabled by default
+        
+        
+      </h4>
+    
 
-  <ul>
-    <li>This will only work with Hadoop versions &gt; 3.1.3, and so require a Hadoop 3 client.</li>
-    <li>Note that the utility is not fast due to distcp performance limitations. You may prefer backup your whole storage namespace with <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10">AzCopy</a> / <a href="https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html">aws cp</a> / <a href="https://rclone.org/">rclone</a>.</li>
-  </ul>
+  <p><code class="language-plaintext highlighter-rouge">-v</code>, to log additional info (path, size) in the SKIP/COPY log
+<code class="language-plaintext highlighter-rouge">-direct</code> to write directly to destination paths, recommended when the destination is an object store
+<code class="language-plaintext highlighter-rouge">-strategy=dynamic</code> to accelerate distCp performance</p>
+      <h4 class="no_toc" id="configuration-options">
+        
+        
+          <a href="#configuration-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration options
+        
+        
+      </h4>
+    
+
+  <p><code class="language-plaintext highlighter-rouge">-log</code>, to configure the log path
+<code class="language-plaintext highlighter-rouge">-m</code>, to set the max number of maps
+<code class="language-plaintext highlighter-rouge">-bandwidth</code>, to specify bandwidth per map, in MB/second
+<code class="language-plaintext highlighter-rouge">-numListstatusThreads</code>, number of threads to use for building file listing, max 40</p>
+
+  <p>To configure the properties, set the following hadoop properties:</p>
+  <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.distcp.log.path
+spark.hadoop.distcp.max.maps
+spark.hadoop.distcp.map.bandwidth.mb
+spark.hadoop.distcp.liststatus.threads 
+</code></pre></div>  </div>
       <h3 class="no_toc" id="running-gc-backup-and-restore">
         
         
@@ -868,8 +902,7 @@ Currently, GC backup and restore is available for Spark 3.1.2 and 3.2.1, but it 
 
   <p>First, download the lakeFS Spark client Uber-jar. The Uber-jar can be found on a public S3 location:
 <code class="language-plaintext highlighter-rouge">http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-312-hadoop3/${CLIENT_VERSION}/lakefs-spark-client-312-hadoop3-assembly-${CLIENT_VERSION}.jar
-</code>
-<strong>Note</strong> GC backup and restore is available from version 0.5.2 of lakeFS Spark client.</p>
+</code></p>
 
   <p>Running instructions:</p>
       <h4 class="no_toc" id="backup">
@@ -899,6 +932,7 @@ Program arguments:</p>
 
       <p>To start the backup process, run:</p>
       <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
+  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:3.2.0 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
@@ -951,7 +985,7 @@ Program arguments:</p>
 
         <p>To start the restore process, run:</p>
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
-  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
+ <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:3.2.0 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
@@ -971,7 +1005,6 @@ Program arguments:</p>
 
         <p>To start the restore process, run:</p>
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
-  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
   <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
   &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
   objects-to-restore-list-location backup-external-location storage-namespace azure
