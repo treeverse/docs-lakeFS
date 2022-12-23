@@ -428,12 +428,12 @@
             <div id="main-content" class="main-content" role="main">
                 
                 <h1 class="no_toc" id="using-lakefs-with-delta-lake">
-        
-        
-          <a href="#using-lakefs-with-delta-lake" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Delta Lake
-        
-        
-      </h1>
+  
+  
+    <a href="#using-lakefs-with-delta-lake" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Delta Lake
+  
+  
+</h1>
     
 
 <p><a href="https://delta.io/">Delta Lake</a> is an open file format designed to improve performance and provide transactional guarantees to data lake tables.</p>
@@ -447,13 +447,13 @@
 </ol>
 
 <div class="toc-block">
-      <h2 class="no_toc text-delta" id="table-of-contents">
-        
-        
-          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
-        
-        
-      </h2>
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
     
 
 <ol id="markdown-toc">
@@ -467,13 +467,13 @@
 </ol>
 
 </div>
-      <h2 id="configuration">
-        
-        
-          <a href="#configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
-        
-        
-      </h2>
+<h2 id="configuration">
+  
+  
+    <a href="#configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
+  
+  
+</h2>
     
 
 <p>Most commonly, you interact with Delta tables in a Spark environment - given the native integration between Delta Lake and Spark.</p>
@@ -486,23 +486,23 @@
 </code></pre></div></div>
 
 <p>Note: If using the Databricks Analytics Platform, see the <a href="/integrations/spark.html">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
-      <h2 id="limitations">
-        
-        
-          <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
-        
-        
-      </h2>
+<h2 id="limitations">
+  
+  
+    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+  
+  
+</h2>
     
 
 <p>The <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it would result in conflicts if later attempting to merge one branch into the other. For this reason, production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>.</p>
-      <h3 id="when-running-lakefs-inside-your-vpc-on-aws">
-        
-        
-          <a href="#when-running-lakefs-inside-your-vpc-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> When running lakeFS inside your VPC (on AWS)
-        
-        
-      </h3>
+<h3 id="when-running-lakefs-inside-your-vpc-on-aws">
+  
+  
+    <a href="#when-running-lakefs-inside-your-vpc-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> When running lakeFS inside your VPC (on AWS)
+  
+  
+</h3>
     
 
 <p>When lakeFS runs inside your private network, your Databricks cluster needs to be able to access it. 
@@ -511,26 +511,26 @@ This can be done by setting up a VPC peering between the two VPCs
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.databricks.delta.multiClusterWrites.enabled false
 </code></pre></div></div>
-      <h3 id="using-multi-cluster-writes-on-aws">
-        
-        
-          <a href="#using-multi-cluster-writes-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using multi cluster writes (on AWS)
-        
-        
-      </h3>
+<h3 id="using-multi-cluster-writes-on-aws">
+  
+  
+    <a href="#using-multi-cluster-writes-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using multi cluster writes (on AWS)
+  
+  
+</h3>
     
 
 <p>When using multi-cluster writes, Databricks overrides Delta’s S3-commit action. 
 The new action tries to contact lakeFS from servers on Databricks’ own AWS account, which of course won’t be able to access your private network. 
 So, if you must use multi-cluster writes, you’ll have to allow access from Databricks’ AWS account to lakeFS. 
 If you are trying to achieve that, please reach out on Slack and the community will try to assist.</p>
-      <h2 id="further-reading">
-        
-        
-          <a href="#further-reading" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Further Reading
-        
-        
-      </h2>
+<h2 id="further-reading">
+  
+  
+    <a href="#further-reading" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Further Reading
+  
+  
+</h2>
     
 
 <p>See <a href="https://lakefs.io/guarantee-consistency-in-your-delta-lake-tables-with-lakefs/">Guaranteeing Consistency in Your Delta Lake Tables With lakeFS</a> post on the lakeFS blog to learn how to 

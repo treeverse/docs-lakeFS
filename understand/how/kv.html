@@ -431,22 +431,22 @@
             <div id="main-content" class="main-content" role="main">
                 
                 <h1 class="no_toc" id="internal-database-structure">
-        
-        
-          <a href="#internal-database-structure" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Internal database structure
-        
-        
-      </h1>
+  
+  
+    <a href="#internal-database-structure" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Internal database structure
+  
+  
+</h1>
     
 
 <div class="toc-block">
-      <h2 class="no_toc text-delta" id="table-of-contents">
-        
-        
-          <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
-        
-        
-      </h2>
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
     
 
 <ol id="markdown-toc">
@@ -467,13 +467,13 @@ Our KV Store implements a generic interface, with methods for <code class="langu
 <p>In order to store its metadata objects (that is <code class="language-plaintext highlighter-rouge">Repositories</code>, <code class="language-plaintext highlighter-rouge">Branches</code>, <code class="language-plaintext highlighter-rouge">Commits</code>, <code class="language-plaintext highlighter-rouge">Tags</code>, and <code class="language-plaintext highlighter-rouge">Uncommitted Objects</code>), lakeFS implements another layer over the generic KV Store, which supports serialization and deserialization of these objects as <a href="https://en.wikipedia.org/wiki/Protocol_Buffers">protobuf</a>. As this layer relies on the generic interface of the KV Store layer, it is totally agnostic to whichever store implementation is in use, gaining our users the maximal flexibility</p>
 
 <p>For further reading, please refer to our <a href="https://github.com/treeverse/lakeFS/blob/master/design/accepted/metadata_kv/index.md">KV Design</a></p>
-      <h2 id="optimistic-locking-with-kv">
-        
-        
-          <a href="#optimistic-locking-with-kv" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Optimistic Locking with KV
-        
-        
-      </h2>
+<h2 id="optimistic-locking-with-kv">
+  
+  
+    <a href="#optimistic-locking-with-kv" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Optimistic Locking with KV
+  
+  
+</h2>
     
 
 <p>One important key difference between SQL databases and Key Value Store is the ability to lock resources. While this is a common practice with relational databases, Key Value stores not always support this ability. When designing our KV Store, we tried to support the most simplistic straight-forward interface, with flexibility in backing DB selection, and so, we decided not to support locking. This decision brought some concurrency challenges we had to overcome. Let us take a look at a common lakeFS flow, <code class="language-plaintext highlighter-rouge">Commit</code>, during which several database operations are performed:</p>
@@ -496,13 +496,13 @@ Here’s a running example:</p>
 <p>An important detail to note, is that as a <code class="language-plaintext highlighter-rouge">Commit</code> starts, and the <code class="language-plaintext highlighter-rouge">StagingToken</code> is set a new value, the former value is added to a list of ‘still valid’ <code class="language-plaintext highlighter-rouge">StagingToken</code>s - <code class="language-plaintext highlighter-rouge">SealedToken</code> - on the <code class="language-plaintext highlighter-rouge">Branch</code>, which makes sure no <code class="language-plaintext highlighter-rouge">StagingToken</code> and no object are lost due to a failed <code class="language-plaintext highlighter-rouge">Commit</code></p>
 
 <p>You can read more on the Commit Flow in the <a href="https://github.com/treeverse/lakeFS/blob/master/design/accepted/metadata_kv/index.md#graveler-metadata---branches-and-staged-writes">dedicated section in the KV Design</a></p>
-      <h2 id="db-transactions-and-atomic-updates">
-        
-        
-          <a href="#db-transactions-and-atomic-updates" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DB Transactions and Atomic Updates
-        
-        
-      </h2>
+<h2 id="db-transactions-and-atomic-updates">
+  
+  
+    <a href="#db-transactions-and-atomic-updates" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> DB Transactions and Atomic Updates
+  
+  
+</h2>
     
 
 <p>Another notable difference is the existence of DB transactions with PostgreSQL, ability that our KV Store lacks. This ability was leveraged by <code class="language-plaintext highlighter-rouge">lakeFS</code> to construct several DB updates, into one “atomic” operation - each failure, in each step, rolled back the entire operation, keeping the DB consistent and clean.
@@ -511,13 +511,13 @@ A brand new <code class="language-plaintext highlighter-rouge">Repository</code>
 With no transaction in KV Store, if for example the <code class="language-plaintext highlighter-rouge">Branch</code> creation fails, it will leave the <code class="language-plaintext highlighter-rouge">Repository</code> without an initial <code class="language-plaintext highlighter-rouge">Branch</code> (or a <code class="language-plaintext highlighter-rouge">Branch</code> at all), yet the <code class="language-plaintext highlighter-rouge">Repository</code> will be accessible. Trying to delete the <code class="language-plaintext highlighter-rouge">Repository</code> as a response to <code class="language-plaintext highlighter-rouge">Branch</code> creation failure is ony a partial solution as this operation can fail as well.
 To mitigate this we introduced a per-<code class="language-plaintext highlighter-rouge">Repository</code>-partition, which holds all repository related objects (the <code class="language-plaintext highlighter-rouge">Branch</code> and <code class="language-plaintext highlighter-rouge">Commit</code> in this scenario). The partition key can only be derived from the specific<code class="language-plaintext highlighter-rouge">Repository</code> instance itself. In addition we first create the <code class="language-plaintext highlighter-rouge">Repository</code> objects, the <code class="language-plaintext highlighter-rouge">Commit</code> and the <code class="language-plaintext highlighter-rouge">Branch</code>, under the <code class="language-plaintext highlighter-rouge">Repository</code>’s partition key, and then the <code class="language-plaintext highlighter-rouge">Repository</code> is created. The <code class="language-plaintext highlighter-rouge">Repository</code> and its objects will be accessible only after a successful creation of all 3 entities. A failure in this flow might leave some dangling objects, but consistency is maintained.
 The number of such dangling objects is not expected to be significant, and we plan to implement a cleaning algorithm to keep our KV Store neat and clean</p>
-      <h2 id="so-which-approach-is-better">
-        
-        
-          <a href="#so-which-approach-is-better" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> So, Which Approach is Better?
-        
-        
-      </h2>
+<h2 id="so-which-approach-is-better">
+  
+  
+    <a href="#so-which-approach-is-better" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> So, Which Approach is Better?
+  
+  
+</h2>
     
 
 <p>This documents provides a peek into <code class="language-plaintext highlighter-rouge">lakeFS</code>’ new database approach - Key Value Store instead of a Relational SQL. It discusses the challenges we faced, and the solutions we provided to overcome these challenges. Considering the fact that <code class="language-plaintext highlighter-rouge">lakeFS</code> over with relational database did work, you might ask yourself why did we bother to develop another solution. The simple answer, is that while PostgreSQL was not a bad option, it was the only option, and any drawback of PostgreSQL, reflected on our users:</p>
