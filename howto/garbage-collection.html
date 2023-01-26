@@ -482,13 +482,9 @@ At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have
   </li>
   <li><a href="#considerations" id="markdown-toc-considerations">Considerations</a></li>
   <li><a href="#gc-backup-and-restore" id="markdown-toc-gc-backup-and-restore">GC backup and restore</a>    <ol>
-      <li><a href="#using-rclone" id="markdown-toc-using-rclone">Using rclone</a>        <ol>
-          <li><a href="#backup-command" id="markdown-toc-backup-command">Backup command</a></li>
-          <li><a href="#restore-command" id="markdown-toc-restore-command">Restore command</a></li>
-          <li><a href="#example" id="markdown-toc-example">Example</a></li>
-        </ol>
-      </li>
-      <li><a href="#using-distcp" id="markdown-toc-using-distcp">Using DistCp</a></li>
+      <li><a href="#backup-command" id="markdown-toc-backup-command">Backup command</a></li>
+      <li><a href="#restore-command" id="markdown-toc-restore-command">Restore command</a></li>
+      <li><a href="#example" id="markdown-toc-example">Example</a></li>
     </ol>
   </li>
   <li><a href="#beta-deleting-uncommitted-objects" id="markdown-toc-beta-deleting-uncommitted-objects">Beta: Deleting uncommitted objects</a>    <ol>
@@ -859,14 +855,6 @@ using the feature you may want to first gain confidence in the decisions GC make
     <li>Backup: copy expired objects from your repository’s storage namespace to an external location before running GC in <a href="#sweep-only-mode">sweep only mode</a>.</li>
     <li>Restore: copy objects that were hard-deleted by GC from an external location you used for saving your backup into your repository’s storage namespace.</li>
   </ul>
-<h3 id="using-rclone">
-  
-  
-    <a href="#using-rclone" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using rclone
-  
-  
-</h3>
-    
 
   <p>Follow <a href="https://rclone.org/docs/">rclone documentation</a> to configure remote access to the underlying storage used by lakeFS.
 Replace <code class="language-plaintext highlighter-rouge">LAKEFS_STORAGE_NAMESPACE</code> with remote:bucket/path which points to the lakeFS repository storage namespace.
@@ -914,183 +902,6 @@ rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span c
 rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"azure://tal/azure-br/_lakefs/retention/gc/addresses.text/mark_id=a64d1885-6202-431f-a0a3-8832e4a5865a/"</span> | <span class="se">\</span>
   rclone <span class="nt">-P</span> <span class="nt">--no-traverse</span> <span class="nt">--files-from</span> - copy azure://backup/repo-example/ azure://repo/example/
 </code></pre></div>  </div>
-<h3 id="using-distcp">
-  
-  
-    <a href="#using-distcp" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using DistCp
-  
-  
-</h3>
-    
-
-  <p>This utility is a Spark application that uses <a href="https://hadoop.apache.org/docs/current/hadoop-distcp/DistCp.html">DistCp</a> under the hood to copy objects marked by GC as expired from one location to another.</p>
-
-  <p><strong>Notes</strong></p>
-  <ul>
-    <li>GC Backup &amp; Restore job using DistCp is <a href="https://github.com/treeverse/lakeFS/issues/4775">broken</a> due to changes in the storage namespace structure relevant to lakeFS &gt;= v0.84.0.  We’re working to fix it.</li>
-    <li>There has been a change in the storage namespace structure relevant to lakeFS &gt;= v0.84.0, which causes the <a href="https://github.com/treeverse/lakeFS/issues/4775">GC Backup &amp; Restore job to break</a>.  Currently, we are working on a fix.</li>
-    <li>GC Backup &amp; Restore is available from version 0.5.2 of lakeFS Spark client.</li>
-    <li>It is compatible with Hadoop API versions 3.1.3 and higher.</li>
-    <li>Note that the utility is not fast due to DistCp performance limitations. You may prefer to backup your whole storage namespace with <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10">AzCopy</a> / <a href="https://docs.aws.amazon.com/cli/latest/reference/s3/cp.html">aws cp</a> / <a href="https://docs.lakefs.io/howto/copying.html#using-rclone">rclone</a>.</li>
-  </ul>
-<h4 class="no_toc" id="job-options">
-  
-  
-    <a href="#job-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Job options
-  
-  
-</h4>
-    
-
-  <p><strong>Enabled by default</strong></p>
-
-  <ul>
-    <li><code class="language-plaintext highlighter-rouge">-v</code>, to log additional info (path, size) in the SKIP/COPY log</li>
-    <li><code class="language-plaintext highlighter-rouge">-direct</code> to write directly to destination paths, recommended when the destination is an object store</li>
-    <li><code class="language-plaintext highlighter-rouge">-strategy=dynamic</code> to accelerate DistCp performance</li>
-  </ul>
-
-  <p><strong>Additional options</strong></p>
-
-  <ul>
-    <li><code class="language-plaintext highlighter-rouge">-log</code>, to configure the log path</li>
-    <li><code class="language-plaintext highlighter-rouge">-m</code>, to set the max number of maps</li>
-    <li><code class="language-plaintext highlighter-rouge">-bandwidth</code>, to specify bandwidth per map, in MB/second</li>
-    <li><code class="language-plaintext highlighter-rouge">-numListstatusThreads</code>, number of threads to use for building file listing, max 40</li>
-  </ul>
-
-  <p>To configure the properties, set the following Hadoop properties:</p>
-
-  <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.distcp.log.path
-spark.hadoop.distcp.max.maps
-spark.hadoop.distcp.map.bandwidth.mb
-spark.hadoop.distcp.liststatus.threads 
-</code></pre></div>  </div>
-<h4 class="no_toc" id="running-gc-backup-and-restore">
-  
-  
-    <a href="#running-gc-backup-and-restore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running GC backup and restore
-  
-  
-</h4>
-    
-
-  <p>You can run GC backup and restore using <code class="language-plaintext highlighter-rouge">spark-submit</code> or using your preferred method of running Spark programs. 
-Currently, GC backup and restore is available for Spark 3.1.2 and 3.2.1, but it may work for other versions.</p>
-
-  <p>First, download the lakeFS Spark client Uber-jar. The Uber-jar can be found on a public S3 location:
-<code class="language-plaintext highlighter-rouge">http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-312-hadoop3/${CLIENT_VERSION}/lakefs-spark-client-312-hadoop3-assembly-${CLIENT_VERSION}.jar</code>
-<strong>Note</strong> GC backup and restore is available from version 0.5.2 of lakeFS Spark client.</p>
-
-  <p>Running instructions:</p>
-<h5 class="no_toc" id="backup-job">
-  
-  
-    <a href="#backup-job" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Backup job
-  
-  
-</h5>
-    
-
-  <div class="tabs">
-    <ul>
-    <li><a href="#aws-option">On AWS</a></li>
-	<li><a href="#azure-option">On Azure</a></li>
-  </ul>
-    <div id="aws-option">
-
-      <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code>
-Program arguments:</p>
-      <ul>
-        <li><em>location of expired objects list</em>: the path of an expired objects parquet created by a <a href="#mark-only-mode">mark-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a mark-only run this file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace includes the data you are backing up.</li>
-        <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
-        <li><em>storage type</em>: s3</li>
-      </ul>
-
-      <p>To start the backup process, run:</p>
-
-      <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
-  <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:3.2.0 <span class="se">\</span>
-  <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
-  <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
-  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
-  expired-objects-list-location storage-namespace backup-external-location s3 
-</code></pre></div>      </div>
-    </div>
-
-    <div id="azure-option">
-
-      <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code>
-Program arguments:</p>
-      <ul>
-        <li><em>location of expired objects list</em>: the path of an expired objects parquet created by a <a href="#mark-only-mode">mark-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a mark-only run this file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-        <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you are running GC for. The storage namespace includes the data you are backing up.</li>
-        <li><em>external location for backup</em>: A storage location outside your lakeFS storage namespace into which you want to save the backup.</li>
-        <li><em>storage type</em>: s3</li>
-      </ul>
-
-      <p>To start the backup process, run:</p>
-      <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
-  <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
-  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
-  expired-objects-list-location storage-namespace backup-external-location azure
-</code></pre></div>      </div>
-    </div>
-<h5 class="no_toc" id="restore-job">
-  
-  
-    <a href="#restore-job" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Restore job
-  
-  
-</h5>
-    
-
-    <div class="tabs">
-      <ul>
-    <li><a href="#aws-option">On AWS</a></li>
-	<li><a href="#azure-option">On Azure</a></li>
-  </ul>
-      <div id="aws-option">
-
-        <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code>
-Program arguments:</p>
-        <ul>
-          <li><em>location of objects to restore list</em>: the path for a list of object that were hard-deleted by a <a href="#sweep-only-mode">sweep-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a sweep only run the file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-          <li><em>external location to restore from</em>: A storage location outside your lakeFS storage namespace you used for backup.</li>
-          <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you previously ran GC for.</li>
-          <li><em>storage type</em>: s3</li>
-        </ul>
-
-        <p>To start the restore process, run:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
- <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:3.2.0 <span class="se">\</span>
-  <span class="nt">-c</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY&gt; <span class="se">\</span>
-  <span class="nt">-c</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span>&lt;AWS_SECRET_KEY&gt; <span class="se">\</span>
-  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
-  objects-to-restore-list-location backup-external-location storage-namespace s3 
-</code></pre></div>        </div>
-      </div>
-
-      <div id="azure-option">
-        <p>You should specify the Uber-jar path instead of <code class="language-plaintext highlighter-rouge">&lt;APPLICATION-JAR-PATH&gt;</code>
-Program arguments:</p>
-        <ul>
-          <li><em>location of objects to restore list</em>: the path for a list of object that were hard-deleted by a <a href="#sweep-only-mode">sweep-only</a> GC run. given a <code class="language-plaintext highlighter-rouge">MARK_ID</code> used for a sweep only run the file is located under <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</li>
-          <li><em>external location to restore from</em>: A storage location outside your lakeFS storage namespace you used for backup.</li>
-          <li><em>storage namespace</em>: The storage namespace of the lakeFS repository you previously ran GC for.</li>
-          <li><em>storage type</em>: azure</li>
-        </ul>
-
-        <p>To start the restore process, run:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GCBackupAndRestore <span class="se">\</span>
-  <span class="nt">-c</span> spark.hadoop.fs.azure.account.key.&lt;AZURE_STORAGE_ACCOUNT&gt;.dfs.core.windows.net<span class="o">=</span>&lt;AZURE_STORAGE_ACCESS_KEY&gt; <span class="se">\</span>
-  &lt;APPLICATION-JAR-PATH&gt; <span class="se">\</span>
-  objects-to-restore-list-location backup-external-location storage-namespace azure
-</code></pre></div>        </div>
-      </div>
 <h2 id="beta-deleting-uncommitted-objects">
   
   
@@ -1100,25 +911,25 @@ Program arguments:</p>
 </h2>
     
 
-      <p class="note">Note: Uncommitted GC is in Beta mode. Users should read this manual carefully and 
+  <p class="note">Note: Uncommitted GC is in Beta mode. Users should read this manual carefully and 
 take precautions before applying the actual delete (“sweep”), like copying the marked objects.</p>
 
-      <p>Deletion of objects that were never committed was always a difficulty for lakeFS, see
+  <p>Deletion of objects that were never committed was always a difficulty for lakeFS, see
 <a href="https://github.com/treeverse/lakeFS/issues/1933">#1933</a> for more details. Examples for 
 objects that will be collected as part of the uncommitted GC job:</p>
-      <ol>
-        <li>Objects that were uploaded to lakeFS and deleted.</li>
-        <li>Objects that were uploaded to lakeFS and were overridden.</li>
-      </ol>
+  <ol>
+    <li>Objects that were uploaded to lakeFS and deleted.</li>
+    <li>Objects that were uploaded to lakeFS and were overridden.</li>
+  </ol>
 
-      <p class="note">While we tried to make the uncommitted GC a server-only solution, we couldn’t find a sustainable way to achieve that.
+  <p class="note">While we tried to make the uncommitted GC a server-only solution, we couldn’t find a sustainable way to achieve that.
 See discussion on the original <a href="https://github.com/treeverse/lakeFS/pull/4015">design PR</a>.</p>
 
-      <p>The uncommitted GC will not clean:</p>
-      <ol>
-        <li>Committed objects. For committed objects cleanup see <a href="#what-gets-collected">above</a></li>
-        <li>Everything mentioned in <a href="#what-does-_not_-get-collected">what does not get collected</a></li>
-      </ol>
+  <p>The uncommitted GC will not clean:</p>
+  <ol>
+    <li>Committed objects. For committed objects cleanup see <a href="#what-gets-collected">above</a></li>
+    <li>Everything mentioned in <a href="#what-does-_not_-get-collected">what does not get collected</a></li>
+  </ol>
 <h3 class="no_toc" id="prerequisites">
   
   
@@ -1128,12 +939,12 @@ See discussion on the original <a href="https://github.com/treeverse/lakeFS/pull
 </h3>
     
 
-      <ol>
-        <li>lakeFS server version must be at least <a href="https://github.com/treeverse/lakeFS/releases/tag/v0.87.0">v0.87.0</a>. 
+  <ol>
+    <li>lakeFS server version must be at least <a href="https://github.com/treeverse/lakeFS/releases/tag/v0.87.0">v0.87.0</a>. 
 If your version is lower, you should first upgrade.</li>
-        <li>Read the <a href="#limitations">limitations</a> section.</li>
-        <li>Setup <a href="https://rclone.org/">rclone</a> to access underlying bucket for backup and restore.</li>
-      </ol>
+    <li>Read the <a href="#limitations">limitations</a> section.</li>
+    <li>Setup <a href="https://rclone.org/">rclone</a> to access underlying bucket for backup and restore.</li>
+  </ol>
 <h3 id="running-the-uncommitted-gc">
   
   
@@ -1143,13 +954,13 @@ If your version is lower, you should first upgrade.</li>
 </h3>
     
 
-      <ol>
-        <li>
-          <p>Mark the files to delete - summary and report will be generated under <code class="language-plaintext highlighter-rouge">&lt;REPOSITORY_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/uncommitted/&lt;MARK_ID&gt;/</code>.
+  <ol>
+    <li>
+      <p>Mark the files to delete - summary and report will be generated under <code class="language-plaintext highlighter-rouge">&lt;REPOSITORY_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/uncommitted/&lt;MARK_ID&gt;/</code>.
 By listing the bucket under ‘uncommitted’ the last entry represents the last mark ID of the uncommitted GC.
 The GC job prints out “Report for mark_id=…” which includes the mark ID with the run summary.</p>
 
-          <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="se">\</span>
+      <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="se">\</span>
     <span class="nt">--conf</span> spark.hadoop.lakefs.gc.do_sweep<span class="o">=</span><span class="nb">false</span> <span class="se">\</span>
     <span class="nt">--conf</span> spark.hadoop.lakefs.api.url<span class="o">=</span>&lt;LAKEFS_ENDPOINT&gt; <span class="se">\</span>
     <span class="nt">--conf</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span>&lt;AWS_ACCESS_KEY_ID&gt; <span class="se">\</span>
@@ -1159,21 +970,21 @@ The GC job prints out “Report for mark_id=…” which includes the mark ID wi
     <span class="nt">--class</span> io.treeverse.gc.UncommittedGarbageCollector <span class="se">\</span>
     <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
     &lt;APPLICATION-JAR-PATH&gt; &lt;REPOSITORY_NAME&gt; &lt;REGION&gt;
-</code></pre></div>          </div>
-        </li>
-        <li>
-          <p>Backup (optional but recommended) - when you start using the feature you may want to first gain confidence in the decisions uncommitted GC makes. Backup will copy the objects marked to be deleted for run ID to a specified location.
+</code></pre></div>      </div>
+    </li>
+    <li>
+      <p>Backup (optional but recommended) - when you start using the feature you may want to first gain confidence in the decisions uncommitted GC makes. Backup will copy the objects marked to be deleted for run ID to a specified location.
 Follow <a href="https://rclone.org/docs/">rclone documentation</a> to configure remote access to lakeFS storage.
 Note that the lakeFS and backup locations are specified as <code class="language-plaintext highlighter-rouge">remote:path</code> based on how rclone was configured.</p>
 
-          <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"&lt;LAKEFS_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/uncommitted/&lt;MARK_ID&gt;/deleted.text/"</span> | <span class="se">\</span>
+      <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"&lt;LAKEFS_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/uncommitted/&lt;MARK_ID&gt;/deleted.text/"</span> | <span class="se">\</span>
   rclone <span class="nt">-P</span> <span class="nt">--no-traverse</span> <span class="nt">--files-from</span> - copy &lt;LAKEFS_STORAGE_NAMESPACE&gt; &lt;BACKUP_STORAGE_LOCATION&gt;
-</code></pre></div>          </div>
-        </li>
-        <li>
-          <p>Sweep - delete reported objects to delete based on mark ID</p>
+</code></pre></div>      </div>
+    </li>
+    <li>
+      <p>Sweep - delete reported objects to delete based on mark ID</p>
 
-          <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="se">\</span>
+      <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="se">\</span>
     <span class="nt">--conf</span> spark.hadoop.lakefs.gc.mark_id<span class="o">=</span>&lt;MARK_ID&gt; <span class="se">\</span>
     <span class="nt">--conf</span> spark.hadoop.lakefs.gc.do_mark<span class="o">=</span><span class="nb">false</span> <span class="se">\</span>
     <span class="nt">--conf</span> spark.hadoop.lakefs.api.url<span class="o">=</span>&lt;LAKEFS_ENDPOINT&gt; <span class="se">\</span>
@@ -1184,17 +995,17 @@ Note that the lakeFS and backup locations are specified as <code class="language
     <span class="nt">--class</span> io.treeverse.gc.UncommittedGarbageCollector <span class="se">\</span>
     <span class="nt">--packages</span> org.apache.hadoop:hadoop-aws:2.7.7 <span class="se">\</span>
     &lt;APPLICATION-JAR-PATH&gt; &lt;REPOSITORY_NAME&gt; &lt;REGION&gt;
-</code></pre></div>          </div>
-        </li>
-        <li>
-          <p>Restore - in any case we would like to undo and restore the data from from our backup. The following command will copy the objects back from the backup location using the information stored under the specific mark ID.
+</code></pre></div>      </div>
+    </li>
+    <li>
+      <p>Restore - in any case we would like to undo and restore the data from from our backup. The following command will copy the objects back from the backup location using the information stored under the specific mark ID.
 Note that the lakeFS and backup locations are specified as <code class="language-plaintext highlighter-rouge">remote:path</code> based on how rclone was configured.</p>
 
-          <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"remote:&lt;LAKEFS_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/uncommitted/&lt;MARK_ID&gt;/deleted.text/"</span> | <span class="se">\</span>
+      <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"remote:&lt;LAKEFS_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/uncommitted/&lt;MARK_ID&gt;/deleted.text/"</span> | <span class="se">\</span>
   rclone <span class="nt">-P</span> <span class="nt">--no-traverse</span> <span class="nt">--files-from</span> - copy &lt;BACKUP_STORAGE_LOCATION&gt; &lt;LAKEFS_STORAGE_NAMESPACE&gt;
-</code></pre></div>          </div>
-        </li>
-      </ol>
+</code></pre></div>      </div>
+    </li>
+  </ol>
 <h4 class="no_toc" id="uncommitted-gc-job-options">
   
   
@@ -1204,7 +1015,7 @@ Note that the lakeFS and backup locations are specified as <code class="language
 </h4>
     
 
-      <p>Similar to the described <a href="#gc-job-options">above</a>.</p>
+  <p>Similar to the described <a href="#gc-job-options">above</a>.</p>
 <h4 class="no_toc" id="limitations">
   
   
@@ -1214,16 +1025,16 @@ Note that the lakeFS and backup locations are specified as <code class="language
 </h4>
     
 
-      <p>The uncommitted GC job has several limitations in its Beta version:</p>
-      <ol>
-        <li>No writes to lakeFS during the execution of the job. Objects written to lakeFS
+  <p>The uncommitted GC job has several limitations in its Beta version:</p>
+  <ol>
+    <li>No writes to lakeFS during the execution of the job. Objects written to lakeFS
 during the job run may or may not be detected by the job. It can lead to unexpected behaviour 
 including the deletion of newly written data. Avoid any write operation while the job is 
 running, like <code class="language-plaintext highlighter-rouge">UploadObject</code>, <code class="language-plaintext highlighter-rouge">CopyObject</code>, <code class="language-plaintext highlighter-rouge">StageObject</code>, <code class="language-plaintext highlighter-rouge">LinkPhysicalAddress</code> or 
 any other non-read operation.</li>
-        <li>Support is limited to S3 repositories, it was not tested on ABS, GS or MinIO.</li>
-        <li>Scale may be limited, see performance results below.</li>
-      </ol>
+    <li>Support is limited to S3 repositories, it was not tested on ABS, GS or MinIO.</li>
+    <li>Scale may be limited, see performance results below.</li>
+  </ol>
 <h4 class="no_toc" id="next-steps">
   
   
@@ -1233,23 +1044,23 @@ any other non-read operation.</li>
 </h4>
     
 
-      <p>The uncommitted GC is under development, next releases will include:</p>
+  <p>The uncommitted GC is under development, next releases will include:</p>
 
-      <ol>
-        <li>Incorporation of committed &amp; uncommitted GC into a single job. We understand the friction
+  <ol>
+    <li>Incorporation of committed &amp; uncommitted GC into a single job. We understand the friction
 of having 2 garbage collection jobs for a lakeFS installation and working to creating a
 single job for it.</li>
-        <li>Removing the limitation of a read-only lakeFS during the job run.</li>
-        <li>Performance improvements:
-          <ol>
-            <li>Better parallelization of the storage namespace traversal.</li>
-            <li>Optimized Run: GC will only iterate over objects that were written to the
+    <li>Removing the limitation of a read-only lakeFS during the job run.</li>
+    <li>Performance improvements:
+      <ol>
+        <li>Better parallelization of the storage namespace traversal.</li>
+        <li>Optimized Run: GC will only iterate over objects that were written to the
 repository since the last GC run. For more information see the <a href="https://github.com/treeverse/lakeFS/blob/master/design/accepted/gc_plus/uncommitted-gc.md#flow-2-optimized-run">proposal</a>.</li>
-          </ol>
-        </li>
-        <li>Backup &amp; Restore, similar to <a href="#gc-backup-and-restore">committed data</a>.</li>
-        <li>Support for non-S3 repositories.</li>
       </ol>
+    </li>
+    <li>Backup &amp; Restore, similar to <a href="#gc-backup-and-restore">committed data</a>.</li>
+    <li>Support for non-S3 repositories.</li>
+  </ol>
 <h4 class="no_toc" id="performance-1">
   
   
@@ -1259,14 +1070,12 @@ repository since the last GC run. For more information see the <a href="https://
 </h4>
     
 
-      <p>The uncommitted GC job was tested on a repository with 1K branches, 
+  <p>The uncommitted GC job was tested on a repository with 1K branches, 
 25K uncommitted objects and 2K commits.
 The storage namespace number of objects prior to the cleanup was 103K objects.
 The job ran on a Spark cluster with a single master and 2 workers of type <a href="https://aws.amazon.com/ec2/instance-types/i3/">i3.2xlarge</a> 
 The job finished after 5 minutes deleting 15K objects.</p>
 
-    </div>
-  </div>
 </div>
 
                 
