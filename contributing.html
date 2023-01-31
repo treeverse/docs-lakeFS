@@ -606,19 +606,57 @@ You can create separate pull requests for documentation changes only.</p>
   <li>You can explain things better by including examples. Show, not tell. Use illustrations, images, gifs, code snippets, etc.</li>
   <li>Establish a visual hierarchy to help people quickly find the information they need. Use text formatting to create levels of title and subtitle (such as h1 to h6 headings in HTML).</li>
 </ul>
-<h3 id="test-your-changes-localy">
+<h3 id="test-your-changes-locally">
   
   
-    <a href="#test-your-changes-localy" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Test your changes localy
+    <a href="#test-your-changes-locally" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Test your changes locally
   
   
 </h3>
     
-<p>To render the documentation locally and preview changes, use the following command and <a href="http://localhost:4000">browse the documentation locally</a>:</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>docs
-docker run <span class="nt">--rm</span> <span class="nt">-p</span> 4000:4000 <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">:/srv/jekyll:Z"</span> <span class="nt">-it</span> jekyll/jekyll:3.8 jekyll serve
-</code></pre></div></div>
+<p>To render the documentation locally and preview changes you can run the Jeykll server under Docker.</p>
+
+<ol>
+  <li>
+    <p>Launch the Docker container:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--rm</span> <span class="se">\</span>
+           <span class="nt">--name</span> lakefs_docs <span class="se">\</span>
+           <span class="nt">--publish</span> 4000:4000 <span class="nt">--publish</span> 35729:35729 <span class="se">\</span>
+           <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">/docs:/srv/jekyll:Z"</span> <span class="se">\</span>
+           <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">/docs/.jekyll-bundle-cache:/usr/local/bundle:Z"</span> <span class="se">\</span>
+           <span class="nt">--interactive</span> <span class="nt">--tty</span> <span class="se">\</span>
+           jekyll/jekyll:3.8 <span class="se">\</span>
+           jekyll serve <span class="nt">--livereload</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>The first time you run the container it will need to download dependencies and will take several minutes to be ready.</p>
+
+    <p>Once you see the following output, the docs server is ready to <a href="http://localhost:4000">open in your web browser</a>:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Server running... press ctrl-c to stop.
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>When you make a change to a page’s source the server will automatically rebuild the page which will be shown in the server log by this entry:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Regenerating: 1 file(s) changed at 2023-01-26 08:34:47
+               contributing.md
+Remote Theme: Using theme pmarsceill/just-the-docs
+</code></pre></div>    </div>
+
+    <p>This can take a short while—you’ll see something like this in the server’s output when it’s done.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...done in 34.714073461 seconds.
+</code></pre></div>    </div>
+
+    <p>Your page will automatically reload to show the changes.</p>
+  </li>
+</ol>
+
+<p><em>If you are doing lots of work on the docs you may want to leave the Docker container in place (so that you don’t have to wait for the dependencies to load each time you re-create it). To do this replace the <code class="language-plaintext highlighter-rouge">--rm</code> with <code class="language-plaintext highlighter-rouge">--detach</code> in the <code class="language-plaintext highlighter-rouge">docker run</code> command, and use <code class="language-plaintext highlighter-rouge">docker logs -f lakefs_docs</code> to view the server log.</em></p>
 <h3 id="changelogmd">
   
   
