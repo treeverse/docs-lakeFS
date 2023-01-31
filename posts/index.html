@@ -27,17 +27,17 @@
   
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Authentication | lakeFS</title>
+<title>lakeFS | lakeFS - Data version control for your data lake Git for data</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Authentication" />
+<meta property="og:title" content="lakeFS" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section covers Authentication of your lakeFS server." />
-<meta property="og:description" content="This section covers Authentication of your lakeFS server." />
+<meta name="description" content="lakeFS - Data version control for your data lake Git for data" />
+<meta property="og:description" content="lakeFS - Data version control for your data lake Git for data" />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Authentication" />
+<meta property="twitter:title" content="lakeFS" />
 <script type="application/ld+json">
-{"description":"This section covers Authentication of your lakeFS server.","@type":"WebPage","headline":"Authentication","url":"/reference/authentication.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"lakeFS - Data version control for your data lake Git for data","@type":"WebPage","headline":"lakeFS","url":"/posts/","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -247,7 +247,7 @@
                    class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/migrate-away.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li></ul></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/reference/"
            class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/configuration.html"
@@ -255,8 +255,8 @@
                    class="nav-list-link">CLI (lakectl)</a></li><li class="nav-list-item "><a href="/reference/api.html"
                    class="nav-list-link">API Reference</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/reference/s3.html"
-                   class="nav-list-link">S3 Supported API</a></li><li class="nav-list-item  active"><a href="/reference/authentication.html"
-                   class="nav-list-link active">Authentication</a></li><li class="nav-list-item "><a href="/reference/saml-authentication-integration.html"
+                   class="nav-list-link">S3 Supported API</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
+                   class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/saml-authentication-integration.html"
                    class="nav-list-link">SAML Authentication Integration</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
                    class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li></ul></li><li
@@ -427,279 +427,636 @@
         <div id="main-content-wrap" class="main-content-wrap">
             
             
-            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-                <ol class="breadcrumb-nav-list">
-                    
-                    <li class="breadcrumb-nav-list-item"><a href="/reference/">Reference</a>
-                    </li>
-                    
-                    <li class="breadcrumb-nav-list-item"><span>Authentication</span></li>
-                </ol>
-            </nav>
-            
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 id="authentication">
-  
-  
-    <a href="#authentication" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication
-  
-  
-</h1>
-    
-
-<div class="toc-block no_toc">
-<h2 class="no_toc text-delta" id="table-of-contents">
-  
-  
-    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
-  
-  
-</h2>
-    
-
-<ol id="markdown-toc">
-  <li><a href="#authentication" id="markdown-toc-authentication">Authentication</a>    <ol>
-      <li><a href="#authentication-1" id="markdown-toc-authentication-1">Authentication</a>        <ol>
-          <li><a href="#user-authentication" id="markdown-toc-user-authentication">User Authentication</a>            <ol>
-              <li><a href="#built-in-database" id="markdown-toc-built-in-database">Built-in database</a></li>
-              <li><a href="#ldap-server" id="markdown-toc-ldap-server">LDAP server</a></li>
-            </ol>
-          </li>
-          <li><a href="#api-server-authentication" id="markdown-toc-api-server-authentication">API Server Authentication</a></li>
-          <li><a href="#s3-gateway-authentication" id="markdown-toc-s3-gateway-authentication">S3 Gateway Authentication</a></li>
-        </ol>
-      </li>
-      <li><a href="#oidc-support" id="markdown-toc-oidc-support">OIDC support</a>        <ol>
-          <li><a href="#configuring-lakefs-server-for-oidc" id="markdown-toc-configuring-lakefs-server-for-oidc">Configuring lakeFS server for OIDC</a></li>
-        </ol>
-      </li>
-      <li><a href="#user-permissions" id="markdown-toc-user-permissions">User permissions</a>        <ol>
-          <li><a href="#using-a-different-claim-name" id="markdown-toc-using-a-different-claim-name">Using a different claim name</a></li>
-        </ol>
-      </li>
-    </ol>
-  </li>
-</ol>
-
-</div>
-<h2 id="authentication-1">
-  
-  
-    <a href="#authentication-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication
-  
-  
-</h2>
-    
-<h3 id="user-authentication">
-  
-  
-    <a href="#user-authentication" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User Authentication
-  
-  
-</h3>
-    
-
-<p>lakeFS authenticates users from a built-in authentication database, or,
-optionally, from a configured LDAP server.</p>
-<h4 id="built-in-database">
-  
-  
-    <a href="#built-in-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Built-in database
-  
-  
-</h4>
-    
-
-<p>The built-in authentication database is always present and active. You can use the
-Web UI at Administration / Users to create users. Users have an access key
-<code class="language-plaintext highlighter-rouge">AKIA...</code> and an associated secret access key. These credentials are valid
-for logging into the Web UI or authenticating programmatic requests to the API
-Server or the S3 Gateway.</p>
-<h4 id="ldap-server">
-  
-  
-    <a href="#ldap-server" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> LDAP server
-  
-  
-</h4>
-    
-
-<p class="note"><strong>Note</strong>
-This feature is deprecated (<a href="../posts/security_update.html">learn more</a>). For single sign-on with lakeFS, try <a href="https://lakefs.cloud">lakeFS cloud</a></p>
-
-<p>Configure lakeFS to authenticate users on an LDAP server. Once configured,
-users can additionally log into lakeFS using their credentials LDAP. These
-users may then generate an access key and a secret access key on the Web UI
-at Administration / My Credentials. lakeFS generates an internal user once
-logged in via the LDAP server. Adding this internal user to a group allows
-assigning them a different policy.</p>
-
-<p>Configure the LDAP server using the <a href="/reference/configuration.html">configuration fields</a>:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">server_endpoint</code>: the <code class="language-plaintext highlighter-rouge">ldaps:</code> (or <code class="language-plaintext highlighter-rouge">ldap:</code>) URL of the LDAP server.</li>
-  <li><code class="language-plaintext highlighter-rouge">bind_dn</code>, <code class="language-plaintext highlighter-rouge">bind_password</code>: Credentials for lakeFS to use to query the
-LDAP server for users. They must identify a user with Basic
-Authentication, and are used to convert a user ID attribute to a full
-user DN.</li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">default_user_group</code>: A group to add users the first time they log in
-using LDAP.  Typically “<code class="language-plaintext highlighter-rouge">Viewers</code>” or “<code class="language-plaintext highlighter-rouge">Developers</code>”.</p>
-
-    <p>Once logged in, LDAP users may be added as normal to any other group.</p>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">username_attribute</code>: Attribute on LDAP user to identify user when
-logging in.  Typically “<code class="language-plaintext highlighter-rouge">uid</code>” or “<code class="language-plaintext highlighter-rouge">cn</code>”.</li>
-  <li><code class="language-plaintext highlighter-rouge">user_base_dn</code>: DN of root of DAP tree containing users,
-e.g. <code class="language-plaintext highlighter-rouge">ou=Users,dc=treeverse,dc=io</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">user_filter</code>: An additional filter for users allowed to login,
-e.g. <code class="language-plaintext highlighter-rouge">(objectClass=person)</code>.</li>
-</ul>
-
-<p>LDAP users log in using the following flow:</p>
-
-<ol>
-  <li>Bind the lakeFS control connection to <code class="language-plaintext highlighter-rouge">server_endpoint</code> using <code class="language-plaintext highlighter-rouge">bind_dn</code>,
-<code class="language-plaintext highlighter-rouge">bind_password</code>.</li>
-  <li>Receive an LDAP user-ID (e.g. “joebloggs”) and a password entered on the
-Web UI login page.</li>
-  <li>Attempt to log in as internally-defined users; fail.</li>
-  <li>
-    <p>Search the LDAP server using the control connection for the user: out of
-all users under <code class="language-plaintext highlighter-rouge">user_base_dn</code> that satisfy <code class="language-plaintext highlighter-rouge">user_filter</code>, there must be
-a single user whose <code class="language-plaintext highlighter-rouge">username_attribute</code> was specified by the user. Get
-their DN.</p>
-
-    <p>In our example, this may be <code class="language-plaintext highlighter-rouge">uid=joebloggs,ou=Users,dc=treeverse,dc=io</code>
-(this entry must have <code class="language-plaintext highlighter-rouge">objectClass: person</code> because of <code class="language-plaintext highlighter-rouge">user_filter</code>).</p>
-  </li>
-  <li>Attempt to bind the received DN on the LDAP server using the password.</li>
-  <li>On success, the user is authenticated.</li>
-  <li>Create a new internal user with that DN if needed. When creating a user,
-add them to the internal group named <code class="language-plaintext highlighter-rouge">default_user_group</code>.</li>
-</ol>
-<h3 id="api-server-authentication">
-  
-  
-    <a href="#api-server-authentication" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> API Server Authentication
-  
-  
-</h3>
-    
-
-<p>Authenticating against the API server is done using a key-pair, passed via <a href="https://en.wikipedia.org/wiki/Basic_access_authentication">Basic Access Authentication</a>.</p>
-
-<p>All HTTP requests must carry an <code class="language-plaintext highlighter-rouge">Authorization</code> header with the following structure:</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Authorization: Basic &lt;base64 encoded access_key_id:secret_access_key&gt;
-</code></pre></div></div>
-
-<p>For example, assuming my access_key_id is <code class="language-plaintext highlighter-rouge">my_access_key_id</code> and my secret_access_key is <code class="language-plaintext highlighter-rouge">my_secret_access_key</code>, we’d send the following header with every request:</p>
-
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Authorization: Basic bXlfYWNjZXNzX2tleV9pZDpteV9hY2Nlc3Nfc2VjcmV0X2tleQ==
-</code></pre></div></div>
-<h3 id="s3-gateway-authentication">
-  
-  
-    <a href="#s3-gateway-authentication" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> S3 Gateway Authentication
-  
-  
-</h3>
-    
-
-<p>To provide API compatibility with Amazon S3, authentication with the S3 Gateway supports both <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html" target="_blank">SIGv2</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html" target="_blank">SIGv4</a>.
-Clients such as the AWS SDK that implement these authentication methods should work without modification.</p>
-
-<p>See <a href="/integrations/aws_cli.html">this example for authenticating with the AWS CLI</a>.</p>
-<h2 id="oidc-support">
-  
-  
-    <a href="#oidc-support" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> OIDC support
-  
-  
-</h2>
-    
-
-<p class="note"><strong>Note</strong>
-This feature is deprecated. For single sign-on with lakeFS, try <a href="https://lakefs.cloud">lakeFS cloud</a></p>
-
-<p>OpenID Connect (OIDC) is a simple identity layer on top of the OAuth 2.0 protocol.
-You can configure lakeFS to enable OIDC to manage your lakeFS users externally. 
-Essentially, once configured, this enables you the benefit of OpenID connect, such as a single sign-on (SSO), etc.</p>
-<h3 id="configuring-lakefs-server-for-oidc">
-  
-  
-    <a href="#configuring-lakefs-server-for-oidc" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring lakeFS server for OIDC
-  
-  
-</h3>
-    
-
-<p>To support OIDC, add the following to your <a href="/reference/configuration.html">lakeFS configuration</a>:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
-  <span class="na">oidc</span><span class="pi">:</span>
-    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
-    <span class="na">client_id</span><span class="pi">:</span> <span class="s">example-client-id</span>
-    <span class="na">client_secret</span><span class="pi">:</span> <span class="s">exampleSecretValue</span>
-    <span class="na">callback_base_url</span><span class="pi">:</span> <span class="s">https://lakefs.example.com</span>       <span class="c1"># The scheme, domain (and port) of your lakeFS installation</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">https://my-account.oidc-provider-example.com</span>
-    <span class="na">default_initial_groups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">Developers"</span><span class="pi">]</span>
-    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">name</span>                      <span class="c1">#  Optional: use the value from this claim as the user's display name </span>
-</code></pre></div></div>
-
-<p>Your login page will now include a link to sign in using the 
-OIDC provider. When a user first logs in through the provider, a corresponding user is created in lakeFS.</p>
-<h4 class="no_toc" id="notes">
-  
-  
-    <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
-  
-  
-</h4>
-    
-<ol>
-  <li>As always, you may choose to provide these configurations using <a href="/reference/configuration.html#using-environment-variables">environment variables</a>.</li>
-  <li>You may already have other configuration values under the <em>auth</em> key, so make sure you combine them correctly.</li>
-</ol>
-<h2 id="user-permissions">
-  
-  
-    <a href="#user-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User permissions
-  
-  
-</h2>
-    
-
-<p>Authorization is managed via <a href="/reference/authorization.html">lakeFS groups and policies</a>.</p>
-
-<p>By default, an externally managed user is assigned to the lakeFS groups configured in the <em>default_initial_groups</em> property above.
-For a user to be assigned to other groups, add the <em>initial_groups</em> claim to their <strong>ID token</strong> claims. The claim should contain a
-comma-separated list of group names.</p>
-
-<p>Once the user has been created, you can manage their permissions from the Administration pages in the lakeFS UI or using <em>lakectl</em>.</p>
-<h3 id="using-a-different-claim-name">
-  
-  
-    <a href="#using-a-different-claim-name" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using a different claim name
-  
-  
-</h3>
-    
-
-<p>To supply the initial groups using another claim from your ID token, you can use the <code class="language-plaintext highlighter-rouge">auth.oidc.initial_groups_claim_name</code> 
-lakeFS configuration. For example, to take the initial groups from the <em>roles</em> claim, add:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
-  <span class="na">oidc</span><span class="pi">:</span>
-    <span class="c1"># ... Other OIDC configurations</span>
-    <span class="na">initial_groups_claim_name</span><span class="pi">:</span> <span class="s">roles</span>
-</code></pre></div></div>
+                
 
                 
 
+                
+                <hr>
+                <div class="toc-block">
+                    <h2 class="text-delta">Table of contents</h2>
+                    <ul>
+                        <li>
+                            <a href="/">What is lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/hooks/overview.html">Overview</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/">Quickstart</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/architecture.html">Architecture</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploy/aws.html">AWS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/configuration.html">Configuration</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/use_cases/etl_testing.html">ETL Testing Environment</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/import.html">Import data into lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploy/">Deploy and Setup lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/hooks/lua.html">Lua</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/run.html">Run lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/spark.html">Spark</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/how/versioning-internals.html">Versioning Internals</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploy/azure.html">Azure</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/cli.html">CLI (lakectl)</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/delta.html">Delta Lake</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/garbage-collection.html">Garbage Collection</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/">Integrations</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/how/kv.html">Internal database structure</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/model.html">Model</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/repository.html">Create a Repository</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/use_cases/rollback.html">Rollback</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/hooks/webhooks.html">Webhooks</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/data_lifecycle_management/data-devenv.html">In Test</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/performance-best-practices.html">Performance Best Practices</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/add_data.html">Add Data</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/hooks/airflow.html">Airflow</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/api.html">API Reference</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/aws_cli.html">AWS CLI</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/hooks/">Hooks</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/use_cases/">Use Cases</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/use_cases/reproducibility.html">Reproducibility</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/upgrade.html">Upgrade lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/data_lifecycle_management/ci.html">During Deployment</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/airflow.html">Airflow</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/export.html">Exporting Data</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/first_commit.html">Commit the Changes</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploy/gcp.html">GCP</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/how/">How it Works</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/spark-client.html">Spark Client</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/use_cases/cicd_for_data.html">CI/CD for data lakes</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/copying.html">Copying data to/from lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/data_lifecycle_management/">Data Lifecycle Management</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/more_quickstart_options.html">More Quickstart Options</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploy/onprem.html">On-Prem</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/python.html">Python</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/s3.html">S3 Supported API</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/data_lifecycle_management/production.html">In Production</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/authentication.html">Authentication</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/duckdb.html">DuckDB</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/glossary.html">Glossary</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/glue_hive_metastore.html">Glue / Hive metastore</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/">How-To</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/protect-branches.html">Protect Branches</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/saml-authentication-integration.html">SAML Authentication Integration</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/authorization.html">Authorization</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/presto_trino.html">Presto/Trino</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/athena.html">Amazon Athena</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/">Reference</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/">Understanding lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/roadmap.html">Roadmap</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/commitment.html">Commitment to OSS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/kubeflow.html">Kubeflow</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/monitor.html">Monitoring using Prometheus</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/airbyte.html">Airbyte</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/contributing.html">Contributing</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/slack/">Slack</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/dbt.html">dbt</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/faq.html">FAQ</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/kakfa.html">Kafka</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/sagemaker.html">SageMaker</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/hive.html">Hive</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/dremio.html">Dremio</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/how/merge.html">Merge</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/migrate-away.html">Migrating away from lakeFS</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/iceberg.html">Iceberg</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/howto/sizing-guide.html">Sizing Guide</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/posts/"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/airflow.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/architecture/index.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/architecture/overview.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/athena.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploying-aws/index.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploying-aws/install.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploying-aws/db.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploying-aws/lb_dns.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/setup/storage/s3.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/aws_cli.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/setup/storage/blob.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/data_lifecycle_management/ci.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/commands.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/licensing.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/distcp.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/rclone.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/data_lifecycle_management/data-devenv.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/dbt.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/dremio.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/use_cases/iso_env.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/export.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/lakefs_cli.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/garbage-collection.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/setup/storage/gcs.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/glossary.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/glossary.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/glue_hive_metastore.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/hive.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/setup/import.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/branching/recommendations.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using_lakefs.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/hooks.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/hooks.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/downloads.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/kakfa.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/kv-in-a-nutshell.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/merge.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/merge.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploying-aws/offboarding.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/offboarding.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/object-model.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/branching-model.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/object-model.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/k8s.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/docker.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/minio.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/minio.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/integrations/presto.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/presto.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/data_lifecycle_management/production.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/protected_branches.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/python.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/boto.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/boto.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/roadmap.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/quickstart/installing.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/sagemaker.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/architecture/sizing-guide.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/sizing-guide.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/spark.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/databricks.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/databricks.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/emr.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/emr.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/glue_etl.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/using/glue_etl.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/deploying-aws/upgrade.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/reference/upgrade.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/architecture/data-model.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/understand/data-model.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/versioning-internals.html"></a>
+                        </li>
+                        
+                        <li>
+                            <a href="/404.html">Page not found</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/posts/security_update.html">Security update for the lakeFS project</a>
+                        </li>
+                        
+                    </ul>
+                </div>
                 
                 
 
