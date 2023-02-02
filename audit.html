@@ -27,17 +27,17 @@
   
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Glossary | lakeFS</title>
+<title>Audit | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Glossary" />
+<meta property="og:title" content="Audit" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Glossary of all terms related to lakeFS technical internals and the architecture." />
-<meta property="og:description" content="Glossary of all terms related to lakeFS technical internals and the architecture." />
+<meta name="description" content="lakeFS Cloud audit log" />
+<meta property="og:description" content="lakeFS Cloud audit log" />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Glossary" />
+<meta property="twitter:title" content="Audit" />
 <script type="application/ld+json">
-{"description":"Glossary of all terms related to lakeFS technical internals and the architecture.","@type":"WebPage","headline":"Glossary","url":"/understand/glossary.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"lakeFS Cloud audit log","@type":"WebPage","headline":"Audit","url":"/audit.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -260,7 +260,7 @@
                    class="nav-list-link">SAML Authentication Integration</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
                    class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li></ul></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/understand/"
            class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/understand/architecture.html"
@@ -290,14 +290,14 @@
                     </li><li class="nav-list-item ">
                         <a href="/understand/data_lifecycle_management/production.html"
                            class="nav-list-link">In Production</a>
-                    </li></ul></li><li class="nav-list-item  active"><a href="/understand/glossary.html"
-                   class="nav-list-link active">Glossary</a></li></ul></li><li
+                    </li></ul></li><li class="nav-list-item "><a href="/understand/glossary.html"
+                   class="nav-list-link">Glossary</a></li></ul></li><li
             class="nav-list-item"><a href="/roadmap.html"
            class="nav-list-link">Roadmap</a></li><li
             class="nav-list-item"><a href="/commitment.html"
            class="nav-list-link">Commitment to OSS</a></li><li
-            class="nav-list-item"><a href="/audit.html"
-           class="nav-list-link">Audit</a></li><li
+            class="nav-list-item active"><a href="/audit.html"
+           class="nav-list-link active">Audit</a></li><li
             class="nav-list-item"><a href="/contributing.html"
            class="nav-list-link">Contributing</a></li><li
             class="nav-list-item"><a href="/faq.html"
@@ -429,267 +429,78 @@
         <div id="main-content-wrap" class="main-content-wrap">
             
             
-            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-                <ol class="breadcrumb-nav-list">
-                    
-                    <li class="breadcrumb-nav-list-item"><a href="/understand/">Understanding lakeFS</a>
-                    </li>
-                    
-                    <li class="breadcrumb-nav-list-item"><span>Glossary</span></li>
-                </ol>
-            </nav>
-            
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 id="glossary">
+                <p class="note note-info">Audit logs is only available in <a href="https://lakefs.cloud/">lakeFS cloud</a>.</p>
+<h1 id="audit-log">
   
   
-    <a href="#glossary" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Glossary
+    <a href="#audit-log" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Audit log
   
   
 </h1>
     
-<p>This page has definition and explanations of all terms related to lakeFS technical internals and the architecture.</p>
 
-<div class="toc-block">
-<h2 class="no_toc text-delta" id="table-of-contents">
+<p>The lakeFS audit log allows you to view all relevant user action information in a clear and organized table, including when the action was performed, by whom, and what it was they did.</p>
+
+<p><img src="/assets/img/audit-log.png" alt="audit log" /></p>
+
+<p>This can be useful for several purposes, including:</p>
+
+<ol>
+  <li>
+    <p>Compliance - Audit logs can be used to show what data users accessed, as well as any changes they made to user management.</p>
+  </li>
+  <li>
+    <p>Troubleshooting - If something changes on your underlying object store that you weren’t expecting, such as a big file suddenly breaking into thousands of smaller files, you can use the audit log to find out what action led to this change.</p>
+  </li>
+</ol>
+<h2 id="audit-fields">
   
   
-    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+    <a href="#audit-fields" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Audit Fields
   
   
 </h2>
     
 
-<ol id="markdown-toc">
-  <li><a href="#glossary" id="markdown-toc-glossary">Glossary</a>    <ol>
-      <li><a href="#auditing" id="markdown-toc-auditing">Auditing</a></li>
-      <li><a href="#branch" id="markdown-toc-branch">Branch</a></li>
-      <li><a href="#collection" id="markdown-toc-collection">Collection</a></li>
-      <li><a href="#commit" id="markdown-toc-commit">Commit</a></li>
-      <li><a href="#cross-collection-consistency" id="markdown-toc-cross-collection-consistency">Cross-Collection Consistency</a></li>
-      <li><a href="#data-lifecycle-management" id="markdown-toc-data-lifecycle-management">Data Lifecycle Management</a></li>
-      <li><a href="#data-pipeline-reproducibility" id="markdown-toc-data-pipeline-reproducibility">Data Pipeline Reproducibility</a></li>
-      <li><a href="#data-quality-testing" id="markdown-toc-data-quality-testing">Data Quality Testing</a></li>
-      <li><a href="#data-versioning" id="markdown-toc-data-versioning">Data Versioning</a></li>
-      <li><a href="#git-like-operations" id="markdown-toc-git-like-operations">Git-like Operations</a></li>
-      <li><a href="#graveler" id="markdown-toc-graveler">Graveler</a></li>
-      <li><a href="#hooks" id="markdown-toc-hooks">Hooks</a></li>
-      <li><a href="#isolated-data-snapshot" id="markdown-toc-isolated-data-snapshot">Isolated Data Snapshot</a></li>
-      <li><a href="#main-branch" id="markdown-toc-main-branch">Main Branch</a></li>
-      <li><a href="#metadata-management" id="markdown-toc-metadata-management">Metadata Management</a></li>
-      <li><a href="#merge" id="markdown-toc-merge">Merge</a></li>
-      <li><a href="#repository" id="markdown-toc-repository">Repository</a></li>
-      <li><a href="#rollback" id="markdown-toc-rollback">Rollback</a></li>
-      <li><a href="#storage-namespace" id="markdown-toc-storage-namespace">Storage Namespace</a></li>
-      <li><a href="#underlying-storage" id="markdown-toc-underlying-storage">Underlying Storage</a></li>
-      <li><a href="#tag" id="markdown-toc-tag">Tag</a></li>
-    </ol>
+<p>The audit log includes the following fields:</p>
+
+<ul>
+  <li>Time - Time of action</li>
+  <li>User - Name of the user who performed the action</li>
+  <li>Region - Region of the lakeFS installation where the action was performed</li>
+  <li>Status - Status code returned for the action
+    <ul>
+      <li>2xx - Successful</li>
+      <li>3xx - Redirection</li>
+      <li>4xx - Client error</li>
+      <li>5xx - Server error</li>
+    </ul>
   </li>
-</ol>
-
-</div>
-<h3 id="auditing">
+  <li>Action - Specific lakeFS action (such as <code class="language-plaintext highlighter-rouge">Login</code>, <code class="language-plaintext highlighter-rouge">Commit</code>, <code class="language-plaintext highlighter-rouge">ListRepositories</code>, <code class="language-plaintext highlighter-rouge">CreateUser</code>, etc…)</li>
+  <li>Resource - Full URL of the command (e.g for a commit on branch <code class="language-plaintext highlighter-rouge">main</code> we would see the Action <code class="language-plaintext highlighter-rouge">Commit</code> and the resource <code class="language-plaintext highlighter-rouge">/api/v1/repositories/e2e-monitoring/branches/main/commits</code>)</li>
+</ul>
+<h2 id="filtering">
   
   
-    <a href="#auditing" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Auditing
+    <a href="#filtering" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Filtering
   
   
-</h3>
-    
-<p>Data auditing is data assessment to ensure its accuracy, security, and efficacy for specific usage. It also involves assessing data quality through its lifecycle and understanding the impact of poor quality data on the organization’s performance and revenue. Ensuring data reproducibility, auditability, and governance is one of the key concerns of data engineers today. lakeFS commit history helps the data teams to keep track of all changes to the data, supporting data auditing.</p>
-<h3 id="branch">
-  
-  
-    <a href="#branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Branch
-  
-  
-</h3>
+</h2>
     
 
-<p>Branches in lakeFS allow users to create their own “isolated” view of the repository. <a href="/understand/model.html#branches">Read more</a>.</p>
-<h3 id="collection">
-  
-  
-    <a href="#collection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Collection
-  
-  
-</h3>
-    
-<p>A collection, roughly speaking, is a set of data. Collections may be structured or unstructured; a structured collection is often referred to as a table.</p>
-<h3 id="commit">
-  
-  
-    <a href="#commit" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Commit
-  
-  
-</h3>
-    
+<p>Filtering is available using the filter bar. The filter bar works with a simple query language.</p>
 
-<p>Using commits, you can view a <a href="/understand/model.html#repository">repository</a> at a certain point in its history and you’re guaranteed that the data you see is exactly as it was at the point of committing it. <a href="/understand/model.html#commits">Read More</a></p>
-<h3 id="cross-collection-consistency">
-  
-  
-    <a href="#cross-collection-consistency" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Cross-Collection Consistency
-  
-  
-</h3>
-    
-<p>It is unfortunate that the word ‘consistency’ has multiple meanings, at least four of them according to Martin Kleppmann. Consistency in the context of lakeFS and data versioning is, the guarantee that operations in a transaction are performed accurately, correctly and most important, atomically.</p>
-
-<p>A repository (and thus a branch) in lakeFS, can span multiple tables or collections. By providing branch, commit, merge and revert operations atomically on a branch, lakeFS achieves consistency guarantees across different logical collections. That is, data versioning is consistent across multiple collections within a repository.</p>
-
-<p>It is sometimes referred as multi-table transactions. That is, lakeFS offers transactional guarantees across multiple tables.</p>
-
-<!---Learn more about cross-collection consistency here (link to CCC blog) -->
-<h3 id="data-lifecycle-management">
-  
-  
-    <a href="#data-lifecycle-management" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Data Lifecycle Management
-  
-  
-</h3>
-    
-<p>In data-intensive applications, data should be managed through its entire lifecycle similar to how teams manage code. By doing so, we could leverage the best practices and tools from application lifecycle management (like CI/CD operations) and apply them to data. lakeFS offers data lifecycle management via <a href="../use_cases/iso_env.md">isolated data development environments</a> instead of shared buckets.</p>
-<h3 id="data-pipeline-reproducibility">
-  
-  
-    <a href="#data-pipeline-reproducibility" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Data Pipeline Reproducibility
-  
-  
-</h3>
-    
-<p>Reproducibility in data pipelines is the ability to repeat a process. An example of this is recreating an issue that occurred in the production pipeline. Reproducibility allows for the controlled manufacture of an error to debug and troubleshoot it at a later point in time. Reproducing a data pipeline issue is a challenge that most data engineers face on a daily basis. Learn more about how lakeFS supports data pipeline <a href="/use_cases/reproducibility.html">reproducibility</a>. Other use cases include running ad-hoc queries (useful for data science), review, and backfill.</p>
-<h3 id="data-quality-testing">
-  
-  
-    <a href="#data-quality-testing" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Data Quality Testing
-  
-  
-</h3>
-    
-<p>This term describes ways to test data for its accuracy, completeness, consistency, timeliness, validity, and integrity. lakeFS hooks can be used to implement and run data quality tests before promoting staging data into production.</p>
-<h3 id="data-versioning">
-  
-  
-    <a href="#data-versioning" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Data Versioning
-  
-  
-</h3>
-    
-<p>To version data means creating a unique point-in-time reference for data that can be accessed later. This reference can take the form of a query, an ID, or also commonly, a DateTime identifier. Data versioning may also include saving an entire copy of the data under a new name or file path every time you want to create a version of it. More advanced versioning solutions like lakeFS perform versioning through zero-copy data operations. lakeFS also optimizes storage usage between versions and exposes special operations to manage them.</p>
-<h3 id="git-like-operations">
-  
-  
-    <a href="#git-like-operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Git-like Operations
-  
-  
-</h3>
-    
-<p>lakeFS allows teams to treat their data lake as a Git repository.   Git is used for code versioning, whereas lakeFS is used for data versioning.  lakeFS provides Git-like operations such as branch, commit, merge and revert.</p>
-<h3 id="graveler">
-  
-  
-    <a href="#graveler" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Graveler
-  
-  
-</h3>
-    
-<p>Graveler is the core versioning engine of lakeFS. It handles versioning by translating lakeFS addresses to the actual stored objects. See the <a href="/understand/how/versioning-internals.html">versioning internals section</a> to learn how lakeFS stores metadata.</p>
-<h3 id="hooks">
-  
-  
-    <a href="#hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hooks
-  
-  
-</h3>
-    
-<p>lakeFS hooks allow you to automate and ensure that a given set of checks and validations happens before important lifecycle events. They are similar conceptually to <a href="https://git-scm.com/docs/githooks">Git Hooks</a>, but in contrast, they run remotely on a server. Currently, lakeFS allows executing hooks when two types of events occur: pre-commit events that run before a commit is acknowledged and pre-merge events that trigger right before a merge operation.</p>
-<h3 id="isolated-data-snapshot">
-  
-  
-    <a href="#isolated-data-snapshot" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Isolated Data Snapshot
-  
-  
-</h3>
-    
-<p>Creating a branch in lakeFS provides an isolated environment containing a snapshot of your repository. While working on your branch in isolation, all other data users will be looking at the repository’s main branch. So they won’t see your changes, and you also won’t see the changes applied to the main branch. All of this happens without any data duplication but metadata management.</p>
-<h3 id="main-branch">
-  
-  
-    <a href="#main-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Main Branch
-  
-  
-</h3>
-    
-<p>Every Git repository has the main branch (unless you take explicit steps to remove it) and it plays a key role in the software development process. In most projects, it represents the source of truth - all the code that works has been tested and is ready to be pushed to production. Similarly, main branch in lakeFS could be used as the single source of truth. For example, the live production data can be on the main branch.</p>
-<h3 id="metadata-management">
-  
-  
-    <a href="#metadata-management" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Metadata Management
-  
-  
-</h3>
-    
-<p>Where there is data, there is also metadata. lakeFS uses metadata to define schema, data types, data versions, relations to other datasets, etc. This helps to improve discoverability and manageability. lakeFS performs data versioning through metadata operations.</p>
-<h3 id="merge">
-  
-  
-    <a href="#merge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Merge
-  
-  
-</h3>
-    
-<p>lakeFS merge command, similar to git merge functionality, allows you to merge data branches. Once you commit data, you can review it and then merge the committed data into the target branch. A merge generates a commit on the target branch with all your changes. lakeFS guarantees atomic merges that are fast, given they don’t involve copying data. <a href="/understand/model.html#merge">Read More</a>.</p>
-<h3 id="repository">
-  
-  
-    <a href="#repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Repository
-  
-  
-</h3>
-    
-
-<p>In lakeFS, a <em>repository</em> is a set of related objects (or collections of objects). <a href="/understand/model.html#repository">Read More</a></p>
-<h3 id="rollback">
-  
-  
-    <a href="#rollback" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Rollback
-  
-  
-</h3>
-    
-<p>A rollback is an atomic operation reversing the effects of a previous commit. If a developer introduces a new code version to production and discovers that it has a critical bug, they can simply roll back to the previous version. In lakeFS, a rollback is an atomic action that prevents the data consumers from receiving low-quality data until the issue is resolved. Learn more about how lakeFS supports the <a href="/use_cases/rollback.html">rollback</a> operation.</p>
-<h3 id="storage-namespace">
-  
-  
-    <a href="#storage-namespace" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Storage Namespace
-  
-  
-</h3>
-    
-<p>The storage namespace is a location in the underlying storage dedicated to a specific repository.
-lakeFS uses it to store the repository’s objects and some of its metadata.</p>
-<h3 id="underlying-storage">
-  
-  
-    <a href="#underlying-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Underlying Storage
-  
-  
-</h3>
-    
-<p>The underlying storage is a location in some object store where lakeFS keeps your objects and some metadata.</p>
-<h3 id="tag">
-  
-  
-    <a href="#tag" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Tag
-  
-  
-</h3>
-    
-
-<p>Tags are a way to give a meaningful name to a specific commit. <a href="/understand/model.html#tags">Read More</a></p>
+<p>The table fields can be filtered by the following operators</p>
+<ul>
+  <li>User  - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
+  <li>Region - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
+  <li>Status(Number) - <code class="language-plaintext highlighter-rouge">&lt;</code>,<code class="language-plaintext highlighter-rouge">&gt;</code>,<code class="language-plaintext highlighter-rouge">&lt;=</code>,<code class="language-plaintext highlighter-rouge">&gt;=</code>,<code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
+  <li>Action - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
+  <li>Resource - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
+</ul>
 
                 
 
