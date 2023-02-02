@@ -462,13 +462,137 @@
     
 
 <ol id="markdown-toc">
+  <li><a href="#supported-storage-types" id="markdown-toc-supported-storage-types">Supported storage types</a></li>
+  <li><a href="#authentication-methods" id="markdown-toc-authentication-methods">Authentication methods</a>    <ol>
+      <li><a href="#storage-account-credentials" id="markdown-toc-storage-account-credentials">Storage Account Credentials</a></li>
+      <li><a href="#identity-based-credentials" id="markdown-toc-identity-based-credentials">Identity Based Credentials</a></li>
+      <li><a href="#how-to-create-service-principal-for-resource-group" id="markdown-toc-how-to-create-service-principal-for-resource-group">How to Create Service Principal for Resource Group</a></li>
+    </ol>
+  </li>
   <li><a href="#create-a-database" id="markdown-toc-create-a-database">Create a database</a></li>
-  <li><a href="#run-the-lakefs-server" id="markdown-toc-run-the-lakefs-server">Run the lakeFS server</a></li>
+  <li><a href="#run-the-lakefs-server" id="markdown-toc-run-the-lakefs-server">Run the lakeFS server</a>    <ol>
+      <li><a href="#storage-account-access" id="markdown-toc-storage-account-access">Storage account access</a></li>
+    </ol>
+  </li>
   <li><a href="#create-the-admin-user" id="markdown-toc-create-the-admin-user">Create the admin user</a></li>
   <li><a href="#create-your-first-repository" id="markdown-toc-create-your-first-repository">Create your first repository</a></li>
 </ol>
 
 </div>
+<h2 id="supported-storage-types">
+  
+  
+    <a href="#supported-storage-types" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Supported storage types
+  
+  
+</h2>
+    
+
+<p>lakeFS supports the following storage account types:</p>
+
+<ol>
+  <li>Azure Blob Storage</li>
+  <li>Azure Data Lake Storage Gen2 (HNS)</li>
+</ol>
+
+<p>Other Azure storage types have not been tested, and specifically Data Lake Storage Gen1 is not supported.<br />
+For more information see: <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-introduction">Introduction to Azure Storage</a></p>
+<h2 id="authentication-methods">
+  
+  
+    <a href="#authentication-methods" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication methods
+  
+  
+</h2>
+    
+
+<p>lakeFS supports two ways to authenticate with Azure:</p>
+<ul>
+  <li><strong>Storage account based authentication</strong></li>
+  <li><strong>Identity based authentication</strong></li>
+</ul>
+<h3 id="storage-account-credentials">
+  
+  
+    <a href="#storage-account-credentials" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Storage Account Credentials
+  
+  
+</h3>
+    
+
+<p>Storage account credentials can be set directly in the lakeFS configuration using the following parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.azure.storage_account</code></li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.azure.storage_access_key</code></li>
+</ul>
+
+<p>Please note that using this authentication method limits lakeFS to the scope of the given storage account. Specifically, <strong>the following operations will not work</strong>:</p>
+
+<ol>
+  <li>Import of data from different storage accounts</li>
+  <li>Copy/Read/Write of data that was imported from a different storage account</li>
+  <li>Create pre-signed URL for data that was imported from a different storage account</li>
+</ol>
+<h3 id="identity-based-credentials">
+  
+  
+    <a href="#identity-based-credentials" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Identity Based Credentials
+  
+  
+</h3>
+    
+
+<p>lakeFS uses environment variables to determine credentials to use for authentication. the following authentication methods are supported:</p>
+<ol>
+  <li>Managed Service Identity (MSI)</li>
+  <li>Service Principal RBAC</li>
+  <li>Azure CLI</li>
+</ol>
+
+<p>For deployments inside the Azure ecosystem it is recommended to use a managed identity.<br />
+More information on authentication methods and environment variables can be found <a href="https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication">here</a></p>
+<h3 id="how-to-create-service-principal-for-resource-group">
+  
+  
+    <a href="#how-to-create-service-principal-for-resource-group" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How to Create Service Principal for Resource Group
+  
+  
+</h3>
+    
+
+<p>It is recommended to create a resource group that consists of all the resources lakeFS should have access to.
+Using a resource group will allow dynamic removal/addition of services from the group, effectively providing/preventing 
+access for lakeFS to these resources without requiring any changes in configuration in lakeFS or providing lakeFS with any additional credentials.
+The minimal role required for the service principal is “Storage Blob Data Contributor”</p>
+
+<p>The following Azure CLI command creates a service principal for a resource group called “lakeFS” with permission to access (read/write/delete)
+Blob Storage resources in the resource group and with an expiry of 5 years</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az ad sp create-for-rbac <span class="se">\</span>
+  <span class="nt">--role</span> <span class="s2">"Storage Blob Data Contributor"</span> <span class="se">\</span>
+  <span class="nt">--scopes</span> /subscriptions/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/resourceGroups/lakeFS <span class="nt">--years</span> 5
+    
+Creating <span class="s1">'Storage Blob Data Contributor'</span> role assignment under scope <span class="s1">'/subscriptions/947382ea-681a-4541-99ab-b718960c6289/resourceGroups/lakeFS'</span>
+The output includes credentials that you must protect. Be sure that you <span class="k">do </span>not include these credentials <span class="k">in </span>your code or check the credentials into your <span class="nb">source </span>control. For more information, see https://aka.ms/azadsp-cli
+<span class="o">{</span>
+  <span class="s2">"appId"</span>: <span class="s2">"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</span>,
+  <span class="s2">"displayName"</span>: <span class="s2">"azure-cli-2023-01-30-06-18-30"</span>,
+  <span class="s2">"password"</span>: <span class="s2">"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</span>,
+  <span class="s2">"tenant"</span>: <span class="s2">"XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>The command output should be used to populate the following environment variables:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AZURE_CLIENT_ID      =  $appId
+AZURE_TENANT_ID      =  $tenant
+AZURE_CLIENT_SECRET  =  $password
+</code></pre></div></div>
+<p class="note"><strong>Note:</strong> Service Principal credentials have an expiry date and lakeFS will lose access to resources unless credentials are renewed on time.</p>
+
+<p class="note"><strong>Note:</strong> It is possible to provide both account based credentials and environment variables to lakeFS. In that case - lakeFS will use
+the account credentials for any access to data located in the given account, and will try to use the identity credentials for any data located outside the given account.</p>
 <h2 id="create-a-database">
   
   
@@ -478,10 +602,10 @@
 </h2>
     
 
-<p>lakeFS requires a PostgreSQL database to synchronize actions in your repositories.
-We will show you how to create a database on Azure Database, but you can use any PostgreSQL database as long as it’s accessible by your lakeFS installation.</p>
-
-<p>If you already have a database, take note of the connection string and skip to the <a href="#run-the-lakefs-server">next step</a></p>
+<p>lakeFS stores metadata in a database for its versioning engine. This is done via a Key-Value interface that can be implemented on any DB engine and lakeFS comes with several built-in driver implementations (You can read more about it <a href="https://docs.lakefs.io/understand/how/kv.html">here</a>).<br />
+One of these is a PostgreSQL implementation which can be used in the Azure ecosystem.<br />
+We will show you how to create a database on Azure Database, but you can use any PostgreSQL database as long as it’s accessible by your lakeFS installation.
+If you already have a database, take note of the connection string and skip to the <a href="#run-the-lakefs-server">next step</a></p>
 
 <ol>
   <li>Follow the official <a href="https://docs.microsoft.com/en-us/azure/postgresql/quickstart-create-server-database-portal" target="_blank">Azure documentation</a> on how to create a PostgreSQL instance and connect to it.
@@ -497,6 +621,14 @@ Make sure that you’re using PostgreSQL version &gt;= 11.</li>
   
   
 </h2>
+    
+<h3 id="storage-account-access">
+  
+  
+    <a href="#storage-account-access" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Storage account access
+  
+  
+</h3>
     
 
 <div class="tabs">
@@ -527,10 +659,6 @@ Make sure that you’re using PostgreSQL version &gt;= 11.</li>
 <span class="na">blockstore</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">azure</span>
   <span class="na">azure</span><span class="pi">:</span>
-    <span class="na">auth_method</span><span class="pi">:</span> <span class="s">msi</span> <span class="c1"># msi for active directory, access-key for access key </span>
-      <span class="c1"># In case you chose to authenticate via access key, unmark the following rows and insert the values from the previous step </span>
-      <span class="c1"># storage_account: [your storage account]</span>
-      <span class="c1"># storage_access_key: [your access key]</span>
 </code></pre></div>        </div>
       </li>
       <li><a href="/#downloads">Download the binary</a> to the VM.</li>
@@ -584,7 +712,6 @@ command to demonstrate starting lakeFS using Docker:</p>
     <span class="s">blockstore:</span>
       <span class="s">type: azure</span>
       <span class="s">azure:</span>
-        <span class="s">auth_method: msi # msi for active directory, access-key for access key </span>
     <span class="s">#  If you chose to authenticate via access key, unmark the following rows and insert the values from the previous step </span>
     <span class="s">#  storage_account: [your storage account]</span>
     <span class="s">#  storage_access_key: [your access key]</span>
