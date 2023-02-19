@@ -239,7 +239,7 @@
   },"34": {
     "doc": "Authentication",
     "title": "Authentication",
-    "content": "User Authentication . lakeFS authenticates users from a built-in authentication database, or, optionally, from a configured LDAP server. Built-in database . The built-in authentication database is always present and active. You can use the Web UI at Administration / Users to create users. Users have an access key AKIA... and an associated secret access key. These credentials are valid for logging into the Web UI or authenticating programmatic requests to the API Server or the S3 Gateway. LDAP server . Note This feature is deprecated (learn more). For single sign-on with lakeFS, try lakeFS cloud . Configure lakeFS to authenticate users on an LDAP server. Once configured, users can additionally log into lakeFS using their credentials LDAP. These users may then generate an access key and a secret access key on the Web UI at Administration / My Credentials. lakeFS generates an internal user once logged in via the LDAP server. Adding this internal user to a group allows assigning them a different policy. Configure the LDAP server using the configuration fields: . | server_endpoint: the ldaps: (or ldap:) URL of the LDAP server. | bind_dn, bind_password: Credentials for lakeFS to use to query the LDAP server for users. They must identify a user with Basic Authentication, and are used to convert a user ID attribute to a full user DN. | default_user_group: A group to add users the first time they log in using LDAP. Typically “Viewers” or “Developers”. Once logged in, LDAP users may be added as normal to any other group. | username_attribute: Attribute on LDAP user to identify user when logging in. Typically “uid” or “cn”. | user_base_dn: DN of root of DAP tree containing users, e.g. ou=Users,dc=treeverse,dc=io. | user_filter: An additional filter for users allowed to login, e.g. (objectClass=person). | . LDAP users log in using the following flow: . | Bind the lakeFS control connection to server_endpoint using bind_dn, bind_password. | Receive an LDAP user-ID (e.g. “joebloggs”) and a password entered on the Web UI login page. | Attempt to log in as internally-defined users; fail. | Search the LDAP server using the control connection for the user: out of all users under user_base_dn that satisfy user_filter, there must be a single user whose username_attribute was specified by the user. Get their DN. In our example, this may be uid=joebloggs,ou=Users,dc=treeverse,dc=io (this entry must have objectClass: person because of user_filter). | Attempt to bind the received DN on the LDAP server using the password. | On success, the user is authenticated. | Create a new internal user with that DN if needed. When creating a user, add them to the internal group named default_user_group. | . API Server Authentication . Authenticating against the API server is done using a key-pair, passed via Basic Access Authentication. All HTTP requests must carry an Authorization header with the following structure: . Authorization: Basic &lt;base64 encoded access_key_id:secret_access_key&gt; . For example, assuming my access_key_id is my_access_key_id and my secret_access_key is my_secret_access_key, we’d send the following header with every request: . Authorization: Basic bXlfYWNjZXNzX2tleV9pZDpteV9hY2Nlc3Nfc2VjcmV0X2tleQ== . S3 Gateway Authentication . To provide API compatibility with Amazon S3, authentication with the S3 Gateway supports both SIGv2 and SIGv4. Clients such as the AWS SDK that implement these authentication methods should work without modification. See this example for authenticating with the AWS CLI. ",
+    "content": "User Authentication . lakeFS authenticates users from a built-in authentication database. Built-in database . The built-in authentication database is always present and active. You can use the Web UI at Administration / Users to create users. Users have an access key AKIA... and an associated secret access key. These credentials are valid for logging into the Web UI or authenticating programmatic requests to the API Server or the S3 Gateway. LDAP server . Note This feature is deprecated (learn more). For single sign-on with lakeFS, try lakeFS cloud . Configure lakeFS to authenticate users on an LDAP server. Once configured, users can additionally log into lakeFS using their credentials LDAP. These users may then generate an access key and a secret access key on the Web UI at Administration / My Credentials. lakeFS generates an internal user once logged in via the LDAP server. Adding this internal user to a group allows assigning them a different policy. Configure the LDAP server using the configuration fields: . | server_endpoint: the ldaps: (or ldap:) URL of the LDAP server. | bind_dn, bind_password: Credentials for lakeFS to use to query the LDAP server for users. They must identify a user with Basic Authentication, and are used to convert a user ID attribute to a full user DN. | default_user_group: A group to add users the first time they log in using LDAP. Typically “Viewers” or “Developers”. Once logged in, LDAP users may be added as normal to any other group. | username_attribute: Attribute on LDAP user to identify user when logging in. Typically “uid” or “cn”. | user_base_dn: DN of root of DAP tree containing users, e.g. ou=Users,dc=treeverse,dc=io. | user_filter: An additional filter for users allowed to login, e.g. (objectClass=person). | . LDAP users log in using the following flow: . | Bind the lakeFS control connection to server_endpoint using bind_dn, bind_password. | Receive an LDAP user-ID (e.g. “joebloggs”) and a password entered on the Web UI login page. | Attempt to log in as internally-defined users; fail. | Search the LDAP server using the control connection for the user: out of all users under user_base_dn that satisfy user_filter, there must be a single user whose username_attribute was specified by the user. Get their DN. In our example, this may be uid=joebloggs,ou=Users,dc=treeverse,dc=io (this entry must have objectClass: person because of user_filter). | Attempt to bind the received DN on the LDAP server using the password. | On success, the user is authenticated. | Create a new internal user with that DN if needed. When creating a user, add them to the internal group named default_user_group. | . API Server Authentication . Authenticating against the API server is done using a key-pair, passed via Basic Access Authentication. All HTTP requests must carry an Authorization header with the following structure: . Authorization: Basic &lt;base64 encoded access_key_id:secret_access_key&gt; . For example, assuming my access_key_id is my_access_key_id and my secret_access_key is my_secret_access_key, we’d send the following header with every request: . Authorization: Basic bXlfYWNjZXNzX2tleV9pZDpteV9hY2Nlc3Nfc2VjcmV0X2tleQ== . S3 Gateway Authentication . To provide API compatibility with Amazon S3, authentication with the S3 Gateway supports both SIGv2 and SIGv4. Clients such as the AWS SDK that implement these authentication methods should work without modification. See this example for authenticating with the AWS CLI. ",
     "url": "/reference/authentication.html",
     
     "relUrl": "/reference/authentication.html"
@@ -1308,68 +1308,68 @@
     
     "relUrl": "/understand/"
   },"187": {
-    "doc": "Reference",
-    "title": "Reference",
-    "content": " ",
-    "url": "/reference/",
-    
-    "relUrl": "/reference/"
-  },"188": {
     "doc": "Hooks",
     "title": "Hooks",
     "content": " ",
     "url": "/hooks/",
     
     "relUrl": "/hooks/"
-  },"189": {
-    "doc": "Integrations",
-    "title": "Integrations",
-    "content": " ",
-    "url": "/integrations/",
-    
-    "relUrl": "/integrations/"
-  },"190": {
-    "doc": "How-To",
-    "title": "How-To",
-    "content": " ",
-    "url": "/howto/",
-    
-    "relUrl": "/howto/"
-  },"191": {
-    "doc": "Deploy and Setup lakeFS",
-    "title": "Deploy and setup lakeFS",
-    "content": "Note: Optionally, for a hosted lakeFS service with guaranteed SLAs, try lakeFS cloud . ",
-    "url": "/deploy/#deploy-and-setup-lakefs",
-    
-    "relUrl": "/deploy/#deploy-and-setup-lakefs"
-  },"192": {
-    "doc": "Deploy and Setup lakeFS",
-    "title": "Deploy and Setup lakeFS",
-    "content": " ",
-    "url": "/deploy/",
-    
-    "relUrl": "/deploy/"
-  },"193": {
-    "doc": "Slack",
-    "title": "Slack",
-    "content": " ",
-    "url": "/slack/",
-    
-    "relUrl": "/slack/"
-  },"194": {
+  },"188": {
     "doc": "Use Cases",
     "title": "Use Cases",
     "content": " ",
     "url": "/use_cases/",
     
     "relUrl": "/use_cases/"
-  },"195": {
+  },"189": {
     "doc": "Quickstart",
     "title": "Quickstart",
     "content": " ",
     "url": "/quickstart/",
     
     "relUrl": "/quickstart/"
+  },"190": {
+    "doc": "Integrations",
+    "title": "Integrations",
+    "content": " ",
+    "url": "/integrations/",
+    
+    "relUrl": "/integrations/"
+  },"191": {
+    "doc": "Slack",
+    "title": "Slack",
+    "content": " ",
+    "url": "/slack/",
+    
+    "relUrl": "/slack/"
+  },"192": {
+    "doc": "Deploy and Setup lakeFS",
+    "title": "Deploy and setup lakeFS",
+    "content": "Note: Optionally, for a hosted lakeFS service with guaranteed SLAs, try lakeFS cloud . ",
+    "url": "/deploy/#deploy-and-setup-lakefs",
+    
+    "relUrl": "/deploy/#deploy-and-setup-lakefs"
+  },"193": {
+    "doc": "Deploy and Setup lakeFS",
+    "title": "Deploy and Setup lakeFS",
+    "content": " ",
+    "url": "/deploy/",
+    
+    "relUrl": "/deploy/"
+  },"194": {
+    "doc": "How-To",
+    "title": "How-To",
+    "content": " ",
+    "url": "/howto/",
+    
+    "relUrl": "/howto/"
+  },"195": {
+    "doc": "Reference",
+    "title": "Reference",
+    "content": " ",
+    "url": "/reference/",
+    
+    "relUrl": "/reference/"
   },"196": {
     "doc": "What is lakeFS",
     "title": "What is lakeFS",
