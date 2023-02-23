@@ -467,6 +467,11 @@
   <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
   <li><a href="#setting-up-a-database" id="markdown-toc-setting-up-a-database">Setting up a database</a></li>
   <li><a href="#setting-up-a-lakefs-server" id="markdown-toc-setting-up-a-lakefs-server">Setting up a lakeFS Server</a></li>
+  <li><a href="#local-blockstore" id="markdown-toc-local-blockstore">Local Blockstore</a>    <ol>
+      <li><a href="#sample-configuration-using-local-blockstore" id="markdown-toc-sample-configuration-using-local-blockstore">Sample configuration using local blockstore</a></li>
+      <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
+    </ol>
+  </li>
   <li><a href="#create-the-admin-user" id="markdown-toc-create-the-admin-user">Create the admin user</a></li>
   <li><a href="#create-your-first-repository" id="markdown-toc-create-your-first-repository">Create your first repository</a></li>
 </ol>
@@ -645,6 +650,64 @@ Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/ng
 
   </div>
 </div>
+<h2 id="local-blockstore">
+  
+  
+    <a href="#local-blockstore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Local Blockstore
+  
+  
+</h2>
+    
+
+<p>You can configure a block adapter to a POSIX compatible storage location shared by all lakeFS instances. 
+Using the shared storage location, both data and metadata will be stored there.</p>
+
+<p>Using the local blockstore import and allowing lakeFS access to a specific prefix, it is possible to import files from a shared location.
+Import is not enabled by default, as it doesn’t assume the local path is shared and there is a security concern about accessing a path outside the specified in the blockstore configuration.
+Enabling is done by <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> and <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> as described in the <a href="/reference/configuration.html">configuration reference</a>.</p>
+<h3 id="sample-configuration-using-local-blockstore">
+  
+  
+    <a href="#sample-configuration-using-local-blockstore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sample configuration using local blockstore
+  
+  
+</h3>
+    
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">database</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+  <span class="na">postgres</span><span class="pi">:</span>
+    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DATABASE_CONNECTION_STRING]"</span>
+  
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="c1"># replace this with a randomly-generated string. Make sure to keep it safe!</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[ENCRYPTION_SECRET_KEY]"</span>
+
+<span class="na">blockstore</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">local</span>
+  <span class="na">local</span><span class="pi">:</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s">/shared/location/lakefs_data</span>    <span class="c1"># location where data and metadata kept by lakeFS</span>
+    <span class="na">import_enabled</span><span class="pi">:</span> <span class="no">true</span>                  <span class="c1"># required to be true to enable import files</span>
+                                          <span class="c1"># from `allowed_external_prefixes` locations</span>
+    <span class="na">allowed_external_prefixes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">/shared/location/files_to_import</span>  <span class="c1"># location with files we can import into lakeFS, require access from lakeFS</span>
+</code></pre></div></div>
+<h3 id="limitations">
+  
+  
+    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+  
+  
+</h3>
+    
+
+<ul>
+  <li>Using a local adapter on a shared location is relativly new and not battle-tested yet</li>
+  <li>lakeFS doesn’t control the way a shared location is managed across machines</li>
+  <li>Import works only for folders</li>
+  <li>Garbage collector (for committed and uncommitted) and lakeFS Hadoop FileSystem currently unsupported</li>
+</ul>
 <h2 id="create-the-admin-user">
   
   
