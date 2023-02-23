@@ -685,6 +685,10 @@ lakectl ingest <span class="se">\</span>
 
 <p>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</p>
 
+<p>Import is available for S3, GCP, Azure and the local storage adapters.
+While the first 3 don’t require special configurations, for security reasons you need to enable it for the local storage adapter by setting <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> and specifying the allowed import paths <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> described in the <a href="/reference/configuration.html">configuration</a>.
+Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</p>
+
 <p class="note">Although created by lakeFS, import branches behave like any other branch:
 Authorization policies, CI/CD triggering, branch protection rules and all other lakeFS concepts apply to them as well.</p>
 <h3 id="working-with-imported-data">
