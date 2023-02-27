@@ -27,17 +27,17 @@
   
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Authorization | lakeFS</title>
+<title>Role Based Access Control (RBAC) | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Authorization" />
+<meta property="og:title" content="Role Based Access Control (RBAC)" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section covers authorization (using AWS IAM) of your lakeFS server." />
-<meta property="og:description" content="This section covers authorization (using AWS IAM) of your lakeFS server." />
+<meta name="description" content="This section covers authorization (using RBAC) of your lakeFS server." />
+<meta property="og:description" content="This section covers authorization (using RBAC) of your lakeFS server." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Authorization" />
+<meta property="twitter:title" content="Role Based Access Control (RBAC)" />
 <script type="application/ld+json">
-{"description":"This section covers authorization (using AWS IAM) of your lakeFS server.","@type":"WebPage","headline":"Authorization","url":"/reference/authorization.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section covers authorization (using RBAC) of your lakeFS server.","@type":"WebPage","url":"/reference/authorization.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"headline":"Role Based Access Control (RBAC)","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -268,7 +268,7 @@
                    class="nav-list-link">S3 Supported API</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
                    class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/saml-authentication-integration.html"
                    class="nav-list-link">SAML Authentication Integration</a></li><li class="nav-list-item  active"><a href="/reference/authorization.html"
-                   class="nav-list-link active">Authorization</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
+                   class="nav-list-link active">Role Based Access Control (RBAC)</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
                    class="nav-list-link">Monitoring using Prometheus</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -445,17 +445,17 @@
                     <li class="breadcrumb-nav-list-item"><a href="/reference/">Reference</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Authorization</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Role Based Access Control (RBAC)</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="authorization">
+                <h1 class="no_toc" id="role-based-access-control-rbac">
   
   
-    <a href="#authorization" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authorization
+    <a href="#role-based-access-control-rbac" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Role Based Access Control (RBAC)
   
   
 </h1>
@@ -472,59 +472,38 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#role-based-access-control" id="markdown-toc-role-based-access-control">Role Based Access Control</a>    <ol>
-      <li><a href="#rbac-model" id="markdown-toc-rbac-model">RBAC Model</a></li>
-      <li><a href="#authorization-process" id="markdown-toc-authorization-process">Authorization process</a></li>
-      <li><a href="#policy-precedence" id="markdown-toc-policy-precedence">Policy Precedence</a></li>
-      <li><a href="#resource-naming---arns" id="markdown-toc-resource-naming---arns">Resource naming - ARNs</a></li>
-      <li><a href="#actions-and-permissions" id="markdown-toc-actions-and-permissions">Actions and Permissions</a></li>
-      <li><a href="#preconfigured-policies" id="markdown-toc-preconfigured-policies">Preconfigured Policies</a>        <ol>
-          <li><a href="#fsfullaccess" id="markdown-toc-fsfullaccess">FSFullAccess</a></li>
-          <li><a href="#fsreadall" id="markdown-toc-fsreadall">FSReadAll</a></li>
-          <li><a href="#fsreadwriteall" id="markdown-toc-fsreadwriteall">FSReadWriteAll</a></li>
-          <li><a href="#authfullaccess" id="markdown-toc-authfullaccess">AuthFullAccess</a></li>
-          <li><a href="#authmanageowncredentials" id="markdown-toc-authmanageowncredentials">AuthManageOwnCredentials</a></li>
-          <li><a href="#repomanagementfullaccess" id="markdown-toc-repomanagementfullaccess">RepoManagementFullAccess</a></li>
-          <li><a href="#repomanagementreadall" id="markdown-toc-repomanagementreadall">RepoManagementReadAll</a></li>
-          <li><a href="#exportsetconfiguration" id="markdown-toc-exportsetconfiguration">ExportSetConfiguration</a></li>
-        </ol>
-      </li>
-      <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a>        <ol>
-          <li><a href="#readwrite-access-for-a-specific-repository" id="markdown-toc-readwrite-access-for-a-specific-repository">Read/write access for a specific repository</a></li>
-        </ol>
-      </li>
-      <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a>        <ol>
-          <li><a href="#admins" id="markdown-toc-admins">Admins</a></li>
-          <li><a href="#superusers" id="markdown-toc-superusers">SuperUsers</a></li>
-          <li><a href="#developers" id="markdown-toc-developers">Developers</a></li>
-          <li><a href="#viewers" id="markdown-toc-viewers">Viewers</a></li>
-        </ol>
-      </li>
+  <li><a href="#rbac-model" id="markdown-toc-rbac-model">RBAC Model</a></li>
+  <li><a href="#authorization-process" id="markdown-toc-authorization-process">Authorization process</a></li>
+  <li><a href="#policy-precedence" id="markdown-toc-policy-precedence">Policy Precedence</a></li>
+  <li><a href="#resource-naming---arns" id="markdown-toc-resource-naming---arns">Resource naming - ARNs</a></li>
+  <li><a href="#actions-and-permissions" id="markdown-toc-actions-and-permissions">Actions and Permissions</a></li>
+  <li><a href="#preconfigured-policies" id="markdown-toc-preconfigured-policies">Preconfigured Policies</a>    <ol>
+      <li><a href="#fsfullaccess" id="markdown-toc-fsfullaccess">FSFullAccess</a></li>
+      <li><a href="#fsreadall" id="markdown-toc-fsreadall">FSReadAll</a></li>
+      <li><a href="#fsreadwriteall" id="markdown-toc-fsreadwriteall">FSReadWriteAll</a></li>
+      <li><a href="#authfullaccess" id="markdown-toc-authfullaccess">AuthFullAccess</a></li>
+      <li><a href="#authmanageowncredentials" id="markdown-toc-authmanageowncredentials">AuthManageOwnCredentials</a></li>
+      <li><a href="#repomanagementfullaccess" id="markdown-toc-repomanagementfullaccess">RepoManagementFullAccess</a></li>
+      <li><a href="#repomanagementreadall" id="markdown-toc-repomanagementreadall">RepoManagementReadAll</a></li>
     </ol>
   </li>
-  <li><a href="#soc2-compliance" id="markdown-toc-soc2-compliance">SOC2 Compliance</a></li>
+  <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a></li>
+  <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a></li>
 </ol>
 
 </div>
-<h2 id="role-based-access-control">
-  
-  
-    <a href="#role-based-access-control" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Role Based Access Control
-  
-  
-</h2>
-    
 
-<p class="note"><strong>Note</strong>
-This feature is deprecated and will be replaced with a simpler ACL-based authorization mechanism (<a href="../posts/security_update.html">learn more</a>).<br />
-Role based access control will remain fully supported on <a href="https://lakefs.cloud">lakeFS cloud</a></p>
-<h3 id="rbac-model">
+<blockquote class="note">
+  <p>RBAC is only available in <a href="https://lakefs.cloud">lakeFS cloud</a>. This scalable fully-managed lakeFS service is also SOC 2 compliant.<br />
+A simpler ACL-based authorization mechanism is planned for open-source lakeFS. For more details see <a href="/posts/security_update.html">this announcement</a>.</p>
+</blockquote>
+<h2 id="rbac-model">
   
   
     <a href="#rbac-model" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RBAC Model
   
   
-</h3>
+</h2>
     
 
 <p>Access to resources is managed very much like <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html" target="_blank">AWS IAM</a>.</p>
@@ -550,13 +529,13 @@ Role based access control will remain fully supported on <a href="https://lakefs
 </ol>
 
 <p>Controlling access is done by attaching <strong>Policies</strong>, either directly to <strong>Users</strong>, or to <strong>Groups</strong> they belong to.</p>
-<h3 id="authorization-process">
+<h2 id="authorization-process">
   
   
     <a href="#authorization-process" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authorization process
   
   
-</h3>
+</h2>
     
 
 <p>Every action in the system - be it an API request, UI interaction, S3 Gateway call, or CLI command - requires a set of actions to be allowed for one or more resources.</p>
@@ -569,26 +548,26 @@ Role based access control will remain fully supported on <a href="https://lakefs
   <li>Effective policy resolution - the user’s policies (either attached directly or through group memberships) are calculated.</li>
   <li>Policy/Permission evaluation - lakeFS will compare the given user policies with the request actions and determine whether or not the request is allowed to continue.</li>
 </ol>
-<h3 id="policy-precedence">
+<h2 id="policy-precedence">
   
   
     <a href="#policy-precedence" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Policy Precedence
   
   
-</h3>
+</h2>
     
 
 <p>Each policy attached to a user or a group has an <code class="language-plaintext highlighter-rouge">Effect</code> - either <code class="language-plaintext highlighter-rouge">allow</code> or <code class="language-plaintext highlighter-rouge">deny</code>.
 During evaluation of a request, <code class="language-plaintext highlighter-rouge">deny</code> would take precedence over any other <code class="language-plaintext highlighter-rouge">allow</code> policy.</p>
 
 <p>This helps us compose policies together. For example, we could attach a very permissive policy to a user and use <code class="language-plaintext highlighter-rouge">deny</code> rules to then selectively restrict what that user can do.</p>
-<h3 id="resource-naming---arns">
+<h2 id="resource-naming---arns">
   
   
     <a href="#resource-naming---arns" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resource naming - ARNs
   
   
-</h3>
+</h2>
     
 
 <p>lakeFS uses <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns" target="_blank">ARN identifier</a> - very similar in structure to those used by AWS.
@@ -610,13 +589,13 @@ arn:lakefs:fs:::*
 <p>this allows us to create fine-grained policies affecting only a specific subset of resources.</p>
 
 <p>See below for a full reference of ARNs and actions.</p>
-<h3 id="actions-and-permissions">
+<h2 id="actions-and-permissions">
   
   
     <a href="#actions-and-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Actions and Permissions
   
   
-</h3>
+</h2>
     
 
 <p>For the full list of actions and their required permissions see the following table:</p>
@@ -1031,26 +1010,24 @@ arn:lakefs:fs:::*
 create a repository (<code class="language-plaintext highlighter-rouge">POST /repositories</code>), you need permission to
 <code class="language-plaintext highlighter-rouge">fs:CreateRepository</code> for the <em>name</em> of the repository and also
 <code class="language-plaintext highlighter-rouge">fs:AttachStorageNamespace</code> for the <em>storage namespace</em> used.</p>
-<h3 id="preconfigured-policies">
+<h2 id="preconfigured-policies">
   
   
     <a href="#preconfigured-policies" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Preconfigured Policies
   
   
-</h3>
+</h2>
     
 
 <p>The following Policies are created during initial setup:</p>
-<h5 id="fsfullaccess">
+<h3 id="fsfullaccess">
   
   
     <a href="#fsfullaccess" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FSFullAccess
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1064,16 +1041,14 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="fsreadall">
+<h3 id="fsreadall">
   
   
     <a href="#fsreadall" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FSReadAll
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1088,16 +1063,14 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="fsreadwriteall">
+<h3 id="fsreadwriteall">
   
   
     <a href="#fsreadwriteall" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FSReadWriteAll
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1123,16 +1096,14 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="authfullaccess">
+<h3 id="authfullaccess">
   
   
     <a href="#authfullaccess" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AuthFullAccess
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1146,16 +1117,14 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="authmanageowncredentials">
+<h3 id="authmanageowncredentials">
   
   
     <a href="#authmanageowncredentials" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AuthManageOwnCredentials
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1172,16 +1141,14 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="repomanagementfullaccess">
+<h3 id="repomanagementfullaccess">
   
   
     <a href="#repomanagementfullaccess" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RepoManagementFullAccess
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1202,16 +1169,14 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="repomanagementreadall">
+<h3 id="repomanagementreadall">
   
   
     <a href="#repomanagementreadall" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RepoManagementReadAll
   
   
-</h5>
+</h3>
     
-
-<p>Policy:</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
@@ -1232,34 +1197,17 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h5 id="exportsetconfiguration">
-  
-  
-    <a href="#exportsetconfiguration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ExportSetConfiguration
-  
-  
-</h5>
-    
-<h3 id="additional-policies">
+<h2 id="additional-policies">
   
   
     <a href="#additional-policies" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Additional Policies
   
   
-</h3>
+</h2>
     
 
-<p>The following examples can be used to create additional policies to further limit user access. Use the web UI or the <a href="/reference/cli.html#lakectl-auth-policies-create">lakectl auth</a> command to create policies.</p>
-<h4 id="readwrite-access-for-a-specific-repository">
-  
-  
-    <a href="#readwrite-access-for-a-specific-repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Read/write access for a specific repository
-  
-  
-</h4>
-    
+<p>You can create additional policies to further limit user access. Use the web UI or the <a href="/reference/cli.html#lakectl-auth-policies-create">lakectl auth</a> command to create policies. Here is an example to define read/write access for a specific repository:</p>
 
-<p>Policy:</p>
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
         </span><span class="p">{</span><span class="w">
@@ -1311,64 +1259,88 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h3 id="preconfigured-groups">
+<h2 id="preconfigured-groups">
   
   
     <a href="#preconfigured-groups" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Preconfigured Groups
   
   
-</h3>
-    
-<h5 id="admins">
-  
-  
-    <a href="#admins" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Admins
-  
-  
-</h5>
-    
-
-<p>Policies: <code class="language-plaintext highlighter-rouge">["FSFullAccess", "AuthFullAccess", "RepoManagementFullAccess", "ExportSetConfiguration"]</code></p>
-<h5 id="superusers">
-  
-  
-    <a href="#superusers" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SuperUsers
-  
-  
-</h5>
-    
-
-<p>Policies: <code class="language-plaintext highlighter-rouge">["FSFullAccess", "AuthManageOwnCredentials", "RepoManagementReadAll"]</code></p>
-<h5 id="developers">
-  
-  
-    <a href="#developers" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Developers
-  
-  
-</h5>
-    
-
-<p>Policies: <code class="language-plaintext highlighter-rouge">["FSReadWriteAll", "AuthManageOwnCredentials", "RepoManagementReadAll"]</code></p>
-<h5 id="viewers">
-  
-  
-    <a href="#viewers" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Viewers
-  
-  
-</h5>
-    
-
-<p>Policies: <code class="language-plaintext highlighter-rouge">["FSReadAll", "AuthManageOwnCredentials"]</code></p>
-<h2 id="soc2-compliance">
-  
-  
-    <a href="#soc2-compliance" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SOC2 Compliance
-  
-  
 </h2>
     
 
-<p>For a scalable managed lakeFS service with guaranteed SLAs, which is SOC 2 Compliant try <a href="https://lakefs.cloud">lakeFS cloud</a></p>
+<p>lakeFS has four preconfigured groups:</p>
+
+<ul>
+  <li>Admins</li>
+  <li>SuperUsers</li>
+  <li>Developers</li>
+  <li>Viewers</li>
+</ul>
+
+<p>They have the following policies granted to them:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Policy</th>
+      <th>Admins</th>
+      <th>SuperUsers</th>
+      <th>Developers</th>
+      <th>Viewers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#fsfullaccess"><code class="language-plaintext highlighter-rouge">FSFullAccess</code></a></td>
+      <td>✅</td>
+      <td>✅</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#authfullaccess"><code class="language-plaintext highlighter-rouge">AuthFullAccess</code></a></td>
+      <td>✅</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#repomanagementfullaccess"><code class="language-plaintext highlighter-rouge">RepoManagementFullAccess</code></a></td>
+      <td>✅</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#authmanageowncredentials"><code class="language-plaintext highlighter-rouge">AuthManageOwnCredentials</code></a></td>
+      <td> </td>
+      <td>✅</td>
+      <td>✅</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><a href="#repomanagementreadall"><code class="language-plaintext highlighter-rouge">RepoManagementReadAll</code></a></td>
+      <td> </td>
+      <td>✅</td>
+      <td>✅</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#fsreadwriteall"><code class="language-plaintext highlighter-rouge">FSReadWriteAll</code></a></td>
+      <td> </td>
+      <td> </td>
+      <td>✅</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#fsreadall"><code class="language-plaintext highlighter-rouge">FSReadAll</code></a></td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>✅</td>
+    </tr>
+  </tbody>
+</table></div>
 
                 
 
