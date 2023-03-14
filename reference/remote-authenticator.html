@@ -531,41 +531,61 @@
     </span><span class="nl">"external_user_identifier"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TestyMcTestface"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
-<h3 id="example-responses">
+<h3 id="example-request--responses">
   
   
-    <a href="#example-responses" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example Responses
+    <a href="#example-request--responses" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example Request &amp; Responses
   
   
 </h3>
     
+<h4 id="request">
+  
+  
+    <a href="#request" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Request
+  
+  
+</h4>
+    
 
-<div class="language-http highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">### Request
-POST https://remote-authenticator.example.com/auth
+<div class="language-http highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">POST https://remote-authenticator.example.com/auth
 Content-Type: application/json
 
 {
   "username": "testy.mctestface@example.com",
   "password": "Password1"
 }
-
-### Successful Response
-</span><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span></code></pre></div></div>
+<h4 id="successful-response">
+  
+  
+    <a href="#successful-response" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Successful Response
+  
+  
+</h4>
+    
+<div class="language-http highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
 
 <span class="w">
 </span><span class="p">{</span><span class="w">
   </span><span class="nl">"external_user_identifier"</span><span class="p">:</span><span class="w"> </span><span class="s2">"TestyMcTestface"</span><span class="w">
 </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h4 id="unauthorized-response">
+  
+  
+    <a href="#unauthorized-response" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Unauthorized Response
+  
+  
+</h4>
+    
+<div class="language-http highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorized</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
 
-</span><span class="err">###</span><span class="w"> </span><span class="err">Unauthorized</span><span class="w"> </span><span class="err">Response</span><span class="w">
-</span><span class="err">HTTP/</span><span class="mf">1.1</span><span class="w"> </span><span class="mi">401</span><span class="w"> </span><span class="err">Unauthorized</span><span class="w">
-</span><span class="err">Content-Type:</span><span class="w"> </span><span class="err">application/json</span><span class="w">
-
-</span><span class="p">{</span><span class="w">
+<span class="p">{</span><span class="w">
   </span><span class="nl">"external_user_identifier"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
 </span><span class="p">}</span><span class="w">
-
 </span></code></pre></div></div>
 
 <p>If the Remote Authenticator returns any HTTP status in the 2xx range, lakeFS considers this a successful authentication. Any HTTP status &lt; 200 or &gt; 300 is considered a failed authentication. If the Remote Authenticator returns a non-empty value for the <code class="language-plaintext highlighter-rouge">external_user_identifier</code> property along with a success HTTP status, lakeFS will show this identifier instead of an internal lakeFS user identifier in the UI.</p>
@@ -580,56 +600,56 @@ Content-Type: application/json
 
 <p>Here is a sample Remote Authenticator implemented using <a href="https://nodejs.org/">node</a> and <a href="https://expressjs.com/">express</a> and written in TypeScript. This example implementation doesn’t integrate with any real IdP but illustrates the expected request/response patterns that you need to implement.</p>
 
-<pre><code class="language-TypeScript">import dotenv from "dotenv";
-import express, { Express, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">dotenv</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">dotenv</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">express</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Express</span><span class="p">,</span> <span class="nx">Request</span><span class="p">,</span> <span class="nx">Response</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">express</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">StatusCodes</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">http-status-codes</span><span class="dl">"</span><span class="p">;</span>
 
-type AuthRequestBody = {
-  username: string;
-  password: string;
-};
+<span class="nx">type</span> <span class="nx">AuthRequestBody</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">username</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+  <span class="nl">password</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">};</span>
 
-type AuthResponseBody = {
-  external_user_identifier: string;
-};
+<span class="nx">type</span> <span class="nx">AuthResponseBody</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">external_user_identifier</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">};</span>
 
-const DEFAULT_PORT = 80;
+<span class="kd">const</span> <span class="nx">DEFAULT_PORT</span> <span class="o">=</span> <span class="mi">80</span><span class="p">;</span>
 
-dotenv.config();
+<span class="nx">dotenv</span><span class="p">.</span><span class="nx">config</span><span class="p">();</span>
 
-const port = process.env.PORT || DEFAULT_PORT;
-const app: Express = express();
+<span class="kd">const</span> <span class="nx">port</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PORT</span> <span class="o">||</span> <span class="nx">DEFAULT_PORT</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">app</span><span class="p">:</span> <span class="nx">Express</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
 
-app.post(
-  "/auth",
-  (req: Request&lt;AuthResponseBody, {}, AuthRequestBody&gt;, res: Response) =&gt; {
-    const { username, password } = req.body;
-    if (!username?.length || !password?.length) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        external_user_identifier: "",
-      });
-    }
+<span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span>
+  <span class="dl">"</span><span class="s2">/auth</span><span class="dl">"</span><span class="p">,</span>
+  <span class="p">(</span><span class="nx">req</span><span class="p">:</span> <span class="nx">Request</span><span class="o">&lt;</span><span class="nx">AuthResponseBody</span><span class="p">,</span> <span class="p">{},</span> <span class="nx">AuthRequestBody</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">res</span><span class="p">:</span> <span class="nx">Response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">password</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">username</span><span class="p">?.</span><span class="nx">length</span> <span class="o">||</span> <span class="o">!</span><span class="nx">password</span><span class="p">?.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">StatusCodes</span><span class="p">.</span><span class="nx">BAD_REQUEST</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span>
+        <span class="na">external_user_identifier</span><span class="p">:</span> <span class="dl">""</span><span class="p">,</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
 
-    // 👇🏻 This is where you would implement your own authentication logic
-    if (
-      username === "testy.mctestface@example.com" &amp;&amp;
-      password === "Password1"
-    ) {
-      return res.status(StatusCodes.OK).json({
-        external_user_identifier: "TestyMcTestface",
-      });
-    } else {
-      return res.status(StatusCodes.UNAUTHORIZED).json({
-        external_user_identifier: "",
-      });
-    }
-  }
-);
+    <span class="c1">// 👇🏻 This is where you would implement your own authentication logic</span>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="nx">username</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">testy.mctestface@example.com</span><span class="dl">"</span> <span class="o">&amp;&amp;</span>
+      <span class="nx">password</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">Password1</span><span class="dl">"</span>
+    <span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">StatusCodes</span><span class="p">.</span><span class="nx">OK</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span>
+        <span class="na">external_user_identifier</span><span class="p">:</span> <span class="dl">"</span><span class="s2">TestyMcTestface</span><span class="dl">"</span><span class="p">,</span>
+      <span class="p">});</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">StatusCodes</span><span class="p">.</span><span class="nx">UNAUTHORIZED</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span>
+        <span class="na">external_user_identifier</span><span class="p">:</span> <span class="dl">""</span><span class="p">,</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">);</span>
 
-app.listen(port, () =&gt; {
-  console.log(`Remote Authenticator listening on port ${port}`);
-});
-</code></pre>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Remote Authenticator listening on port </span><span class="p">${</span><span class="nx">port</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
 
 <p>To run this service on the sub-domain <code class="language-plaintext highlighter-rouge">idp.example.com</code>, use a lakeFS configuration that looks like this:</p>
 
