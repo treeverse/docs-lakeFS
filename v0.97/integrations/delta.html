@@ -272,7 +272,7 @@
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.97/reference/"
            class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/v0.97/reference/configuration.html"
-                   class="nav-list-link">Configuration</a></li><li class="nav-list-item "><a href="/v0.97/reference/cli.html"
+                   class="nav-list-link">Server Configuration</a></li><li class="nav-list-item "><a href="/v0.97/reference/cli.html"
                    class="nav-list-link">lakectl (lakeFS command-line tool)</a></li><li class="nav-list-item "><a href="/v0.97/reference/api.html"
                    class="nav-list-link">API Reference</a></li><li class="nav-list-item "><a href="/v0.97/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/v0.97/reference/s3.html"
@@ -474,12 +474,12 @@
 </h1>
     
 
-<p><a href="https://delta.io/">Delta Lake</a> is an open file format designed to improve performance and provide transactional guarantees to data lake tables.</p>
+<p><a href="https://delta.io/">Delta Lake</a> Delta Lake is an open-source storage framework designed to improve performance and provide transactional guarantees to data lake tables.</p>
 
-<p>lakeFS is format-agnostic, so you can save data in Delta format within a lakeFS repository to reap the benefits of both technologies. Specifically:</p>
+<p>Because lakeFS is format-agnostic, you can save data in Delta format within a lakeFS repository and benefit from the advantages of both technologies.  Specifically:</p>
 
 <ol>
-  <li>ACID operations can now span across many Delta tables.</li>
+  <li>ACID operations can span across many Delta tables.</li>
   <li><a href="/v0.97/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">CI/CD hooks</a> can validate Delta table contents, schema, or even referential integrity.</li>
   <li>lakeFS supports zero-copy branching for quick experimentation with full isolation.</li>
 </ol>
@@ -495,8 +495,12 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#configuration" id="markdown-toc-configuration">Configuration</a></li>
-  <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a>    <ol>
+  <li><a href="#viewing-delta-lake-table-changes-in-lakefs-beta" id="markdown-toc-viewing-delta-lake-table-changes-in-lakefs-beta">Viewing Delta Lake table changes in lakeFS <sup>BETA</sup></a>    <ol>
+      <li><a href="#installing-the-delta-lake-diff-plugin" id="markdown-toc-installing-the-delta-lake-diff-plugin">Installing the Delta Lake diff plugin</a></li>
+    </ol>
+  </li>
+  <li><a href="#spark-configuration" id="markdown-toc-spark-configuration">Spark Configuration</a></li>
+  <li><a href="#best-practices" id="markdown-toc-best-practices">Best Practices</a>    <ol>
       <li><a href="#when-running-lakefs-inside-your-vpc-on-aws" id="markdown-toc-when-running-lakefs-inside-your-vpc-on-aws">When running lakeFS inside your VPC (on AWS)</a></li>
       <li><a href="#using-multi-cluster-writes-on-aws" id="markdown-toc-using-multi-cluster-writes-on-aws">Using multi cluster writes (on AWS)</a></li>
     </ol>
@@ -505,35 +509,75 @@
 </ol>
 
 </div>
-<h2 id="configuration">
+<h2 id="viewing-delta-lake-table-changes-in-lakefs-beta">
   
   
-    <a href="#configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
+    <a href="#viewing-delta-lake-table-changes-in-lakefs-beta" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Viewing Delta Lake table changes in lakeFS <sup>BETA</sup>
   
   
 </h2>
     
 
-<p>Most commonly, you interact with Delta tables in a Spark environment - given the native integration between Delta Lake and Spark.</p>
+<p>Using lakeFS you can</p>
+<ul>
+  <li>Compare different versions of Delta Lake tables</li>
+  <li>Get a detailed view of all Delta Lake table operations performed since the tables diverged.</li>
+</ul>
 
-<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you’d do with any <a href="/v0.97/integrations/spark.html">Spark</a>.</p>
+<p>For example, comparing branches <code class="language-plaintext highlighter-rouge">dev</code> and <code class="language-plaintext highlighter-rouge">main</code>, we can see that the <em>movies</em> table has changed on <code class="language-plaintext highlighter-rouge">dev</code> since the branches diverged.
+Expanding the delete operation, we learn that all movies with a rating &lt; 4 were deleted from the table on the <code class="language-plaintext highlighter-rouge">dev</code> branch.</p>
+
+<p><img src="/v0.97/assets/img/delta-diff-table-icon.png" alt="movies_table_changed.png" />
+<img src="/v0.97/assets/img/delta-diff-operations.png" alt="movies_table_operations.png" /></p>
+
+<p class="note"><strong>Note:</strong>
+The diff is available as long as the table history in Delta is retained (<a href="https://docs.databricks.com/delta/history.html#configure-data-retention-for-time-travel">30 days by default</a>). A delta lake table history is derived from the delta log JSON files.</p>
+<h3 id="installing-the-delta-lake-diff-plugin">
+  
+  
+    <a href="#installing-the-delta-lake-diff-plugin" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installing the Delta Lake diff plugin
+  
+  
+</h3>
+    
+
+<p>To enable the Delta Lake diff feature, you need to install a plugin on the lakeFS server. You will find the plugin binary in the
+<a href="https://github.com/treeverse/lakeFS/releases/latest">release</a> tarball (versions &gt;= 0.97.3).
+Put the <code class="language-plaintext highlighter-rouge">delta_diff</code> binary under <code class="language-plaintext highlighter-rouge">~/.lakefs/plugins/diff</code> on the machine where lakeFS is running.</p>
+
+<p>You can customize the location of the Delta Lake diff plugin by changing the <code class="language-plaintext highlighter-rouge">diff.delta.plugin</code> and 
+<code class="language-plaintext highlighter-rouge">plugin.properties.&lt;plugin name&gt;.path</code> configurations in the <a href="../reference/configuration"><code class="language-plaintext highlighter-rouge">.lakefs.yaml</code></a> file.</p>
+
+<p><strong>Notice</strong>: If you’re using the lakeFS <a href="/v0.97/quickstart/run.html#running-locally-with-docker">docker image</a>, the plugin is installed by default.</p>
+<h2 id="spark-configuration">
+  
+  
+    <a href="#spark-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Spark Configuration
+  
+  
+</h2>
+    
+
+<p><em>Given the native integration between Delta Lake and Spark, it’s most common that you’ll interact with Delta tables in a Spark environment.</em></p>
+
+<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you’d do with any <a href="/v0.97/integrations/spark.html">Spark</a> environment.</p>
 
 <p>Once set, you can interact with Delta tables using regular Spark path URIs. Make sure that you include the lakeFS repository and branch name:</p>
 
 <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">df</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">format</span><span class="o">(</span><span class="s">"delta"</span><span class="o">).</span><span class="py">save</span><span class="o">(</span><span class="s">"s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table"</span><span class="o">)</span>
 </code></pre></div></div>
 
-<p>Note: If using the Databricks Analytics Platform, see the <a href="/v0.97/integrations/spark.html">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
-<h2 id="limitations">
+<p>Note: If using the Databricks Analytics Platform, see the <a href="/v0.97/integrations/spark.html#installation">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
+<h2 id="best-practices">
   
   
-    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+    <a href="#best-practices" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Best Practices
   
   
 </h2>
     
 
-<p>The <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it would result in conflicts if later attempting to merge one branch into the other. For this reason, production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>.</p>
+<p>Production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>. This is because the <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it would result in conflicts if later attempting to merge one branch into the other.</p>
 <h3 id="when-running-lakefs-inside-your-vpc-on-aws">
   
   
@@ -545,7 +589,7 @@
 
 <p>When lakeFS runs inside your private network, your Databricks cluster needs to be able to access it. 
 This can be done by setting up a VPC peering between the two VPCs 
-(the one where lakeFS runs and the one where Databricks runs). For this to work on DeltaLake tables, you would also have to disable multi-cluster writes with:</p>
+(the one where lakeFS runs and the one where Databricks runs). For this to work on Delta Lake tables, you would also have to disable multi-cluster writes with:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.databricks.delta.multiClusterWrites.enabled false
 </code></pre></div></div>

@@ -27,17 +27,17 @@
   
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Configuration | lakeFS</title>
+<title>Server Configuration | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Configuration" />
+<meta property="og:title" content="Server Configuration" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Configuring lakeFS is done using a YAML configuration file. This reference uses . to denote the nesting of values." />
-<meta property="og:description" content="Configuring lakeFS is done using a YAML configuration file. This reference uses . to denote the nesting of values." />
+<meta name="description" content="Reference for lakeFS Server configuration items and several examples of confriguation for different deployment permutations." />
+<meta property="og:description" content="Reference for lakeFS Server configuration items and several examples of confriguation for different deployment permutations." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Configuration" />
+<meta property="twitter:title" content="Server Configuration" />
 <script type="application/ld+json">
-{"description":"Configuring lakeFS is done using a YAML configuration file. This reference uses . to denote the nesting of values.","@type":"WebPage","headline":"Configuration","url":"/v0.97/reference/configuration.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v0.97/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"Reference for lakeFS Server configuration items and several examples of confriguation for different deployment permutations.","@type":"WebPage","headline":"Server Configuration","url":"/v0.97/reference/configuration.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v0.97/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -272,7 +272,7 @@
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.97/reference/"
            class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item  active"><a href="/v0.97/reference/configuration.html"
-                   class="nav-list-link active">Configuration</a></li><li class="nav-list-item "><a href="/v0.97/reference/cli.html"
+                   class="nav-list-link active">Server Configuration</a></li><li class="nav-list-item "><a href="/v0.97/reference/cli.html"
                    class="nav-list-link">lakectl (lakeFS command-line tool)</a></li><li class="nav-list-item "><a href="/v0.97/reference/api.html"
                    class="nav-list-link">API Reference</a></li><li class="nav-list-item "><a href="/v0.97/reference/spark-client.html"
                    class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/v0.97/reference/s3.html"
@@ -458,17 +458,17 @@
                     <li class="breadcrumb-nav-list-item"><a href="/v0.97/reference/">Reference</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Configuration</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Server Configuration</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 class="no_toc" id="configuration-reference">
+                <h1 class="no_toc" id="server-configuration">
   
   
-    <a href="#configuration-reference" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration Reference
+    <a href="#server-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Server Configuration
   
   
 </h1>
@@ -485,98 +485,169 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#reference" id="markdown-toc-reference">Reference</a></li>
-  <li><a href="#using-environment-variables" id="markdown-toc-using-environment-variables">Using Environment Variables</a></li>
-  <li><a href="#example-local-development-with-postgresql-database" id="markdown-toc-example-local-development-with-postgresql-database">Example: Local Development with PostgreSQL database</a></li>
-  <li><a href="#example-aws-deployment-with-dynamodb-database" id="markdown-toc-example-aws-deployment-with-dynamodb-database">Example: AWS Deployment with DynamoDB database</a></li>
-  <li><a href="#example-google-storage" id="markdown-toc-example-google-storage">Example: Google Storage</a></li>
-  <li><a href="#example-minio" id="markdown-toc-example-minio">Example: MinIO</a></li>
-  <li><a href="#example-azure-blob-storage" id="markdown-toc-example-azure-blob-storage">Example: Azure blob storage</a></li>
+  <li><a href="#configuration-reference" id="markdown-toc-configuration-reference">Configuration Reference</a>    <ol>
+      <li><a href="#logging" id="markdown-toc-logging">Logging</a></li>
+      <li><a href="#actions-hooks" id="markdown-toc-actions-hooks">Actions (Hooks)</a></li>
+      <li><a href="#database" id="markdown-toc-database">Database</a></li>
+      <li><a href="#miscellaneous" id="markdown-toc-miscellaneous">Miscellaneous</a></li>
+      <li><a href="#authentication-and-authorization" id="markdown-toc-authentication-and-authorization">Authentication and Authorization</a></li>
+      <li><a href="#blockstore" id="markdown-toc-blockstore">Blockstore</a></li>
+      <li><a href="#graveler" id="markdown-toc-graveler">Graveler</a></li>
+      <li><a href="#email" id="markdown-toc-email">Email</a></li>
+      <li><a href="#s3-gateway" id="markdown-toc-s3-gateway">S3 Gateway</a></li>
+      <li><a href="#plugins" id="markdown-toc-plugins">Plugins</a></li>
+    </ol>
+  </li>
+  <li><a href="#examples" id="markdown-toc-examples">Examples</a>    <ol>
+      <li><a href="#local-development-with-postgresql-database" id="markdown-toc-local-development-with-postgresql-database">Local Development with PostgreSQL database</a></li>
+      <li><a href="#aws-deployment-with-dynamodb-database" id="markdown-toc-aws-deployment-with-dynamodb-database">AWS Deployment with DynamoDB database</a></li>
+      <li><a href="#google-storage" id="markdown-toc-google-storage">Google Storage</a></li>
+      <li><a href="#minio" id="markdown-toc-minio">MinIO</a></li>
+      <li><a href="#azure-blob-storage" id="markdown-toc-azure-blob-storage">Azure Blob Storage</a></li>
+    </ol>
+  </li>
 </ol>
 
 </div>
 
-<p>Configuring lakeFS is done using a YAML configuration file and/or environment variable.
-The configuration file’s location can be set with the ‘–config’ flag. If not specified, the first file found in the following order will be used:</p>
+<p>Configuring lakeFS is done using a YAML configuration file and/or environment variable.</p>
+
+<p>The configuration file’s location can be set with the <code class="language-plaintext highlighter-rouge">--config</code> flag. If not specified, the first file found in the following order will be used:</p>
 <ol>
-  <li>./config.yaml</li>
-  <li><code class="language-plaintext highlighter-rouge">$HOME</code>/lakefs/config.yaml</li>
-  <li>/etc/lakefs/config.yaml</li>
-  <li><code class="language-plaintext highlighter-rouge">$HOME</code>/.lakefs.yaml</li>
+  <li><code class="language-plaintext highlighter-rouge">./config.yaml</code></li>
+  <li><code class="language-plaintext highlighter-rouge">$HOME/lakefs/config.yaml</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/etc/lakefs/config.yaml</code></li>
+  <li><code class="language-plaintext highlighter-rouge">$HOME/.lakefs.yaml</code></li>
 </ol>
 
-<p>Configuration items can each be controlled by an environment variable. The variable name will have a prefix of <em>LAKEFS_</em>, followed by the name of the configuration, replacing every ‘.’ with a ‘_’.
-Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL</code> controls <code class="language-plaintext highlighter-rouge">logging.level</code>.</p>
+<p>All the configuration properties can be set or overridden using environment variables. The variable name should have a prefix of <em><code class="language-plaintext highlighter-rouge">LAKEFS_</code></em>, followed by the name of the configuration, replacing every ‘<code class="language-plaintext highlighter-rouge">.</code>’ with a ‘<code class="language-plaintext highlighter-rouge">_</code>’.</p>
 
-<p>This reference uses <code class="language-plaintext highlighter-rouge">.</code> to denote the nesting of values.</p>
-<h2 id="reference">
+<p>For example, <code class="language-plaintext highlighter-rouge">logging.format</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_FORMAT</code>, <code class="language-plaintext highlighter-rouge">blockstore.s3.region</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_BLOCKSTORE_S3_REGION</code>, etc.</p>
+<h2 id="configuration-reference">
   
   
-    <a href="#reference" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Reference
+    <a href="#configuration-reference" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration Reference
   
   
 </h2>
     
 
-<ul class="ref-list">
+<p>This reference uses ‘<code class="language-plaintext highlighter-rouge">.</code>’ to denote the nesting of values. See the <a href="#example-lakefs-server-configuration">examples below</a> for sample YAML.</p>
+<h3 id="logging">
+  
+  
+    <a href="#logging" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Logging
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">logging.format</code> <code class="language-plaintext highlighter-rouge">(one of ["json", "text"] : "text")</code> - Format to output log message in</li>
   <li><code class="language-plaintext highlighter-rouge">logging.level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Logging level to output</li>
   <li>
     <p><code class="language-plaintext highlighter-rouge">logging.audit_log_level</code> <code class="language-plaintext highlighter-rouge">(one of ["TRACE", "DEBUG", "INFO", "WARN", "ERROR", "NONE"] : "DEBUG")</code> - Audit logs level to output.</p>
 
-    <p class="note"><strong>Note:</strong> In case you configure this field to be lower than the main logger level, you won’t be able to get the audit logs</p>
+    <p class="note"><strong>Note:</strong> If you configure this field to be lower than the main logger level, you won’t be able to get the audit logs</p>
   </li>
   <li><code class="language-plaintext highlighter-rouge">logging.output</code> <code class="language-plaintext highlighter-rouge">(string : "-")</code> - A path or paths to write logs to. A <code class="language-plaintext highlighter-rouge">-</code> means the standard output, <code class="language-plaintext highlighter-rouge">=</code> means the standard error.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.file_max_size_mb</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - Output file maximum size in megabytes.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.files_keep</code> <code class="language-plaintext highlighter-rouge">(int : 0)</code> - Number of log files to keep, default is all.</li>
+</ul>
+<h3 id="actions-hooks">
+  
+  
+    <a href="#actions-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Actions (Hooks)
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">actions.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Setting this to false will block hooks from being executed</li>
+</ul>
+<h3 id="database">
+  
+  
+    <a href="#database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Database
+  
+  
+</h3>
+    
+
+<p>These configuration items are for the lakeFS key-value store database</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string ["postgres"|"dynamodb"|"local"] : )</code> - lakeFS database type</li>
+  <li><code class="language-plaintext highlighter-rouge">database.postgres</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="postgres"</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
+      <li><code class="language-plaintext highlighter-rouge">database.postgres.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</li>
+      <li><code class="language-plaintext highlighter-rouge">database.postgres.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of connections in the idle connection pool</li>
+      <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused <code class="language-plaintext highlighter-rouge">(valid units: ns|us|ms|s|m|h)</code></li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">database.dynamodb</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="dynamodb"</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.table_name</code> <code class="language-plaintext highlighter-rouge">(string : "kvstore")</code> - Table used to store the data</li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">database.dynamodb.scan_limit</code> <code class="language-plaintext highlighter-rouge">(int : 1025)</code> - Maximal number of items per page during scan operation</p>
+
+        <p class="note"><strong>Note:</strong> Refer to the following <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Limit">AWS documentation</a> for further information</p>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Endpoint URL for database instance</li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_region</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS Region of database instance</li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_profile</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS named profile to use</li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS access key ID</li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS secret access key</li>
+      <li><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">endpoint</code> <code class="language-plaintext highlighter-rouge">aws_region</code> <code class="language-plaintext highlighter-rouge">aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">aws_secret_access_key</code> are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials.</li>
+      <li><code class="language-plaintext highlighter-rouge">database.dynamodb.health_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 0s)</code> - Interval to run health check for the DynamoDB instance (won’t run if equal to 0).</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">database.local</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="local"</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">database.local.path</code> <code class="language-plaintext highlighter-rouge">(string : "~/lakefs/metadata")</code> - Local path on the filesystem to store embedded KV metadata, like branches and uncommitted entries</li>
+      <li><code class="language-plaintext highlighter-rouge">database.local.sync_writes</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - Ensure each write is written to the disk. Disable to increase performance</li>
+      <li><code class="language-plaintext highlighter-rouge">database.local.prefetch_size</code> <code class="language-plaintext highlighter-rouge">(int: 256)</code> - How many items to prefetch when iterating over embedded KV records</li>
+      <li><code class="language-plaintext highlighter-rouge">database.local.enable_logging</code> <code class="language-plaintext highlighter-rouge">(bool: false)</code> - Enable trace logging for local driver</li>
+    </ul>
+  </li>
   <li><del><code class="language-plaintext highlighter-rouge">database.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</del></li>
   <li><del><code class="language-plaintext highlighter-rouge">database.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</del></li>
   <li><del><code class="language-plaintext highlighter-rouge">database.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Sets the maximum number of connections in the idle connection pool</del></li>
   <li>
     <p><del><code class="language-plaintext highlighter-rouge">database.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused</del></p>
 
-    <p class="note"><strong>Note:</strong> Deprecated - See <code class="language-plaintext highlighter-rouge">database</code> section</p>
+    <p class="note"><strong>Note:</strong> Deprecated</p>
   </li>
-  <li><code class="language-plaintext highlighter-rouge">database</code> - Configuration section for the lakeFS key-value store database
-    <ul>
-      <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string ["postgres"|"dynamodb"|"local"] : )</code> - lakeFS database type</li>
-      <li><code class="language-plaintext highlighter-rouge">database.postgres</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="postgres"</code>
-        <ul>
-          <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
-          <li><code class="language-plaintext highlighter-rouge">database.postgres.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</li>
-          <li><code class="language-plaintext highlighter-rouge">database.postgres.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of connections in the idle connection pool</li>
-          <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused <code class="language-plaintext highlighter-rouge">(valid units: ns|us|ms|s|m|h)</code></li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">database.dynamodb</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="dynamodb"</code>
-        <ul>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.table_name</code> <code class="language-plaintext highlighter-rouge">(string : "kvstore")</code> - Table used to store the data</li>
-          <li>
-            <p><code class="language-plaintext highlighter-rouge">database.dynamodb.scan_limit</code> <code class="language-plaintext highlighter-rouge">(int : 1025)</code> - Maximal number of items per page during scan operation</p>
+</ul>
+<h3 id="miscellaneous">
+  
+  
+    <a href="#miscellaneous" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Miscellaneous
+  
+  
+</h3>
+    
 
-            <p class="note"><strong>Note:</strong> Refer to the following <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Limit">AWS documentation</a> for further information</p>
-          </li>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Endpoint URL for database instance</li>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_region</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS Region of database instance</li>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_profile</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS named profile to use</li>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS access key ID</li>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS secret access key</li>
-          <li><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">endpoint</code> <code class="language-plaintext highlighter-rouge">aws_region</code> <code class="language-plaintext highlighter-rouge">aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">aws_secret_access_key</code> are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials.</li>
-          <li><code class="language-plaintext highlighter-rouge">database.dynamodb.health_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 0s)</code> - Interval to run health check for the DynamoDB instance (won’t run if equal to 0).</li>
-        </ul>
-      </li>
-      <li><code class="language-plaintext highlighter-rouge">database.local</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="local"</code>
-        <ul>
-          <li><code class="language-plaintext highlighter-rouge">database.local.path</code> <code class="language-plaintext highlighter-rouge">(string : "~/lakefs/metadata")</code> - Local path on the filesystem to store embedded KV metadata, like branches and uncommitted entries</li>
-          <li><code class="language-plaintext highlighter-rouge">database.local.sync_writes</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - Ensure each write is written to the disk. Disable to increase performance</li>
-          <li><code class="language-plaintext highlighter-rouge">database.local.prefetch_size</code> <code class="language-plaintext highlighter-rouge">(int: 256)</code> - How many items to prefetch when iterating over embedded KV records</li>
-          <li><code class="language-plaintext highlighter-rouge">database.local.enable_logging</code> <code class="language-plaintext highlighter-rouge">(bool: false)</code> - Enable trace logging for local driver</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+<ul>
   <li><code class="language-plaintext highlighter-rouge">listen_address</code> <code class="language-plaintext highlighter-rouge">(string : "0.0.0.0:8000")</code> - A <code class="language-plaintext highlighter-rouge">&lt;host&gt;:&lt;port&gt;</code> structured string representing the address to listen on</li>
+  <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Whether to periodically collect anonymous usage statistics</li>
+  <li><code class="language-plaintext highlighter-rouge">stats.flush_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 30s)</code> - Interval used to post anonymous statistics collected</li>
+  <li><code class="language-plaintext highlighter-rouge">stats.flush_size</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - A size (in records) of anonymous statistics collected in which we post</li>
+  <li><code class="language-plaintext highlighter-rouge">security.audit_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 24h)</code> - Duration in which we check for security audit.</li>
+  <li><code class="language-plaintext highlighter-rouge">ui.enabled</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - Whether to server the embedded UI from the binary</li>
+</ul>
+<h3 id="authentication-and-authorization">
+  
+  
+    <a href="#authentication-and-authorization" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication and Authorization
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Whether to cache access credentials and user policies in-memory. Can greatly improve throughput when enabled.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.size</code> <code class="language-plaintext highlighter-rouge">(int : 1024)</code> - How many items to store in the auth cache. Systems with a very high user count should use a larger value at the expense of ~1kb of memory per cached user.</li>
   <li><code class="language-plaintext highlighter-rouge">auth.cache.ttl</code> <code class="language-plaintext highlighter-rouge">(time duration : "20s")</code> - How long to store an item in the auth cache. Using a higher value reduces load on the database, but will cause changes longer to take effect for cached users.</li>
@@ -608,6 +679,17 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
 “external”.  In simplified mode, do not display policy in GUI.  If you
 have configured an external auth server you can set this to “external” to
 support the policy editor.</li>
+</ul>
+<h3 id="blockstore">
+  
+  
+    <a href="#blockstore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Blockstore
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">blockstore.type</code> <code class="language-plaintext highlighter-rouge">(one of ["local", "s3", "gs", "azure", "mem"] : required)</code>. Block adapter to use. This controls where the underlying data will be stored</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.default_namespace_prefix</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Use this to help your users choose a storage namespace for their repositories. 
  If specified, the storage namespace will be filled with this default value as a prefix when creating a repository from the UI.
@@ -640,6 +722,17 @@ support the policy editor.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.server_side_encryption_kms_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Server side encryption KMS key ID</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.pre_signed_expiry</code> <code class="language-plaintext highlighter-rouge">(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.disable_pre_signed_ui</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - When enabled the UI will use a pre-signed URL to get and upload objects from the UI (<a href="presigned-url">reference</a>).</li>
+</ul>
+<h3 id="graveler">
+  
+  
+    <a href="#graveler" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Graveler
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">graveler.reposiory_cache.size</code> <code class="language-plaintext highlighter-rouge">(int : 1000)</code> - How many items to store in the repository cache.</li>
   <li><code class="language-plaintext highlighter-rouge">graveler.reposiory_cache.ttl</code> <code class="language-plaintext highlighter-rouge">(time duration : "5s")</code> - How long to store an item in the repository cache.</li>
   <li><code class="language-plaintext highlighter-rouge">graveler.reposiory_cache.jitter</code> <code class="language-plaintext highlighter-rouge">(time duration : "2s")</code> - A random amount of time between 0 and this value is added to each item’s TTL.</li>
@@ -679,6 +772,17 @@ pointers to store in each range (subject to <code class="language-plaintext high
 <code class="language-plaintext highlighter-rouge">max_range_size_bytes</code>).</li>
   <li><code class="language-plaintext highlighter-rouge">committed.sstable.memory.cache_size_bytes</code> (<code class="language-plaintext highlighter-rouge">int</code> : <code class="language-plaintext highlighter-rouge">200_000_000</code>) - maximal size of
 in-memory cache used for each SSTable reader.</li>
+</ul>
+<h3 id="email">
+  
+  
+    <a href="#email" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Email
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">email.smtp_host</code> <code class="language-plaintext highlighter-rouge">(string)</code> - A string representing the URL of the SMTP host.</li>
   <li><code class="language-plaintext highlighter-rouge">email.smtp_port</code> (<code class="language-plaintext highlighter-rouge">int</code>) - An integer representing the port of the SMTP service (465, 587, 993, 25 are some standard ports)</li>
   <li><code class="language-plaintext highlighter-rouge">email.use_ssl</code> (<code class="language-plaintext highlighter-rouge">bool : false</code>) - Use SSL connection with SMTP host.</li>
@@ -689,38 +793,54 @@ in-memory cache used for each SSTable reader.</li>
   <li><code class="language-plaintext highlighter-rouge">email.limit_every_duration</code> <code class="language-plaintext highlighter-rouge">(duration : 1m)</code> - The average time between sending emails. If zero is entered, there is no limit to the amount of emails that can be sent.</li>
   <li><code class="language-plaintext highlighter-rouge">email.burst</code> <code class="language-plaintext highlighter-rouge">(int: 10)</code> - Maximal burst of emails before applying <code class="language-plaintext highlighter-rouge">limit_every_duration</code>. The zero value means no burst and therefore no emails can be sent.</li>
   <li><code class="language-plaintext highlighter-rouge">email.lakefs_base_url</code> <code class="language-plaintext highlighter-rouge">(string : "http://localhost:8000")</code> - A string representing the base lakefs endpoint to be directed to when emails are sent inviting users, reseting passwords etc.</li>
+</ul>
+<h3 id="s3-gateway">
+  
+  
+    <a href="#s3-gateway" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> S3 Gateway
+  
+  
+</h3>
+    
+
+<ul>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.domain_name</code> <code class="language-plaintext highlighter-rouge">(string : "s3.local.lakefs.io")</code> - a FQDN
 representing the S3 endpoint used by S3 clients to call this server
 (<code class="language-plaintext highlighter-rouge">*.s3.local.lakefs.io</code> always resolves to 127.0.0.1, useful for
 local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual-host addressing</a>.</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - AWS region we’re pretending to be in, it should match the region configuration used in AWS SDK clients</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.fallback_url</code> <code class="language-plaintext highlighter-rouge">(string)</code> - If specified, requests with a non-existing repository will be forwarded to this URL. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an <a href="https://github.com/gaul/s3proxy">S3Proxy</a> instance.</li>
-  <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Whether to periodically collect anonymous usage statistics</li>
-  <li><code class="language-plaintext highlighter-rouge">stats.flush_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 30s)</code> - Interval used to post anonymous statistics collected</li>
-  <li><code class="language-plaintext highlighter-rouge">stats.flush_size</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - A size (in records) of anonymous statistics collected in which we post</li>
-  <li><code class="language-plaintext highlighter-rouge">security.audit_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 24h)</code> - Duration in which we check for security audit.</li>
-  <li><code class="language-plaintext highlighter-rouge">ui.enabled</code> <code class="language-plaintext highlighter-rouge">(bool: true)</code> - Whether to server the embedded UI from the binary</li>
 </ul>
-<h2 id="using-environment-variables">
+<h3 id="plugins">
   
   
-    <a href="#using-environment-variables" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Environment Variables
+    <a href="#plugins" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Plugins
+  
+  
+</h3>
+    
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">diff.delta.plugin</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Name of the Delta Lake diff plugin.</li>
+  <li><code class="language-plaintext highlighter-rouge">plugins.default_path</code> <code class="language-plaintext highlighter-rouge">(string : ~/.lakefs/plugins)</code> - Absolute path to the root of lakeFS’s plugins location.</li>
+  <li><code class="language-plaintext highlighter-rouge">plugins.properties.&lt;plugin name&gt;.path</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Absolute path to the location of <code class="language-plaintext highlighter-rouge">&lt;plugin name&gt;</code>’s binary location.</li>
+  <li><code class="language-plaintext highlighter-rouge">plugins.properties.&lt;plugin name&gt;.version</code> <code class="language-plaintext highlighter-rouge">(uint : )</code> - Version of the <code class="language-plaintext highlighter-rouge">&lt;plugin name&gt;</code> plugin. The version must be &gt; 0.</li>
+</ul>
+<h2 id="examples">
+  
+  
+    <a href="#examples" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
   
   
 </h2>
     
-
-<p>All the configuration variables can be set or overridden using environment variables.
-To set an environment variable, prepend <code class="language-plaintext highlighter-rouge">LAKEFS_</code> to its name, convert it to upper case, and replace <code class="language-plaintext highlighter-rouge">.</code> with <code class="language-plaintext highlighter-rouge">_</code>:</p>
-
-<p>For example, <code class="language-plaintext highlighter-rouge">logging.format</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_FORMAT</code>, <code class="language-plaintext highlighter-rouge">blockstore.s3.region</code> becomes <code class="language-plaintext highlighter-rouge">LAKEFS_BLOCKSTORE_S3_REGION</code>, etc.</p>
-<h2 id="example-local-development-with-postgresql-database">
+<h3 id="local-development-with-postgresql-database">
   
   
-    <a href="#example-local-development-with-postgresql-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: Local Development with PostgreSQL database
+    <a href="#local-development-with-postgresql-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Local Development with PostgreSQL database
   
   
-</h2>
+</h3>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
@@ -749,13 +869,13 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">s3</span><span class="pi">:</span>
     <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
 </code></pre></div></div>
-<h2 id="example-aws-deployment-with-dynamodb-database">
+<h3 id="aws-deployment-with-dynamodb-database">
   
   
-    <a href="#example-aws-deployment-with-dynamodb-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: AWS Deployment with DynamoDB database
+    <a href="#aws-deployment-with-dynamodb-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWS Deployment with DynamoDB database
   
   
-</h2>
+</h3>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
@@ -781,13 +901,13 @@ To set an environment variable, prepend <code class="language-plaintext highligh
     <span class="na">profile</span><span class="pi">:</span> <span class="s">default</span>
 
 </code></pre></div></div>
-<h2 id="example-google-storage">
+<h3 id="google-storage">
   
   
-    <a href="#example-google-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: Google Storage
+    <a href="#google-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Google Storage
   
   
-</h2>
+</h3>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
@@ -811,13 +931,13 @@ To set an environment variable, prepend <code class="language-plaintext highligh
     <span class="na">credentials_file</span><span class="pi">:</span> <span class="s">/secrets/lakefs-service-account.json</span>
 
 </code></pre></div></div>
-<h2 id="example-minio">
+<h3 id="minio">
   
   
-    <a href="#example-minio" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: MinIO
+    <a href="#minio" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> MinIO
   
   
-</h2>
+</h3>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
@@ -846,13 +966,13 @@ To set an environment variable, prepend <code class="language-plaintext highligh
       <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">minioadmin</span>
 
 </code></pre></div></div>
-<h2 id="example-azure-blob-storage">
+<h3 id="azure-blob-storage">
   
   
-    <a href="#example-azure-blob-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: Azure blob storage
+    <a href="#azure-blob-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Azure Blob Storage
   
   
-</h2>
+</h3>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
