@@ -474,6 +474,9 @@
 </h1>
     
 
+<p>The simplest way to bring data into lakeFS is by <a href="#copying-data-into-a-lakefs-repository">copying it</a>, but this approach may not be suitable when a lot of data is involved.
+To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy import</a>. With this approach, lakeFS only creates pointers to your existing objects in your new repository.</p>
+
 <div class="toc-block">
 <h2 class="no_toc text-delta" id="table-of-contents">
   
@@ -486,27 +489,10 @@
 
 <ol id="markdown-toc">
   <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
-      <li><a href="#importing-using-the-lakefs-ui" id="markdown-toc-importing-using-the-lakefs-ui">Importing using the lakeFS UI</a>        <ol>
-          <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
-          <li><a href="#using-the-import-wizard" id="markdown-toc-using-the-import-wizard">Using the import wizard</a></li>
-        </ol>
-      </li>
-      <li><a href="#importing-using-lakectl-cli" id="markdown-toc-importing-using-lakectl-cli">Importing using lakectl cli</a>        <ol>
-          <li><a href="#using-the-lakectl-import-command" id="markdown-toc-using-the-lakectl-import-command">Using the <code class="language-plaintext highlighter-rouge">lakectl import</code> command</a>            <ol>
-              <li><a href="#usage" id="markdown-toc-usage">Usage</a></li>
-            </ol>
-          </li>
-          <li><a href="#using-the-lakectl-ingest-command" id="markdown-toc-using-the-lakectl-ingest-command">Using the <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command</a>            <ol>
-              <li><a href="#prerequisites-1" id="markdown-toc-prerequisites-1">Prerequisites</a></li>
-              <li><a href="#usage-1" id="markdown-toc-usage-1">Usage</a></li>
-            </ol>
-          </li>
-        </ol>
-      </li>
-      <li><a href="#limitations-to-importing-data" id="markdown-toc-limitations-to-importing-data">Limitations to importing data</a>        <ol>
-          <li><a href="#importing-from-local-storage" id="markdown-toc-importing-from-local-storage">Importing from local storage</a></li>
-        </ol>
-      </li>
+      <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
+      <li><a href="#lakectl-import" id="markdown-toc-lakectl-import"><em>lakectl import</em></a></li>
+      <li><a href="#lakectl-ingest" id="markdown-toc-lakectl-ingest"><em>lakectl ingest</em></a></li>
+      <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
       <li><a href="#working-with-imported-data" id="markdown-toc-working-with-imported-data">Working with imported data</a></li>
       <li><a href="#aws-s3-importing-from-public-buckets" id="markdown-toc-aws-s3-importing-from-public-buckets">AWS S3: Importing from public buckets</a></li>
     </ol>
@@ -523,86 +509,54 @@
   
 </h2>
     
-<h3 id="importing-using-the-lakefs-ui">
+<h3 id="using-the-lakefs-ui">
   
   
-    <a href="#importing-using-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing using the lakeFS UI
+    <a href="#using-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the lakeFS UI
   
   
 </h3>
     
-<h4 id="prerequisites">
-  
-  
-    <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
-  
-  
-</h4>
-    
 
-<p>lakeFS must have permissions to list the objects at the source object store,
-and in the same region of your destination bucket.</p>
-
-<p>lakeFS supports two ways to ingest objects from the object store without copying the data:</p>
+<p class="note">To import using the UI, lakeFS must have permissions to list the objects in the source object store.</p>
 
 <ol>
-  <li><a href="#importing-using-the-lakefs-ui">Importing using the lakeFS UI</a> - A UI dialog to trigger an import to a designated import branch. It creates a commit from all imported objects.</li>
-  <li><a href="#importing-using-lakectl-cli">Importing using lakectl cli</a> - You can use the <a href="/reference/cli.html#lakectl"><code class="language-plaintext highlighter-rouge">lakectl</code> CLI command</a> to create uncommitted objects in a branch. It will make sequential calls between the CLI and the server.</li>
+  <li>
+    <p>In your repository’s main page, click the <em>Import</em> button to open the import dialog:</p>
+
+    <p><img src="/assets/img/UI-Import-Dialog.png" alt="img.png" /></p>
+  </li>
+  <li>Under <em>Import from</em>, fill in the location on your object store you would like to import from.</li>
+  <li>Fill in the import destination in lakeFS and a commit message.</li>
 </ol>
-<h4 id="using-the-import-wizard">
+
+<p>Once the import is complete, you can merge the changes from the import branch to the source branch.</p>
+<h4 class="no_toc" id="notes">
   
   
-    <a href="#using-the-import-wizard" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the import wizard
+    <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
   
   
 </h4>
     
 
-<p>Clicking the Import button from any branch will open the following dialog:</p>
-
-<p><img src="/assets/img/UI-Import-Dialog.png" alt="Import dialog example configured with S3" /></p>
-
-<p>If it’s the first import to the selected branch, it will create the import branch named <code class="language-plaintext highlighter-rouge">_&lt;branch_name&gt;_imported</code>.
-lakeFS will import all objects from the Source URI to the import branch under the given prefix.</p>
-
-<p>The UI will update periodically with the amount of objects imported. How long it takes depends on the amount of objects to be imported but will roughly be a few thousand objects per second.</p>
-
-<p><img src="/assets/img/ui-import-waiting.png" alt="img.png" /></p>
-
-<p>Once the import is completed, you can merge the changes from the import branch to the source branch.</p>
-
-<p><img src="/assets/img/ui-import-completed.png" alt="img.png" /></p>
-<h3 id="importing-using-lakectl-cli">
+<ul>
+  <li>On the first import to a branch, a dedicated branch named <code class="language-plaintext highlighter-rouge">_&lt;branch_name&gt;_imported</code> will be created. lakeFS will import all objects to this branch under the given prefix.</li>
+  <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
+</ul>
+<h3 id="lakectl-import">
   
   
-    <a href="#importing-using-lakectl-cli" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing using lakectl cli
+    <a href="#lakectl-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <em>lakectl import</em>
   
   
 </h3>
     
 
-<p>The <code class="language-plaintext highlighter-rouge">lakectl</code> cli supports <em>import</em> and <em>ingest</em> commands to import objects from an external source.</p>
+<p>Prerequisite: have <a href="/quickstart/first_commit.html#install-lakectl">lakectl</a> installed.</p>
 
-<ul>
-  <li>The <em>import</em> command acts the same as the UI import wizard. It imports (zero copy) and commits the changes on <code class="language-plaintext highlighter-rouge">_&lt;branch_name&gt;_imported</code> branch with an optional flag to also merge the changes to <code class="language-plaintext highlighter-rouge">&lt;branch_name&gt;</code>.</li>
-  <li>The <em>Ingest</em> is listing the source bucket (and optional prefix) from the client, and creating pointers to the returned objects in lakeFS. The objects will be staged on the branch.</li>
-</ul>
-<h4 id="using-the-lakectl-import-command">
-  
-  
-    <a href="#using-the-lakectl-import-command" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the <code class="language-plaintext highlighter-rouge">lakectl import</code> command
-  
-  
-</h4>
-    
-<h5 id="usage">
-  
-  
-    <a href="#usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
-  
-  
-</h5>
-    
+<p>The <em>lakectl import</em> command acts the same as the UI import wizard. It commits the changes to a dedicated branch, with an optional
+flag to merge the changes to <code class="language-plaintext highlighter-rouge">&lt;branch_name&gt;</code>.</p>
 
 <div class="tabs">
   <ul>
@@ -630,37 +584,23 @@ lakeFS will import all objects from the Source URI to the import branch under th
   </div>
 </div>
 
-<p>The imported objects will be committed to <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> branch. If the branch does not exist, it will be created. The flag <code class="language-plaintext highlighter-rouge">--merge</code> will merge the branch <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> to  <code class="language-plaintext highlighter-rouge">my-branch</code> after a successful import.</p>
-<h4 id="using-the-lakectl-ingest-command">
+<p>The imported objects will be committed to the <code class="language-plaintext highlighter-rouge">_my-branch_imported</code>, creating it if it doesn’t exists.
+Using the <code class="language-plaintext highlighter-rouge">--merge</code> flag will merge <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> to <code class="language-plaintext highlighter-rouge">my-branch</code> after a successful import.</p>
+<h3 id="lakectl-ingest">
   
   
-    <a href="#using-the-lakectl-ingest-command" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command
+    <a href="#lakectl-ingest" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <em>lakectl ingest</em>
   
   
-</h4>
-    
-<h5 id="prerequisites-1">
-  
-  
-    <a href="#prerequisites-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
-  
-  
-</h5>
+</h3>
     
 
-<ol>
-  <li>The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> has permissions to list the objects at the source object store.</li>
-  <li><em>Recommended</em>: The lakeFS installation has read permissions to the objects being ingested (to support downloading them directly from the lakeFS server)</li>
-  <li>The source path is <strong>not</strong> a storage namespace used by lakeFS. For example, if <code class="language-plaintext highlighter-rouge">lakefs://my-repo</code> created with storage namespace <code class="language-plaintext highlighter-rouge">s3://my-bucket</code>, then <code class="language-plaintext highlighter-rouge">s3://my-bucket/*</code> cannot be an ingestion source.</li>
-</ol>
-<h5 id="usage-1">
-  
-  
-    <a href="#usage-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
-  
-  
-</h5>
-    
+<p>Prerequisite: have <a href="/quickstart/first_commit.html#install-lakectl">lakectl</a> installed.</p>
+
+<p>The <em>ingest</em> command adds the objects to lakeFS by listing them on the client side.
+The added objects will appear as uncommitted changes.</p>
+
+<p class="note">The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> needs to have permissions to list the objects in the source object store.</p>
 
 <div class="tabs">
   <ul>
@@ -700,32 +640,22 @@ lakectl ingest <span class="se">\</span>
     <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports the standard <code class="language-plaintext highlighter-rouge">GOOGLE_APPLICATION_CREDENTIALS</code> environment variable <a href="https://cloud.google.com/docs/authentication/getting-started">as described in Google Cloud’s documentation</a>.</p>
   </div>
 </div>
-<h3 id="limitations-to-importing-data">
+<h3 id="limitations">
   
   
-    <a href="#limitations-to-importing-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations to importing data
+    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
   
   
 </h3>
     
 
-<p>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</p>
-
-<p>Import is available for S3, GCP, Azure and the local storage adapters.</p>
-
-<p class="note">Although created by lakeFS, import branches behave like any other branch:
-Authorization policies, CI/CD triggering, branch protection rules and all other lakeFS concepts apply to them as well.</p>
-<h4 id="importing-from-local-storage">
-  
-  
-    <a href="#importing-from-local-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing from local storage
-  
-  
-</h4>
-    
-
-<p>For security reasons you need to enable import for the local storage adapter by setting <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> and specifying the allowed import paths <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> described in the <a href="/reference/configuration.html">configuration</a>.
-Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</p>
+<ol>
+  <li>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</li>
+  <li>Import is available for S3, GCP and Azure.</li>
+  <li>For security reasons, if you are lakeFS on top of your local disk, you need to enable the import feature explicitly. 
+To do so, set the <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> to <code class="language-plaintext highlighter-rouge">true</code> and specify the allowed import paths in <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> (see <a href="/reference/configuration.html">configuration reference</a>).
+Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</li>
+</ol>
 <h3 id="working-with-imported-data">
   
   
