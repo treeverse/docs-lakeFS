@@ -478,12 +478,9 @@
 
 <ul>
   <li>Using the <a href="#use-the-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a>: Highly scalable, data flows directly from client to storage.</li>
-  <li>Using the <a href="#use-the-s3-gateway">S3 gateway</a>: Scalable and simpler to set up.</li>
+  <li>Using the lakeFS <a href="#use-the-s3-compatible-api">S3-compatible API</a>: Scalable and simpler to set up.</li>
 </ul>
-
-<p class="pb-5 note">⚠️ The following examples include inline credentials for the sake of simplicity.
-In production, credentials should be protected using security best practices.</p>
-<h2 id="use-the-lakefs-hadoop-filesystem">
+<h2 class="pb-5" id="use-the-lakefs-hadoop-filesystem">
   
   
     <a href="#use-the-lakefs-hadoop-filesystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use the lakeFS Hadoop FileSystem
@@ -521,13 +518,10 @@ interact with your data on lakeFS.</p>
 
   </div>
   <div id="install-databricks">
+    <p>In  your cluster settings, under the <em>Libraries</em> tab, add the following Maven package:</p>
 
-    <p class="note"><strong>Note</strong> For your convenience, follow this <a href="https://lakefs.io/blog/databricks-lakefs-integration-tutorial/">step by step Databricks integration tutorial, including lakeFS Hadoop File System, Python client and lakeFS SPARK client</a>.</p>
-
-    <p>Add the <code class="language-plaintext highlighter-rouge">hadoop-lakefs-assembly</code> jar to your Databricks cluster. Under <code class="language-plaintext highlighter-rouge">compute ➡️ Libraries</code> Add a Maven package as follows:</p>
-
-    <p>Install a Maven package with the <code class="language-plaintext highlighter-rouge">io.lakefs:hadoop-lakefs-assembly:0.1.12</code> 
-  coordinates.</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>io.lakefs:hadoop-lakefs-assembly:0.1.12
+</code></pre></div>    </div>
 
     <p>Once installed, it should look something like this:</p>
 
@@ -544,46 +538,19 @@ interact with your data on lakeFS.</p>
 </h3>
     
 
-<p>Configure the S3A filesystem with your S3 credentials (<strong>not</strong> the lakeFS credentials).
-Additionally, supply the <code class="language-plaintext highlighter-rouge">fs.lakefs.*</code> configurations to allow Spark to access metadata on lakeFS:</p>
+<p>Set the <code class="language-plaintext highlighter-rouge">fs.lakefs.*</code> Hadoop configurations to point to your lakeFS installation:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.impl</code>: <code class="language-plaintext highlighter-rouge">io.lakefs.LakeFSFileSystem</code></li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.access.key</code>: lakeFS access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.secret.key</code>: lakeFS secret key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.endpoint</code>: lakeFS API URL (e.g. <code class="language-plaintext highlighter-rouge">https://example-org.us-east-1.lakefscloud.io/api/v1</code>)</li>
+</ul>
 
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Hadoop Configuration</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.s3a.access.key</code></td>
-      <td>Set to the AWS S3 access key</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code></td>
-      <td>Set to the AWS S3 secret key</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.lakefs.impl</code></td>
-      <td><code class="language-plaintext highlighter-rouge">io.lakefs.LakeFSFileSystem</code></td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.lakefs.access.key</code></td>
-      <td>Set to the lakeFS access key</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.lakefs.secret.key</code></td>
-      <td>Set to the lakeFS secret key</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.lakefs.endpoint</code></td>
-      <td>Set to the lakeFS API URL</td>
-    </tr>
-  </tbody>
-</table></div>
-
-<p class="note">The lakeFS Hadoop FileSystem uses the <code class="language-plaintext highlighter-rouge">fs.s3a.*</code> properties to directly
-access S3. If your cluster already has access to your buckets (for example, if you’re using an AWS instance profile), then you don’t need to configure these properties.</p>
+<p>Configure the S3A FileSystem to access your S3 storage, for example using the <code class="language-plaintext highlighter-rouge">fs.s3a.*</code> configurations (these are <strong>not</strong> your lakeFS credentials):</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.access.key</code>: AWS S3 access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code>: AWS S3 secret key</li>
+</ul>
 
 <p>Here are some configuration examples:</p>
 <div class="tabs">
@@ -601,9 +568,9 @@ access S3. If your cluster already has access to your buckets (for example, if y
               <span class="nt">--conf</span> spark.hadoop.fs.lakefs.impl<span class="o">=</span>io.lakefs.LakeFSFileSystem <span class="se">\</span>
               <span class="nt">--conf</span> spark.hadoop.fs.lakefs.access.key<span class="o">=</span>AKIAlakefs12345EXAMPLE <span class="se">\</span>
               <span class="nt">--conf</span> spark.hadoop.fs.lakefs.secret.key<span class="o">=</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY <span class="se">\</span>
-              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.endpoint<span class="o">=</span>https://lakefs.example.com/api/v1 <span class="se">\</span>
-              <span class="nt">--packages</span> io.lakefs:hadoop-lakefs-assembly:0.1.12
-              ...
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.endpoint<span class="o">=</span>https://example-org.us-east-1.lakefscloud.io/api/v1 <span class="se">\</span>
+              <span class="nt">--packages</span> io.lakefs:hadoop-lakefs-assembly:0.1.12 <span class="se">\</span>
+              io.example.ExampleClass
 </code></pre></div>    </div>
   </div>
   <div id="config-scala">
@@ -614,7 +581,7 @@ access S3. If your cluster already has access to your buckets (for example, if y
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.impl"</span><span class="o">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="o">)</span>
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
-<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="o">,</span> <span class="s">"https://lakefs.example.com/api/v1"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io/api/v1"</span><span class="o">)</span>
 </code></pre></div>    </div>
   </div>
   <div id="config-pyspark">
@@ -625,7 +592,7 @@ access S3. If your cluster already has access to your buckets (for example, if y
 <span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.impl"</span><span class="p">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="p">)</span>
 <span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.access.key"</span><span class="p">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="p">)</span>
 <span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.secret.key"</span><span class="p">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span>
-<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="p">,</span> <span class="s">"https://lakefs.example.com/api/v1"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="p">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io/api/v1"</span><span class="p">)</span>
 </code></pre></div>    </div>
   </div>
   <div id="config-xml">
@@ -661,7 +628,7 @@ and then add these into a configuration file, e.g., <code class="language-plaint
     <span class="nt">&lt;/property&gt;</span>
     <span class="nt">&lt;property&gt;</span>
         <span class="nt">&lt;name&gt;</span>fs.lakefs.endpoint<span class="nt">&lt;/name&gt;</span>
-        <span class="nt">&lt;value&gt;</span>https://lakefs.example.com/api/v1<span class="nt">&lt;/value&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io/api/v1<span class="nt">&lt;/value&gt;</span>
     <span class="nt">&lt;/property&gt;</span>
 <span class="nt">&lt;/configuration&gt;</span>
 </code></pre></div>    </div>
@@ -676,7 +643,7 @@ spark.hadoop.fs.lakefs.secret.key abc/lakefs/1234567bPxRfiCYEXAMPLEKEY
 spark.hadoop.fs.s3a.access.key AKIAIOSFODNN7EXAMPLE
 spark.hadoop.fs.s3a.secret.key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 spark.hadoop.fs.s3a.impl shaded.databricks.org.apache.hadoop.fs.s3a.S3AFileSystem
-spark.hadoop.fs.lakefs.endpoint https://lakefs.example.com/api/v1
+spark.hadoop.fs.lakefs.endpoint https://example-org.us-east-1.lakefscloud.io/api/v1
 </code></pre></div>    </div>
 
     <p>Alternatively, follow this <a href="https://lakefs.io/blog/databricks-lakefs-integration-tutorial/">step by step Databricks integration tutorial, including lakeFS Hadoop File System, Python client and lakeFS SPARK client</a>.</p>
@@ -722,10 +689,10 @@ Here’s an example for reading a Parquet file from lakeFS to a Spark DataFrame:
   <li>Since data will not be sent to the lakeFS server, using this mode maximizes data security.</li>
   <li>The FileSystem implementation is tested with the latest Spark 2.X (Hadoop 2) and Spark 3.X (Hadoop 3) Bitnami images.</li>
 </ul>
-<h2 id="use-the-s3-gateway">
+<h2 id="use-the-s3-compatible-api">
   
   
-    <a href="#use-the-s3-gateway" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use the S3 gateway
+    <a href="#use-the-s3-compatible-api" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use the S3-compatible API
   
   
 </h2>
@@ -744,32 +711,12 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
 
 <p>To configure Spark to work with lakeFS, we set S3A Hadoop configuration to the lakeFS endpoint and credentials:</p>
 
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Hadoop Configuration</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.s3a.access.key</code></td>
-      <td>Set to the lakeFS access key</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code></td>
-      <td>Set to the lakeFS secret key</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.s3a.endpoint</code></td>
-      <td>Set to the lakeFS S3-compatible API endpoint</td>
-    </tr>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">fs.s3a.path.style.access</code></td>
-      <td>Set to <code class="language-plaintext highlighter-rouge">true</code></td>
-    </tr>
-  </tbody>
-</table></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.access.key</code>: lakeFS access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code>: lakeFS secret key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.endpoint</code>: lakeFS S3-compatible API endpoint (e.g. https://example-org.us-east-1.lakefscloud.io)</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.path.style.access</code>: <code class="language-plaintext highlighter-rouge">true</code></li>
+</ul>
 
 <p>Here is how to do it:</p>
 <div class="tabs">
@@ -783,13 +730,13 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span><span class="s1">'AKIAlakefs12345EXAMPLE'</span> <span class="se">\</span>
               <span class="nt">--conf</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span><span class="s1">'abc/lakefs/1234567bPxRfiCYEXAMPLEKEY'</span> <span class="se">\</span>
               <span class="nt">--conf</span> spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
-              <span class="nt">--conf</span> spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s1">'https://lakefs.example.com'</span> ...
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s1">'https://example-org.us-east-1.lakefscloud.io'</span> ...
 </code></pre></div>    </div>
   </div>
   <div id="s3-config-tabs-code">
     <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
-<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.endpoint"</span><span class="o">,</span> <span class="s">"https://lakefs.example.com"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io"</span><span class="o">)</span>
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">)</span>
 </code></pre></div>    </div>
   </div>
@@ -807,7 +754,7 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     <span class="nt">&lt;/property&gt;</span>
     <span class="nt">&lt;property&gt;</span>
         <span class="nt">&lt;name&gt;</span>fs.s3a.endpoint<span class="nt">&lt;/name&gt;</span>
-        <span class="nt">&lt;value&gt;</span>https://lakefs.example.com<span class="nt">&lt;/value&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io<span class="nt">&lt;/value&gt;</span>
     <span class="nt">&lt;/property&gt;</span>
     <span class="nt">&lt;property&gt;</span>
         <span class="nt">&lt;name&gt;</span>fs.s3a.path.style.access<span class="nt">&lt;/name&gt;</span>
@@ -831,11 +778,11 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -844,11 +791,11 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -857,7 +804,7 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"hive.s3.aws-access-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"hive.s3.aws-secret-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"hive.s3.path-style-access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"hive.s3-file-system-type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PRESTO"</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -867,11 +814,11 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -880,11 +827,11 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -893,11 +840,11 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
@@ -912,7 +859,7 @@ You will access your data using S3-style URIs, e.g. <code class="language-plaint
   <span class="nt">--steps</span><span class="o">=</span><span class="s2">"Type=Spark,Name=SparkApplication,ActionOnFailure=CONTINUE, </span><span class="se">\</span><span class="s2">
   Args=[--conf,spark.hadoop.fs.s3a.access.key=AKIAIOSFODNN7EXAMPLE, </span><span class="se">\</span><span class="s2">
   --conf,spark.hadoop.fs.s3a.secret.key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY, </span><span class="se">\</span><span class="s2">
-  --conf,spark.hadoop.fs.s3a.endpoint=https://lakefs.example.com, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.endpoint=https://example-org.us-east-1.lakefscloud.io, </span><span class="se">\</span><span class="s2">
   --conf,spark.hadoop.fs.s3a.path.style.access=true, </span><span class="se">\</span><span class="s2">
   s3a://&lt;lakefs-repo&gt;/&lt;lakefs-branch&gt;/path/to/jar]"</span>
 </code></pre></div>    </div>
@@ -941,14 +888,14 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
   <div id="s3-bucket-config-tabs-cli">
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.access.key<span class="o">=</span><span class="s1">'AKIAlakefs12345EXAMPLE'</span> <span class="se">\</span>
               <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.secret.key<span class="o">=</span><span class="s1">'abc/lakefs/1234567bPxRfiCYEXAMPLEKEY'</span> <span class="se">\</span>
-              <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s1">'https://lakefs.example.com'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s1">'https://example-org.us-east-1.lakefscloud.io'</span> <span class="se">\</span>
               <span class="nt">--conf</span> spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="nb">true</span>
 </code></pre></div>    </div>
   </div>
   <div id="s3-bucket-config-tabs-code">
     <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
-<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.endpoint"</span><span class="o">,</span> <span class="s">"https://lakefs.example.com"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io"</span><span class="o">)</span>
 <span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">)</span>
 </code></pre></div>    </div>
   </div>
@@ -966,7 +913,7 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     <span class="nt">&lt;/property&gt;</span>
     <span class="nt">&lt;property&gt;</span>
         <span class="nt">&lt;name&gt;</span>fs.s3a.bucket.example-repo.endpoint<span class="nt">&lt;/name&gt;</span>
-        <span class="nt">&lt;value&gt;</span>https://lakefs.example.com<span class="nt">&lt;/value&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io<span class="nt">&lt;/value&gt;</span>
     <span class="nt">&lt;/property&gt;</span>
     <span class="nt">&lt;property&gt;</span>
         <span class="nt">&lt;name&gt;</span>fs.s3a.path.style.access<span class="nt">&lt;/name&gt;</span>
@@ -990,11 +937,11 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -1003,11 +950,11 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -1016,7 +963,7 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"hive.s3.aws-access-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"hive.s3.aws-secret-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"hive.s3.path-style-access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"hive.s3-file-system-type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PRESTO"</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -1026,11 +973,11 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -1039,11 +986,11 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
@@ -1052,11 +999,11 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
     </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
-        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://lakefs.example.com"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
         </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
@@ -1071,7 +1018,7 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
   <span class="nt">--steps</span><span class="o">=</span><span class="s2">"Type=Spark,Name=SparkApplication,ActionOnFailure=CONTINUE, </span><span class="se">\</span><span class="s2">
   Args=[--conf,spark.hadoop.fs.s3a.bucket.example-repo.access.key=AKIAIOSFODNN7EXAMPLE, </span><span class="se">\</span><span class="s2">
   --conf,spark.hadoop.fs.s3a.bucket.example-repo.secret.key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY, </span><span class="se">\</span><span class="s2">
-  --conf,spark.hadoop.fs.s3a.bucket.example-repo.endpoint=https://lakefs.example.com, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.bucket.example-repo.endpoint=https://example-org.us-east-1.lakefscloud.io, </span><span class="se">\</span><span class="s2">
   --conf,spark.hadoop.fs.s3a.path.style.access=true, </span><span class="se">\</span><span class="s2">
   s3a://&lt;lakefs-repo&gt;/&lt;lakefs-branch&gt;/path/to/jar]"</span>
 </code></pre></div>    </div>
@@ -1101,25 +1048,25 @@ For example, to configure only <code class="language-plaintext highlighter-rouge
 </code></pre></div></div>
 
 <p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes or revert them.</p>
-<h3 class="no_toc" id="configuring-azure-databricks-with-the-s3-gateway">
+<h3 class="no_toc" id="configuring-azure-databricks-with-the-s3-compatible-api">
   
   
-    <a href="#configuring-azure-databricks-with-the-s3-gateway" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring Azure Databricks with the S3 Gateway
+    <a href="#configuring-azure-databricks-with-the-s3-compatible-api" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring Azure Databricks with the S3-compatible API
   
   
 </h3>
     
 
-<p>If you use Azure Databricks, you would want to take advantage of the lakeFS S3 gateway with your Azure account, using the S3A File system. 
-Meaning, you’ll need to add the <code class="language-plaintext highlighter-rouge">hadoop-aws</code> jar (with the same version of your <code class="language-plaintext highlighter-rouge">hadoop-azure</code> jar) to your Databricks cluster.
-The S3 gateway makes lakeFS compatible with S3, meaning that the S3A file system can “talk” to it natively
-Define your File system configurations in the following way:</p>
+<p>If you use Azure Databricks, you can take advantage of the lakeFS S3-compatible API with your Azure account and the S3A FileSystem. 
+This will require installing the <code class="language-plaintext highlighter-rouge">hadoop-aws</code> package (with the same version as your <code class="language-plaintext highlighter-rouge">hadoop-azure</code> package) to your Databricks cluster.</p>
+
+<p>Define your FileSystem configurations in the following way:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.lakefs.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
 spark.hadoop.fs.lakefs.access.key=‘AKIAlakefs12345EXAMPLE’                   // The access key to your lakeFS server
 spark.hadoop.fs.lakefs.secret.key=‘abc/lakefs/1234567bPxRfiCYEXAMPLEKEY’     // The secret key to your lakeFS server
 spark.hadoop.fs.lakefs.path.style.access=true
-spark.hadoop.fs.lakefs.endpoint=‘https://lakefs.example.com’                 // The endpoint of your lakeFS server
+spark.hadoop.fs.lakefs.endpoint=‘https://example-org.us-east-1.lakefscloud.io’                 // The endpoint of your lakeFS server
 </code></pre></div></div>
 
 <p>For more details about <a href="https://docs.databricks.com/dbfs/mounts.html">Mounting cloud object storage on Databricks</a>.</p>
