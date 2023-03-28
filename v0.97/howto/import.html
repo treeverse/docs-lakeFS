@@ -489,12 +489,14 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
 
 <ol id="markdown-toc">
   <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
+      <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
+      <li><a href="#aws-s3-importing-from-public-buckets" id="markdown-toc-aws-s3-importing-from-public-buckets">AWS S3: Importing from public buckets</a></li>
+      <li><a href="#azure-data-lake-gen2" id="markdown-toc-azure-data-lake-gen2">Azure Data Lake Gen2</a></li>
       <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
       <li><a href="#lakectl-import" id="markdown-toc-lakectl-import"><em>lakectl import</em></a></li>
       <li><a href="#lakectl-ingest" id="markdown-toc-lakectl-ingest"><em>lakectl ingest</em></a></li>
       <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
       <li><a href="#working-with-imported-data" id="markdown-toc-working-with-imported-data">Working with imported data</a></li>
-      <li><a href="#aws-s3-importing-from-public-buckets" id="markdown-toc-aws-s3-importing-from-public-buckets">AWS S3: Importing from public buckets</a></li>
     </ol>
   </li>
   <li><a href="#copying-data-into-a-lakefs-repository" id="markdown-toc-copying-data-into-a-lakefs-repository">Copying data into a lakeFS repository</a></li>
@@ -509,6 +511,102 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
   
 </h2>
     
+<h3 id="prerequisites">
+  
+  
+    <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+  
+  
+</h3>
+    
+
+<p>lakeFS must have permissions to list the objects in the source object store,
+and the source bucket must be in the same region of your destination bucket.<br />
+In addition, see the following storage provider specific instructions:</p>
+
+<div class="tabs">
+  <ul>
+  <li><a href="#aws-s3">AWS S3</a></li>
+  <li><a href="#azure-storage">Azure Storage</a></li>
+  <li><a href="#gcs">Google Cloud Storage</a></li>
+</ul>
+  <div id="aws-s3">
+<h3 id="aws-s3-importing-from-public-buckets">
+  
+  
+    <a href="#aws-s3-importing-from-public-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWS S3: Importing from public buckets
+  
+  
+</h3>
+    
+
+    <p>lakeFS needs access to the imported location to first list the files to import and later read the files upon users request.</p>
+
+    <p>There are some use cases where the user would like to import from a destination which isn’t owned by the account running lakeFS.
+For example, importing public datasets to experiment with lakeFS and Spark.</p>
+
+    <p>lakeFS will require additional permissions to read from public buckets. For example, for S3 public buckets,
+the following policy needs to be attached to the lakeFS S3 service-account to allow access to public buckets, while blocking access to other owned buckets:</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">   </span><span class="p">{</span><span class="w">
+     </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+     </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+       </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PubliclyAccessibleBuckets"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3:GetBucketVersioning"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucketVersions"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetObjectVersion"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+           </span><span class="nl">"StringNotEquals"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+             </span><span class="nl">"s3:ResourceAccount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;YourAccountID&gt;"</span><span class="w">
+           </span><span class="p">}</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+       </span><span class="p">}</span><span class="w">
+     </span><span class="p">]</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+
+  </div>
+  <div id="azure-storage">
+    <p>See <a href="/v0.97/deploy/azure.html#storage-account-credentials">Azure deployment</a> on limitations when using account credentials.</p>
+<h3 id="azure-data-lake-gen2">
+  
+  
+    <a href="#azure-data-lake-gen2" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Azure Data Lake Gen2
+  
+  
+</h3>
+    
+
+    <p>The following requirements and limitations apply when the import source is an ADLS Gen2 account:</p>
+
+    <ol>
+      <li>Import is supported only from a folder. Prefix import will not work.</li>
+      <li>lakeFS requires a hint in the URL to understand that the provided account URL is ADLS Gen2</li>
+    </ol>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   For account URL:
+      https://&lt;my-account&gt;.core.windows.net/path/to/import/
+
+   Please add the *adls* subdomain to the URL as follows:
+      https://&lt;my-account&gt;.adls.core.windows.net/path/to/import/
+</code></pre></div>    </div>
+
+  </div>
+  <div id="gcs">
+    <p>No specific prerequisites</p>
+  </div>
+</div><hr />
 <h3 id="using-the-lakefs-ui">
   
   
@@ -694,50 +792,6 @@ The following table describes the results of making changes in the original buck
     </tr>
   </tbody>
 </table></div>
-<h3 id="aws-s3-importing-from-public-buckets">
-  
-  
-    <a href="#aws-s3-importing-from-public-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWS S3: Importing from public buckets
-  
-  
-</h3>
-    
-
-<p>lakeFS needs access to the imported location to first list the files to import and later read the files upon users request.</p>
-
-<p>There are some use cases where the user would like to import from a destination which isn’t owned by the account running lakeFS.
-For example, importing public datasets to experiment with lakeFS and Spark.</p>
-
-<p>lakeFS will require additional permissions to read from public buckets. For example, for S3 public buckets,
-the following policy needs to be attached to the lakeFS S3 service-account to allow access to public buckets, while blocking access to other owned buckets:</p>
-
-<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">   </span><span class="p">{</span><span class="w">
-     </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
-     </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-       </span><span class="p">{</span><span class="w">
-         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PubliclyAccessibleBuckets"</span><span class="p">,</span><span class="w">
-         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-            </span><span class="s2">"s3:GetBucketVersioning"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListBucketVersions"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:GetObjectVersion"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
-         </span><span class="p">],</span><span class="w">
-         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">],</span><span class="w">
-         </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-           </span><span class="nl">"StringNotEquals"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-             </span><span class="nl">"s3:ResourceAccount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;YourAccountID&gt;"</span><span class="w">
-           </span><span class="p">}</span><span class="w">
-         </span><span class="p">}</span><span class="w">
-       </span><span class="p">}</span><span class="w">
-     </span><span class="p">]</span><span class="w">
-   </span><span class="p">}</span><span class="w">
-</span></code></pre></div></div>
 <h2 id="copying-data-into-a-lakefs-repository">
   
   
