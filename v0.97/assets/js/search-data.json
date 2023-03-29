@@ -105,60 +105,60 @@
     "relUrl": "/integrations/airbyte.html"
   },"15": {
     "doc": "Airflow",
-    "title": "Airflow Hooks",
-    "content": " ",
-    "url": "/v0.97/hooks/airflow.html#airflow-hooks",
-    
-    "relUrl": "/hooks/airflow.html#airflow-hooks"
-  },"16": {
-    "doc": "Airflow",
-    "title": "Table of contents",
-    "content": ". | Action file Airflow hook properties | Hook Record in configuration field | . Airflow Hook triggers a DAG run in an Airflow installation using Airflow’s REST API. The hook run succeeds if the DAG was triggered, and fails otherwise. Action file Airflow hook properties . | Property | Description | Data Type | Example | Required | Env Vars Support | . | url | The URL of the Airflow instance | String | “http://localhost:8080” | true | no | . | dag_id | The DAG to trigger | String | “example_dag” | true | no | . | username | The name of the Airflow user performing the request | String | “admin” | true | no | . | password | The password of the Airflow user performing the request | String | “admin” | true | yes | . | dag_conf | DAG run configuration that will be passed as is | JSON |   | false | no | . | wait_for_dag | Wait for DAG run to complete and reflect state (default: false) | Boolean |   | false | no | . | timeout | Time to wait for the DAG run to complete (default: 1m) | String (golang’s Duration representation) |   | false | no | . Example: ... hooks: - id: trigger_my_dag type: airflow description: Trigger an example_dag properties: url: \"http://localhost:8000\" dag_id: \"example_dag\" username: \"admin\" password: \"{{ ENV.AIRFLOW_SECRET }}\" dag_conf: some: \"additional_conf\" ... Hook Record in configuration field . lakeFS will add an entry to the Airflow request configuration property (conf) with the event that triggered the action. The key of the record will be lakeFS_event and the value will match the one described here . ",
-    "url": "/v0.97/hooks/airflow.html#table-of-contents",
-    
-    "relUrl": "/hooks/airflow.html#table-of-contents"
-  },"17": {
-    "doc": "Airflow",
-    "title": "Airflow",
-    "content": " ",
-    "url": "/v0.97/hooks/airflow.html",
-    
-    "relUrl": "/hooks/airflow.html"
-  },"18": {
-    "doc": "Airflow",
     "title": "Using lakeFS with Airflow",
     "content": "Apache Airflow is a platform that allows users to programmatically author, schedule, and monitor workflows. To run Airflow with lakeFS, you need to follow a few steps. ",
     "url": "/v0.97/integrations/airflow.html#using-lakefs-with-airflow",
     
     "relUrl": "/integrations/airflow.html#using-lakefs-with-airflow"
-  },"19": {
+  },"16": {
     "doc": "Airflow",
     "title": "Create a lakeFS connection on Airflow",
     "content": "To access the lakeFS server and authenticate with it, create a new Airflow Connection of type HTTP and add it to your DAG. You can do that using the Airflow UI or the CLI. Here’s an example Airflow command that does just that: . airflow connections add conn_lakefs --conn-type=HTTP --conn-host=http://&lt;LAKEFS_ENDPOINT&gt; \\ --conn-extra='{\"access_key_id\":\"&lt;LAKEFS_ACCESS_KEY_ID&gt;\",\"secret_access_key\":\"&lt;LAKEFS_SECRET_ACCESS_KEY&gt;\"}' . ",
     "url": "/v0.97/integrations/airflow.html#create-a-lakefs-connection-on-airflow",
     
     "relUrl": "/integrations/airflow.html#create-a-lakefs-connection-on-airflow"
-  },"20": {
+  },"17": {
     "doc": "Airflow",
     "title": "Install the lakeFS Airflow package",
     "content": "You can use pip to install the package . pip install airflow-provider-lakefs . ",
     "url": "/v0.97/integrations/airflow.html#install-the-lakefs-airflow-package",
     
     "relUrl": "/integrations/airflow.html#install-the-lakefs-airflow-package"
-  },"21": {
+  },"18": {
     "doc": "Airflow",
     "title": "Use the package",
     "content": "Operators . The package exposes several operations to interact with a lakeFS server: . | CreateBranchOperator creates a new lakeFS branch from the source branch (main by default). task_create_branch = CreateBranchOperator( task_id='create_branch', repo='example-repo', branch='example-branch', source_branch='main' ) . | CommitOperator commits uncommitted changes to a branch. task_commit = CommitOperator( task_id='commit', repo='example-repo', branch='example-branch', msg='committing to lakeFS using airflow!', metadata={'committed_from\": \"airflow-operator'} ) . | MergeOperator merges 2 lakeFS branches. task_merge = MergeOperator( task_id='merge_branches', source_ref='example-branch', destination_branch='main', msg='merging job outputs', metadata={'committer': 'airflow-operator'} ) . | . Sensors . Sensors are also available that allow synchronizing a running DAG with external operations: . | CommitSensor waits until a commit has been applied to the branch . task_sense_commit = CommitSensor( repo='example-repo', branch='example-branch', task_id='sense_commit' ) . | FileSensor waits until a given file is present on a branch. task_sense_file = FileSensor( task_id='sense_file', repo='example-repo', branch='example-branch', path=\"file/to/sense\" ) . | . Example . This example DAG in the airflow-provider-lakeFS repository shows how to use all of these. Performing other operations . Sometimes an operator might not be supported by airflow-provider-lakeFS yet. You can access lakeFS directly by using: . | SimpleHttpOperator to send API requests to lakeFS. | BashOperator with lakeCTL commands. For example, deleting a branch using BashOperator: commit_extract = BashOperator( task_id='delete_branch', bash_command='lakectl branch delete lakefs://example-repo/example-branch', dag=dag, ) . | . Note lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch. ",
     "url": "/v0.97/integrations/airflow.html#use-the-package",
     
     "relUrl": "/integrations/airflow.html#use-the-package"
-  },"22": {
+  },"19": {
     "doc": "Airflow",
     "title": "Airflow",
     "content": " ",
     "url": "/v0.97/integrations/airflow.html",
     
     "relUrl": "/integrations/airflow.html"
+  },"20": {
+    "doc": "Airflow",
+    "title": "Airflow Hooks",
+    "content": " ",
+    "url": "/v0.97/hooks/airflow.html#airflow-hooks",
+    
+    "relUrl": "/hooks/airflow.html#airflow-hooks"
+  },"21": {
+    "doc": "Airflow",
+    "title": "Table of contents",
+    "content": ". | Action file Airflow hook properties | Hook Record in configuration field | . Airflow Hook triggers a DAG run in an Airflow installation using Airflow’s REST API. The hook run succeeds if the DAG was triggered, and fails otherwise. Action file Airflow hook properties . | Property | Description | Data Type | Example | Required | Env Vars Support | . | url | The URL of the Airflow instance | String | “http://localhost:8080” | true | no | . | dag_id | The DAG to trigger | String | “example_dag” | true | no | . | username | The name of the Airflow user performing the request | String | “admin” | true | no | . | password | The password of the Airflow user performing the request | String | “admin” | true | yes | . | dag_conf | DAG run configuration that will be passed as is | JSON |   | false | no | . | wait_for_dag | Wait for DAG run to complete and reflect state (default: false) | Boolean |   | false | no | . | timeout | Time to wait for the DAG run to complete (default: 1m) | String (golang’s Duration representation) |   | false | no | . Example: ... hooks: - id: trigger_my_dag type: airflow description: Trigger an example_dag properties: url: \"http://localhost:8000\" dag_id: \"example_dag\" username: \"admin\" password: \"{{ ENV.AIRFLOW_SECRET }}\" dag_conf: some: \"additional_conf\" ... Hook Record in configuration field . lakeFS will add an entry to the Airflow request configuration property (conf) with the event that triggered the action. The key of the record will be lakeFS_event and the value will match the one described here . ",
+    "url": "/v0.97/hooks/airflow.html#table-of-contents",
+    
+    "relUrl": "/hooks/airflow.html#table-of-contents"
+  },"22": {
+    "doc": "Airflow",
+    "title": "Airflow",
+    "content": " ",
+    "url": "/v0.97/hooks/airflow.html",
+    
+    "relUrl": "/hooks/airflow.html"
   },"23": {
     "doc": "API Reference",
     "title": "API Reference",
@@ -1287,89 +1287,89 @@
     
     "relUrl": "/howto/import.html#copying-data-into-a-lakefs-repository"
   },"184": {
-    "doc": "Use Cases",
-    "title": "Use Cases",
-    "content": " ",
-    "url": "/v0.97/use_cases/",
-    
-    "relUrl": "/use_cases/"
-  },"185": {
-    "doc": "How it Works",
-    "title": "How it Works",
-    "content": "This section includes all the details about lakeFS internals and implementation details . ",
-    "url": "/v0.97/understand/how/",
-    
-    "relUrl": "/understand/how/"
-  },"186": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management",
-    "content": " ",
-    "url": "/v0.97/understand/data_lifecycle_management/",
-    
-    "relUrl": "/understand/data_lifecycle_management/"
-  },"187": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": "This section includes all the details about the lakeFS open source project. ",
-    "url": "/v0.97/understand/",
-    
-    "relUrl": "/understand/"
-  },"188": {
-    "doc": "Slack",
-    "title": "Slack",
-    "content": " ",
-    "url": "/v0.97/slack/",
-    
-    "relUrl": "/slack/"
-  },"189": {
     "doc": "Deploy and Setup lakeFS",
     "title": "Deploy and setup lakeFS",
     "content": "Note: Optionally, for a hosted lakeFS service with guaranteed SLAs, try lakeFS cloud . ",
     "url": "/v0.97/deploy/#deploy-and-setup-lakefs",
     
     "relUrl": "/deploy/#deploy-and-setup-lakefs"
-  },"190": {
+  },"185": {
     "doc": "Deploy and Setup lakeFS",
     "title": "Deploy and Setup lakeFS",
     "content": " ",
     "url": "/v0.97/deploy/",
     
     "relUrl": "/deploy/"
-  },"191": {
-    "doc": "Hooks",
-    "title": "Hooks",
-    "content": " ",
-    "url": "/v0.97/hooks/",
-    
-    "relUrl": "/hooks/"
-  },"192": {
+  },"186": {
     "doc": "Integrations",
     "title": "Integrations",
     "content": " ",
     "url": "/v0.97/integrations/",
     
     "relUrl": "/integrations/"
-  },"193": {
-    "doc": "How-To",
-    "title": "How-To",
+  },"187": {
+    "doc": "Hooks",
+    "title": "Hooks",
     "content": " ",
-    "url": "/v0.97/howto/",
+    "url": "/v0.97/hooks/",
     
-    "relUrl": "/howto/"
-  },"194": {
-    "doc": "Reference",
-    "title": "Reference",
+    "relUrl": "/hooks/"
+  },"188": {
+    "doc": "Use Cases",
+    "title": "Use Cases",
     "content": " ",
-    "url": "/v0.97/reference/",
+    "url": "/v0.97/use_cases/",
     
-    "relUrl": "/reference/"
-  },"195": {
+    "relUrl": "/use_cases/"
+  },"189": {
     "doc": "Quickstart",
     "title": "Quickstart",
     "content": " ",
     "url": "/v0.97/quickstart/",
     
     "relUrl": "/quickstart/"
+  },"190": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management",
+    "content": " ",
+    "url": "/v0.97/understand/data_lifecycle_management/",
+    
+    "relUrl": "/understand/data_lifecycle_management/"
+  },"191": {
+    "doc": "How it Works",
+    "title": "How it Works",
+    "content": "This section includes all the details about lakeFS internals and implementation details . ",
+    "url": "/v0.97/understand/how/",
+    
+    "relUrl": "/understand/how/"
+  },"192": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": "This section includes all the details about the lakeFS open source project. ",
+    "url": "/v0.97/understand/",
+    
+    "relUrl": "/understand/"
+  },"193": {
+    "doc": "Reference",
+    "title": "Reference",
+    "content": " ",
+    "url": "/v0.97/reference/",
+    
+    "relUrl": "/reference/"
+  },"194": {
+    "doc": "Slack",
+    "title": "Slack",
+    "content": " ",
+    "url": "/v0.97/slack/",
+    
+    "relUrl": "/slack/"
+  },"195": {
+    "doc": "How-To",
+    "title": "How-To",
+    "content": " ",
+    "url": "/v0.97/howto/",
+    
+    "relUrl": "/howto/"
   },"196": {
     "doc": "What is lakeFS",
     "title": "What is lakeFS",
