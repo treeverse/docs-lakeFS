@@ -7,33 +7,37 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 
-  
-
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-
   <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
 
   
 
   
-    <script type="text/javascript" src="/assets/js/vendor/lunr.min.js"></script>
+    <script src="/assets/js/vendor/lunr.min.js"></script>
   
-  <script type="text/javascript" src="/assets/js/just-the-docs.js"></script>
+
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  
+  
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  
+
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Tutorial – Rollback | lakeFS</title>
+<title>5️⃣ Roll back Changes | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Tutorial – Rollback" />
+<meta property="og:title" content="5️⃣ Roll back Changes" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="In this section we will explore how to use lakeFS for rollback operations." />
-<meta property="og:description" content="In this section we will explore how to use lakeFS for rollback operations." />
+<meta name="description" content="lakeFS quickstart / Rollback the changes made to show how lakeFS can be used to revert changes made in error." />
+<meta property="og:description" content="lakeFS quickstart / Rollback the changes made to show how lakeFS can be used to revert changes made in error." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Tutorial – Rollback" />
+<meta property="twitter:title" content="5️⃣ Roll back Changes" />
 <script type="application/ld+json">
-{"description":"In this section we will explore how to use lakeFS for rollback operations.","headline":"Tutorial – Rollback","@type":"WebPage","url":"/quickstart/rollback.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"lakeFS quickstart / Rollback the changes made to show how lakeFS can be used to revert changes made in error.","@type":"WebPage","headline":"5️⃣ Roll back Changes","url":"/quickstart/rollback.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -45,23 +49,32 @@
     })(window,document,'script','dataLayer','GTM-KTZBZW9');</script>
 <!-- End Google Tag Manager Head -->
 <meta property="og:image" content="/assets/img/shared-image.png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/js/fontawesome.min.js" integrity="sha512-i3N2a3sMtKOQHXCJF3qEpce5twcGN9mRsWQe6PUTf9WS/eG5XkivI97uxit7B2nRGz5XuoszBaqndSqxdeVfag==" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-        crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css" integrity="sha512-giQeaPns4lQTBMRpOOHsYnGw1tGVzbAIHUyHRgn7+6FmiEgGGjaG0T2LZJmAPMzRCl+Cug0ItQ2xDZpTmEc+CQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 <script src="/assets/js/copy-code.js"></script>
 <script>
     $(function () {
         $(".tabs").tabs();
     });
 </script>
-
+<script src="/assets/js/feedback.js"></script>
+<link href="https://data-folks.masto.host/@lakeFS" rel="me">
 
 </head>
 
+<script src="https://unpkg.com/mermaid@9.3.0/dist/mermaid.min.js"></script>
+<script>
+    $(document).ready(function () {
+        mermaid.initialize({
+            startOnLoad:true,
+            theme: "default",
+        });
+        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+    });
+</script>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTZBZW9"
@@ -181,107 +194,134 @@
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/quickstart/"
-           class="nav-list-link">Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/quickstart/try.html"
-                   class="nav-list-link">Try without installing</a></li><li class="nav-list-item "><a href="/quickstart/installing.html"
-                   class="nav-list-link">Install lakeFS</a></li><li class="nav-list-item "><a href="/quickstart/repository.html"
-                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/quickstart/add_data.html"
-                   class="nav-list-link">Add Data</a></li><li class="nav-list-item "><a href="/quickstart/first_commit.html"
-                   class="nav-list-link">Commit the Changes</a></li><li class="nav-list-item "><a href="/quickstart/more_quickstart_options.html"
-                   class="nav-list-link">More Quickstart Options</a></li><li class="nav-list-item "><a href="/quickstart/iso_env.html"
-                   class="nav-list-link">Tutorial – Isolated Environment</a></li><li class="nav-list-item  active"><a href="/quickstart/rollback.html"
-                   class="nav-list-link active">Tutorial – Rollback</a></li></ul></li><li
+           class="nav-list-link">⭐ Quickstart ⭐</a><ul class="nav-list "><li class="nav-list-item "><a href="/quickstart/launch.html"
+                   class="nav-list-link">1️⃣ Run lakeFS</a></li><li class="nav-list-item "><a href="/quickstart/query.html"
+                   class="nav-list-link">2️⃣ Query the data</a></li><li class="nav-list-item "><a href="/quickstart/branch.html"
+                   class="nav-list-link">3️⃣ Create a branch</a></li><li class="nav-list-item "><a href="/quickstart/commit-and-merge.html"
+                   class="nav-list-link">4️⃣ Commit and Merge</a></li><li class="nav-list-item  active"><a href="/quickstart/rollback.html"
+                   class="nav-list-link active">5️⃣ Roll back Changes</a></li><li class="nav-list-item "><a href="/quickstart/learning-more-lakefs.html"
+                   class="nav-list-link">🧑🏻‍🎓 Learn more about lakeFS</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/deploy/"
-           class="nav-list-link">Deploy lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/deploy/aws.html"
-                   class="nav-list-link">On AWS</a></li><li class="nav-list-item "><a href="/deploy/azure.html"
-                   class="nav-list-link">On Azure</a></li><li class="nav-list-item "><a href="/deploy/gcp.html"
-                   class="nav-list-link">On GCP</a></li><li class="nav-list-item "><a href="/deploy/k8s.html"
-                   class="nav-list-link">With Kubernetes</a></li><li class="nav-list-item "><a href="/deploy/docker.html"
-                   class="nav-list-link">With Docker</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/setup/"
-           class="nav-list-link">Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                        <use xlink:href="#svg-arrow-right"></use>
-                    </svg></a><a href="/setup/storage/"
-                   class="nav-list-link">Prepare Your Storage</a><ul class="nav-list"><li class="nav-list-item ">
-                        <a href="/setup/storage/s3.html"
-                           class="nav-list-link">AWS S3</a>
-                    </li><li class="nav-list-item ">
-                        <a href="/setup/storage/gcs.html"
-                           class="nav-list-link">Google Cloud Storage</a>
-                    </li><li class="nav-list-item ">
-                        <a href="/setup/storage/blob.html"
-                           class="nav-list-link">Azure Blob Storage</a>
-                    </li></ul></li><li class="nav-list-item "><a href="/setup/create-repo.html"
-                   class="nav-list-link">Create a Repository</a></li><li class="nav-list-item "><a href="/setup/import.html"
-                   class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="/setup/hooks.html"
-                   class="nav-list-link">Hooks</a></li><li class="nav-list-item "><a href="/setup/virtual-host-addressing.html"
-                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/usecases/"
-           class="nav-list-link">Using lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/usecases/data-devenv.html"
-                   class="nav-list-link">In Development</a></li><li class="nav-list-item "><a href="/usecases/ci.html"
-                   class="nav-list-link">During Deployment</a></li><li class="nav-list-item "><a href="/usecases/production.html"
-                   class="nav-list-link">In Production</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/reference/"
-           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/api.html"
-                   class="nav-list-link">API Reference</a></li><li class="nav-list-item "><a href="/reference/s3.html"
-                   class="nav-list-link">S3 Supported API</a></li><li class="nav-list-item "><a href="/reference/configuration.html"
-                   class="nav-list-link">Configuration Reference</a></li><li class="nav-list-item "><a href="/reference/commands.html"
-                   class="nav-list-link">Command (CLI) Reference</a></li><li class="nav-list-item "><a href="/reference/protected_branches.html"
-                   class="nav-list-link">Protected Branches</a></li><li class="nav-list-item "><a href="/reference/export.html"
-                   class="nav-list-link">Exporting Data</a></li><li class="nav-list-item "><a href="/reference/garbage-collection.html"
-                   class="nav-list-link">Garbage Collection</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
-                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/offboarding.html"
-                   class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/reference/upgrade.html"
-                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
-                   class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/authorization.html"
-                   class="nav-list-link">Authorization</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
-                   class="nav-list-link">Spark Client</a></li></ul></li><li
+           class="nav-list-link">Deploy and Setup lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/deploy/aws.html"
+                   class="nav-list-link">AWS</a></li><li class="nav-list-item "><a href="/deploy/azure.html"
+                   class="nav-list-link">Azure</a></li><li class="nav-list-item "><a href="/deploy/gcp.html"
+                   class="nav-list-link">GCP</a></li><li class="nav-list-item "><a href="/deploy/onprem.html"
+                   class="nav-list-link">On-Premises Deployment of lakeFS</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/integrations/"
-           class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/integrations/distcp.html"
-                   class="nav-list-link">Copying Data with DistCp</a></li><li class="nav-list-item "><a href="/integrations/rclone.html"
-                   class="nav-list-link">Copying data with Rclone</a></li><li class="nav-list-item "><a href="/integrations/aws_cli.html"
-                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/integrations/spark.html"
-                   class="nav-list-link">Spark</a></li><li class="nav-list-item "><a href="/integrations/hive.html"
-                   class="nav-list-link">Hive</a></li><li class="nav-list-item "><a href="/integrations/python.html"
-                   class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/emr.html"
-                   class="nav-list-link">EMR</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
-                   class="nav-list-link">Presto/Trino</a></li><li class="nav-list-item "><a href="/integrations/boto.html"
-                   class="nav-list-link">Boto (Python)</a></li><li class="nav-list-item "><a href="/integrations/minio.html"
-                   class="nav-list-link">MinIO</a></li><li class="nav-list-item "><a href="/integrations/athena.html"
-                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/integrations/airflow.html"
-                   class="nav-list-link">Airflow</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
+           class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/integrations/spark.html"
+                   class="nav-list-link">Spark</a></li><li class="nav-list-item "><a href="/integrations/delta.html"
+                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/integrations/aws_cli.html"
+                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/integrations/airflow.html"
+                   class="nav-list-link">Airflow</a></li><li class="nav-list-item "><a href="/integrations/python.html"
+                   class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/duckdb.html"
+                   class="nav-list-link">DuckDB</a></li><li class="nav-list-item "><a href="/integrations/glue_hive_metastore.html"
+                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
+                   class="nav-list-link">Presto/Trino</a></li><li class="nav-list-item "><a href="/integrations/athena.html"
+                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/airbyte.html"
-                   class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/integrations/databricks.html"
-                   class="nav-list-link">Databricks</a></li><li class="nav-list-item "><a href="/integrations/delta.html"
-                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/integrations/dbt.html"
-                   class="nav-list-link">dbt</a></li><li class="nav-list-item "><a href="/integrations/glue_hive_metastore.html"
-                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/integrations/glue_etl.html"
-                   class="nav-list-link">Glue ETL</a></li><li class="nav-list-item "><a href="/integrations/kakfa.html"
-                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/integrations/mapreduce.html"
-                   class="nav-list-link">MapReduce</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
-                   class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
-                   class="nav-list-link">Dremio</a></li></ul></li><li
+                   class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/integrations/dbt.html"
+                   class="nav-list-link">dbt</a></li><li class="nav-list-item "><a href="/integrations/kakfa.html"
+                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
+                   class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/integrations/hive.html"
+                   class="nav-list-link">Hive</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/iceberg.html"
+                   class="nav-list-link">Iceberg</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/hooks/"
+           class="nav-list-link">Hooks</a><ul class="nav-list "><li class="nav-list-item "><a href="/hooks/overview.html"
+                   class="nav-list-link">Overview</a></li><li class="nav-list-item "><a href="/hooks/lua.html"
+                   class="nav-list-link">Lua</a></li><li class="nav-list-item "><a href="/hooks/webhooks.html"
+                   class="nav-list-link">Webhooks</a></li><li class="nav-list-item "><a href="/hooks/airflow.html"
+                   class="nav-list-link">Airflow</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/use_cases/"
+           class="nav-list-link">Use Cases</a><ul class="nav-list "><li class="nav-list-item "><a href="/use_cases/etl_testing.html"
+                   class="nav-list-link">ETL Testing Environment</a></li><li class="nav-list-item "><a href="/use_cases/rollback.html"
+                   class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/use_cases/reproducibility.html"
+                   class="nav-list-link">Reproducibility</a></li><li class="nav-list-item "><a href="/use_cases/cicd_for_data.html"
+                   class="nav-list-link">CI/CD for data lakes</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/howto/"
+           class="nav-list-link">How-To</a><ul class="nav-list "><li class="nav-list-item "><a href="/howto/import.html"
+                   class="nav-list-link">Import data into lakeFS</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/howto/garbage-collection-index.html"
+                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/howto/garbage-collection-committed.html"
+                           class="nav-list-link">Committed Objects</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/howto/garbage-collection-uncommitted.html"
+                           class="nav-list-link">Uncommitted Objects</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/howto/gc-internals.html"
+                           class="nav-list-link">Committed GC Internals</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/howto/upgrade.html"
+                   class="nav-list-link">Upgrade lakeFS</a></li><li class="nav-list-item "><a href="/howto/export.html"
+                   class="nav-list-link">Exporting Data</a></li><li class="nav-list-item "><a href="/howto/copying.html"
+                   class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/protect-branches.html"
+                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/migrate-away.html"
+                   class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
+                   class="nav-list-link">Sizing Guide</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/reference/"
+           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/configuration.html"
+                   class="nav-list-link">Server Configuration</a></li><li class="nav-list-item "><a href="/reference/cli.html"
+                   class="nav-list-link">lakectl (lakeFS command-line tool)</a></li><li class="nav-list-item "><a href="/reference/api.html"
+                   class="nav-list-link">API Reference</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/reference/s3.html"
+                   class="nav-list-link">S3 Supported API</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
+                   class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/saml-authentication-integration.html"
+                   class="nav-list-link">SAML Authentication Integration</a></li><li class="nav-list-item "><a href="/reference/remote-authenticator.html"
+                   class="nav-list-link">Remote Authenticator</a></li><li class="nav-list-item "><a href="/reference/rbac.html"
+                   class="nav-list-link">Role-Based Access Control (RBAC)</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/access-control-lists.html"
+                   class="nav-list-link">Access Control Lists (ACL)</a></li><li class="nav-list-item "><a href="/reference/audit.html"
+                   class="nav-list-link">Audit Logs</a></li><li class="nav-list-item "><a href="/reference/presigned-url.html"
+                   class="nav-list-link">Presigned URL</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/understand/"
            class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/understand/architecture.html"
-                   class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/understand/versioning-internals.html"
-                   class="nav-list-link">Versioning Internals</a></li><li class="nav-list-item "><a href="/understand/object-model.html"
-                   class="nav-list-link">Object Model</a></li><li class="nav-list-item "><a href="/understand/branching-model.html"
-                   class="nav-list-link">Branching Model</a></li><li class="nav-list-item "><a href="/understand/sizing-guide.html"
-                   class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/understand/roadmap.html"
-                   class="nav-list-link">Roadmap</a></li></ul></li><li
+                   class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/understand/model.html"
+                   class="nav-list-link">Model</a></li><li class="nav-list-item "><a href="/understand/performance-best-practices.html"
+                   class="nav-list-link">Performance Best Practices</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/understand/how/"
+                   class="nav-list-link">How it Works</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/understand/how/versioning-internals.html"
+                           class="nav-list-link">Versioning Internals</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/how/kv.html"
+                           class="nav-list-link">Internal database structure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/how/merge.html"
+                           class="nav-list-link">Merge</a>
+                    </li></ul></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/understand/data_lifecycle_management/"
+                   class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/understand/data_lifecycle_management/data-devenv.html"
+                           class="nav-list-link">In Test</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/data_lifecycle_management/ci.html"
+                           class="nav-list-link">During Deployment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/data_lifecycle_management/production.html"
+                           class="nav-list-link">In Production</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/understand/glossary.html"
+                   class="nav-list-link">Glossary</a></li></ul></li><li
+            class="nav-list-item"><a href="/roadmap.html"
+           class="nav-list-link">Roadmap</a></li><li
             class="nav-list-item"><a href="/commitment.html"
-           class="nav-list-link">Our commitment to open source</a></li><li
+           class="nav-list-link">Commitment to OSS</a></li><li
             class="nav-list-item"><a href="/contributing.html"
            class="nav-list-link">Contributing</a></li><li
             class="nav-list-item"><a href="/faq.html"
@@ -293,29 +333,25 @@
         
         
         <li class="aux-nav-list-item">
-            <a href="https://docs.lakefs.io/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://docs.lakefs.io/" class="site-button" >
                 Docs
             </a>
         </li>
         
         <li class="aux-nav-list-item">
-            <a href="https://lakefs.io/blog/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://lakefs.io/blog/" class="site-button" >
                 Blog
             </a>
         </li>
         
         <li class="aux-nav-list-item">
-            <a href="https://lakefs.io/community/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://lakefs.io/community/" class="site-button" >
                 Community
             </a>
         </li>
         
         <li class="aux-nav-list-item">
-            <a href="https://github.com/treeverse/lakeFS" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
                 GitHub
             </a>
         </li>
@@ -324,9 +360,8 @@
         
         
         <li class="aux-nav-list-item button">
-            <a href="https://lakefs.io/cloud-registration/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
-                lakeFS Cloud
+            <a href="/quickstart" class="site-button" >
+                Get Started
             </a>
         </li>
         
@@ -339,6 +374,28 @@
 
     </div>
     <div class="main" id="top">
+         <div class="feedback-container">
+            <div id="is-helpful-ty">
+                <div class="text-epsilon">Thank you for your feedback.</div>
+                <div class="mt-2 text-epsilon">
+                    <a href="https://lakefs.io/slack" target="_blank">Join the community</a> to get more help.
+                </div>
+            </div>
+            <div class="feedback-buttons">
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-up" id="page-helpful-yes"></button>
+                    <span class="tooltiptext">
+                        This page is <b>helpful</b>
+                    </span>
+                </span>
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-down" id="page-helpful-no"></button>
+                    <span class="tooltiptext">
+                        This page is <b>not helpful</b>
+                    </span>
+                </span>
+            </div>
+        </div>
         <div id="main-header" class="main-header">
             
 <nav aria-label="Auxiliary" class="aux-nav">
@@ -346,29 +403,25 @@
         
         
         <li class="aux-nav-list-item">
-            <a href="https://docs.lakefs.io/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://docs.lakefs.io/" class="site-button" >
                 Docs
             </a>
         </li>
         
         <li class="aux-nav-list-item">
-            <a href="https://lakefs.io/blog/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://lakefs.io/blog/" class="site-button" >
                 Blog
             </a>
         </li>
         
         <li class="aux-nav-list-item">
-            <a href="https://lakefs.io/community/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://lakefs.io/community/" class="site-button" >
                 Community
             </a>
         </li>
         
         <li class="aux-nav-list-item">
-            <a href="https://github.com/treeverse/lakeFS" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
                 GitHub
             </a>
         </li>
@@ -377,9 +430,8 @@
         
         
         <li class="aux-nav-list-item button">
-            <a href="https://lakefs.io/cloud-registration/" class="site-button"  target="_blank"
-               rel="noopener noreferrer" >
-                lakeFS Cloud
+            <a href="/quickstart" class="site-button" >
+                Get Started
             </a>
         </li>
         
@@ -394,82 +446,93 @@
             <nav aria-label="Breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb-nav-list">
                     
-                    <li class="breadcrumb-nav-list-item"><a href="/quickstart/">Quickstart</a>
+                    <li class="breadcrumb-nav-list-item"><a href="/quickstart/">⭐ Quickstart ⭐</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Tutorial – Rollback</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>5️⃣ Roll back Changes</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                <h1 id="what-is-a-rollback">
-        
-        
-          <a href="#what-is-a-rollback" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What is a Rollback
-        
-        
-      </h1>
+                    <h1 id="rolling-back-changes-in-lakefs-️">
+  
+  
+    <a href="#rolling-back-changes-in-lakefs-️" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Rolling back Changes in lakeFS ↩️
+  
+  
+</h1>
     
 
-<p>A rollback operation is used to to fix critical data errors immediately.</p>
+<p>Our intrepid user (you) merged a change back into the <code class="language-plaintext highlighter-rouge">main</code> branch and realised that they had made a mistake 🤦🏻.</p>
 
-<p>What is a critical data error? Think of a situation where erroneous or mis-formatted data causes a signficant issue with an important service or function. In these situations, the first thing to do is stop the bleeding.</p>
+<p>The good news for them (you) is that lakeFS can revert changes made, similar to how you would in git 😅.</p>
 
-<p>Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors.</p>
+<p>From your terminal window run <code class="language-plaintext highlighter-rouge">lakectl</code> with the <code class="language-plaintext highlighter-rouge">revert</code> command:</p>
 
-<p>A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened and 2) what can be done to prevent it from happening again.</p>
-      <h2 id="performing-rollbacks-with-lakefs">
-        
-        
-          <a href="#performing-rollbacks-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Performing Rollbacks with lakeFS
-        
-        
-      </h2>
-    
-
-<p>lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs.</p>
-
-<p>Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback.</p>
-
-<p>To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history:</p>
-
-<p><img src="/assets/img/rollback-commit-history.png" alt="Commit History" /></p>
-
-<p>As can be inferred from the history, this repo is updated every minute with a data sync from some data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time.</p>
-      <h3 id="how-to-rollback-from-a-bad-sync">
-        
-        
-          <a href="#how-to-rollback-from-a-bad-sync" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How to Rollback from a bad sync?
-        
-        
-      </h3>
-    
-
-<p>Say the situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a <code class="language-plaintext highlighter-rouge">revert</code> operation to undo the changes introduced in that sync.</p>
-
-<p><img src="/assets/img/rollback-copy-id.png" alt="Copy Commit ID" /></p>
-
-<p>Step 1: Copy the <code class="language-plaintext highlighter-rouge">commit_id</code> associated with the commit we want to revert. As shown in the screenshot above you can use the <code class="language-plaintext highlighter-rouge">Copy ID to Clipboard</code> button to do this.</p>
-
-<p>Step 2: Run the revert command using <a href="/reference/commands.html">lakectl</a>, the lakeFS CLI. In this example this command will be:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> lakefs <span class="se">\</span>
+    lakectl branch revert <span class="se">\</span>
+	    lakefs://quickstart/main <span class="se">\</span>
+	    main <span class="nt">--parent-number</span> 1 <span class="nt">--yes</span>
+</code></pre></div></div>
+<p>You should see a confirmation of a successful rollback:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Branch: lakefs://quickstart/main
+commit main successfully reverted
 </code></pre></div></div>
 
-<p>This will undo the changes introduced by this commit, completing the rollback!</p>
+<p>Back in the object page and the DuckDB query we can see that the original file is now back to how it was: 
+<img src="/assets/img/quickstart/duckdb-main-02.png" alt="The lakeFS object viewer with DuckDB query showing that the lakes dataset on main branch has been successfully returned to state prior to the merge." class="quickstart" /></p>
+<h2 id="bonus-challenge">
+  
+  
+    <a href="#bonus-challenge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bonus Challenge
+  
+  
+</h2>
+    
 
-<p><img src="/assets/img/rollback-revert-commit.png" alt="Rollback Commit" /></p>
+<p>And so with that, this quickstart for lakeFS draws to a close. If you’re simply having <em>too much fun</em> to stop then here’s an exercise for you.</p>
 
-<p>The rollback operation is this simple even if many changes were introduced in a commit, spanning multiple data collections.</p>
+<p>Implement the requirement from above <em>correctly</em>, such that you write <code class="language-plaintext highlighter-rouge">denmark-lakes.parquet</code> in the respective branch and successfully merge it back into main. Look up how to list the contents of the <code class="language-plaintext highlighter-rouge">main</code> branch and verify that it looks like this:</p>
 
-<p>In lakeFS, it is always a one-liner to rollback data.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>object          2023-03-21 17:33:51 +0000 UTC    20.9 kB         denmark-lakes.parquet
+object          2023-03-21 14:45:38 +0000 UTC    916.4 kB        lakes.parquet
+</code></pre></div></div>
+<h1 id="finishing-up">
+  
+  
+    <a href="#finishing-up" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Finishing Up
+  
+  
+</h1>
+    
+
+<p>Once you’ve finished the quickstart, shut down your local environment with the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose down
+</code></pre></div></div>
 
                 
 
                 
+                
+                <div style="float: left" class="mt-5">
 
+                    <a type="button" class="btn btn-green" href="./commit-and-merge.html">
+                        <i class="fa fa-solid fa-arrow-left"></i> Previous: Merge the branch back into main
+                    </a>
+                </div>
+                
+
+                
+                <div style="float: right" class="mt-5">
+
+                    <a type="button" class="btn btn-green" href="./learning-more-lakefs.html">
+                        Next: Resources for learning more about lakeFS <i class="fa fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                
 
             </div>
         </div>
@@ -486,53 +549,42 @@
     <div class="footer-sidebar"></div>
     <div class="footer-main">
         <div class="row">
-            <a href="https://lakefs.io" class="site-title lh-tight">
-                <div class="site-logo"></div>
-            </a>
-        </div>
-        <div class="row">
             <div class="left">
                 <ul class="footer-links">
                     
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://docs.lakefs.io/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://docs.lakefs.io/" class="site-button" >
                             Docs
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/blog/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/blog/" class="site-button" >
                             Blog
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://github.com/treeverse/lakeFS" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
                             GitHub
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/community/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/community/" class="site-button" >
                             Community
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/cloud-registration/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/cloud-registration/" class="site-button" >
                             lakeFS Cloud
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/contact-us/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/contact-us/" class="site-button" >
                             Contact
                         </a>
                     </li>
@@ -545,40 +597,42 @@
                     
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/youtube" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/youtube" class="site-button" >
                             <img src="/assets/icons/youtube.svg" class="no-hover" />
                             <img src="/assets/icons/youtube-hover.svg" class="hover" />
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://www.linkedin.com/company/treeverse" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://www.linkedin.com/company/treeverse" class="site-button" >
                             <img src="/assets/icons/linkedin.svg" class="no-hover" />
                             <img src="/assets/icons/linkedin-hover.svg" class="hover" />
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://github.com/treeverse/lakeFS" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
                             <img src="/assets/icons/github.svg" class="no-hover" />
                             <img src="/assets/icons/github-hover.svg" class="hover" />
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://twitter.com/lakeFS" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://twitter.com/lakeFS" class="site-button" >
                             <img src="/assets/icons/twitter.svg" class="no-hover" />
                             <img src="/assets/icons/twitter-hover.svg" class="hover" />
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/slack" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://data-folks.masto.host/@lakeFS" class="site-button" >
+                            <img src="/assets/icons/mastodon.svg" class="no-hover" />
+                            <img src="/assets/icons/mastodon-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/slack" class="site-button" >
                             <img src="/assets/icons/slack.svg" class="no-hover" />
                             <img src="/assets/icons/slack-hover.svg" class="hover" />
                         </a>
@@ -589,23 +643,23 @@
             </div>
         </div>
         <div class="row top-border">
-            <div class="left"><a href="https://www.treeverse.io/">
-                    <div class="other-logo"><img src="/assets/by-treeverse.png" /></div>
-                </a></div>
+            <div class="left">
+                <a href="https://lakefs.io" class="lh-tight" style="margin-bottom: 0px;">
+                    <div class="site-logo"></div>
+                </a>                    
+            </div>
             <div class="right">
                 <ul class="bottom-footer-links">
                     
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/terms-of-use/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/terms-of-use/" class="site-button" >
                             Terms of use
                         </a>
                     </li>
                     
                     <li class="aux-nav-list-item">
-                        <a href="https://lakefs.io/privacy-policy/" class="site-button"  target="_blank"
-                            rel="noopener noreferrer" >
+                        <a href="https://lakefs.io/privacy-policy/" class="site-button" >
                             Privacy Policy
                         </a>
                     </li>
