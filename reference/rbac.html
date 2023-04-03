@@ -269,6 +269,20 @@
                    class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/migrate-away.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/cloud/"
+           class="nav-list-link">lakeFS Cloud</a><ul class="nav-list "><li class="nav-list-item "><a href="/cloud/auditing.html"
+                   class="nav-list-link">Auditing</a></li><li class="nav-list-item "><a href="/cloud/managed-gc.html"
+                   class="nav-list-link">Managed Garbage Collection</a></li><li class="nav-list-item "><a href="/cloud/private-link.html"
+                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/cloud/setup-azure.html"
+                   class="nav-list-link">Setting up lakeFS Cloud on Azure</a></li><li class="nav-list-item "><a href="/cloud/sso.html"
+                   class="nav-list-link">Single Sign On (SSO) for lakeFS Cloud</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/enterprise/"
+           class="nav-list-link">lakeFS Enterprise</a><ul class="nav-list "><li class="nav-list-item "><a href="/enterprise/sso.html"
+                   class="nav-list-link">Single Sign On (SSO) in lakeFS Enterprise</a></li></ul></li><li
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/reference/"
@@ -282,9 +296,8 @@
                    class="nav-list-link">SAML Authentication Integration</a></li><li class="nav-list-item "><a href="/reference/remote-authenticator.html"
                    class="nav-list-link">Remote Authenticator</a></li><li class="nav-list-item  active"><a href="/reference/rbac.html"
                    class="nav-list-link active">Role-Based Access Control (RBAC)</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
-                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/access-control-lists.html"
-                   class="nav-list-link">Access Control Lists (ACL)</a></li><li class="nav-list-item "><a href="/reference/audit.html"
-                   class="nav-list-link">Audit Logs</a></li><li class="nav-list-item "><a href="/reference/presigned-url.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/access-control-list.html"
+                   class="nav-list-link">Access Control Lists (ACLs)</a></li><li class="nav-list-item "><a href="/reference/presigned-url.html"
                    class="nav-list-link">Presigned URL</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -456,7 +469,7 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 class="no_toc" id="role-based-access-control-rbac">
+                    <h1 class="d-inline-block" id="role-based-access-control-rbac">
   
   
     <a href="#role-based-access-control-rbac" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Role-Based Access Control (RBAC)
@@ -464,10 +477,14 @@
   
 </h1>
     
+<p class="label label-green">lakeFS Cloud</p>
+
+<p class="label label-purple no_toc">lakeFS Enterprise</p>
 
 <blockquote class="note">
-  <p>RBAC is only available when lakeFS is configured with a <a href="remote-authenticator.html">remote authenticator</a>. <br /><a href="https://lakefs.cloud">lakeFS cloud</a> is a scalable and fully-managed lakeFS service which includes this remote authenticator functionality and is also SOC 2 compliant.<br />
-If you do not want to use RBAC then a simpler <a href="access-control-lists.html">ACL-based authorization mechanism</a> is available.</p>
+  <p>RBAC is available on <a href="../cloud/">lakeFS Cloud</a> and <a href="../enterprise/">lakeFS Enterprise</a>.</p>
+
+  <p>If you’re using the open source version of lakeFS then the <a href="access-control-list.html">ACL-based authorization mechanism</a> is an alternative to RBAC.</p>
 </blockquote>
 
 <div class="toc-block">
@@ -481,24 +498,27 @@ If you do not want to use RBAC then a simpler <a href="access-control-lists.html
     
 
 <ol id="markdown-toc">
-  <li><a href="#rbac-model" id="markdown-toc-rbac-model">RBAC Model</a></li>
-  <li><a href="#authorization-process" id="markdown-toc-authorization-process">Authorization process</a></li>
-  <li><a href="#policy-precedence" id="markdown-toc-policy-precedence">Policy Precedence</a></li>
-  <li><a href="#resource-naming---arns" id="markdown-toc-resource-naming---arns">Resource naming - ARNs</a></li>
-  <li><a href="#actions-and-permissions" id="markdown-toc-actions-and-permissions">Actions and Permissions</a></li>
-  <li><a href="#preconfigured-policies" id="markdown-toc-preconfigured-policies">Preconfigured Policies</a>    <ol>
-      <li><a href="#fsfullaccess" id="markdown-toc-fsfullaccess">FSFullAccess</a></li>
-      <li><a href="#fsreadall" id="markdown-toc-fsreadall">FSReadAll</a></li>
-      <li><a href="#fsreadwriteall" id="markdown-toc-fsreadwriteall">FSReadWriteAll</a></li>
-      <li><a href="#authfullaccess" id="markdown-toc-authfullaccess">AuthFullAccess</a></li>
-      <li><a href="#authmanageowncredentials" id="markdown-toc-authmanageowncredentials">AuthManageOwnCredentials</a></li>
-      <li><a href="#repomanagementfullaccess" id="markdown-toc-repomanagementfullaccess">RepoManagementFullAccess</a></li>
-      <li><a href="#repomanagementreadall" id="markdown-toc-repomanagementreadall">RepoManagementReadAll</a></li>
+  <li><a href="#role-based-access-control-rbac" id="markdown-toc-role-based-access-control-rbac">Role-Based Access Control (RBAC)</a>    <ol>
+      <li><a href="#rbac-model" id="markdown-toc-rbac-model">RBAC Model</a></li>
+      <li><a href="#authorization-process" id="markdown-toc-authorization-process">Authorization process</a></li>
+      <li><a href="#policy-precedence" id="markdown-toc-policy-precedence">Policy Precedence</a></li>
+      <li><a href="#resource-naming---arns" id="markdown-toc-resource-naming---arns">Resource naming - ARNs</a></li>
+      <li><a href="#actions-and-permissions" id="markdown-toc-actions-and-permissions">Actions and Permissions</a></li>
+      <li><a href="#preconfigured-policies" id="markdown-toc-preconfigured-policies">Preconfigured Policies</a>        <ol>
+          <li><a href="#fsfullaccess" id="markdown-toc-fsfullaccess">FSFullAccess</a></li>
+          <li><a href="#fsreadall" id="markdown-toc-fsreadall">FSReadAll</a></li>
+          <li><a href="#fsreadwriteall" id="markdown-toc-fsreadwriteall">FSReadWriteAll</a></li>
+          <li><a href="#authfullaccess" id="markdown-toc-authfullaccess">AuthFullAccess</a></li>
+          <li><a href="#authmanageowncredentials" id="markdown-toc-authmanageowncredentials">AuthManageOwnCredentials</a></li>
+          <li><a href="#repomanagementfullaccess" id="markdown-toc-repomanagementfullaccess">RepoManagementFullAccess</a></li>
+          <li><a href="#repomanagementreadall" id="markdown-toc-repomanagementreadall">RepoManagementReadAll</a></li>
+        </ol>
+      </li>
+      <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a></li>
+      <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a></li>
+      <li><a href="#pluggable-authentication-and-authorization" id="markdown-toc-pluggable-authentication-and-authorization">Pluggable Authentication and Authorization</a></li>
     </ol>
   </li>
-  <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a></li>
-  <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a></li>
-  <li><a href="#pluggable-authentication-and-authorization" id="markdown-toc-pluggable-authentication-and-authorization">Pluggable Authentication and Authorization</a></li>
 </ol>
 
 </div>
@@ -1378,7 +1398,7 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
 
 <p>Authorization and authentication is pluggable in lakeFS. If lakeFS is attached to a <a href="remote-authenticator.html">remote authentication server</a> (or you are using lakeFS Cloud) then the <a href="rbac.html">role-based access control</a> user interface can be used. If you are using RBAC with your self-managed lakeFS then the lakeFS configuration element <code class="language-plaintext highlighter-rouge">auth.ui_config.RBAC</code> should be set to <code class="language-plaintext highlighter-rouge">external</code>.</p>
 
-<p>If you are using self-managed lakeFS and do not have a <a href="remote-authenticator.html">remote authentication server</a> then you should set <code class="language-plaintext highlighter-rouge">auth.ui_config.RBAC</code> to <code class="language-plaintext highlighter-rouge">simplified</code> and refer to the <a href="/reference/access-control-lists.html">access control list</a> documentation instead.</p>
+<p>If you are using self-managed lakeFS and do not have a <a href="remote-authenticator.html">remote authentication server</a> then you should set <code class="language-plaintext highlighter-rouge">auth.ui_config.RBAC</code> to <code class="language-plaintext highlighter-rouge">simplified</code> and refer to the <a href="access-control-lists.md">access control list</a> documentation instead.</p>
 
                 
 
