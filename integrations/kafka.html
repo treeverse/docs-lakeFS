@@ -27,17 +27,17 @@
   
 
   <!-- Begin Jekyll SEO tag v2.7.1 -->
-<title>Delta Lake | lakeFS</title>
+<title>Kafka | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.0" />
-<meta property="og:title" content="Delta Lake" />
+<meta property="og:title" content="Kafka" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="This section explains how to use Delta Lake with lakeFS." />
-<meta property="og:description" content="This section explains how to use Delta Lake with lakeFS." />
+<meta name="description" content="This section explains how you can start using lakeFS with Kafka using Confluent’s S3 Sink Connector." />
+<meta property="og:description" content="This section explains how you can start using lakeFS with Kafka using Confluent’s S3 Sink Connector." />
 <meta property="og:site_name" content="lakeFS" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Delta Lake" />
+<meta property="twitter:title" content="Kafka" />
 <script type="application/ld+json">
-{"description":"This section explains how to use Delta Lake with lakeFS.","@type":"WebPage","headline":"Delta Lake","url":"/integrations/delta.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
+{"description":"This section explains how you can start using lakeFS with Kafka using Confluent’s S3 Sink Connector.","@type":"WebPage","headline":"Kafka","url":"/integrations/kafka.html","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -213,8 +213,8 @@
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/integrations/"
            class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/integrations/spark.html"
-                   class="nav-list-link">Spark</a></li><li class="nav-list-item  active"><a href="/integrations/delta.html"
-                   class="nav-list-link active">Delta Lake</a></li><li class="nav-list-item "><a href="/integrations/aws_cli.html"
+                   class="nav-list-link">Spark</a></li><li class="nav-list-item "><a href="/integrations/delta.html"
+                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/integrations/aws_cli.html"
                    class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/integrations/airflow.html"
                    class="nav-list-link">Airflow</a></li><li class="nav-list-item "><a href="/integrations/python.html"
                    class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/duckdb.html"
@@ -224,8 +224,8 @@
                    class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/airbyte.html"
                    class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/integrations/dbt.html"
-                   class="nav-list-link">dbt</a></li><li class="nav-list-item "><a href="/integrations/kafka.html"
-                   class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
+                   class="nav-list-link">dbt</a></li><li class="nav-list-item  active"><a href="/integrations/kafka.html"
+                   class="nav-list-link active">Kafka</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/integrations/hive.html"
                    class="nav-list-link">Hive</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/iceberg.html"
@@ -462,165 +462,41 @@
                     <li class="breadcrumb-nav-list-item"><a href="/integrations/">Integrations</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Delta Lake</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Kafka</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 class="no_toc" id="using-lakefs-with-delta-lake">
+                    <h1 id="using-lakefs-with-kafka">
   
   
-    <a href="#using-lakefs-with-delta-lake" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Delta Lake
+    <a href="#using-lakefs-with-kafka" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Kafka
   
   
 </h1>
     
 
-<p><a href="https://delta.io/">Delta Lake</a> Delta Lake is an open-source storage framework designed to improve performance and provide transactional guarantees to data lake tables.</p>
+<p class="no_toc"><a href="https://kafka.apache.org/">Apache Kafka</a> provides a unified, high-throughput, low-latency platform for handling real-time data feeds.</p>
 
-<p>Because lakeFS is format-agnostic, you can save data in Delta format within a lakeFS repository and benefit from the advantages of both technologies.  Specifically:</p>
+<p>Different distributions of Kafka offer different methods for exporting data to S3 called Kafka Sink Connectors.</p>
 
-<ol>
-  <li>ACID operations can span across many Delta tables.</li>
-  <li><a href="/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">CI/CD hooks</a> can validate Delta table contents, schema, or even referential integrity.</li>
-  <li>lakeFS supports zero-copy branching for quick experimentation with full isolation.</li>
-</ol>
+<p>The most commonly used Connector for S3 is <a href="https://docs.confluent.io/current/connect/kafka-connect-s3/index.html">Confluent’s S3 Sink Connector</a>.</p>
 
-<div class="toc-block">
-<h2 class="no_toc text-delta" id="table-of-contents">
-  
-  
-    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
-  
-  
-</h2>
-    
+<p>Add the following to <code class="language-plaintext highlighter-rouge">connector.properties</code> file for lakeFS support:</p>
 
-<ol id="markdown-toc">
-  <li><a href="#viewing-delta-lake-table-changes-in-lakefs-beta" id="markdown-toc-viewing-delta-lake-table-changes-in-lakefs-beta">Viewing Delta Lake table changes in lakeFS <sup>BETA</sup></a>    <ol>
-      <li><a href="#installing-the-delta-lake-diff-plugin" id="markdown-toc-installing-the-delta-lake-diff-plugin">Installing the Delta Lake diff plugin</a></li>
-    </ol>
-  </li>
-  <li><a href="#spark-configuration" id="markdown-toc-spark-configuration">Spark Configuration</a></li>
-  <li><a href="#best-practices" id="markdown-toc-best-practices">Best Practices</a>    <ol>
-      <li><a href="#when-running-lakefs-inside-your-vpc-on-aws" id="markdown-toc-when-running-lakefs-inside-your-vpc-on-aws">When running lakeFS inside your VPC (on AWS)</a></li>
-      <li><a href="#using-multi-cluster-writes-on-aws" id="markdown-toc-using-multi-cluster-writes-on-aws">Using multi cluster writes (on AWS)</a></li>
-    </ol>
-  </li>
-  <li><a href="#further-reading" id="markdown-toc-further-reading">Further Reading</a></li>
-</ol>
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Your lakeFS repository
+</span><span class="py">s3.bucket.name</span><span class="p">=</span><span class="s">example-repo</span>
 
-</div>
-<h2 id="viewing-delta-lake-table-changes-in-lakefs-beta">
-  
-  
-    <a href="#viewing-delta-lake-table-changes-in-lakefs-beta" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Viewing Delta Lake table changes in lakeFS <sup>BETA</sup>
-  
-  
-</h2>
-    
+<span class="c"># Your lakeFS S3 endpoint and credentials
+</span><span class="py">store.url</span><span class="p">=</span><span class="s">https://lakefs.example.com</span>
+<span class="py">aws.access.key.id</span><span class="p">=</span><span class="s">AKIAIOSFODNN7EXAMPLE</span>
+<span class="py">aws.secret.access.key</span><span class="p">=</span><span class="s">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
 
-<p>Using lakeFS you can</p>
-<ul>
-  <li>Compare different versions of Delta Lake tables</li>
-  <li>Get a detailed view of all Delta Lake table operations performed since the tables diverged.</li>
-</ul>
-
-<p>For example, comparing branches <code class="language-plaintext highlighter-rouge">dev</code> and <code class="language-plaintext highlighter-rouge">main</code>, we can see that the <em>movies</em> table has changed on <code class="language-plaintext highlighter-rouge">dev</code> since the branches diverged.
-Expanding the delete operation, we learn that all movies with a rating &lt; 4 were deleted from the table on the <code class="language-plaintext highlighter-rouge">dev</code> branch.</p>
-
-<p><img src="/assets/img/delta-diff-table-icon.png" alt="movies_table_changed.png" />
-<img src="/assets/img/delta-diff-operations.png" alt="movies_table_operations.png" /></p>
-
-<p class="note"><strong>Note:</strong>
-The diff is available as long as the table history in Delta is retained (<a href="https://docs.databricks.com/delta/history.html#configure-data-retention-for-time-travel">30 days by default</a>). A delta lake table history is derived from the delta log JSON files.</p>
-<h3 id="installing-the-delta-lake-diff-plugin">
-  
-  
-    <a href="#installing-the-delta-lake-diff-plugin" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installing the Delta Lake diff plugin
-  
-  
-</h3>
-    
-
-<p>To enable the Delta Lake diff feature, you need to install a plugin on the lakeFS server. You will find the plugin binary in the
-<a href="https://github.com/treeverse/lakeFS/releases/latest">release</a> tarball (versions &gt;= 0.97.3).
-Put the <code class="language-plaintext highlighter-rouge">delta_diff</code> binary under <code class="language-plaintext highlighter-rouge">~/.lakefs/plugins/diff</code> on the machine where lakeFS is running.</p>
-
-<p>You can customize the location of the Delta Lake diff plugin by changing the <code class="language-plaintext highlighter-rouge">diff.delta.plugin</code> and 
-<code class="language-plaintext highlighter-rouge">plugin.properties.&lt;plugin name&gt;.path</code> configurations in the <a href="../reference/configuration.html#plugins"><code class="language-plaintext highlighter-rouge">.lakefs.yaml</code></a> file.</p>
-
-<p><strong>Notice</strong>: If you’re using the lakeFS <a href="/deploy/onprem.html#docker">docker image</a>, the plugin is installed by default.</p>
-<h2 id="spark-configuration">
-  
-  
-    <a href="#spark-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Spark Configuration
-  
-  
-</h2>
-    
-
-<p><em>Given the native integration between Delta Lake and Spark, it’s most common that you’ll interact with Delta tables in a Spark environment.</em></p>
-
-<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you’d do with any <a href="/integrations/spark.html">Spark</a> environment.</p>
-
-<p>Once set, you can interact with Delta tables using regular Spark path URIs. Make sure that you include the lakeFS repository and branch name:</p>
-
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">df</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">format</span><span class="o">(</span><span class="s">"delta"</span><span class="o">).</span><span class="py">save</span><span class="o">(</span><span class="s">"s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table"</span><span class="o">)</span>
+<span class="c"># main being the branch we want to write to
+</span><span class="py">topics.dir</span><span class="p">=</span><span class="s">main/topics </span>
 </code></pre></div></div>
-
-<p>Note: If using the Databricks Analytics Platform, see the <a href="/integrations/spark.html#installation">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
-<h2 id="best-practices">
-  
-  
-    <a href="#best-practices" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Best Practices
-  
-  
-</h2>
-    
-
-<p>Production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>. This is because the <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it would result in conflicts if later attempting to merge one branch into the other.</p>
-<h3 id="when-running-lakefs-inside-your-vpc-on-aws">
-  
-  
-    <a href="#when-running-lakefs-inside-your-vpc-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> When running lakeFS inside your VPC (on AWS)
-  
-  
-</h3>
-    
-
-<p>When lakeFS runs inside your private network, your Databricks cluster needs to be able to access it. 
-This can be done by setting up a VPC peering between the two VPCs 
-(the one where lakeFS runs and the one where Databricks runs). For this to work on Delta Lake tables, you would also have to disable multi-cluster writes with:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.databricks.delta.multiClusterWrites.enabled false
-</code></pre></div></div>
-<h3 id="using-multi-cluster-writes-on-aws">
-  
-  
-    <a href="#using-multi-cluster-writes-on-aws" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using multi cluster writes (on AWS)
-  
-  
-</h3>
-    
-
-<p>When using multi-cluster writes, Databricks overrides Delta’s S3-commit action. 
-The new action tries to contact lakeFS from servers on Databricks’ own AWS account, which of course won’t be able to access your private network. 
-So, if you must use multi-cluster writes, you’ll have to allow access from Databricks’ AWS account to lakeFS. 
-If you are trying to achieve that, please reach out on Slack and the community will try to assist.</p>
-<h2 id="further-reading">
-  
-  
-    <a href="#further-reading" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Further Reading
-  
-  
-</h2>
-    
-
-<p>See <a href="https://lakefs.io/guarantee-consistency-in-your-delta-lake-tables-with-lakefs/">Guaranteeing Consistency in Your Delta Lake Tables With lakeFS</a> post on the lakeFS blog to learn how to 
-guarantee data quality in a Delta table by utilizing lakeFS branches.</p>
 
                 
 
