@@ -296,7 +296,7 @@
                    class="nav-list-link">SAML Authentication Integration</a></li><li class="nav-list-item "><a href="/reference/remote-authenticator.html"
                    class="nav-list-link">Remote Authenticator</a></li><li class="nav-list-item "><a href="/reference/rbac.html"
                    class="nav-list-link">Role-Based Access Control (RBAC)</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
-                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/access-control-list.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/access-control-lists.html"
                    class="nav-list-link">Access Control Lists (ACLs)</a></li><li class="nav-list-item "><a href="/reference/presigned-url.html"
                    class="nav-list-link">Presigned URL</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
@@ -693,6 +693,50 @@ Remote Theme: Using theme pmarsceill/just-the-docs
 </ol>
 
 <p><em>If you are doing lots of work on the docs you may want to leave the Docker container in place (so that you don’t have to wait for the dependencies to load each time you re-create it). To do this replace the <code class="language-plaintext highlighter-rouge">--rm</code> with <code class="language-plaintext highlighter-rouge">--detach</code> in the <code class="language-plaintext highlighter-rouge">docker run</code> command, and use <code class="language-plaintext highlighter-rouge">docker logs -f lakefs_docs</code> to view the server log.</em></p>
+<h3 id="link-checking-locally">
+  
+  
+    <a href="#link-checking-locally" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Link Checking locally
+  
+  
+</h3>
+    
+
+<p>When making a pull request to lakeFS that involves a <code class="language-plaintext highlighter-rouge">docs/*</code> file, a <a href="https://github.com/treeverse/lakeFS/blob/master/.github/workflows/docs-pr.yaml">GitHub action</a> will automagically check the links. You can also run this link checker manually on your local machine:</p>
+
+<ol>
+  <li>
+    <p>Build the site:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm \
+         --name lakefs_docs \
+         -e TZ="Etc/UTC" \
+         --volume="$PWD/docs:/srv/jekyll:Z" \
+         --volume="$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z" \
+         --interactive --tty \
+         jekyll/jekyll:3.8 \
+         jekyll build --config _config.yml -d _site --watch
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Check the links:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm \
+         --name lakefs_docs_lychee \
+         --volume "$PWD:/data"\
+         --volume "/tmp:/output"\
+         --tty \
+         lycheeverse/lychee:master \
+         --exclude-file /data/docs/.lycheeignore \
+         --output /output/lychee_report.md \
+         --format markdown \
+         /data/docs/_site
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Review the <code class="language-plaintext highlighter-rouge">lychee_report.md</code> in your local <code class="language-plaintext highlighter-rouge">/tmp</code> folder</p>
+  </li>
+</ol>
 <h3 id="changelogmd">
   
   
