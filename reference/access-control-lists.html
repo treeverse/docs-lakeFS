@@ -629,11 +629,11 @@ There are 4 default groups, named after the 4 permissions. Each group is global 
 <p>Upgrading the lakeFS version will require migrating to the new ACL authorization model.</p>
 
 <p>In order to run the migration run:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs migrate auth-acl
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs migrate up
 </code></pre></div></div>
 
-<p>The command defaults to dry-run. We recommend running the script only after running the dry-run and going over the warnings. 
-To apply the migration, re-run with the  <code class="language-plaintext highlighter-rouge">--yes</code>  flag</p>
+<p>The command will run the migration to ACL. The migration process might adjust the current authorization policies to fit ACL, in that case the command will not make any changes, only print warnings.<br />
+In case of warnings to apply the migration, re-run with the  <code class="language-plaintext highlighter-rouge">--force</code>  flag</p>
 
 <p>The upgrade will ensure that the 4 default groups exist, and modify existing groups to fit into the new ACLs model:</p>
 <ul>
@@ -649,7 +649,9 @@ To apply the migration, re-run with the  <code class="language-plaintext highlig
   </li>
 </ul>
 
-<p>Once you have completed the migration you should update the lakeFS server configuration for <code class="language-plaintext highlighter-rouge">auth.ui_config.RBAC</code> to <code class="language-plaintext highlighter-rouge">simplified</code>. Note that moving to <code class="language-plaintext highlighter-rouge">simplified</code> from <code class="language-plaintext highlighter-rouge">external</code> may only be performed once and <strong>will</strong> lose some configuration.  The upgrade script will detail the changes made by the transition.</p>
+<p>The upgrade will detach every directly attached policy from users</p>
+
+<p>Note that moving to <code class="language-plaintext highlighter-rouge">ACL</code> from <code class="language-plaintext highlighter-rouge">RBAC</code> may only be performed once and <strong>will</strong> lose some configuration.  The upgrade script will detail the changes made by the transition.</p>
 
 <p>For any question or concern during the upgrade, don’t hesitate to get in touch with us through <a href="https://lakefs.io/slack">Slack</a> or <a href="mailto:support@treeverse.io">email</a>.</p>
 
