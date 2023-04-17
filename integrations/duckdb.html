@@ -521,13 +521,30 @@
 </h3>
     
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">LOAD</span> <span class="n">httpfs</span><span class="p">;</span>
-<span class="k">SET</span> <span class="n">s3_region</span><span class="o">=</span><span class="s1">'us-east-1'</span><span class="p">;</span>
+<p>If not loaded already, install and load the HTTPFS extension:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">INSTALL</span> <span class="n">httpfs</span><span class="p">;</span>
+<span class="k">LOAD</span> <span class="n">httpfs</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Then run the following to configure the connection.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">s3_region</span><span class="o">=</span><span class="s1">'us-east-1'</span><span class="p">;</span>
 <span class="k">SET</span> <span class="n">s3_endpoint</span><span class="o">=</span><span class="s1">'lakefs.example.com'</span><span class="p">;</span>
 <span class="k">SET</span> <span class="n">s3_access_key_id</span><span class="o">=</span><span class="s1">'AKIAIOSFODNN7EXAMPLE'</span><span class="p">;</span>
 <span class="k">SET</span> <span class="n">s3_secret_access_key</span><span class="o">=</span><span class="s1">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span><span class="p">;</span>
 <span class="k">SET</span> <span class="n">s3_url_style</span><span class="o">=</span><span class="s1">'path'</span><span class="p">;</span>
+
+<span class="c1">-- Uncomment in case the endpoint listen on non-secure, for example running lakeFS locally.</span>
+<span class="c1">-- SET s3_use_ssl=false;</span>
 </code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">s3_endpoint</code> is the host (and port, if necessary) of your lakeFS server</li>
+  <li><code class="language-plaintext highlighter-rouge">s3_access_key_id</code> and <code class="language-plaintext highlighter-rouge">s3_secret_access_key</code> are the access credentials for your lakeFS user</li>
+  <li><code class="language-plaintext highlighter-rouge">s3_url_style</code> needs to be set to <code class="language-plaintext highlighter-rouge">path</code></li>
+  <li><code class="language-plaintext highlighter-rouge">s3_region</code> is the S3 region on which your bucket resides. If local storage, or not S3, then just set it to <code class="language-plaintext highlighter-rouge">us-east-1</code>.</li>
+</ul>
 <h3 id="querying-data">
   
   
