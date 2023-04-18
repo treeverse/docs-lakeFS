@@ -488,10 +488,8 @@ Reasons for this include cost-reduction and privacy policies.</p>
 <p>Garbage collection rules in lakeFS define for how long to retain objects after they have been deleted.
 lakeFS provides a Spark program to hard-delete objects whose retention period has ended according to the GC rules.</p>
 
-<p>This program does not remove any commits: you will still be able to use commits containing hard-deleted objects,
+<p class="note">This program does not remove any commits: you will still be able to use commits containing hard-deleted objects,
 but trying to read these objects from lakeFS will result in a <code class="language-plaintext highlighter-rouge">410 Gone</code> HTTP status.</p>
-
-<p class="note">At this point, lakeFS supports Garbage Collection only on S3 and Azure.  We have <a href="https://github.com/treeverse/lakeFS/issues/3626">concrete plans</a> to extend the support to GCP.</p>
 
 <p class="note"><a href="https://lakefs.cloud">lakeFS Cloud</a> users enjoy a managed Garbage Collection service, and do not need to run this Spark program.</p>
 
@@ -606,6 +604,7 @@ The job will hard-delete objects that were deleted and whose retention period ha
     <li><a href="#aws-301-option">On AWS (Spark 3.0.1)</a></li>
     <li><a href="#aws-247-option">On AWS (Spark 2.x)</a></li>
     <li><a href="#azure-option">On Azure</a></li>
+    <li><a href="#gcp-option">On GCP</a></li>
   </ul>
   <div id="aws-option">
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
@@ -680,6 +679,40 @@ The job will hard-delete objects that were deleted and whose retention period ha
       <li>In case you don’t have <code class="language-plaintext highlighter-rouge">hadoop-azure</code> package as part of your environment, you should add the package to your spark-submit with <code class="language-plaintext highlighter-rouge">--packages org.apache.hadoop:hadoop-azure:3.2.1</code></li>
       <li>For GC to work on Azure blob, <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/soft-delete-blob-overview">soft delete</a> should be disabled.</li>
     </ul>
+  </div>
+
+  <div id="gcp-option">
+    <p class="note note-warning">⚠️ At the moment, only the “mark” phase of the Garbage Collection is supported for GCP.
+That is, this program will output a list of expired objects, and you will have to delete them manually.
+We have <a href="https://github.com/treeverse/lakeFS/issues/3626">concrete plans</a> to extend this support to actually delete the objects.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-submit <span class="nt">--class</span> io.treeverse.clients.GarbageCollector <span class="se">\</span>
+  <span class="nt">--jars</span> https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-hadoop3-latest.jar <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.api.url<span class="o">=</span>https://lakefs.example.com:8000/api/v1  <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_KEY&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.google.cloud.auth.service.account.enable<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.google.cloud.auth.service.account.json.keyfile<span class="o">=</span>&lt;PATH_TO_JSON_KEYFILE&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.gs.project.id<span class="o">=</span>&lt;GCP_PROJECT_ID&gt; <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.gs.impl<span class="o">=</span>com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.fs.AbstractFileSystem.gs.impl<span class="o">=</span>com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS <span class="se">\</span>
+  <span class="nt">-c</span> spark.hadoop.lakefs.gc.do_sweep<span class="o">=</span><span class="nb">false</span>  <span class="se">\</span>
+  http://treeverse-clients-us-east.s3-website-us-east-1.amazonaws.com/lakefs-spark-client-312-hadoop3/0.6.5/lakefs-spark-client-312-hadoop3-assembly-0.6.5.jar <span class="se">\</span>
+  example-repo
+</code></pre></div>    </div>
+
+    <p>This program will not delete anything.
+Instead, it will find all the objects that are safe to delete and save a list containing all their keys, in Parquet format.
+The list will then be found under the path:</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gs://&lt;STORAGE_NAMESPACE&gt;/_lakefs/logs/gc/expired_addresses/
+</code></pre></div>    </div>
+
+    <p>Note that this is a path in your Google Storage bucket, and not in your lakeFS repository.
+For example, if your repository’s underlying storage is <code class="language-plaintext highlighter-rouge">gs://example-bucket/example-path</code>, you will find the list in:</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gs://example-bucket/example-path/_lakefs/logs/gc/expired_addresses/dt=&lt;TIMESTAMP&gt;/
+</code></pre></div>    </div>
+
+    <p>You can now delete the objects appearing in the list from your Google Storage bucket.</p>
   </div>
 </div>
 
@@ -824,7 +857,7 @@ The <code class="language-plaintext highlighter-rouge">BACKUP_STORAGE_LOCATION</
 </h4>
     
 
-<p>The following of commands used to backup/resource a configured remote ‘azure’ (Azure blob storage) to access example repository storange namespace <code class="language-plaintext highlighter-rouge">https://lakefs.blob.core.windows.net/repo/example/</code>:</p>
+<p>The following of commands used to backup/resource a configured remote ‘azure’ (Azure blob storage) to access example repository storage namespace <code class="language-plaintext highlighter-rouge">https://lakefs.blob.core.windows.net/repo/example/</code>:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Backup</span>
 rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"azure://repo/example/_lakefs/retention/gc/addresses.text/mark_id=a64d1885-6202-431f-a0a3-8832e4a5865a/"</span> | <span class="se">\</span>
