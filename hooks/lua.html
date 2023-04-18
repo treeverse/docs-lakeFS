@@ -555,6 +555,7 @@
       <li><a href="#timeparselayout-value" id="markdown-toc-timeparselayout-value"><code class="language-plaintext highlighter-rouge">time/parse(layout, value)</code></a></li>
       <li><a href="#timeparse_isovalue" id="markdown-toc-timeparse_isovalue"><code class="language-plaintext highlighter-rouge">time/parse_iso(value)</code></a></li>
       <li><a href="#uuidnew" id="markdown-toc-uuidnew"><code class="language-plaintext highlighter-rouge">uuid/new()</code></a></li>
+      <li><a href="#nethttp-optional" id="markdown-toc-nethttp-optional"><code class="language-plaintext highlighter-rouge">net/http</code> (optional)</a></li>
     </ol>
   </li>
   <li><a href="#example-hooks" id="markdown-toc-example-hooks">Example Hooks</a></li>
@@ -1161,6 +1162,68 @@ The <code class="language-plaintext highlighter-rouge">value</code> string shoul
     
 
 <p>Returns a new 128-bit <a href="https://www.rfc-editor.org/rfc/rfc4122" target="_blank">RFC 4122 UUID</a> in string representation.</p>
+<h3 id="nethttp-optional">
+  
+  
+    <a href="#nethttp-optional" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">net/http</code> (optional)
+  
+  
+</h3>
+    
+
+<p>Provides a <code class="language-plaintext highlighter-rouge">request</code> function that performs an HTTP request.
+For security reasons, this package is not available by default as it enables http requests to be sent out from the lakeFS instance network. The feature should be enabled under <code class="language-plaintext highlighter-rouge">actions.lua.net_http_enabled</code> <a href="/reference/configuration.html">configuration</a>.
+Request will time out after 30 seconds.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="n">url</span> <span class="p">[,</span> <span class="n">body</span><span class="p">])</span>
+<span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">{</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="n">string</span><span class="p">,</span>
+  <span class="p">[</span><span class="n">method</span> <span class="o">=</span> <span class="n">string</span><span class="p">,]</span>
+  <span class="p">[</span><span class="n">headers</span> <span class="o">=</span> <span class="n">header</span><span class="o">-</span><span class="n">table</span><span class="p">,]</span>
+  <span class="p">[</span><span class="n">body</span> <span class="o">=</span> <span class="n">string</span><span class="p">,]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Returns a code (number), body (string), headers (table) and status (string).</p>
+
+<ul>
+  <li>code - status code number</li>
+  <li>body - string with the response body</li>
+  <li>headers - table with the response request headers (key/value or table of values)</li>
+  <li>status - status code text</li>
+</ul>
+
+<p>The first form of the call will perform GET requests or POST requests if the body parameter is passed.</p>
+
+<p>The second form accepts a table and allows you to customize the request method and headers.</p>
+
+<p>Example of a GET request</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">http</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"net/http"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">code</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">(</span><span class="s2">"https://example.com"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="mi">200</span> <span class="k">then</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+<span class="k">else</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Failed to get example.com - status code: "</span> <span class="o">..</span> <span class="n">code</span><span class="p">)</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<p>Example of a POST request</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">http</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"net/http"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">code</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">http</span><span class="p">.</span><span class="n">request</span><span class="p">{</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">"https://httpbin.org/post"</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">"POST"</span><span class="p">,</span>
+    <span class="n">body</span><span class="o">=</span><span class="s2">"custname=tester"</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{[</span><span class="s2">"Content-Type"</span><span class="p">]</span><span class="o">=</span><span class="s2">"application/x-www-form-urlencoded"</span><span class="p">},</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="mi">200</span> <span class="k">then</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+<span class="k">else</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Failed to post data - status code: "</span> <span class="o">..</span> <span class="n">code</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
 <h2 id="example-hooks">
   
   
