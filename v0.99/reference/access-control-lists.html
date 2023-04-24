@@ -15,8 +15,6 @@
     <script src="/v0.99/assets/js/vendor/lunr.min.js"></script>
   
 
-  
-
   <script src="/v0.99/assets/js/just-the-docs.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -190,7 +188,7 @@
 
             <ul class="nav-list"><li
             class="nav-list-item"><a href="/v0.99/"
-           class="nav-list-link">What is lakeFS</a></li><li
+           class="nav-list-link">lakeFS</a></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.99/quickstart/"
@@ -494,7 +492,6 @@
 
 <ol id="markdown-toc">
   <li><a href="#acls" id="markdown-toc-acls">ACLs</a></li>
-  <li><a href="#scopes" id="markdown-toc-scopes">Scopes</a></li>
   <li><a href="#pluggable-authentication-and-authorization" id="markdown-toc-pluggable-authentication-and-authorization">Pluggable Authentication and Authorization</a></li>
   <li><a href="#previous-versions-of-acl-in-lakefs" id="markdown-toc-previous-versions-of-acl-in-lakefs">Previous versions of ACL in lakeFS</a>    <ol>
       <li><a href="#migrating-from-the-previous-version-of-acls" id="markdown-toc-migrating-from-the-previous-version-of-acls">Migrating from the previous version of ACLs</a></li>
@@ -520,44 +517,27 @@ There are 4 default groups, named after the 4 permissions. Each group is global 
     <tr>
       <th>Group ID</th>
       <th>Allows</th>
-      <th>Repositories</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><strong>Read</strong></td>
       <td>Read operations, creating access keys</td>
-      <td>All</td>
     </tr>
     <tr>
       <td><strong>Write</strong></td>
       <td>Allows all data read and write operations.</td>
-      <td>All</td>
     </tr>
     <tr>
       <td><strong>Super</strong></td>
       <td>Allows all operations except auth.</td>
-      <td>All</td>
     </tr>
     <tr>
       <td><strong>Admin</strong></td>
       <td>Allows all operations.</td>
-      <td>All</td>
     </tr>
   </tbody>
 </table></div>
-<h2 id="scopes">
-  
-  
-    <a href="#scopes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Scopes
-  
-  
-</h2>
-    
-
-<p>When granted to a group, permissions Read, Write, and Super may be scoped to a set of repositories.</p>
-
-<p>Admin includes global abilities that apply across repos and cannot be scoped to a set of repositories</p>
 <h2 id="pluggable-authentication-and-authorization">
   
   
@@ -643,7 +623,7 @@ In case of warnings to apply the migration, re-run with the  <code class="langua
       <li>Any “Deny” rules are stripped, and a warning printed.</li>
       <li>“Manage own credentials” is added.</li>
       <li>If any actions outside of “fs:” and manage own credentials are allowed, the group becomes an Admin group, a warning is printed, and no further changes apply.</li>
-      <li>The upgrade script unifies repositories: If a resource applies to a set of repositories with a wildcard, permissions are unified to all repositories. Otherwise they apply to the list of all repositories, in all the policies.</li>
+      <li>The upgrade script unifies repositories: If a resource applies to a set of repositories, permissions are unified to all repositories.</li>
       <li>The upgrade script unifies actions: it selects the least permission of Read, Write, Super that contains all of the allowed actions.</li>
     </ol>
   </li>

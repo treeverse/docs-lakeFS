@@ -15,8 +15,6 @@
     <script src="/v0.99/assets/js/vendor/lunr.min.js"></script>
   
 
-  
-
   <script src="/v0.99/assets/js/just-the-docs.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -190,7 +188,7 @@
 
             <ul class="nav-list"><li
             class="nav-list-item"><a href="/v0.99/"
-           class="nav-list-link">What is lakeFS</a></li><li
+           class="nav-list-link">lakeFS</a></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/v0.99/quickstart/"
@@ -621,129 +619,14 @@ You should also mention the related GitHub issue. If the issue should be automat
 <p>Documentation of features and changes in behaviour should be included in the pull request.
 You can create separate pull requests for documentation changes only.</p>
 
-<p>📝  Notice! lakeFS documentation is written using Markdown. make sure to familiarize yourself with the <a href="https://www.markdownguide.org/basic-syntax/#heading-best-practices">Markdown Guide</a>.</p>
-
-<p>Customizing the lakeFS docs site should follow the following guidelines: <a href="https://just-the-docs.github.io/just-the-docs/docs/customization/">Just The Docs Customization</a> and style-guide.</p>
-<h3 id="lakefs-style-guide">
-  
-  
-    <a href="#lakefs-style-guide" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Style Guide:
-  
-  
-</h3>
-    
-<ul>
-  <li>Don’t use unnecessary tech jargon or vague/wordy constructions - keep it friendly, not condescending.</li>
-  <li>Be inclusive and welcoming - use gender-neutral words and pronouns when talking about abstract people like developers).</li>
-  <li>Replace complex expressions with simpler ones.</li>
-  <li>Keep it short - 25-30 words max per sentence.  Otherwise, your readers might get lost on the way.</li>
-  <li>Use active voice instead of passive. For example: This feature can be used to do task X. vs. You can use this feature to do task X. The second one reads much better, right?</li>
-  <li>You can explain things better by including examples. Show, not tell. Use illustrations, images, gifs, code snippets, etc.</li>
-  <li>Establish a visual hierarchy to help people quickly find the information they need. Use text formatting to create levels of title and subtitle (such as h1 to h6 headings in HTML).</li>
-</ul>
-<h3 id="test-your-changes-locally">
-  
-  
-    <a href="#test-your-changes-locally" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Test your changes locally
-  
-  
-</h3>
-    
-
-<p>To render the documentation locally and preview changes you can run the Jeykll server under Docker.</p>
-
-<ol>
-  <li>
-    <p>Launch the Docker container:</p>
-
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--rm</span> <span class="se">\</span>
-           <span class="nt">--name</span> lakefs_docs <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">TZ</span><span class="o">=</span><span class="s2">"Etc/UTC"</span> <span class="se">\</span>
-           <span class="nt">--publish</span> 4000:4000 <span class="nt">--publish</span> 35729:35729 <span class="se">\</span>
-           <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">/docs:/srv/jekyll:Z"</span> <span class="se">\</span>
-           <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PWD</span><span class="s2">/docs/.jekyll-bundle-cache:/usr/local/bundle:Z"</span> <span class="se">\</span>
-           <span class="nt">--interactive</span> <span class="nt">--tty</span> <span class="se">\</span>
-           jekyll/jekyll:3.8 <span class="se">\</span>
-           jekyll serve <span class="nt">--livereload</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>The first time you run the container it will need to download dependencies and will take several minutes to be ready.</p>
-
-    <p>Once you see the following output, the docs server is ready to <a href="http://localhost:4000">open in your web browser</a>:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Server running... press ctrl-c to stop.
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>When you make a change to a page’s source the server will automatically rebuild the page which will be shown in the server log by this entry:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Regenerating: 1 file(s) changed at 2023-01-26 08:34:47
-               contributing.md
-Remote Theme: Using theme pmarsceill/just-the-docs
-</code></pre></div>    </div>
-
-    <p>This can take a short while—you’ll see something like this in the server’s output when it’s done.</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...done in 34.714073460 seconds.
-</code></pre></div>    </div>
-
-    <p>Your page will automatically reload to show the changes.</p>
-  </li>
-</ol>
-
-<p><em>If you are doing lots of work on the docs you may want to leave the Docker container in place (so that you don’t have to wait for the dependencies to load each time you re-create it). To do this replace the <code class="language-plaintext highlighter-rouge">--rm</code> with <code class="language-plaintext highlighter-rouge">--detach</code> in the <code class="language-plaintext highlighter-rouge">docker run</code> command, and use <code class="language-plaintext highlighter-rouge">docker logs -f lakefs_docs</code> to view the server log.</em></p>
-<h3 id="link-checking-locally">
-  
-  
-    <a href="#link-checking-locally" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Link Checking locally
-  
-  
-</h3>
-    
-
-<p>When making a pull request to lakeFS that involves a <code class="language-plaintext highlighter-rouge">docs/*</code> file, a <a href="https://github.com/treeverse/lakeFS/blob/master/.github/workflows/docs-pr.yaml">GitHub action</a> will automagically check the links. You can also run this link checker manually on your local machine:</p>
-
-<ol>
-  <li>
-    <p>Build the site:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm \
-         --name lakefs_docs \
-         -e TZ="Etc/UTC" \
-         --volume="$PWD/docs:/srv/jekyll:Z" \
-         --volume="$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z" \
-         --interactive --tty \
-         jekyll/jekyll:3.8 \
-         jekyll build --config _config.yml -d _site --watch
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Check the links:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm \
-         --name lakefs_docs_lychee \
-         --volume "$PWD:/data"\
-         --volume "/tmp:/output"\
-         --tty \
-         lycheeverse/lychee:master \
-         --exclude-file /data/docs/.lycheeignore \
-         --output /output/lychee_report.md \
-         --format markdown \
-         /data/docs/_site
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Review the <code class="language-plaintext highlighter-rouge">lychee_report.md</code> in your local <code class="language-plaintext highlighter-rouge">/tmp</code> folder</p>
-  </li>
-</ol>
-<h3 id="changelogmd">
+<p>To learn how to contribute to the lakeFS documentation see the <a href="https://github.com/treeverse/lakeFS/blob/master/docs/README.md">README in the <code class="language-plaintext highlighter-rouge">/docs</code> folder of the lakeFS repository</a>. The README also includes details on how to build the documentation locally.</p>
+<h2 id="changelogmd">
   
   
     <a href="#changelogmd" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> CHANGELOG.md
   
   
-</h3>
+</h2>
     
 
 <p>Any user-facing change should be labeled with <code class="language-plaintext highlighter-rouge">include-changelog</code>.
