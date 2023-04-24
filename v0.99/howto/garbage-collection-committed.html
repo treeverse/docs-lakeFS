@@ -544,18 +544,19 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
   
 </h3>
     
-<h4 class="no_toc" id="using-lakectl">
-  
-  
-    <a href="#using-lakectl" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakectl
-  
-  
-</h4>
-    
 
-<p>Use the <code class="language-plaintext highlighter-rouge">lakectl</code> CLI to define the GC rules:</p>
+<p>To define garbage collection rules, either use the <code class="language-plaintext highlighter-rouge">lakectl</code> command or the lakeFS web UI:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOT</span><span class="sh"> &gt;&gt; example_repo_gc_rules.json
+<div class="tabs">
+  <ul>
+    <li><a href="#lakectl-option">CLI</a></li>
+    <li><a href="#ui-option">Web UI</a></li>
+  </ul>
+  <div id="lakectl-option">
+
+    <p>Create a JSON file with your GC rules:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOT</span><span class="sh"> &gt;&gt; example_repo_gc_rules.json
 {
   "default_retention_days": 14,
   "branches": [
@@ -564,26 +565,26 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
   ]
 }
 </span><span class="no">EOT
+</span></code></pre></div>    </div>
 
-</span>lakectl gc set-config lakefs://example-repo <span class="nt">-f</span> example_repo_gc_rules.json 
-</code></pre></div></div>
-<h4 class="no_toc" id="from-the-lakefs-ui">
-  
-  
-    <a href="#from-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> From the lakeFS UI
-  
-  
-</h4>
-    
+    <p>Set the GC rules using <code class="language-plaintext highlighter-rouge">lakectl</code>:</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl gc set-config lakefs://example-repo <span class="nt">-f</span> example_repo_gc_rules.json 
+</code></pre></div>    </div>
 
-<ol>
-  <li>Navigate to the main page of your repository.</li>
-  <li>Go to <em>Settings</em> -&gt; <em>Retention</em>.</li>
-  <li>Click <em>Edit policy</em> and paste your GC rule into the text box as a JSON.</li>
-  <li>Save your changes.</li>
-</ol>
+  </div>
+  <div id="ui-option">
+    <p>From the lakeFS web UI:</p>
 
-<p><img src="/v0.99/assets/img/gc_rules_from_ui.png" alt="GC Rules From UI" /></p>
+    <ol>
+      <li>Navigate to the main page of your repository.</li>
+      <li>Go to <em>Settings</em> -&gt; <em>Retention</em>.</li>
+      <li>Click <em>Edit policy</em> and paste your GC rule into the text box as a JSON.</li>
+      <li>Save your changes.</li>
+    </ol>
+
+    <p><img src="/v0.99/assets/img/gc_rules_from_ui.png" alt="GC Rules From UI" /></p>
+  </div>
+</div>
 <h3 id="running-the-gc-job">
   
   
