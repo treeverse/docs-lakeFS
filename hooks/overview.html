@@ -228,14 +228,6 @@
                    class="nav-list-link">Hive</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/iceberg.html"
                    class="nav-list-link">Iceberg</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                <use xlink:href="#svg-arrow-right"></use>
-            </svg></a><a href="/use_cases/"
-           class="nav-list-link">Use Cases</a><ul class="nav-list "><li class="nav-list-item "><a href="/use_cases/etl_testing.html"
-                   class="nav-list-link">ETL Testing Environment</a></li><li class="nav-list-item "><a href="/use_cases/rollback.html"
-                   class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/use_cases/reproducibility.html"
-                   class="nav-list-link">Reproducibility</a></li><li class="nav-list-item "><a href="/use_cases/cicd_for_data.html"
-                   class="nav-list-link">CI/CD for data lakes</a></li></ul></li><li
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/hooks/"
@@ -244,6 +236,14 @@
                    class="nav-list-link">Lua</a></li><li class="nav-list-item "><a href="/hooks/webhooks.html"
                    class="nav-list-link">Webhooks</a></li><li class="nav-list-item "><a href="/hooks/airflow.html"
                    class="nav-list-link">Airflow</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/use_cases/"
+           class="nav-list-link">Use Cases</a><ul class="nav-list "><li class="nav-list-item "><a href="/use_cases/etl_testing.html"
+                   class="nav-list-link">ETL Testing Environment</a></li><li class="nav-list-item "><a href="/use_cases/rollback.html"
+                   class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/use_cases/reproducibility.html"
+                   class="nav-list-link">Reproducibility</a></li><li class="nav-list-item "><a href="/use_cases/cicd_for_data.html"
+                   class="nav-list-link">CI/CD for data lakes</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/howto/"
@@ -626,7 +626,9 @@ This allows configuration-as-code inside lakeFS, where Action files are declarat
     
 
 <p>An <strong>Action</strong> is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all.
-The Hooks under an Action are ordered and so is their execution. A Hook will only be executed if all the previous Hooks that were triggered with it had passed.</p>
+The Hooks under an Action are ordered and so is their execution.
+Before each hook execution the <code class="language-plaintext highlighter-rouge">if</code> boolean expression is evaluated. The expression can use <code class="language-plaintext highlighter-rouge">success()</code> which evaluate to true in case of no error was occured while running the hoook’s actions. It can also use <code class="language-plaintext highlighter-rouge">failure()</code> which evaluate to true when previous step failed - can be used to report failures.
+By default, when <code class="language-plaintext highlighter-rouge">if</code> is empty or omitted, the step will run only if no error occurred (same as evaluate of success function).</p>
 <h3 class="no_toc" id="hook">
   
   
@@ -703,6 +705,20 @@ The failure of a single Hook will stop the execution of the containing Action an
       <td> </td>
     </tr>
     <tr>
+      <td>hook.description</td>
+      <td>Optional description for the hook</td>
+      <td>String</td>
+      <td>false</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>hook.if</td>
+      <td>Expression that will be evaluated before execute the hook</td>
+      <td>String</td>
+      <td>false</td>
+      <td>No value is the same as evaluate <code class="language-plaintext highlighter-rouge">success()</code></td>
+    </tr>
+    <tr>
       <td>hook.properties</td>
       <td>Hook’s specific configuration</td>
       <td>Dictionary</td>
@@ -732,6 +748,22 @@ The failure of a single Hook will stop the execution of the containing Action an
     <span class="na">description</span><span class="pi">:</span> <span class="s">check production is not in dev freeze</span>
     <span class="na">properties</span><span class="pi">:</span>
       <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R"</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">alert</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">webhook</span>
+    <span class="na">if</span><span class="pi">:</span> <span class="s">failure()</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">notify alert system when check failed</span>
+    <span class="na">properties</span><span class="pi">:</span>
+       <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/alert"</span>
+       <span class="na">query_params</span><span class="pi">:</span>
+          <span class="na">title</span><span class="pi">:</span> <span class="s">good files webhook failed</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">notification</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">webhook</span>
+    <span class="na">if</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">notify that will always run - no matter if one of the previous steps failed</span>
+    <span class="na">properties</span><span class="pi">:</span>
+       <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/notification"</span>
+       <span class="na">query_params</span><span class="pi">:</span>
+          <span class="na">title</span><span class="pi">:</span> <span class="s">good files completed</span>
 </code></pre></div></div>
 
 <p class="note"><strong>Note:</strong> lakeFS will validate action files only when an <strong>Event</strong> has occurred. <br />
