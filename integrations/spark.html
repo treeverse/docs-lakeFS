@@ -226,7 +226,8 @@
                    class="nav-list-link">Kafka</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
                    class="nav-list-link">SageMaker</a></li><li class="nav-list-item "><a href="/integrations/hive.html"
                    class="nav-list-link">Hive</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
-                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/iceberg.html"
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/cloudera.html"
+                   class="nav-list-link">Cloudera</a></li><li class="nav-list-item "><a href="/integrations/iceberg.html"
                    class="nav-list-link">Iceberg</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -902,6 +903,7 @@ interact with your data on lakeFS.</p>
   <ul>
     <li><a href="#install-standalone">Spark Standalone</a></li>
     <li><a href="#install-databricks">Databricks</a></li>
+    <li><a href="#install-cloudera-spark">Cloudera Spark</a></li>
   </ul>
   <div id="install-standalone">
 
@@ -921,6 +923,33 @@ interact with your data on lakeFS.</p>
 
     <p><img src="/assets/img/databricks-install-package.png" alt="Databricks - Adding the lakeFS client Jar" /></p>
 
+  </div>
+  <div id="install-cloudera-spark">
+
+    <p>Add the package to your <code class="language-plaintext highlighter-rouge">pyspark</code> or <code class="language-plaintext highlighter-rouge">spark-submit</code> command:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --packages io.lakefs:hadoop-lakefs-assembly:0.1.14
+</code></pre></div>    </div>
+
+    <p>Add the configuration to access the S3 bucket used by lakeFS to your <code class="language-plaintext highlighter-rouge">pyspark</code> or <code class="language-plaintext highlighter-rouge">spark-submit</code> command or add this configuration at the Cloudera cluster level (see below):</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --conf spark.yarn.access.hadoopFileSystems=s3a://bucket-name
+</code></pre></div>    </div>
+
+    <p>Add the configuration to access the S3 bucket used by lakeFS at the Cloudera cluster level:</p>
+    <ol>
+      <li>Log in to the CDP (Cloudera Data Platform) web interface.</li>
+      <li>From the CDP home screen, click the <code class="language-plaintext highlighter-rouge">Management Console</code> icon.</li>
+      <li>In the Management Console, select <code class="language-plaintext highlighter-rouge">Data Hub Clusters</code> from the navigation pane.</li>
+      <li>Select the cluster you want to configure. Click on <code class="language-plaintext highlighter-rouge">CM-UI</code> link under Services:
+  <img src="/assets/img/cloudera/ManagementConsole.png" alt="Cloudera - Management Console" /></li>
+      <li>In Cloudera Manager web interface, click on <code class="language-plaintext highlighter-rouge">Clusters</code> from the navigation pane and click on <code class="language-plaintext highlighter-rouge">spark_on_yarn</code> option:
+  <img src="/assets/img/cloudera/ClouderaManager.png" alt="Cloudera - Cloudera Manager" /></li>
+      <li>Click on <code class="language-plaintext highlighter-rouge">Configuration</code> tab and search for <code class="language-plaintext highlighter-rouge">spark.yarn.access.hadoopFileSystems</code> in the search box:
+  <img src="/assets/img/cloudera/spark_on_yarn.png" alt="Cloudera - spark_on_yarn" /></li>
+      <li>Add S3 bucket used by lakeFS <code class="language-plaintext highlighter-rouge">s3a://bucket-name</code> in the <code class="language-plaintext highlighter-rouge">spark.yarn.access.hadoopFileSystems</code> list:
+  <img src="/assets/img/cloudera/hadoopFileSystems.png" alt="Cloudera - hadoopFileSystems" /></li>
+    </ol>
   </div>
 </div>
 <h3 id="configuration-1">
