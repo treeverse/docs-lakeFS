@@ -37,7 +37,7 @@ Upgrading the lakeFS version will require migrating to the new ACL authorization
 
 In order to run the migration run:
 ```
-lakefs migrate auth-acl
+lakefs migrate up
 ```
 
 The command defaults to dry-run.
