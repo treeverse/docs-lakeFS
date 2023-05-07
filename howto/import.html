@@ -491,7 +491,11 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
 
 <ol id="markdown-toc">
   <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
-      <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
+      <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a>        <ol>
+          <li><a href="#user-permissions" id="markdown-toc-user-permissions">User Permissions</a></li>
+          <li><a href="#lakefs-permissions" id="markdown-toc-lakefs-permissions">lakeFS Permissions</a></li>
+        </ol>
+      </li>
       <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
       <li><a href="#lakectl-import" id="markdown-toc-lakectl-import"><em>lakectl import</em></a></li>
       <li><a href="#lakectl-ingest" id="markdown-toc-lakectl-ingest"><em>lakectl ingest</em></a></li>
@@ -519,6 +523,32 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
   
 </h3>
     
+<h4 id="user-permissions">
+  
+  
+    <a href="#user-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User Permissions
+  
+  
+</h4>
+    
+
+<p>To run import you need the following permissions:
+<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, and 
+<code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code>. The first 3 permissions are available by default to 
+users in the default Developers group (<a href="/reference/rbac.html">RBAC</a>) or the 
+Writers group (<a href="/reference/access-control-lists.html">ACL</a>). The last 
+permission enables the user to import data from any location of the storage 
+provider that lakeFS has access to. Thus, it’s only available to users in 
+group Supers (<a href="/reference/access-control-lists.html">ACL</a>) or SuperUsers(<a href="/reference/rbac.html">RBAC</a>).
+RBAC installations can modify policies to add that permission to any group, such as Developers.</p>
+<h4 id="lakefs-permissions">
+  
+  
+    <a href="#lakefs-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Permissions
+  
+  
+</h4>
+    
 
 <p>lakeFS must have permissions to list the objects in the source object store,
 and the source bucket must be in the same region of your destination bucket.<br />
@@ -531,13 +561,13 @@ In addition, see the following storage provider specific instructions:</p>
   <li><a href="#gcs">Google Cloud Storage</a></li>
 </ul>
   <div id="aws-s3">
-<h3 class="no_toc" id="aws-s3-importing-from-public-buckets">
+<h4 class="no_toc" id="aws-s3-importing-from-public-buckets">
   
   
     <a href="#aws-s3-importing-from-public-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWS S3: Importing from public buckets
   
   
-</h3>
+</h4>
     
 
     <p>lakeFS needs access to the imported location to first list the files to import and later read the files upon users request.</p>
@@ -579,13 +609,13 @@ the following policy needs to be attached to the lakeFS S3 service-account to al
   </div>
   <div id="azure-storage">
     <p>See <a href="/deploy/azure.html#storage-account-credentials">Azure deployment</a> on limitations when using account credentials.</p>
-<h3 class="no_toc" id="azure-data-lake-gen2">
+<h4 class="no_toc" id="azure-data-lake-gen2">
   
   
     <a href="#azure-data-lake-gen2" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Azure Data Lake Gen2
   
   
-</h3>
+</h4>
     
 
     <p>lakeFS requires a hint in the import source URL to understand that the provided storage account is ADLS Gen2</p>
