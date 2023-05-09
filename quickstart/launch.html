@@ -480,48 +480,53 @@
 </h1>
     
 
-<p><em>The quickstart uses Docker Compose to bring up the lakeFS container, pre-populate it with some data, and also provide a DuckDB container from where we can interact with the data. You’ll need <a href="https://docs.docker.com/get-docker/">Docker</a> and <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Git</a> installed to run this.</em></p>
+<p><em>The quickstart uses Docker to bring up the lakeFS container, pre-populate it with some data, and also provides DuckDB from where we can interact with the data. You’ll need <a href="https://docs.docker.com/get-docker/">Docker</a> installed to run this.</em></p>
 
-<p>The first step is to clone the lakeFS Git repository:</p>
+<p>Launch the lakeFS container:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone git@github.com:treeverse/lakeFS.git
-<span class="nb">cd </span>lakeFS/quickstart
-</code></pre></div></div>
-
-<p>and then launch the environment with Docker Compose:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--name</span> lakefs <span class="se">\</span>
+           <span class="nt">--rm</span> <span class="nt">--publish</span> 8000:8000 <span class="se">\</span>
+           <span class="nt">--entrypoint</span> <span class="s2">"/bin/sh"</span> <span class="se">\</span>
+           <span class="nt">--env</span> <span class="s2">"LAKECTL_CREDENTIALS_ACCESS_KEY_ID=AKIA-EXAMPLE-KEY"</span> <span class="se">\</span>
+           <span class="nt">--env</span> <span class="s2">"LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY=EXAMPLE-SECRET"</span> <span class="se">\</span>
+           <span class="nt">--env</span> <span class="s2">"LAKECTL_SERVER_ENDPOINT_URL=http://localhost:8000"</span> <span class="se">\</span>
+           treeverse/lakefs:latest <span class="nt">-c</span> <span class="se">\</span>
+           <span class="s1">'lakefs setup --local-settings --user-name admin --access-key-id "$LAKECTL_CREDENTIALS_ACCESS_KEY_ID" --secret-access-key "$LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY"; \
+            lakefs run --local-settings'</span>
 </code></pre></div></div>
 
 <p>After a few moments you should see the lakeFS container ready to use:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[…]
-lakefs  | -------- Let's go and have axolotl fun! --------
-lakefs  |
-lakefs  | &gt;(.＿.)&lt;     http://127.0.0.1:8000/
-lakefs  |   (  )_
-lakefs  |              Access Key ID    : AKIA-EXAMPLE-KEY
-lakefs  |              Secret Access Key: EXAMPLE-SECRET
-lakefs  |
-lakefs  | ------------------------------------------------
+│
+│ If you're running lakeFS locally for the first time,
+│     complete the setup process at http://127.0.0.1:8000/setup
+│
+[…]
+
 </code></pre></div></div>
 
 <p>You’re now ready to dive into lakeFS!</p>
 
-<p>Login to the lakeFS web interface at <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> using these credentials:</p>
+<ol>
+  <li>
+    <p>Login to lakeFS’s web interface at <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> using these credentials:</p>
 
-<ul>
-  <li><strong>Access Key ID</strong>: <code class="language-plaintext highlighter-rouge">AKIA-EXAMPLE-KEY</code></li>
-  <li><strong>Secret Access Key</strong>: <code class="language-plaintext highlighter-rouge">EXAMPLE-SECRET</code></li>
-</ul>
+    <ul>
+      <li><strong>Access Key ID</strong>: <code class="language-plaintext highlighter-rouge">AKIA-EXAMPLE-KEY</code></li>
+      <li><strong>Secret Access Key</strong>: <code class="language-plaintext highlighter-rouge">EXAMPLE-SECRET</code></li>
+    </ul>
+  </li>
+  <li>
+    <p>You’ll notice that there aren’t any repositories created yet. Click the <strong>Create Sample Repository</strong> button.</p>
 
-<p><img src="/assets/img/quickstart/lakefs-login-screen.png" alt="The lakeFS login screen" class="quickstart" /></p>
+    <p><img width="75%" src="/assets/img/quickstart/empty-repo-list.png" alt="Empty lakeFS Repository list" class="quickstart" /></p>
+  </li>
+</ol>
 
-<p>You’ll see that there’s a repository that’s been created automagically for you, imaginatively called <code class="language-plaintext highlighter-rouge">quickstart</code>. Click on the repository name to open it.</p>
+<p>You will see the sample repository created and the quickstart guide within it. You can follow along there, or here - it’s the same :)</p>
 
-<p><img src="/assets/img/quickstart/repo-list.png" alt="A list of repositories in lakeFS" class="quickstart" /></p>
-
-<p>Now we’re ready to explore the data that’s been loaded into the quickstart environment.</p>
+<p><img width="75%" src="/assets/img/quickstart/quickstart-repo.png" alt="The quickstart sample repo in lakeFS" class="quickstart" /></p>
 
                 
 
