@@ -496,6 +496,7 @@
   <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
   <li><a href="#setting-up-a-database" id="markdown-toc-setting-up-a-database">Setting up a database</a></li>
   <li><a href="#setting-up-a-lakefs-server" id="markdown-toc-setting-up-a-lakefs-server">Setting up a lakeFS Server</a></li>
+  <li><a href="#secure-connection" id="markdown-toc-secure-connection">Secure connection</a></li>
   <li><a href="#local-blockstore" id="markdown-toc-local-blockstore">Local Blockstore</a>    <ol>
       <li><a href="#sample-configuration-using-local-blockstore" id="markdown-toc-sample-configuration-using-local-blockstore">Sample configuration using local blockstore</a></li>
       <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
@@ -576,7 +577,9 @@ This section assumes that you already have a PostgreSQL &gt;= 11.0 database acce
 
         <p class="note">⚠️ Notice that the lakeFS Blockstore type is set to <code class="language-plaintext highlighter-rouge">s3</code> - This configuration works with S3-compatible storage engines such as <a href="https://min.io/" target="blank">MinIO</a>.</p>
       </li>
-      <li><a href="/#downloads">Download the binary</a> to the server.</li>
+      <li>
+        <p><a href="/#downloads">Download the binary</a> to the server.</p>
+      </li>
       <li>
         <p>Run the <code class="language-plaintext highlighter-rouge">lakefs</code> binary:</p>
 
@@ -679,6 +682,24 @@ Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/ng
 
   </div>
 </div>
+<h2 id="secure-connection">
+  
+  
+    <a href="#secure-connection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Secure connection
+  
+  
+</h2>
+    
+
+<p>Using a load balancer or cluster manager for TLS/SSL termination is recommended. It helps speed the decryption process and reduces the processing burden from lakeFS.</p>
+
+<p>In case lakeFS needs to listen and serve with HTTPS, for example for development purposes, update its config yaml with the following section:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">tls</span><span class="pi">:</span>
+  <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">cert_file</span><span class="pi">:</span> <span class="s">server.crt</span>   <span class="c1"># provide path to your certificate file</span>
+  <span class="na">key_file</span><span class="pi">:</span> <span class="s">server.key</span>    <span class="c1"># provide path to your server private key</span>
+</code></pre></div></div>
 <h2 id="local-blockstore">
   
   
