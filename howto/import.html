@@ -503,7 +503,6 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
       </li>
       <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
       <li><a href="#lakectl-import" id="markdown-toc-lakectl-import"><em>lakectl import</em></a></li>
-      <li><a href="#lakectl-ingest" id="markdown-toc-lakectl-ingest"><em>lakectl ingest</em></a></li>
       <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
       <li><a href="#working-with-imported-data" id="markdown-toc-working-with-imported-data">Working with imported data</a></li>
     </ol>
@@ -538,13 +537,11 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
     
 
 <p>To run import you need the following permissions:
-<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, and 
-<code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code>. The first 3 permissions are available by default to 
-users in the default Developers group (<a href="/reference/rbac.html">RBAC</a>) or the 
-Writers group (<a href="/reference/access-control-lists.html">ACL</a>). The last 
-permission enables the user to import data from any location of the storage 
-provider that lakeFS has access to. Thus, it’s only available to users in 
-group Supers (<a href="/reference/access-control-lists.html">ACL</a>) or SuperUsers(<a href="/reference/rbac.html">RBAC</a>).
+<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:CancelImport</code>. 
+The first 3 permissions are available by default to users in the default Developers group (<a href="/reference/rbac.html">RBAC</a>) or the 
+Writers group (<a href="/reference/access-control-lists.html">ACL</a>). The last permission enables the user to import data from any location of the storage 
+provider that lakeFS has access to. 
+Thus, it’s only available to users in group Supers (<a href="/reference/access-control-lists.html">ACL</a>) or SuperUsers(<a href="/reference/rbac.html">RBAC</a>).
 RBAC installations can modify policies to add that permission to any group, such as Developers.</p>
 <h4 id="lakefs-permissions">
   
@@ -714,60 +711,6 @@ flag to merge the changes to <code class="language-plaintext highlighter-rouge">
 
 <p>The imported objects will be committed to the <code class="language-plaintext highlighter-rouge">_my-branch_imported</code>, creating it if it doesn’t exists.
 Using the <code class="language-plaintext highlighter-rouge">--merge</code> flag will merge <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> to <code class="language-plaintext highlighter-rouge">my-branch</code> after a successful import.</p>
-<h3 id="lakectl-ingest">
-  
-  
-    <a href="#lakectl-ingest" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <em>lakectl ingest</em>
-  
-  
-</h3>
-    
-
-<p>Prerequisite: have <a href="/reference/cli.html">lakectl</a> installed.</p>
-
-<p>The <em>ingest</em> command adds the objects to lakeFS by listing them on the client side.
-The added objects will appear as uncommitted changes.</p>
-
-<p class="note">The user calling <code class="language-plaintext highlighter-rouge">lakectl ingest</code> needs to have permissions to list the objects in the source object store.</p>
-
-<div class="tabs">
-  <ul>
-  <li><a href="#ingest-tabs-1">AWS S3 or S3 API Compatible storage</a></li>
-  <li><a href="#ingest-tabs-2">Azure Blob</a></li>
-  <li><a href="#ingest-tabs-3">Google Cloud Storage</a></li>
-</ul>
-  <div id="ingest-tabs-1">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl ingest <span class="se">\</span>
-  <span class="nt">--from</span> s3://bucket/optional/prefix/ <span class="se">\</span>
-  <span class="nt">--to</span> lakefs://my-repo/ingest-branch/optional/path/
-</code></pre></div>    </div>
-
-    <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command will attempt to use the current user’s existing credentials and respect instance profiles,
-environment variables, and credential files (<a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html" target="_blank">similarly to AWS CLI</a>)
-Specify an endpoint to ingest from other S3 compatible storage solutions, e.g., add <code class="language-plaintext highlighter-rouge">--s3-endpoint-url https://play.min.io</code>.</p>
-  </div>
-  <div id="ingest-tabs-2">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">AZURE_STORAGE_ACCOUNT</span><span class="o">=</span><span class="s2">"storageAccountName"</span>
-<span class="nb">export </span><span class="nv">AZURE_STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="s2">"EXAMPLEroozoo2gaec9fooTieWah6Oshai5Sheofievohthapob0aidee5Shaekahw7loo1aishoonuuquahr3=="</span>
-lakectl ingest <span class="se">\</span>
-   <span class="nt">--from</span> https://storageAccountName.blob.core.windows.net/container/optional/prefix/ <span class="se">\</span>
-   <span class="nt">--to</span> lakefs://my-repo/ingest-branch/optional/path/
-</code></pre></div>    </div>
-
-    <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports storage accounts configured through environment variables as shown above.</p>
-
-    <p class="note"><strong>Note:</strong> Currently, <code class="language-plaintext highlighter-rouge">lakectl import</code> supports the <code class="language-plaintext highlighter-rouge">http://</code> and <code class="language-plaintext highlighter-rouge">https://</code> schemes for Azure storage URIs. <code class="language-plaintext highlighter-rouge">wasb</code>, <code class="language-plaintext highlighter-rouge">abfs</code> or <code class="language-plaintext highlighter-rouge">adls</code> are currently not supported.</p>
-  </div>
-  <div id="ingest-tabs-3">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">GOOGLE_APPLICATION_CREDENTIALS</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.gcs_credentials.json"</span>  <span class="c"># Optional, will fallback to the default configured credentials</span>
-lakectl ingest <span class="se">\</span>
-   <span class="nt">--from</span> gs://bucket/optional/prefix/ <span class="se">\</span>
-   <span class="nt">--to</span> lakefs://my-repo/ingest-branch/optional/path/
-</code></pre></div>    </div>
-
-    <p>The <code class="language-plaintext highlighter-rouge">lakectl ingest</code> command currently supports the standard <code class="language-plaintext highlighter-rouge">GOOGLE_APPLICATION_CREDENTIALS</code> environment variable <a href="https://cloud.google.com/docs/authentication/getting-started">as described in Google Cloud’s documentation</a>.</p>
-  </div>
-</div>
 <h3 id="limitations">
   
   
