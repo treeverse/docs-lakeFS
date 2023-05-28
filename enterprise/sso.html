@@ -530,55 +530,47 @@
 </code></pre></div>    </div>
 
     <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">lakefsConfig</span><span class="pi">:</span> <span class="pi">|</span>
-  <span class="s"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
-
-  <span class="s">auth:</span>
-    <span class="s">cookie_auth_verification:</span>
-      <span class="s">auth_source: saml</span>
-      <span class="s">friendly_name_claim_name: displayName</span>
-      <span class="s">external_user_id_claim_name: samName</span>
-      <span class="s">default_initial_groups:</span>
-        <span class="s">- "Developers"</span>
-    <span class="s">logout_redirect_url: "https://lakefs.company.com/logout-saml"</span>
-    <span class="s">encrypt:</span>
-      <span class="s">secret_key: shared-secrey-key</span>
-    <span class="s">ui_config:</span>
-      <span class="s">login_url: "https://lakefs.company.com/sso/login-saml"</span>
-      <span class="s">logout_url: "https://lakefs.company.com/sso/logout-saml"</span>
-      <span class="s">login_cookie_names:</span>
-        <span class="s">- internal_auth_session</span>
-        <span class="s">- saml_auth_session</span>
-      <span class="s">rbac: external</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
+  <span class="na">cookie_auth_verification</span><span class="pi">:</span>
+    <span class="na">auth_source</span><span class="pi">:</span> <span class="s">saml</span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">displayName</span>
+    <span class="na">external_user_id_claim_name</span><span class="pi">:</span> <span class="s">samName</span>
+    <span class="na">default_initial_groups</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">Developers"</span>
+  <span class="na">logout_redirect_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs.company.com/logout-saml"</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>
+  <span class="na">ui_config</span><span class="pi">:</span>
+    <span class="na">login_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs.company.com/sso/login-saml"</span>
+    <span class="na">logout_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs.company.com/sso/logout-saml"</span>
+    <span class="na">login_cookie_names</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">internal_auth_session</span>
+      <span class="pi">-</span> <span class="s">saml_auth_session</span>
 </code></pre></div>    </div>
 
     <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">fluffyConfig</span><span class="pi">:</span> <span class="nl">&amp;fluffyConfig</span> <span class="pi">|</span>
-  <span class="s">logging:</span>
-    <span class="s">format: "json"</span>
-    <span class="s">level: "INFO"</span>
-    <span class="s">audit_log_level: "INFO"</span>
-    <span class="s">output: "="</span>
-  <span class="s">installation:</span>
-    <span class="s">fixed_id: fluffy-authenticator</span>
-  <span class="s">auth:  </span>
-    <span class="s"># better set from secret FLUFFY_AUTH_ENCRYPT_SECRET_KEY must be equal to what is used in lakeFS for auth_encrypt_secret_key</span>
-    <span class="s">encrypt:</span>
-      <span class="s">secret_key: shared-secrey-key    </span>
-    <span class="s">logout_redirect_url: https://lakefs.company.com</span>
-    <span class="s">post_login_redirect_url: https://lakefs.company.com</span>
-    <span class="s">saml:</span>
-      <span class="s">enabled: true </span>
-      <span class="s">sp_root_url: https://lakefs.company.com</span>
-      <span class="s">sp_x509_key_path: '/etc/saml_certs/rsa_saml_private.cert'</span>
-      <span class="s">sp_x509_cert_path: '/etc/saml_certs/rsa_saml_public.pem'</span>
-      <span class="s">sp_sign_request: true</span>
-      <span class="s">sp_signature_method: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"</span>
-      <span class="s">idp_metadata_url: "https://adfs-auth.company.com/federationmetadata/2007-06/federationmetadata.xml"</span>
-      <span class="s"># idp_authn_name_id_format: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"</span>
-      <span class="s">external_user_id_claim_name: samName</span>
-      <span class="s"># idp_metadata_file_path: </span>
-      <span class="s"># idp_skip_verify_tls_cert: true</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
+  <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">audit_log_level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">="</span>
+<span class="na">auth</span><span class="pi">:</span>  
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>    
+  <span class="na">logout_redirect_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+  <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+  <span class="na">saml</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span> 
+    <span class="na">sp_root_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+    <span class="na">sp_x509_key_path</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/etc/saml_certs/rsa_saml_private.cert'</span>
+    <span class="na">sp_x509_cert_path</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/etc/saml_certs/rsa_saml_public.pem'</span>
+    <span class="na">sp_sign_request</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">sp_signature_method</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"</span>
+    <span class="na">idp_metadata_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://adfs-auth.company.com/federationmetadata/2007-06/federationmetadata.xml"</span>
+    <span class="c1"># idp_authn_name_id_format: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"</span>
+    <span class="na">external_user_id_claim_name</span><span class="pi">:</span> <span class="s">samName</span>
+    <span class="c1"># idp_metadata_file_path: </span>
+    <span class="c1"># idp_skip_verify_tls_cert: true</span>
 </code></pre></div>    </div>
   </div>
   <div id="oidc">
@@ -593,62 +585,56 @@
 
     <p>In order for Fluffy to work, the following values must be configured. Update (or override) the following attributes in the chart’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file.</p>
     <ol>
-      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.friendly_name_claim_name</code> and <code class="language-plaintext highlighter-rouge">fluffyConfig.friendly_name_claim_name</code> with the right claim name</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.friendly_name_claim_name</code> with the right claim name.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.default_initial_groups</code> with desired claim name (See <a href="https://docs.lakefs.io/reference/rbac.html#preconfigured-groups">pre-configured</a> groups for enterprise)</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.logout_redirect_url</code> with your full OIDC logout URL (e.g <code class="language-plaintext highlighter-rouge">https://oidc-provider-url.com/logout/path</code>)</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.url</code> with your OIDC provider URL (e.g <code class="language-plaintext highlighter-rouge">https://oidc-provider-url.com</code>)</li>
-      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.logout_endpoint_query_parameters</code> with parameters you’d like to pass to theOIDC provider for logout.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.logout_endpoint_query_parameters</code> with parameters you’d like to pass to the OIDC provider for logout.</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.client_id</code> and <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.client_secret</code> with the client ID &amp; secret for OIDC.</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.logout_client_id_query_parameter</code> with the query parameter that represent the client_id, note that it should match the the key/query param that represents the client id and required by the specific OIDC provider.</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> with the lakeFS server URL.</li>
     </ol>
 
     <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">lakefsConfig</span><span class="pi">:</span> <span class="pi">|</span>
-  <span class="s"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
-
-  <span class="s">auth:</span>
-    <span class="s">encrypt:</span>
-      <span class="s">secret_key: shared-secrey-key</span>
-    <span class="s">oidc:</span>
-      <span class="s">friendly_name_claim_name: "name"</span>
-      <span class="s">default_initial_groups: ["Developers"]</span>
-    <span class="s">ui_config:</span>
-      <span class="s">login_url: /oidc/login</span>
-      <span class="s">logout_url: /oidc/logout</span>
-      <span class="s">login_cookie_names:</span>
-        <span class="s">- internal_auth_session</span>
-        <span class="s">- oidc_auth_session</span>
-      <span class="s">rbac: external</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">name"</span>
+    <span class="na">default_initial_groups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">Developers"</span><span class="pi">]</span>
+  <span class="na">ui_config</span><span class="pi">:</span>
+    <span class="na">login_url</span><span class="pi">:</span> <span class="s">/oidc/login</span>
+    <span class="na">logout_url</span><span class="pi">:</span> <span class="s">/oidc/logout</span>
+    <span class="na">login_cookie_names</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">internal_auth_session</span>
+      <span class="pi">-</span> <span class="s">oidc_auth_session</span>
 </code></pre></div>    </div>
 
     <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">fluffyConfig</span><span class="pi">:</span> <span class="nl">&amp;fluffyConfig</span> <span class="pi">|</span>
-  <span class="s">logging:</span>
-    <span class="s">format: "json"</span>
-    <span class="s">level: "INFO"</span>
-    <span class="s">audit_log_level: "INFO"</span>
-    <span class="s">output: "="</span>
-  <span class="s">installation:</span>
-    <span class="s">fixed_id: fluffy-authenticator</span>
-  <span class="s">auth:</span>
-    <span class="s">post_login_redirect_url: /</span>
-    <span class="s">logout_redirect_url: https://oidc-provider-url.com/logout/url</span>
-    <span class="s">oidc:</span>
-      <span class="s">enabled: true</span>
-      <span class="s">url: https://oidc-provider-url.com/</span>
-      <span class="s">client_id: &lt;oidc-client-id&gt;</span>
-      <span class="s">client_secret: &lt;oidc-client-secret&gt;</span>
-      <span class="s">callback_base_url: https://lakefs.company.com</span>
-      <span class="s">is_default_login: true</span>
-      <span class="s">default_initial_groups: ["Developers"]</span>
-      <span class="s">friendly_name_claim_name: "name"</span>
-      <span class="s">logout_client_id_query_parameter: client_id</span>
-      <span class="s">logout_endpoint_query_parameters:</span>
-        <span class="s">- returnTo </span>
-        <span class="s">- https://lakefs.company.com/oidc/login</span>
-    <span class="s"># better set from secret FLUFFY_AUTH_ENCRYPT_SECRET_KEY must be equal to what is used in lakeFS for auth_encrypt_secret_key</span>
-    <span class="s"># encrypt:</span>
-    <span class="s">#   secret_key: shared-secrey-key</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
+  <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">audit_log_level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">="</span>
+<span class="na">installation</span><span class="pi">:</span>
+  <span class="na">fixed_id</span><span class="pi">:</span> <span class="s">fluffy-authenticator</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">/</span>
+  <span class="na">logout_redirect_url</span><span class="pi">:</span> <span class="s">https://oidc-provider-url.com/logout/url</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">https://oidc-provider-url.com/</span>
+    <span class="na">client_id</span><span class="pi">:</span> <span class="s">&lt;oidc-client-id&gt;</span>
+    <span class="na">client_secret</span><span class="pi">:</span> <span class="s">&lt;oidc-client-secret&gt;</span>
+    <span class="na">callback_base_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+    <span class="na">is_default_login</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">logout_client_id_query_parameter</span><span class="pi">:</span> <span class="s">client_id</span>
+    <span class="na">logout_endpoint_query_parameters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">returnTo</span> 
+      <span class="pi">-</span> <span class="s">https://lakefs.company.com/oidc/login</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>
 </code></pre></div>    </div>
   </div>
   <div id="ldap">
@@ -670,41 +656,38 @@
     </ol>
 
     <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">lakefsConfig</span><span class="pi">:</span> <span class="pi">|</span>
-  <span class="s"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
 
-  <span class="s">auth:</span>
-    <span class="s">remote_authenticator:</span>
-      <span class="s">enabled: true</span>
-      <span class="s">endpoint: https://lakefs.company.com/api/v1/ldap/login</span>
-      <span class="s">default_user_group: "Developers"</span>
-    <span class="s">ui_config:</span>
-      <span class="s">logout_url: /logout</span>
-      <span class="s">login_cookie_names:</span>
-        <span class="s">- internal_auth_session</span>
-      <span class="s">rbac: external</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">remote_authenticator</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">endpoint</span><span class="pi">:</span> <span class="s">https://lakefs.company.com/api/v1/ldap/login</span>
+    <span class="na">default_user_group</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Developers"</span>
+  <span class="na">ui_config</span><span class="pi">:</span>
+    <span class="na">logout_url</span><span class="pi">:</span> <span class="s">/logout</span>
+    <span class="na">login_cookie_names</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">internal_auth_session</span>
 </code></pre></div>    </div>
 
     <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">fluffyConfig</span><span class="pi">:</span> <span class="nl">&amp;fluffyConfig</span> <span class="pi">|</span>
-  <span class="s">logging:</span>
-    <span class="s">format: "json"</span>
-    <span class="s">level: "INFO"</span>
-    <span class="s">audit_log_level: "INFO"</span>
-    <span class="s">output: "="</span>
-  <span class="s">installation:</span>
-    <span class="s">fixed_id: fluffy-authenticator</span>
-  <span class="s">auth:</span>
-    <span class="s">post_login_redirect_url: /</span>
-    <span class="s">ldap: </span>
-      <span class="s">server_endpoint: 'ldaps://ldap.company.com:636'</span>
-      <span class="s">bind_dn: uid=&lt;bind-user-name&gt;,ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
-      <span class="s">bind_password: '&lt;ldap pwd&gt;'</span>
-      <span class="s">username_attribute: uid</span>
-      <span class="s">user_base_dn: ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
-      <span class="s">user_filter: (objectClass=inetOrgPerson)</span>
-      <span class="s">connection_timeout_seconds: 15</span>
-      <span class="s">request_timeout_seconds: 7</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
+  <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">audit_log_level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">="</span>
+<span class="na">installation</span><span class="pi">:</span>
+  <span class="na">fixed_id</span><span class="pi">:</span> <span class="s">fluffy-authenticator</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">/</span>
+  <span class="na">ldap</span><span class="pi">:</span> 
+    <span class="na">server_endpoint</span><span class="pi">:</span> <span class="s1">'</span><span class="s">ldaps://ldap.company.com:636'</span>
+    <span class="na">bind_dn</span><span class="pi">:</span> <span class="s">uid=&lt;bind-user-name&gt;,ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
+    <span class="na">bind_password</span><span class="pi">:</span> <span class="s1">'</span><span class="s">&lt;ldap</span><span class="nv"> </span><span class="s">pwd&gt;'</span>
+    <span class="na">username_attribute</span><span class="pi">:</span> <span class="s">uid</span>
+    <span class="na">user_base_dn</span><span class="pi">:</span> <span class="s">ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
+    <span class="na">user_filter</span><span class="pi">:</span> <span class="s">(objectClass=inetOrgPerson)</span>
+    <span class="na">connection_timeout_seconds</span><span class="pi">:</span> <span class="m">15</span>
+    <span class="na">request_timeout_seconds</span><span class="pi">:</span> <span class="m">7</span>
 </code></pre></div>    </div>
   </div>
 </div>
@@ -717,188 +700,19 @@
 </h2>
     
 
-<p>In order to use lakeFS Enterprise and Fluffy, see <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">lakeFS Helm chart configuration</a>.</p>
+<p>In order to use lakeFS Enterprise and Fluffy, we provided out of the box setup, see <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">lakeFS Helm chart configuration</a>.</p>
 
 <p>Notes:</p>
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">secrets.authEncryptSecretKey</code> is shared between fluffy &amp; lakeFS and must be equal</li>
-  <li>lakeFS <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.95.0</li>
-  <li>Change the <code class="language-plaintext highlighter-rouge">fluffy.ingress.host</code> from <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> to a real host (usually same as lakeFS), also update additional references in the file (note: URL path after host if provided should stay unchanged).</li>
-  <li>Update the <code class="language-plaintext highlighter-rouge">fluffy.ingress</code> configuration with other optional fields if used</li>
-  <li>Fluffy docker image: replace the <code class="language-plaintext highlighter-rouge">fluffy.image.secretToken</code> with real token to dockerhub for the fluffy docker image.</li>
+  <li>Check the <a href="https://github.com/treeverse/charts/tree/add_enterprise_support/examples/lakefs/enterprise">examples</a> we provide for each authentication method (<code class="language-plaintext highlighter-rouge">oidc</code>/<code class="language-plaintext highlighter-rouge">adfs</code>/<code class="language-plaintext highlighter-rouge">ldap</code> + <code class="language-plaintext highlighter-rouge">rbac</code>).</li>
+  <li>The examples are provisioned with a Postgres pod for quick-start, make sure to replace that to a stable database once ready.</li>
+  <li><code class="language-plaintext highlighter-rouge">secrets.authEncryptSecretKey</code> is shared between fluffy &amp; lakeFS for authentication.</li>
+  <li>lakeFS <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.100.0</li>
+  <li>fluffy <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.2.0</li>
+  <li>Change the <code class="language-plaintext highlighter-rouge">ingress.hosts[0]</code> from <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> to a real host (usually same as lakeFS), also update additional references in the file (note: URL path after host if provided should stay unchanged).</li>
+  <li>Update the <code class="language-plaintext highlighter-rouge">ingress</code> configuration with other optional fields if used</li>
+  <li>Fluffy docker image: replace the <code class="language-plaintext highlighter-rouge">fluffy.image.privateRegistry.secretToken</code> with real token to dockerhub for the fluffy docker image.</li>
 </ul>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">###############################################</span>
-<span class="c1">###############################################</span>
-<span class="c1">############ COMMON CONFIGURATION #############</span>
-<span class="c1">###############################################</span>
-<span class="c1">###############################################</span>
-
-<span class="na">fluffy</span><span class="pi">:</span>
-  <span class="na">serviceAccountName</span><span class="pi">:</span> <span class="s">default</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="nl">&amp;fluffyName</span> <span class="s">lakefs-fluffy</span>
-  <span class="na">logLevel</span><span class="pi">:</span> <span class="s">INFO</span>
-  <span class="na">replicaCount</span><span class="pi">:</span> <span class="nl">&amp;fluffyReplicaCount</span> <span class="m">1</span>
-  <span class="na">resources</span><span class="pi">:</span> <span class="nl">&amp;resources</span>
-    <span class="na">limits</span><span class="pi">:</span>
-      <span class="na">memory</span><span class="pi">:</span> <span class="s">256Mi</span>
-    <span class="na">requests</span><span class="pi">:</span>
-      <span class="na">memory</span><span class="pi">:</span> <span class="s">128Mi</span>
-  <span class="na">ingress</span><span class="pi">:</span>
-    <span class="na">enabled</span><span class="pi">:</span> <span class="nl">&amp;enableIngress</span> <span class="no">true</span> 
-    <span class="na">host</span><span class="pi">:</span> <span class="nl">&amp;ingressHost</span> <span class="s">lakefs.company.com</span>
-    <span class="na">ingressClassName</span><span class="pi">:</span> <span class="nl">&amp;ingressClassName</span> <span class="s1">'</span><span class="s">'</span>
-    <span class="na">annotations</span><span class="pi">:</span> <span class="nl">&amp;ingressAnnotations</span> <span class="pi">{}</span>
-  <span class="na">image</span><span class="pi">:</span> 
-    <span class="na">repository</span><span class="pi">:</span> <span class="s1">'</span><span class="s">treeverse/fluffy'</span>
-    <span class="na">tag</span><span class="pi">:</span> <span class="s1">'</span><span class="s">0.1.1'</span>
-    <span class="na">secretName</span><span class="pi">:</span> <span class="s1">'</span><span class="s">fluffy-dockerhub'</span>
-    <span class="na">secretToken</span><span class="pi">:</span> <span class="nl">&amp;fluffyImageSecretToken</span> <span class="s1">'</span><span class="s">&lt;docker</span><span class="nv"> </span><span class="s">token&gt;'</span>
-  <span class="na">saml_rsa_public_cert</span><span class="pi">:</span> <span class="pi">|</span>
-    <span class="s">-----BEGIN CERTIFICATE-----</span>
-    <span class="s">-----END CERTIFICATE-----</span>
-  <span class="na">saml_rsa_private_key</span><span class="pi">:</span> <span class="pi">|</span>
-    <span class="s">-----BEGIN PRIVATE KEY-----</span>
-    <span class="s">-----END PRIVATE KEY-----</span>
-
-<span class="c1">###############################################</span>
-<span class="c1">###############################################</span>
-<span class="c1">###### ADVANCED DON'T EDIT VALUES BELOW #######</span>
-<span class="c1">###############################################</span>
-<span class="c1">###############################################</span>
-
-<span class="na">ingress</span><span class="pi">:</span>
-  <span class="na">enabled</span><span class="pi">:</span> <span class="nv">*enableIngress</span>
-  <span class="na">ingressClassName</span><span class="pi">:</span> <span class="nv">*ingressClassName</span>
-  <span class="na">annotations</span><span class="pi">:</span> <span class="nv">*ingressAnnotations</span>
-  <span class="na">hosts</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="nv">*ingressHost</span>
-      <span class="na">paths</span><span class="pi">:</span> 
-       <span class="pi">-</span> <span class="s">/</span>
-      <span class="na">pathsOverrides</span><span class="pi">:</span> 
-        <span class="c1"># OIDC related overrides, fluffy and lakefs must be on the same host </span>
-        <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/oidc/</span>
-          <span class="na">serviceName</span><span class="pi">:</span> <span class="nv">*fluffyName</span>
-          <span class="na">servicePort</span><span class="pi">:</span> <span class="m">80</span>
-        <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/api/v1/oidc/</span>
-          <span class="na">serviceName</span><span class="pi">:</span> <span class="nv">*fluffyName</span>
-          <span class="na">servicePort</span><span class="pi">:</span> <span class="m">80</span>
-        <span class="c1"># SAML related overrides, fluffy and lakefs must be on the same host</span>
-        <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/saml/</span>
-          <span class="na">serviceName</span><span class="pi">:</span> <span class="nv">*fluffyName</span>
-          <span class="na">servicePort</span><span class="pi">:</span> <span class="m">80</span>
-        <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/sso/</span>
-          <span class="na">serviceName</span><span class="pi">:</span> <span class="nv">*fluffyName</span>
-          <span class="na">servicePort</span><span class="pi">:</span> <span class="m">80</span>
-      <span class="c1"># Optional if fluffy and lakefs both shariong the same ingress then this override</span>
-        <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/api/v1/ldap/</span>
-          <span class="na">serviceName</span><span class="pi">:</span> <span class="nv">*fluffyName</span>
-          <span class="na">servicePort</span><span class="pi">:</span> <span class="m">80</span>
-<span class="na">extraManifestsValues</span><span class="pi">:</span> 
-  <span class="na">fluffyContainerPort</span><span class="pi">:</span> <span class="nl">&amp;fluffyContainerPort</span> <span class="m">8000</span>
-  <span class="na">dockerhubConfig</span><span class="pi">:</span>
-    <span class="na">auths</span><span class="pi">:</span>
-      <span class="s">https://index.docker.io/v1/:</span> 
-        <span class="s">username</span><span class="pi">:</span> <span class="s">externallakefs</span>
-        <span class="s">password</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.image.secretToken</span><span class="nv"> </span><span class="s">}}'</span>
-  <span class="na">labels</span><span class="pi">:</span> <span class="nl">&amp;labels</span>
-    <span class="s">helm.sh/chart</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">include</span><span class="nv"> </span><span class="s">"lakefs.chart"</span><span class="nv"> </span><span class="s">.</span><span class="nv"> </span><span class="s">}}'</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">fluffy</span>
-    <span class="s">app.kubernetes.io/name</span><span class="pi">:</span> <span class="s">fluffy</span>
-    <span class="s">app.kubernetes.io/instance</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}'</span>
-    <span class="s">app.kubernetes.io/version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Chart.AppVersion</span><span class="nv"> </span><span class="s">}}'</span>
-    <span class="s">app.kubernetes.io/managed-by</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Release.Service</span><span class="nv"> </span><span class="s">}}'</span>
-  <span class="na">selectorLabels</span><span class="pi">:</span> <span class="nl">&amp;selectorLabels</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">fluffy</span>
-    <span class="s">app.kubernetes.io/name</span><span class="pi">:</span> <span class="s">fluffy</span>
-    <span class="s">app.kubernetes.io/instance</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Release.Name</span><span class="nv"> </span><span class="s">}}'</span>
-<span class="na">extraManifests</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-    <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.name</span><span class="nv"> </span><span class="s">}}'</span>
-      <span class="na">labels</span><span class="pi">:</span> 
-        <span class="nv">*labels</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">type</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.service.type</span><span class="nv"> </span><span class="s">}}'</span>
-      <span class="na">ports</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
-            <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http</span>
-            <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
-            <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
-      <span class="na">selector</span><span class="pi">:</span> <span class="nv">*selectorLabels</span>
-  <span class="pi">-</span> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-    <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.name</span><span class="nv"> </span><span class="s">}}'</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="nv">*labels</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">replicas</span><span class="pi">:</span> <span class="nv">*fluffyReplicaCount</span>
-      <span class="na">selector</span><span class="pi">:</span>
-        <span class="na">matchLabels</span><span class="pi">:</span>
-          <span class="nv">*selectorLabels</span>
-      <span class="na">template</span><span class="pi">:</span>
-        <span class="na">metadata</span><span class="pi">:</span>
-          <span class="na">annotations</span><span class="pi">:</span>
-            <span class="s">checksum/config</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffyConfig</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">sha256sum</span><span class="nv"> </span><span class="s">}}'</span>
-          <span class="na">labels</span><span class="pi">:</span>
-            <span class="nv">*selectorLabels</span>
-        <span class="na">spec</span><span class="pi">:</span>
-          <span class="na">serviceAccountName</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.serviceAccountName</span><span class="nv"> </span><span class="s">}}"</span>
-          <span class="na">imagePullSecrets</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.image.secretName</span><span class="nv"> </span><span class="s">}}"</span>
-          <span class="na">containers</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">fluffy</span>
-              <span class="na">args</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">run"</span><span class="pi">]</span>
-              <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.image.repository</span><span class="nv"> </span><span class="s">}}:{{</span><span class="nv"> </span><span class="s">.Values.fluffy.image.tag</span><span class="nv"> </span><span class="s">}}"</span>
-              <span class="na">imagePullPolicy</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.image.pullPolicy</span><span class="nv"> </span><span class="s">}}'</span>
-              <span class="na">env</span><span class="pi">:</span>
-                <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">FLUFFY_AUTH_ENCRYPT_SECRET_KEY</span>
-                  <span class="na">valueFrom</span><span class="pi">:</span>
-                    <span class="na">secretKeyRef</span><span class="pi">:</span>
-                      <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">include</span><span class="nv"> </span><span class="s">"lakefs.fullname"</span><span class="nv"> </span><span class="s">.</span><span class="nv"> </span><span class="s">}}'</span>
-                      <span class="na">key</span><span class="pi">:</span> <span class="s">auth_encrypt_secret_key</span>
-              <span class="na">ports</span><span class="pi">:</span>
-                <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
-                  <span class="na">containerPort</span><span class="pi">:</span> <span class="nv">*fluffyContainerPort</span>
-                  <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
-              <span class="na">resources</span><span class="pi">:</span>
-                <span class="nv">*resources</span>
-              <span class="na">volumeMounts</span><span class="pi">:</span>
-                <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">fluffy-config</span>
-                  <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/etc/fluffy/</span>
-                <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">secret-volume</span>
-                  <span class="na">readOnly</span><span class="pi">:</span> <span class="no">true</span>
-                  <span class="na">mountPath</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/etc/saml_certs/"</span>
-          <span class="na">volumes</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">fluffy-config</span>
-              <span class="na">configMap</span><span class="pi">:</span>
-                <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.name</span><span class="nv"> </span><span class="s">}}-config'</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">secret-volume</span>
-              <span class="na">secret</span><span class="pi">:</span>
-                <span class="na">secretName</span><span class="pi">:</span> <span class="s">saml-certificates</span>
-  <span class="pi">-</span> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-    <span class="na">kind</span><span class="pi">:</span> <span class="s">ConfigMap</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.name</span><span class="nv"> </span><span class="s">}}-config'</span>
-    <span class="na">data</span><span class="pi">:</span>
-      <span class="s">config.yaml</span><span class="pi">:</span> <span class="nv">*fluffyConfig</span>
-  <span class="pi">-</span> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-    <span class="na">kind</span><span class="pi">:</span> <span class="s">Secret</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">name</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.image.secretName</span><span class="nv"> </span><span class="s">}}'</span>
-    <span class="na">data</span><span class="pi">:</span>
-      <span class="s">.dockerconfigjson</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">tpl</span><span class="nv"> </span><span class="s">(.Values.extraManifestsValues.dockerhubConfig</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">toJson</span><span class="nv"> </span><span class="s">)</span><span class="nv"> </span><span class="s">.</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">b64enc</span><span class="nv"> </span><span class="s">}}'</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">kubernetes.io/dockerconfigjson</span>
-  <span class="pi">-</span> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-    <span class="na">kind</span><span class="pi">:</span> <span class="s">Secret</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">name</span><span class="pi">:</span> <span class="s">saml-certificates</span>
-    <span class="na">data</span><span class="pi">:</span>
-      <span class="s">rsa_saml_public.pem</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.saml_rsa_public_cert</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">b64enc</span><span class="nv"> </span><span class="s">}}'</span>
-      <span class="s">rsa_saml_private.cert</span><span class="pi">:</span> <span class="s1">'</span><span class="s">{{</span><span class="nv"> </span><span class="s">.Values.fluffy.saml_rsa_private_key</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">b64enc</span><span class="nv"> </span><span class="s">}}'</span>
-</code></pre></div></div>
 
                 
 
