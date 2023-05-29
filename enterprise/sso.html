@@ -484,15 +484,15 @@
 <p class="label label-purple">lakeFS Enterprise</p>
 
 <blockquote class="note">
-  <p>SSO is also available on <a href="../cloud/sso.html">lakeFS Cloud</a>. Using the open-source version of lakeFS? Read more on <a href="/reference/authentication.html">authentication</a>.</p>
+  <p>SSO is also available on <a href="/cloud/sso.html">lakeFS Cloud</a>. Using the open-source version of lakeFS? Read more on <a href="/reference/authentication.html">authentication</a>.</p>
 </blockquote>
 
 <p>Authentication in lakeFS Enterprise is handled by a secondary service which runs side-by-side with lakeFS. With a nod to Hogwarts and their security system, we’ve named this service <em>Fluffy</em>. Details for configuring the supported identity providers with Fluffy are shown below. In addition, please review the necessary <a href="#helm">Helm configuration</a> to configure Fluffy.</p>
 
 <ul>
-  <li><a href="#adfs">Active Directory Federation Services (AD FS) (using SAML)</a></li>
-  <li><a href="#oidc">OpenID Connect</a></li>
-  <li><a href="#ldap">LDAP</a></li>
+  <li>Active Directory Federation Services (AD FS) (using SAML)</li>
+  <li>OpenID Connect</li>
+  <li>LDAP</li>
 </ul>
 
 <p>If you’re using an authentication provider that is not listed please <a href="support@treeverse.io">contact us</a> for further assistance.</p>
@@ -526,10 +526,12 @@
     </ol>
 
     <p>If you’d like to generate the certificates using OpenSSL, you can take a look at the following example:</p>
+
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl req <span class="nt">-x509</span> <span class="nt">-newkey</span> rsa:2048 <span class="nt">-keyout</span> myservice.key <span class="nt">-out</span> myservice.cert <span class="nt">-days</span> 365 <span class="nt">-nodes</span> <span class="nt">-subj</span> <span class="s2">"/CN=lakefs.company.com"</span> -
 </code></pre></div>    </div>
 
     <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
   <span class="na">cookie_auth_verification</span><span class="pi">:</span>
     <span class="na">auth_source</span><span class="pi">:</span> <span class="s">saml</span>
@@ -549,6 +551,7 @@
 </code></pre></div>    </div>
 
     <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
   <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
   <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
@@ -586,7 +589,7 @@
     <p>In order for Fluffy to work, the following values must be configured. Update (or override) the following attributes in the chart’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file.</p>
     <ol>
       <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.friendly_name_claim_name</code> with the right claim name.</li>
-      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.default_initial_groups</code> with desired claim name (See <a href="https://docs.lakefs.io/reference/rbac.html#preconfigured-groups">pre-configured</a> groups for enterprise)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.default_initial_groups</code> with desired claim name (See <a href="/reference/rbac.html#preconfigured-groups">pre-configured</a> groups for enterprise)</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.logout_redirect_url</code> with your full OIDC logout URL (e.g <code class="language-plaintext highlighter-rouge">https://oidc-provider-url.com/logout/path</code>)</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.url</code> with your OIDC provider URL (e.g <code class="language-plaintext highlighter-rouge">https://oidc-provider-url.com</code>)</li>
       <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.logout_endpoint_query_parameters</code> with parameters you’d like to pass to the OIDC provider for logout.</li>
@@ -596,6 +599,7 @@
     </ol>
 
     <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
@@ -612,6 +616,7 @@
 </code></pre></div>    </div>
 
     <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
   <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
   <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
@@ -656,6 +661,7 @@
     </ol>
 
     <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
 
 <span class="na">auth</span><span class="pi">:</span>
@@ -670,6 +676,7 @@
 </code></pre></div>    </div>
 
     <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
   <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
   <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
@@ -700,15 +707,15 @@
 </h2>
     
 
-<p>In order to use lakeFS Enterprise and Fluffy, we provided out of the box setup, see <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">lakeFS Helm chart configuration</a>.</p>
+<p>In order to use lakeFS Enterprise and Fluffy, we provided out of the box setup, see <a href="https://github.com/treeverse/charts">lakeFS Helm chart configuration</a>.</p>
 
 <p>Notes:</p>
 <ul>
-  <li>Check the <a href="https://github.com/treeverse/charts/tree/add_enterprise_support/examples/lakefs/enterprise">examples</a> we provide for each authentication method (<code class="language-plaintext highlighter-rouge">oidc</code>/<code class="language-plaintext highlighter-rouge">adfs</code>/<code class="language-plaintext highlighter-rouge">ldap</code> + <code class="language-plaintext highlighter-rouge">rbac</code>).</li>
+  <li>Check the <a href="https://github.com/treeverse/charts/tree/master/examples/lakefs/enterprise">examples on GitHub</a> we provide for each authentication method (oidc/adfs/ldap + rbac).</li>
   <li>The examples are provisioned with a Postgres pod for quick-start, make sure to replace that to a stable database once ready.</li>
-  <li><code class="language-plaintext highlighter-rouge">secrets.authEncryptSecretKey</code> is shared between fluffy &amp; lakeFS for authentication.</li>
-  <li>lakeFS <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.100.0</li>
-  <li>fluffy <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.2.0</li>
+  <li>The encrypt secret key <code class="language-plaintext highlighter-rouge">secrets.authEncryptSecretKey</code> is shared between fluffy and lakeFS for authentication.</li>
+  <li>The lakeFS <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.100.0</li>
+  <li>The fluffy <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.2.0</li>
   <li>Change the <code class="language-plaintext highlighter-rouge">ingress.hosts[0]</code> from <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> to a real host (usually same as lakeFS), also update additional references in the file (note: URL path after host if provided should stay unchanged).</li>
   <li>Update the <code class="language-plaintext highlighter-rouge">ingress</code> configuration with other optional fields if used</li>
   <li>Fluffy docker image: replace the <code class="language-plaintext highlighter-rouge">fluffy.image.privateRegistry.secretToken</code> with real token to dockerhub for the fluffy docker image.</li>
