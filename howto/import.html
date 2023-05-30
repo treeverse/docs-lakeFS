@@ -538,10 +538,10 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
     
 
 <p>To run import you need the following permissions:
-<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:CancelImport</code>. 
+<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:ImportCancel</code>. 
 The first 3 permissions are available by default to users in the default Developers group (<a href="/reference/rbac.html">RBAC</a>) or the 
-Writers group (<a href="/reference/access-control-lists.html">ACL</a>). The last permission enables the user to import data from any location of the storage 
-provider that lakeFS has access to. 
+Writers group (<a href="/reference/access-control-lists.html">ACL</a>). The <code class="language-plaintext highlighter-rouge">Import*</code> permissions enable the user to import data from any location of the storage 
+provider that lakeFS has access to and cancel the operation if needed. 
 Thus, it’s only available to users in group Supers (<a href="/reference/access-control-lists.html">ACL</a>) or SuperUsers(<a href="/reference/rbac.html">RBAC</a>).
 RBAC installations can modify policies to add that permission to any group, such as Developers.</p>
 <h4 id="lakefs-permissions">
@@ -653,10 +653,12 @@ the following policy needs to be attached to the lakeFS S3 service-account to al
     <p><img src="/assets/img/UI-Import-Dialog.png" alt="img.png" /></p>
   </li>
   <li>Under <em>Import from</em>, fill in the location on your object store you would like to import from.</li>
-  <li>Fill in the import destination in lakeFS and a commit message.</li>
+  <li>Fill in the import destination in lakeFS</li>
+  <li>Add a commit message, and optionally metadata.</li>
+  <li>Press <em>Import</em></li>
 </ol>
 
-<p>Once the import is complete, you can merge the changes from the import branch to the source branch.</p>
+<p>Once the import is complete, the changes are merged into the destination branch.</p>
 <h4 class="no_toc" id="notes">
   
   
@@ -667,7 +669,7 @@ the following policy needs to be attached to the lakeFS S3 service-account to al
     
 
 <ul>
-  <li>On the first import to a branch, a dedicated branch named <code class="language-plaintext highlighter-rouge">_&lt;branch_name&gt;_imported</code> will be created. lakeFS will import all objects to this branch under the given prefix.</li>
+  <li>Import uses the <code class="language-plaintext highlighter-rouge">src-wins</code> merge strategy. Therefore - import of existing objects nad prefixes in destination will override them.</li>
   <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
 </ul>
 <h3 id="lakectl-import">
@@ -709,9 +711,6 @@ flag to merge the changes to <code class="language-plaintext highlighter-rouge">
 </code></pre></div>    </div>
   </div>
 </div>
-
-<p>The imported objects will be committed to the <code class="language-plaintext highlighter-rouge">_my-branch_imported</code>, creating it if it doesn’t exists.
-Using the <code class="language-plaintext highlighter-rouge">--merge</code> flag will merge <code class="language-plaintext highlighter-rouge">_my-branch_imported</code> to <code class="language-plaintext highlighter-rouge">my-branch</code> after a successful import.</p>
 <h3 id="limitations">
   
   
