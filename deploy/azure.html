@@ -502,7 +502,11 @@
       <li><a href="#how-to-create-service-principal-for-resource-group" id="markdown-toc-how-to-create-service-principal-for-resource-group">How to Create Service Principal for Resource Group</a></li>
     </ol>
   </li>
-  <li><a href="#create-a-database" id="markdown-toc-create-a-database">Create a database</a></li>
+  <li><a href="#database-options" id="markdown-toc-database-options">Database Options</a>    <ol>
+      <li><a href="#postgresql" id="markdown-toc-postgresql">PostgreSQL</a></li>
+      <li><a href="#cosmosdb-beta" id="markdown-toc-cosmosdb-beta">CosmosDB (Beta)</a></li>
+    </ol>
+  </li>
   <li><a href="#run-the-lakefs-server" id="markdown-toc-run-the-lakefs-server">Run the lakeFS server</a>    <ol>
       <li><a href="#storage-account-access" id="markdown-toc-storage-account-access">Storage account access</a></li>
     </ol>
@@ -626,17 +630,27 @@ AZURE_CLIENT_SECRET  =  $password
 
 <p class="note"><strong>Note:</strong> It is possible to provide both account based credentials and environment variables to lakeFS. In that case - lakeFS will use
 the account credentials for any access to data located in the given account, and will try to use the identity credentials for any data located outside the given account.</p>
-<h2 id="create-a-database">
+<h2 id="database-options">
   
   
-    <a href="#create-a-database" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a database
+    <a href="#database-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Database Options
   
   
 </h2>
     
 
-<p>lakeFS stores metadata in a database for its versioning engine. This is done via a Key-Value interface that can be implemented on any DB engine and lakeFS comes with several built-in driver implementations (You can read more about it <a href="https://docs.lakefs.io/understand/how/kv.html">here</a>).<br />
-One of these is a PostgreSQL implementation which can be used in the Azure ecosystem.<br />
+<p>lakeFS stores metadata in a database for its versioning engine. This is done via a Key-Value interface that can be implemented on any DB engine and lakeFS comes with several built-in driver implementations (You can read more about it <a href="https://docs.lakefs.io/understand/how/kv.html">here</a>).</p>
+<h3 id="postgresql">
+  
+  
+    <a href="#postgresql" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> PostgreSQL
+  
+  
+</h3>
+    
+
+<p>One of these impelementation is a PostgreSQL implementation which can be 
+used in the Azure ecosystem.<br />
 We will show you how to create a database on Azure Database, but you can use any PostgreSQL database as long as it’s accessible by your lakeFS installation.
 If you already have a database, take note of the connection string and skip to the <a href="#run-the-lakefs-server">next step</a></p>
 
@@ -647,6 +661,38 @@ Make sure that you’re using PostgreSQL version &gt;= 11.</li>
 <img src="/assets/img/azure_postgres_conn.png" alt="Azure postgres Connection String" /></li>
   <li>Make sure your Access control roles allow you to connect to the database instance.</li>
 </ol>
+<h3 id="cosmosdb-beta">
+  
+  
+    <a href="#cosmosdb-beta" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> CosmosDB (Beta)
+  
+  
+</h3>
+    
+
+<p>CosmosDB is a managed database service provided by Azure. lakeFS supports 
+CosmosDB For NoSQL as a database backend.</p>
+
+<ol>
+  <li>Follow the official <a href="https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-create-account?tabs=azure-cli">Azure documentation</a> 
+on how to create a CosmosDB account for NoSQL and connect to it.</li>
+  <li>Once your CosmosDB account is set up, you can create a Database for 
+lakeFS. For lakeFS ACID guarantees, make sure to select the <a href="https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels#bounded-staleness-consistency">Bounded 
+staleness consistency</a>,
+for single region deployments.</li>
+  <li>Create a new container in the database and select type 
+<code class="language-plaintext highlighter-rouge">partitionKey</code> as the Partition key (case sensitive).</li>
+  <li>Pass the endpoint, database name and container name to lakeFS as 
+described in the <a href="/reference/configuration.html#example--azure-blob-storage">configuration guide</a>.
+You can either pass the CosmosDB’s account read-write key to lakeFS, or 
+use a managed identity to authenticate to CosmosDB, as described 
+<a href="#identity-based-credentials">earlier</a>.</li>
+</ol>
+
+<p class="note">A note on CosmosDB capacity modes: lakeFS usage of CosmosDB is still in its 
+early days and has not been battle tested. Both capacity modes, Provisioned 
+and Serverless, has been tested for some workloads and passed with flying 
+colors. The Provisioned mode was configured with 400-4000 RU/s.</p>
 <h2 id="run-the-lakefs-server">
   
   

@@ -538,18 +538,15 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">logging.file_max_size_mb</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - Output file maximum size in megabytes.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.files_keep</code> <code class="language-plaintext highlighter-rouge">(int : 0)</code> - Number of log files to keep, default is all.</li>
   <li><code class="language-plaintext highlighter-rouge">actions.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Setting this to false will block hooks from being executed.</li>
-  <li><code class="language-plaintext highlighter-rouge">actions.lua.net_http_enabled</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Setting this to true will load the <code class="language-plaintext highlighter-rouge">net/http</code> package.</li>
-  <li><del><code class="language-plaintext highlighter-rouge">database.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</del></li>
-  <li><del><code class="language-plaintext highlighter-rouge">database.max_open_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Maximum number of open connections to the database</del></li>
-  <li><del><code class="language-plaintext highlighter-rouge">database.max_idle_connections</code> <code class="language-plaintext highlighter-rouge">(int : 25)</code> - Sets the maximum number of connections in the idle connection pool</del></li>
   <li>
-    <p><del><code class="language-plaintext highlighter-rouge">database.connection_max_lifetime</code> <code class="language-plaintext highlighter-rouge">(duration : 5m)</code> - Sets the maximum amount of time a connection may be reused</del></p>
+    <p><code class="language-plaintext highlighter-rouge">actions.lua.net_http_enabled</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Setting this to true will load the <code class="language-plaintext highlighter-rouge">net/http</code> package.</p>
 
     <p class="note"><strong>Note:</strong> Deprecated - See <code class="language-plaintext highlighter-rouge">database</code> section</p>
   </li>
   <li><code class="language-plaintext highlighter-rouge">database</code> - Configuration section for the lakeFS key-value store database
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string ["postgres"|"dynamodb"|"local"] : )</code> - lakeFS database type</li>
+      <li><code class="language-plaintext highlighter-rouge">database.type</code> <code class="language-plaintext highlighter-rouge">(string ["postgres"|"dynamodb"|"cosmosdb"|"local"] : )</code> - 
+lakeFS database type</li>
       <li><code class="language-plaintext highlighter-rouge">database.postgres</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="postgres"</code>
         <ul>
           <li><code class="language-plaintext highlighter-rouge">database.postgres.connection_string</code> <code class="language-plaintext highlighter-rouge">(string : "postgres://localhost:5432/postgres?sslmode=disable")</code> - PostgreSQL connection string to use</li>
@@ -573,6 +570,16 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
           <li><code class="language-plaintext highlighter-rouge">database.dynamodb.aws_secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - AWS secret access key</li>
           <li><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">endpoint</code> <code class="language-plaintext highlighter-rouge">aws_region</code> <code class="language-plaintext highlighter-rouge">aws_access_key_id</code> <code class="language-plaintext highlighter-rouge">aws_secret_access_key</code> are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials.</li>
           <li><code class="language-plaintext highlighter-rouge">database.dynamodb.health_check_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 0s)</code> - Interval to run health check for the DynamoDB instance (won’t run if equal to 0).</li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">database.cosmosdb</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="cosmosdb"</code>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">database.cosmosdb.key</code> <code class="language-plaintext highlighter-rouge">(string : "")</code> - If specified, will 
+be used to authenticate to the CosmosDB account. Otherwise, Azure SDK 
+default authentication (with env vars) will be used.</li>
+          <li><code class="language-plaintext highlighter-rouge">database.cosmosdb.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : "")</code> - CosmosDB account endpoint, e.g. <code class="language-plaintext highlighter-rouge">https://&lt;account&gt;.documents.azure.com/</code>.</li>
+          <li><code class="language-plaintext highlighter-rouge">database.cosmosdb.database</code> <code class="language-plaintext highlighter-rouge">(string : "")</code> - CosmosDB database name.</li>
+          <li><code class="language-plaintext highlighter-rouge">database.cosmosdb.container</code> <code class="language-plaintext highlighter-rouge">(string : "")</code> - CosmosDB container name.</li>
         </ul>
       </li>
       <li><code class="language-plaintext highlighter-rouge">database.local</code> - Configuration section when using <code class="language-plaintext highlighter-rouge">database.type="local"</code>
@@ -882,9 +889,12 @@ To set an environment variable, prepend <code class="language-plaintext highligh
   <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-"</span>
 
 <span class="na">database</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
-  <span class="na">postgres</span><span class="pi">:</span>
-    <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres://user:pass@lakefs.rds.amazonaws.com:5432/postgres"</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">cosmosdb"</span>
+  <span class="na">cosmosdb</span><span class="pi">:</span>
+    <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">ExampleReadWriteKeyMD7nkPOWgV7d4BUjzLw=="</span>
+    <span class="na">endpoint</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs-account.documents.azure.com:443/"</span>
+    <span class="na">database</span><span class="pi">:</span> <span class="s2">"</span><span class="s">lakefs-db"</span>
+    <span class="na">container</span><span class="pi">:</span> <span class="s2">"</span><span class="s">lakefs-container"</span>
 
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
