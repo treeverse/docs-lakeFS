@@ -237,8 +237,7 @@
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/hooks/"
-           class="nav-list-link">Hooks</a><ul class="nav-list "><li class="nav-list-item "><a href="/hooks/overview.html"
-                   class="nav-list-link">Overview</a></li><li class="nav-list-item  active"><a href="/hooks/lua.html"
+           class="nav-list-link">Hooks</a><ul class="nav-list "><li class="nav-list-item  active"><a href="/hooks/lua.html"
                    class="nav-list-link active">Lua</a></li><li class="nav-list-item "><a href="/hooks/webhooks.html"
                    class="nav-list-link">Webhooks</a></li><li class="nav-list-item "><a href="/hooks/airflow.html"
                    class="nav-list-link">Airflow</a></li></ul></li><li
@@ -476,16 +475,16 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 class="no_toc" id="lua-hooks-experimental">
+                    <h1 class="no_toc" id="lua-hooks">
   
   
-    <a href="#lua-hooks-experimental" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Lua Hooks <span class="label">Experimental</span>
+    <a href="#lua-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Lua Hooks
   
   
 </h1>
     
 
-<p>As of version 0.86.0, lakeFS supports running hooks without relying on external components using an <a href="https://github.com/Shopify/go-lua">embedded Lua VM</a></p>
+<p>lakeFS supports running hooks without relying on external components using an <a href="https://github.com/Shopify/go-lua">embedded Lua VM</a></p>
 
 <p>Using Lua hooks, it is possible to pass a Lua script to be executed directly by the lakeFS server when an action occurs.</p>
 
@@ -507,6 +506,11 @@
     
 
 <ol id="markdown-toc">
+  <li><a href="#example-lua-hooks" id="markdown-toc-example-lua-hooks">Example Lua Hooks</a>    <ol>
+      <li><a href="#display-information-about-an-event" id="markdown-toc-display-information-about-an-event">Display information about an event</a></li>
+      <li><a href="#ensure-that-a-commit-includes-a-mandatory-metadata-field" id="markdown-toc-ensure-that-a-commit-includes-a-mandatory-metadata-field">Ensure that a commit includes a mandatory metadata field</a></li>
+    </ol>
+  </li>
   <li><a href="#lua-library-reference" id="markdown-toc-lua-library-reference">Lua Library reference</a>    <ol>
       <li><a href="#awss3get_objectbucket-key" id="markdown-toc-awss3get_objectbucket-key"><code class="language-plaintext highlighter-rouge">aws/s3.get_object(bucket, key)</code></a></li>
       <li><a href="#awss3put_objectbucket-key-value" id="markdown-toc-awss3put_objectbucket-key-value"><code class="language-plaintext highlighter-rouge">aws/s3.put_object(bucket, key, value)</code></a></li>
@@ -562,10 +566,80 @@
       <li><a href="#nethttp-optional" id="markdown-toc-nethttp-optional"><code class="language-plaintext highlighter-rouge">net/http</code> (optional)</a></li>
     </ol>
   </li>
-  <li><a href="#example-hooks" id="markdown-toc-example-hooks">Example Hooks</a></li>
 </ol>
 
 </div>
+<h2 id="example-lua-hooks">
+  
+  
+    <a href="#example-lua-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example Lua Hooks
+  
+  
+</h2>
+    
+<h3 id="display-information-about-an-event">
+  
+  
+    <a href="#display-information-about-an-event" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Display information about an event
+  
+  
+</h3>
+    
+
+<p>This example will print out a JSON representation of the event that occurred:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">dump_all</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">post-commit</span><span class="pi">:</span>
+  <span class="na">post-merge</span><span class="pi">:</span>
+  <span class="na">post-create-tag</span><span class="pi">:</span>
+  <span class="na">post-create-branch</span><span class="pi">:</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">dump_event</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">json = require("encoding/json")</span>
+        <span class="s">print(json.marshal(action))</span>
+</code></pre></div></div>
+<h3 id="ensure-that-a-commit-includes-a-mandatory-metadata-field">
+  
+  
+    <a href="#ensure-that-a-commit-includes-a-mandatory-metadata-field" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ensure that a commit includes a mandatory metadata field
+  
+  
+</h3>
+    
+
+<p>A more useful example: ensure every commit contains a required metadata field:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">pre commit metadata field check</span>
+<span class="na">on</span><span class="pi">:</span>
+<span class="na">pre-commit</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">main</span>
+    <span class="pi">-</span> <span class="s">dev</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">ensure_commit_metadata</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">args</span><span class="pi">:</span>
+        <span class="na">notebook_url</span><span class="pi">:</span> <span class="pi">{</span><span class="s2">"</span><span class="s">pattern"</span><span class="pi">:</span> <span class="s2">"</span><span class="s">my-jupyter.example.com/.*"</span><span class="pi">}</span>
+        <span class="na">spark_version</span><span class="pi">:</span>  <span class="pi">{}</span>
+      <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">regexp = require("regexp")</span>
+        <span class="s">for k, props in pairs(args) do</span>
+          <span class="s">current_value = action.commit.metadata[k]</span>
+          <span class="s">if current_value == nil then</span>
+            <span class="s">error("missing mandatory metadata field: " .. k)</span>
+          <span class="s">end</span>
+          <span class="s">if props.pattern and not regexp.match(props.pattern, current_value) then</span>
+            <span class="s">error("current value for commit metadata field " .. k .. " does not match pattern: " .. props.pattern .. " - got: " .. current_value)</span>
+          <span class="s">end</span>
+        <span class="s">end</span>
+</code></pre></div></div>
+
+<p>For more examples and configuration samples, check out the <a href="https://github.com/treeverse/lakeFS/tree/master/examples/hooks">examples/hooks/</a> directory in the lakeFS repository.</p>
 <h2 id="lua-library-reference">
   
   
@@ -574,6 +648,8 @@
   
 </h2>
     
+
+<p>The Lua runtime embedded in lakeFS is limited for security reasons. The provided APIs are shown below.</p>
 <h3 id="awss3get_objectbucket-key">
   
   
@@ -1228,61 +1304,6 @@ Request will time out after 30 seconds.</p>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Failed to post data - status code: "</span> <span class="o">..</span> <span class="n">code</span><span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
-<h2 id="example-hooks">
-  
-  
-    <a href="#example-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example Hooks
-  
-  
-</h2>
-    
-
-<p>This example will simply print out a JSON representation of the event that occurred:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">dump_all</span>
-<span class="na">on</span><span class="pi">:</span>
-  <span class="na">post-commit</span><span class="pi">:</span>
-  <span class="na">post-merge</span><span class="pi">:</span>
-  <span class="na">post-create-tag</span><span class="pi">:</span>
-  <span class="na">post-create-branch</span><span class="pi">:</span>
-<span class="na">hooks</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">dump_event</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
-    <span class="na">properties</span><span class="pi">:</span>
-      <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
-        <span class="s">json = require("encoding/json")</span>
-        <span class="s">print(json.marshal(action))</span>
-</code></pre></div></div>
-
-<p>A more useful example: ensure every commit contains a required metadata field:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">pre commit metadata field check</span>
-<span class="na">on</span><span class="pi">:</span>
-<span class="na">pre-commit</span><span class="pi">:</span>
-    <span class="na">branches</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">main</span>
-    <span class="pi">-</span> <span class="s">dev</span>
-<span class="na">hooks</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">ensure_commit_metadata</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
-    <span class="na">properties</span><span class="pi">:</span>
-      <span class="na">args</span><span class="pi">:</span>
-        <span class="na">notebook_url</span><span class="pi">:</span> <span class="pi">{</span><span class="s2">"</span><span class="s">pattern"</span><span class="pi">:</span> <span class="s2">"</span><span class="s">my-jupyter.example.com/.*"</span><span class="pi">}</span>
-        <span class="na">spark_version</span><span class="pi">:</span>  <span class="pi">{}</span>
-      <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
-        <span class="s">regexp = require("regexp")</span>
-        <span class="s">for k, props in pairs(args) do</span>
-          <span class="s">current_value = action.commit.metadata[k]</span>
-          <span class="s">if current_value == nil then</span>
-            <span class="s">error("missing mandatory metadata field: " .. k)</span>
-          <span class="s">end</span>
-          <span class="s">if props.pattern and not regexp.match(props.pattern, current_value) then</span>
-            <span class="s">error("current value for commit metadata field " .. k .. " does not match pattern: " .. props.pattern .. " - got: " .. current_value)</span>
-          <span class="s">end</span>
-        <span class="s">end</span>
-</code></pre></div></div>
-
-<p>For more examples and configuration samples, check out the <a href="https://github.com/treeverse/lakeFS/tree/master/examples/hooks">examples/hooks/</a> directory in the lakeFS repository.</p>
 
                 
 

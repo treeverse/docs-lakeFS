@@ -29,14 +29,14 @@
 <meta name="generator" content="Jekyll v3.9.3" />
 <meta property="og:title" content="Hooks" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Learn about lakeFS hooks" />
-<meta property="og:description" content="Learn about lakeFS hooks" />
+<meta name="description" content="Overview of lakeFS hooks" />
+<meta property="og:description" content="Overview of lakeFS hooks" />
 <meta property="og:site_name" content="lakeFS" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Hooks" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Learn about lakeFS hooks","headline":"Hooks","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/hooks/"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Overview of lakeFS hooks","headline":"Hooks","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/hooks/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -237,8 +237,7 @@
             class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/hooks/"
-           class="nav-list-link active">Hooks</a><ul class="nav-list "><li class="nav-list-item "><a href="/hooks/overview.html"
-                   class="nav-list-link">Overview</a></li><li class="nav-list-item "><a href="/hooks/lua.html"
+           class="nav-list-link active">Hooks</a><ul class="nav-list "><li class="nav-list-item "><a href="/hooks/lua.html"
                    class="nav-list-link">Lua</a></li><li class="nav-list-item "><a href="/hooks/webhooks.html"
                    class="nav-list-link">Webhooks</a></li><li class="nav-list-item "><a href="/hooks/airflow.html"
                    class="nav-list-link">Airflow</a></li></ul></li><li
@@ -463,33 +462,364 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    
+                    <h1 class="no_toc" id="lakefs-hooks">
+  
+  
+    <a href="#lakefs-hooks" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Hooks
+  
+  
+</h1>
+    
+
+<div class="toc-block">
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ol id="markdown-toc">
+  <li><a href="#example-use-cases" id="markdown-toc-example-use-cases">Example use cases</a></li>
+  <li><a href="#supported-events" id="markdown-toc-supported-events">Supported Events</a></li>
+  <li><a href="#terminology" id="markdown-toc-terminology">Terminology</a></li>
+  <li><a href="#uploading-action-files" id="markdown-toc-uploading-action-files">Uploading Action files</a></li>
+  <li><a href="#runs-api--cli" id="markdown-toc-runs-api--cli">Runs API &amp; CLI</a></li>
+</ol>
+
+</div>
+
+<p>Like other version control systems, lakeFS allows you to configure <em>Actions</em> to trigger when <a href="#supported-events">predefined events</a> occur.</p>
+
+<p>lakeFS supports three types of hook:</p>
+
+<ol>
+  <li><a href="./lua.html">Lua</a> - uses an embedded Lua VM</li>
+  <li><a href="./webhooks.html">Webhook</a> - makes REST call to external URL and waits for response</li>
+  <li><a href="./airflow.html">Airflow</a> - triggers a DAG in Airflow</li>
+</ol>
+<h2 id="example-use-cases">
+  
+  
+    <a href="#example-use-cases" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example use cases
+  
+  
+</h2>
+    
+
+<ol>
+  <li>Format Validator:
+A webhook that checks new files to ensure they are of a set of allowed data formats.</li>
+  <li>Schema Validator:
+A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes).
+This is useful for avoiding accidental PII exposure.</li>
+  <li>Integration with external systems:
+Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting <code class="language-plaintext highlighter-rouge">symlink.txt</code> files that allow e.g. <a href="../integrations/athena.html">AWS Athena</a> to read data from lakeFS.</li>
+  <li>Notifying downstream consumers:
+Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened</li>
+</ol>
+
+<p>For more examples and configuration samples, check out the <a href="https://github.com/treeverse/lakeFS/tree/master/examples/hooks">examples</a> on the lakeFS repository.</p>
+<h2 id="supported-events">
+  
+  
+    <a href="#supported-events" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Supported Events
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre-commit</code></td>
+      <td>Runs when the commit occurs, before the commit is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post-commit</code></td>
+      <td>Runs after the commit is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre-merge</code></td>
+      <td>Runs on the source branch when the merge occurs, before the merge is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post-merge</code></td>
+      <td>Runs on the merge result, after the merge is finalized</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre-create-branch</code></td>
+      <td>Runs on the source branch prior to creating a new branch</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post-create-branch</code></td>
+      <td>Runs on the new branch after the branch was created</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre-delete-branch</code></td>
+      <td>Runs prior to deleting a branch</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post-delete-branch</code></td>
+      <td>Runs after the branch was deleted</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre-create-tag</code></td>
+      <td>Runs prior to creating a new tag</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post-create-tag</code></td>
+      <td>Runs after the tag was created</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pre-delete-tag</code></td>
+      <td>Runs prior to deleting a tag</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">post-delete-tag</code></td>
+      <td>Runs after the tag was deleted</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>lakeFS Actions are handled per repository and cannot be shared between repositories.
+A failure of any Hook under any Action of a <code class="language-plaintext highlighter-rouge">pre-*</code> event will result in aborting the lakeFS operation that is taking place.
+Hook failures under any Action of a <code class="language-plaintext highlighter-rouge">post-*</code> event will not revert the operation.</p>
+
+<p>Hooks are managed by Action files that are written to a prefix in the lakeFS repository.
+This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML.</p>
+<h2 id="terminology">
+  
+  
+    <a href="#terminology" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Terminology
+  
+  
+</h2>
+    
+<h3 class="no_toc" id="action">
+  
+  
+    <a href="#action" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Action
+  
+  
+</h3>
+    
+
+<p>An <strong>Action</strong> is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all.
+The Hooks under an Action are ordered and so is their execution.
+Before each hook execution the <code class="language-plaintext highlighter-rouge">if</code> boolean expression is evaluated. The expression can use <code class="language-plaintext highlighter-rouge">success()</code> which evaluate to true in case of no error was occured while running the hoook’s actions. It can also use <code class="language-plaintext highlighter-rouge">failure()</code> which evaluate to true when previous step failed - can be used to report failures.
+By default, when <code class="language-plaintext highlighter-rouge">if</code> is empty or omitted, the step will run only if no error occurred (same as evaluate of success function).</p>
+<h3 class="no_toc" id="hook">
+  
+  
+    <a href="#hook" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hook
+  
+  
+</h3>
+    
+
+<p>A <strong>Hook</strong> is the basic building block of an Action.
+The failure of a single Hook will stop the execution of the containing Action and fail the Run.</p>
+<h3 class="no_toc" id="action-file">
+  
+  
+    <a href="#action-file" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Action file
+  
+  
+</h3>
+    
+
+<p>Schema of the Action file:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+      <th>Data Type</th>
+      <th>Required</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>name</td>
+      <td>Identify the Action file</td>
+      <td>String</td>
+      <td>false</td>
+      <td>If missing, filename is used instead</td>
+    </tr>
+    <tr>
+      <td>on</td>
+      <td>List of events that will trigger the hooks</td>
+      <td>List</td>
+      <td>true</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>on<event>.branches</event></td>
+      <td>Glob pattern list of branches that triggers the hooks</td>
+      <td>List</td>
+      <td>false</td>
+      <td><strong>Not applicable to Tag events.</strong> If empty, Action runs on all branches</td>
+    </tr>
+    <tr>
+      <td>hooks</td>
+      <td>List of hooks to be executed</td>
+      <td>List</td>
+      <td>true</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>hook.id</td>
+      <td>ID of the hook, must be unique within the action.</td>
+      <td>String</td>
+      <td>true</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>hook.type</td>
+      <td>Type of the hook (<a href="#hook-types">types</a>)</td>
+      <td>String</td>
+      <td>true</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>hook.description</td>
+      <td>Optional description for the hook</td>
+      <td>String</td>
+      <td>false</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>hook.if</td>
+      <td>Expression that will be evaluated before execute the hook</td>
+      <td>String</td>
+      <td>false</td>
+      <td>No value is the same as evaluate <code class="language-plaintext highlighter-rouge">success()</code></td>
+    </tr>
+    <tr>
+      <td>hook.properties</td>
+      <td>Hook’s specific configuration</td>
+      <td>Dictionary</td>
+      <td>true</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Example:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Good files check</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s">set of checks to verify that branch is good</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">pre-commit</span><span class="pi">:</span>
+  <span class="na">pre-merge</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">no_temp</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">webhook</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">checking no temporary files found</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R"</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">no_freeze</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">webhook</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">check production is not in dev freeze</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R"</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">alert</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">webhook</span>
+    <span class="na">if</span><span class="pi">:</span> <span class="s">failure()</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">notify alert system when check failed</span>
+    <span class="na">properties</span><span class="pi">:</span>
+       <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/alert"</span>
+       <span class="na">query_params</span><span class="pi">:</span>
+          <span class="na">title</span><span class="pi">:</span> <span class="s">good files webhook failed</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">notification</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">webhook</span>
+    <span class="na">if</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">notify that will always run - no matter if one of the previous steps failed</span>
+    <span class="na">properties</span><span class="pi">:</span>
+       <span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://your.domain.io/notification"</span>
+       <span class="na">query_params</span><span class="pi">:</span>
+          <span class="na">title</span><span class="pi">:</span> <span class="s">good files completed</span>
+</code></pre></div></div>
+
+<p class="note"><strong>Note:</strong> lakeFS will validate action files only when an <strong>Event</strong> has occurred. <br />
+Use <code class="language-plaintext highlighter-rouge">lakectl actions validate &lt;path&gt;</code> to validate your action files locally.</p>
+<h3 class="no_toc" id="run">
+  
+  
+    <a href="#run" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Run
+  
+  
+</h3>
+    
+
+<p>A <strong>Run</strong> is an instantiation of the repository’s Action files when the triggering event occurs.
+For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit.</p>
+
+<p>lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action.
+All executed Hooks (each with <code class="language-plaintext highlighter-rouge">hook_run_id</code>) exist in the context of that Run (<code class="language-plaintext highlighter-rouge">run_id</code>).</p><hr />
+<h2 id="uploading-action-files">
+  
+  
+    <a href="#uploading-action-files" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Uploading Action files
+  
+  
+</h2>
+    
+
+<p>Action files should be uploaded with the prefix <code class="language-plaintext highlighter-rouge">_lakefs_actions/</code> to the lakeFS repository.
+When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix <code class="language-plaintext highlighter-rouge">_lakefs_actions/</code>
+in the repository branch where the action occurred.
+A failure to parse an Action file will result with a failing Run.</p>
+
+<p>For example, lakeFS will search and execute all the matching Action files with the prefix <code class="language-plaintext highlighter-rouge">lakefs://example-repo/feature-1/_lakefs_actions/</code> on:</p>
+<ol>
+  <li>Commit to <code class="language-plaintext highlighter-rouge">feature-1</code> branch on <code class="language-plaintext highlighter-rouge">example-repo</code> repository.</li>
+  <li>Merge to <code class="language-plaintext highlighter-rouge">main</code> branch from <code class="language-plaintext highlighter-rouge">feature-1</code> branch on <code class="language-plaintext highlighter-rouge">repo1</code> repository.</li>
+</ol>
+<h2 id="runs-api--cli">
+  
+  
+    <a href="#runs-api--cli" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Runs API &amp; CLI
+  
+  
+</h2>
+    
+
+<p>The <a href="../reference/api.html">lakeFS API</a> and <a href="../reference/cli.html#lakectl-actions">lakectl</a> expose the results of executions per repository, branch, commit, and specific Action.
+The endpoint also allows to download the execution log of any executed Hook under each Run for observability.</p>
+<h3 class="no_toc" id="result-files">
+  
+  
+    <a href="#result-files" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Result Files
+  
+  
+</h3>
+    
+
+<p>The metadata section of lakeFS repository with each Run contains two types of files:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">_lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log</code> - Execution log of the specific Hook run.</li>
+  <li><code class="language-plaintext highlighter-rouge">_lakefs/actions/log/&lt;runID&gt;/run.manifest</code> - Manifest with all Hooks execution for the run with their results and additional metadata.</li>
+</ol>
+
+<p class="note"><strong>Note:</strong> Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges.
+Metadata files stored in the metadata section aren’t accessible like user stored files.</p>
 
                 
 
-                
-                <hr>
-                <div class="toc-block">
-                    <h2 class="text-delta">Table of contents</h2>
-                    <ul>
-                        <li>
-                            <a href="/hooks/overview.html">Overview</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/hooks/lua.html">Lua</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/hooks/webhooks.html">Webhooks</a>
-                        </li>
-                        
-                        <li>
-                            <a href="/hooks/airflow.html">Airflow</a>
-                        </li>
-                        
-                    </ul>
-                </div>
                 
                 
 
