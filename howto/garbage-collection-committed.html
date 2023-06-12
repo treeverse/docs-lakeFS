@@ -475,13 +475,13 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h2 class="no_toc" id="garbage-collection-committed-objects">
+                    <h1 id="garbage-collection-committed-objects">
   
   
     <a href="#garbage-collection-committed-objects" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Garbage Collection: committed objects
   
   
-</h2>
+</h1>
     
 
 <p>By default, lakeFS keeps all your objects forever. This allows you to travel back in time to previous versions of your data.
@@ -515,13 +515,13 @@ but trying to read these objects from lakeFS will result in a <code class="langu
 </ol>
 
 </div>
-<h3 id="understanding-garbage-collection">
+<h2 id="understanding-garbage-collection">
   
   
     <a href="#understanding-garbage-collection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Understanding Garbage Collection
   
   
-</h3>
+</h2>
     
 
 <p>For every branch, the GC job retains deleted objects for the number of days defined for the branch.
@@ -541,13 +541,13 @@ That is, it’s hard-deleted only after the retention period has ended for all r
 
 <p>In the above example, objects are retained for 14 days after deletion by default. However, if they are present in the branch <code class="language-plaintext highlighter-rouge">main</code>, they are retained for 21 days.
 Objects present in the <code class="language-plaintext highlighter-rouge">dev</code> branch (but not in any other branch) are retained for 7 days after they are deleted.</p>
-<h3 id="configuring-gc-rules">
+<h2 id="configuring-gc-rules">
   
   
     <a href="#configuring-gc-rules" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring GC rules
   
   
-</h3>
+</h2>
     
 
 <p>To define garbage collection rules, either use the <code class="language-plaintext highlighter-rouge">lakectl</code> command or the lakeFS web UI:</p>
@@ -590,13 +590,13 @@ Objects present in the <code class="language-plaintext highlighter-rouge">dev</c
     <p><img src="/assets/img/gc_rules_from_ui.png" alt="GC Rules From UI" /></p>
   </div>
 </div>
-<h3 id="running-the-gc-job">
+<h2 id="running-the-gc-job">
   
   
     <a href="#running-the-gc-job" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Running the GC job
   
   
-</h3>
+</h2>
     
 
 <p>To run the job, use the following <code class="language-plaintext highlighter-rouge">spark-submit</code> command (or using your preferred method of running Spark programs).
@@ -722,13 +722,13 @@ For example, if your repository’s underlying storage is <code class="language-
 
 <p>You will find the list of objects hard-deleted by the job in the storage
 namespace of the repository. It is saved in Parquet format under <code class="language-plaintext highlighter-rouge">_lakefs/logs/gc/deleted_objects</code>.</p>
-<h4 class="no_toc" id="gc-job-options">
+<h3 id="gc-job-options">
   
   
     <a href="#gc-job-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GC job options
   
   
-</h4>
+</h3>
     
 
 <p>By default, GC first creates a list of expired objects according to your retention rules and then hard-deletes those objects. 
@@ -740,13 +740,13 @@ However, you can use GC options to break the GC job down into two stages:</p>
 
 <p>By breaking GC into these stages, you can pause and create a backup of the objects that GC is about to sweep and later 
 restore them. You can use the <a href="#backup-and-restore">GC backup and restore</a> utility to do that.</p>
-<h6 class="no_toc" id="mark-only-mode">
+<h4 id="mark-only-mode">
   
   
     <a href="#mark-only-mode" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Mark only mode
   
   
-</h6>
+</h4>
     
 
 <p>To make GC run the mark stage only, add the following properties to your spark-submit command:</p>
@@ -760,13 +760,13 @@ restore them. You can use the <a href="#backup-and-restore">GC backup and restor
   <li>Mark only mode is only available from v0.4.0 of lakeFS Spark client.</li>
   <li>The <code class="language-plaintext highlighter-rouge">spark.hadoop.lakefs.debug.gc.no_delete</code> property has been deprecated with v0.4.0.</li>
 </ul>
-<h6 class="no_toc" id="sweep-only-mode">
+<h4 id="sweep-only-mode">
   
   
     <a href="#sweep-only-mode" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sweep only mode
   
   
-</h6>
+</h4>
     
 
 <p>To make GC run the sweep stage only, add the following properties to your spark-submit command:</p>
@@ -776,13 +776,13 @@ restore them. You can use the <a href="#backup-and-restore">GC backup and restor
 <p>Running in sweep only mode, GC will hard-delete the expired objects marked by a mark-only run and listed in: <code class="language-plaintext highlighter-rouge">STORAGE_NAMESPACE/_lakefs/retention/gc/addresses/mark_id=&lt;MARK_ID&gt;/</code>.</p>
 
 <p><strong>Note:</strong> Mark only mode is only available from v0.4.0 of lakeFS Spark client.</p>
-<h3 id="considerations">
+<h2 id="considerations">
   
   
     <a href="#considerations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Considerations
   
   
-</h3>
+</h2>
     
 
 <ol>
@@ -807,13 +807,13 @@ deleted. Such actions include:</p>
     </ol>
   </li>
 </ol>
-<h3 id="backup-and-restore">
+<h2 id="backup-and-restore">
   
   
     <a href="#backup-and-restore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Backup and restore
   
   
-</h3>
+</h2>
     
 
 <p>GC was created to hard-delete objects from your underlying objects store according to your retention rules. However, when you start
@@ -828,37 +828,37 @@ using the feature you may want to first gain confidence in the decisions GC make
 <p>Follow <a href="https://rclone.org/docs/">rclone documentation</a> to configure remote access to the underlying storage used by lakeFS.
 Replace <code class="language-plaintext highlighter-rouge">LAKEFS_STORAGE_NAMESPACE</code> with remote:bucket/path which points to the lakeFS repository storage namespace.
 The <code class="language-plaintext highlighter-rouge">BACKUP_STORAGE_LOCATION</code> attribute points to a storage location outside your lakeFS storage namespace into which you want to save the backup.</p>
-<h4 class="no_toc" id="backup-command">
+<h3 id="backup-command">
   
   
     <a href="#backup-command" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Backup command
   
   
-</h4>
+</h3>
     
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"&lt;LAKEFS_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/addresses.text/mark_id=&lt;MARK_ID&gt;/"</span> | <span class="se">\</span>
   rclone <span class="nt">-P</span> <span class="nt">--no-traverse</span> <span class="nt">--files-from</span> - copy &lt;LAKEFS_STORAGE_NAMESPACE&gt; &lt;BACKUP_STORAGE_LOCATION&gt;
 </code></pre></div></div>
-<h4 class="no_toc" id="restore-command">
+<h3 id="restore-command">
   
   
     <a href="#restore-command" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Restore command
   
   
-</h4>
+</h3>
     
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rclone <span class="nt">--include</span> <span class="s2">"*.txt"</span> <span class="nb">cat</span> <span class="s2">"&lt;LAKEFS_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/addresses.text/mark_id=&lt;MARK_ID&gt;/"</span> | <span class="se">\</span>
   rclone <span class="nt">-P</span> <span class="nt">--no-traverse</span> <span class="nt">--files-from</span> - copy &lt;BACKUP_STORAGE_LOCATION&gt; &lt;LAKEFS_STORAGE_NAMESPACE&gt;
 </code></pre></div></div>
-<h4 class="no_toc" id="example">
+<h3 id="example">
   
   
     <a href="#example" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example
   
   
-</h4>
+</h3>
     
 
 <p>The following of commands used to backup/resource a configured remote ‘azure’ (Azure blob storage) to access example repository storage namespace <code class="language-plaintext highlighter-rouge">https://lakefs.blob.core.windows.net/repo/example/</code>:</p>

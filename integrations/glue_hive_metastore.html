@@ -472,7 +472,16 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <div class="toc-block">
+                    <h1 id="using-lakefs-with-the-gluehive-metastore">
+  
+  
+    <a href="#using-lakefs-with-the-gluehive-metastore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with the Glue/Hive Metastore
+  
+  
+</h1>
+    
+
+<div class="toc-block">
 <h2 class="no_toc text-delta" id="table-of-contents">
   
   
@@ -483,41 +492,41 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#about-glue--hive-metastore" id="markdown-toc-about-glue--hive-metastore">About Glue / Hive Metastore</a></li>
+  <li><a href="#about-glue--hive-metastore" id="markdown-toc-about-glue--hive-metastore">About Glue / Hive Metastore</a>    <ol>
+      <li><a href="#without-lakefs" id="markdown-toc-without-lakefs">Without lakeFS</a></li>
+      <li><a href="#with-lakefs" id="markdown-toc-with-lakefs">With lakeFS</a></li>
+    </ol>
+  </li>
   <li><a href="#managing-tables-with-lakefs-branches" id="markdown-toc-managing-tables-with-lakefs-branches">Managing Tables With lakeFS Branches</a>    <ol>
       <li><a href="#motivation" id="markdown-toc-motivation">Motivation</a></li>
       <li><a href="#configurations" id="markdown-toc-configurations">Configurations</a></li>
       <li><a href="#suggested-model" id="markdown-toc-suggested-model">Suggested Model</a></li>
-      <li><a href="#commands" id="markdown-toc-commands">Commands</a>        <ol>
-          <li><a href="#copy" id="markdown-toc-copy">Copy</a></li>
-          <li><a href="#diff" id="markdown-toc-diff">Diff</a></li>
-        </ol>
-      </li>
+      <li><a href="#commands" id="markdown-toc-commands">Commands</a></li>
     </ol>
   </li>
 </ol>
 
 </div>
-<h1 id="about-glue--hive-metastore">
+<h2 id="about-glue--hive-metastore">
   
   
     <a href="#about-glue--hive-metastore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> About Glue / Hive Metastore
   
   
-</h1>
+</h2>
     
 
 <p>This part explains about how Glue/Hive Metastore work with lakeFS.</p>
 
 <p>Glue and Hive Metastore store metadata related to Hive and other services (such as Spark and Trino).
 They contain metadata such as the location of the table, information about columns, partitions and many more.</p>
-<h2 class="no_toc" id="without-lakefs">
+<h3 id="without-lakefs">
   
   
     <a href="#without-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Without lakeFS
   
   
-</h2>
+</h3>
     
 <p>To query the table <code class="language-plaintext highlighter-rouge">my_table</code>, Spark will:</p>
 <ul>
@@ -525,31 +534,31 @@ They contain metadata such as the location of the table, information about colum
   <li>Use the location from the metadata to access the data in S3 (steps 3,4).
 <img src="/assets/img/metastore-S3.svg" alt="metastore with S3" /></li>
 </ul>
-<h2 class="no_toc" id="with-lakefs">
+<h3 id="with-lakefs">
   
   
     <a href="#with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> With lakeFS
   
   
-</h2>
+</h3>
     
 <p>When using lakeFS, the flow stays exactly the same. Note that the location of the table <code class="language-plaintext highlighter-rouge">my_table</code> now contains the branch <code class="language-plaintext highlighter-rouge">s3://example/main/path/to/table</code>
 <img src="/assets/img/metastore-lakefs.svg" alt="metastore with S3" /></p>
-<h1 id="managing-tables-with-lakefs-branches">
+<h2 id="managing-tables-with-lakefs-branches">
   
   
     <a href="#managing-tables-with-lakefs-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Managing Tables With lakeFS Branches
   
   
-</h1>
+</h2>
     
-<h2 id="motivation">
+<h3 id="motivation">
   
   
     <a href="#motivation" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Motivation
   
   
-</h2>
+</h3>
     
 <p>When creating a table in Glue/Hive metastore (using a client such as Spark, Hive, Presto), we specify the table location.
 Consider the table <code class="language-plaintext highlighter-rouge">my_table</code> that was created with the location <code class="language-plaintext highlighter-rouge">s3://example/main/path/to/table</code>.</p>
@@ -559,23 +568,23 @@ The data from <code class="language-plaintext highlighter-rouge">s3://example/ma
 The metadata is not managed in lakeFS, meaning you don’t have any table pointing to <code class="language-plaintext highlighter-rouge">s3://example/DEV/path/to/table</code>.</p>
 
 <p>To address this, lakeFS introduces <code class="language-plaintext highlighter-rouge">lakectl metastore</code> commands. The case above can be handled using the copy command: it creates a copy of <code class="language-plaintext highlighter-rouge">my_table</code> with data located in <code class="language-plaintext highlighter-rouge">s3://example/DEV/path/to/table</code>. Note that this is a fast, metadata-only operation.</p>
-<h2 id="configurations">
+<h3 id="configurations">
   
   
     <a href="#configurations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configurations
   
   
-</h2>
+</h3>
     
 <p>The <code class="language-plaintext highlighter-rouge">lakectl metastore</code> commands can run on Glue or Hive metastore.
 Add the following to the lakectl configuration file (by default <code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code>):</p>
-<h3 class="no_toc" id="hive">
+<h4 id="hive">
   
   
     <a href="#hive" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hive
   
   
-</h3>
+</h4>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">metastore</span><span class="pi">:</span>
@@ -583,13 +592,13 @@ Add the following to the lakectl configuration file (by default <code class="lan
   <span class="na">hive</span><span class="pi">:</span>
     <span class="na">uri</span><span class="pi">:</span> <span class="s">hive-metastore:9083</span>
 </code></pre></div></div>
-<h3 class="no_toc" id="glue">
+<h4 id="glue">
   
   
     <a href="#glue" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Glue
   
   
-</h3>
+</h4>
     
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">metastore</span><span class="pi">:</span>
@@ -604,13 +613,13 @@ Add the following to the lakectl configuration file (by default <code class="lan
 </code></pre></div></div>
 
 <p class="note pb-3"><strong>Note:</strong> It’s recommended to set type and catalog-id/metastore-uri in the lakectl configuration file.</p>
-<h2 id="suggested-model">
+<h3 id="suggested-model">
   
   
     <a href="#suggested-model" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Suggested Model
   
   
-</h2>
+</h3>
     
 
 <p>For simplicity, we recommend creating a schema for each branch. That way, you can use the same table name across different schemas.</p>
@@ -618,13 +627,13 @@ Add the following to the lakectl configuration file (by default <code class="lan
 <p>For example:
 after creating branch <code class="language-plaintext highlighter-rouge">example_branch</code>, also create a schema named <code class="language-plaintext highlighter-rouge">example_branch</code>.
 For a table named <code class="language-plaintext highlighter-rouge">my_table</code> under the schema <code class="language-plaintext highlighter-rouge">main</code>, create a new table under the same name and under the schema <code class="language-plaintext highlighter-rouge">example_branch</code>. You now have two <code class="language-plaintext highlighter-rouge">my_table</code>, one in the main schema and one in the branch schema.</p>
-<h2 id="commands">
+<h3 id="commands">
   
   
     <a href="#commands" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Commands
   
   
-</h2>
+</h3>
     
 
 <p>Metastore tools support three commands: <code class="language-plaintext highlighter-rouge">copy</code>, <code class="language-plaintext highlighter-rouge">diff</code>, and <code class="language-plaintext highlighter-rouge">create-symlink</code>.
@@ -634,13 +643,13 @@ create-symlink works only on Glue.</p>
 <p class="note pb-3"><strong>Note:</strong> If <code class="language-plaintext highlighter-rouge">to-schema</code> or <code class="language-plaintext highlighter-rouge">to-table</code> are not specified, the destination branch and source table names will be used as per the <a href="#suggested-model">suggested model</a>.</p>
 
 <p class="note pb-3"><strong>Note:</strong> Metastore commands can only run on tables located in lakeFS. You should not use tables that aren’t located in lakeFS.</p>
-<h3 id="copy">
+<h4 id="copy">
   
   
     <a href="#copy" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Copy
   
   
-</h3>
+</h4>
     
 
 <p>The <code class="language-plaintext highlighter-rouge">copy</code> command creates a copy of a table pointing to the defined branch.
@@ -671,7 +680,7 @@ To query the data in <code class="language-plaintext highlighter-rouge">s3://my_
 </code></pre></div></div>
 
 <p>After running this command, query the table <code class="language-plaintext highlighter-rouge">example_branch.inventory</code> to get the data from <code class="language-plaintext highlighter-rouge">s3://my_repo/DEV/path/to/table</code></p>
-<h4 class="no_toc" id="copy-partition">
+<h4 id="copy-partition">
   
   
     <a href="#copy-partition" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Copy Partition
@@ -690,13 +699,13 @@ For example, for the new partition <code class="language-plaintext highlighter-r
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore copy <span class="nt">--from-schema</span> example_branch <span class="nt">--from-table</span> branch_inventory <span class="nt">--to-schema</span> default <span class="nt">--to-branch</span> main <span class="nt">-p</span> 2020 <span class="nt">-p</span> 08 <span class="nt">-p</span> 01
 </code></pre></div></div>
-<h3 id="diff">
+<h4 id="diff">
   
   
     <a href="#diff" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Diff
   
   
-</h3>
+</h4>
     
 
 <p>Provides a two-way diff between two tables.

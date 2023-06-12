@@ -481,7 +481,8 @@
 </h1>
     
 
-<p><a href="https://duckdb.org/" target="_blank">DuckDB</a> is an in-process  SQL OLAP database management system.</p>
+<p><a href="https://duckdb.org/" target="_blank">DuckDB</a> is an in-process SQL OLAP database management system.</p>
+
 <div class="toc-block">
 <h2 class="no_toc text-delta" id="table-of-contents">
   
@@ -493,15 +494,9 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#using-lakefs-with-duckdb" id="markdown-toc-using-lakefs-with-duckdb">Using lakeFS with DuckDB</a>    <ol>
-      <li><a href="#configuration" id="markdown-toc-configuration">Configuration</a>        <ol>
-          <li><a href="#configure-the-lakefs-s3-gateway-endpoint" id="markdown-toc-configure-the-lakefs-s3-gateway-endpoint">Configure the lakeFS S3 Gateway endpoint</a></li>
-          <li><a href="#querying-data" id="markdown-toc-querying-data">Querying Data</a></li>
-          <li><a href="#writing-data" id="markdown-toc-writing-data">Writing Data</a></li>
-        </ol>
-      </li>
-    </ol>
-  </li>
+  <li><a href="#configuration" id="markdown-toc-configuration">Configuration</a></li>
+  <li><a href="#querying-data" id="markdown-toc-querying-data">Querying Data</a></li>
+  <li><a href="#writing-data" id="markdown-toc-writing-data">Writing Data</a></li>
 </ol>
 
 </div>
@@ -514,15 +509,7 @@
 </h2>
     
 
-<p>Querying data in lakeFS from DuckDB is similar to querying data in S3 from DuckDB. It is done using the <a href="https://duckdb.org/docs/extensions/httpfs.html" target="_blank">httpfs extension</a>.</p>
-<h3 id="configure-the-lakefs-s3-gateway-endpoint">
-  
-  
-    <a href="#configure-the-lakefs-s3-gateway-endpoint" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configure the lakeFS S3 Gateway endpoint
-  
-  
-</h3>
-    
+<p>Querying data in lakeFS from DuckDB is similar to querying data in S3 from DuckDB. It is done using the <a href="https://duckdb.org/docs/extensions/httpfs.html" target="_blank">httpfs extension</a> connecting to the <a href="https://docs.lakefs.io/understand/architecture.html#s3-gateway">S3 Gateway that lakeFS provides</a>.</p>
 
 <p>If not loaded already, install and load the HTTPFS extension:</p>
 
@@ -548,13 +535,13 @@
   <li><code class="language-plaintext highlighter-rouge">s3_url_style</code> needs to be set to <code class="language-plaintext highlighter-rouge">path</code></li>
   <li><code class="language-plaintext highlighter-rouge">s3_region</code> is the S3 region on which your bucket resides. If local storage, or not S3, then just set it to <code class="language-plaintext highlighter-rouge">us-east-1</code>.</li>
 </ul>
-<h3 id="querying-data">
+<h2 id="querying-data">
   
   
     <a href="#querying-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Querying Data
   
   
-</h3>
+</h2>
     
 
 <p>Once configured, you can query data using the lakeFS S3 Gateway using the following URI pattern:</p>
@@ -570,13 +557,13 @@
 <span class="k">FROM</span> <span class="n">parquet_scan</span><span class="p">(</span><span class="s1">'s3://example-repo/main/data/population/by-region/*.parquet'</span><span class="p">,</span> <span class="n">HIVE_PARTITIONING</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">name</span><span class="p">;</span>
 </code></pre></div></div>
-<h3 id="writing-data">
+<h2 id="writing-data">
   
   
     <a href="#writing-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Writing Data
   
   
-</h3>
+</h2>
     
 
 <p>No special configuration required for writing to a branch. Assuming the configuration above and write permissions to a <code class="language-plaintext highlighter-rouge">dev</code> branch,
