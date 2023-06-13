@@ -547,7 +547,7 @@ created branch 'denmark-lakes' 3384cd7cdc4a2cd5eb6249b52f0a709b49081668bb1574ce8
 <p>Now we’ll load the lakes data into a DuckDB table so that we can manipulate it:</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">lakes</span> <span class="k">AS</span> 
-    <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">READ_PARQUET</span><span class="p">(</span><span class="s1">'s3://quickstart/denmark-lakes/lakes.parquet'</span><span class="p">);</span>
+    <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">read_parquet</span><span class="p">(</span><span class="s1">'s3://quickstart/denmark-lakes/lakes.parquet'</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>Just to check that it’s the same we saw before we’re run the same query:</p>
@@ -632,7 +632,7 @@ created branch 'denmark-lakes' 3384cd7cdc4a2cd5eb6249b52f0a709b49081668bb1574ce8
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">lakes</span><span class="p">;</span>
 
 <span class="k">SELECT</span>   <span class="n">country</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
-<span class="k">FROM</span>     <span class="n">READ_PARQUET</span><span class="p">(</span><span class="s1">'s3://quickstart/denmark-lakes/lakes.parquet'</span><span class="p">)</span>
+<span class="k">FROM</span>     <span class="n">read_parquet</span><span class="p">(</span><span class="s1">'s3://quickstart/denmark-lakes/lakes.parquet'</span><span class="p">)</span>
 <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">country</span>
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> 
 <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
@@ -657,7 +657,7 @@ created branch 'denmark-lakes' 3384cd7cdc4a2cd5eb6249b52f0a709b49081668bb1574ce8
 <p>So we’ve changed the data in our <code class="language-plaintext highlighter-rouge">denmark-lakes</code> branch, deleting swathes of the dataset. What’s this done to our original data in the <code class="language-plaintext highlighter-rouge">main</code> branch? Absolutely nothing! See for yourself by returning to the lakeFS object view and re-running the same query:</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>   <span class="n">country</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
-<span class="k">FROM</span>     <span class="n">READ_PARQUET</span><span class="p">(</span><span class="n">LAKEFS_OBJECT</span><span class="p">(</span><span class="s1">'quickstart'</span><span class="p">,</span> <span class="s1">'main'</span><span class="p">,</span> <span class="s1">'lakes.parquet'</span><span class="p">))</span>
+<span class="k">FROM</span>     <span class="n">read_parquet</span><span class="p">(</span><span class="s1">'lakefs://quickstart/main/lakes.parquet'</span><span class="p">)</span>
 <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">country</span>
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> 
 <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
