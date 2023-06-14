@@ -25,18 +25,18 @@
   
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>CI/CD for data lakes | lakeFS</title>
+<title>CI/CD for Data Lakes | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="CI/CD for data lakes" />
+<meta property="og:title" content="CI/CD for Data Lakes" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="In this tutorial, we will explore how to use lakeFS to build a CI/CD pipeline for data lakes." />
 <meta property="og:description" content="In this tutorial, we will explore how to use lakeFS to build a CI/CD pipeline for data lakes." />
 <meta property="og:site_name" content="lakeFS" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="CI/CD for data lakes" />
+<meta property="twitter:title" content="CI/CD for Data Lakes" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"In this tutorial, we will explore how to use lakeFS to build a CI/CD pipeline for data lakes.","headline":"CI/CD for data lakes","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/use_cases/cicd_for_data.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"In this tutorial, we will explore how to use lakeFS to build a CI/CD pipeline for data lakes.","headline":"CI/CD for Data Lakes","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/use_cases/cicd_for_data.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -248,7 +248,7 @@
                    class="nav-list-link">ETL Testing Environment</a></li><li class="nav-list-item "><a href="/use_cases/rollback.html"
                    class="nav-list-link">Rollback</a></li><li class="nav-list-item "><a href="/use_cases/reproducibility.html"
                    class="nav-list-link">Reproducibility</a></li><li class="nav-list-item  active"><a href="/use_cases/cicd_for_data.html"
-                   class="nav-list-link active">CI/CD for data lakes</a></li></ul></li><li
+                   class="nav-list-link active">CI/CD for Data Lakes</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/howto/"
@@ -465,7 +465,7 @@
                     <li class="breadcrumb-nav-list-item"><a href="/use_cases/">Use Cases</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>CI/CD for data lakes</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>CI/CD for Data Lakes</span></li>
                 </ol>
             </nav>
             
@@ -480,6 +480,26 @@
   
 </h1>
     
+
+<div class="toc-block">
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ol id="markdown-toc">
+  <li><a href="#why-do-i-need-cicd" id="markdown-toc-why-do-i-need-cicd">Why do I need CI/CD?</a></li>
+  <li><a href="#how-do-i-implement-cicd-for-data-with-lakefs" id="markdown-toc-how-do-i-implement-cicd-for-data-with-lakefs">How do I implement CI/CD for data with lakeFS?</a></li>
+  <li><a href="#using-hooks-as-data-quality-gates" id="markdown-toc-using-hooks-as-data-quality-gates">Using hooks as data quality gates</a></li>
+  <li><a href="#implementing-cicd-pipeline-with-lakefs---demo" id="markdown-toc-implementing-cicd-pipeline-with-lakefs---demo">Implementing CI/CD pipeline with lakeFS - Demo</a></li>
+  <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+</ol>
+
+</div>
 <h2 id="why-do-i-need-cicd">
   
   
@@ -558,87 +578,63 @@ hooks:
 
 <p>In this tutorial, we will show how to use webhooks (python flask webserver) to implement quality gates on your data branches. Specifically, how to configure hooks to allow only parquet and delta lake format files in the main branch.</p>
 
-<p>The tutorial uses an existing lakeFS environment (lakeFS running on <a href="https://lakefs.io/the-docker-everything-bagel-spin-up-a-local-data-stack/">everything bagel docker</a> container), python flask server running on a docker container, a Jupyter notebook and sample data sets to demonstrate the integration of lakeFS hooks with Apache Spark and Python.</p>
+<p>The tutorial provides a lakeFS environment, python flask server, a Jupyter notebook and sample data sets to demonstrate the integration of lakeFS hooks with Apache Spark and Python. It runs on Docker Compose.</p>
 
 <p>To understand how hooks work and how to configure hooks in your production system, refer to the documentation: <a href="/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">Hooks</a>. To configure lakeFS hooks with custom quality check rules, refer to the <a href="https://github.com/treeverse/lakeFS-hooks">lakefs-hooks</a> repository.</p>
 
 <p><img src="/assets/img/promotion_workflow.png" alt="lakeFS hooks - Promotion workflow" /></p>
 
-<p>Follow the steps below to clone the hooks demo repository and to implement CI/CD for data lakes.</p>
-<h1 id="implementing-cicd-pipeline-with-lakefs">
+<p>Follow the steps below to try out CI/CD for data lakes.</p>
+<h2 id="implementing-cicd-pipeline-with-lakefs---demo">
   
   
-    <a href="#implementing-cicd-pipeline-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Implementing CI/CD pipeline with lakeFS
+    <a href="#implementing-cicd-pipeline-with-lakefs---demo" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Implementing CI/CD pipeline with lakeFS - Demo
   
   
-</h1>
+</h2>
     
-<h3 id="prerequisites">
+
+<p>The sample below provides a lakeFS environment, a Jupyter notebook, and a server on which for the lakeFS webhooks to run.</p>
+<h3 id="prerequisites--setup">
   
   
-    <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+    <a href="#prerequisites--setup" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites &amp; Setup
   
   
 </h3>
     
 
-<p>Before we get started, make sure <a href="https://docs.docker.com/engine/install/">docker</a> is installed on your machine.</p>
-<h2 id="setup-webhooks-server">
+<p>Before we get started, make sure <a href="https://docs.docker.com/engine/install/">Docker</a> is installed on your machine.</p>
+
+<ul>
+  <li>
+    <p>Start by cloning the lakeFS samples Git repository:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/treeverse/lakeFS-samples.git
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>lakeFS-samples
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Run following commands to start the components:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git submodule init
+git submodule update
+docker compose up
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>Open the <a href="http://localhost:8888">local Jupyter Notebook</a> and go to the <code class="language-plaintext highlighter-rouge">hooks-demo.ipynb</code> notebook.</p>
+<h2 id="resources">
   
   
-    <a href="#setup-webhooks-server" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setup Webhooks server
+    <a href="#resources" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resources
   
   
 </h2>
     
-
-<p>First, as you know, lakeFS webhooks need a remote server to serve the http requests from lakeFS. So let us set up the python flask server for webhooks.</p>
-
-<p>Start with cloning the <a href="https://github.com/treeverse/lakeFS-hooks">lakeFS-hooks</a> repository. The following command can be run in your terminal to get the hooks image.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/treeverse/lakeFS-hooks.git <span class="o">&amp;&amp;</span> <span class="nb">cd </span>lakeFS-hooks/
-docker build <span class="nt">-t</span> &lt;lakefs-hooks-image-name&gt; <span class="nb">.</span>
-</code></pre></div></div>
-<p class="note note-info">Once you have the <code class="language-plaintext highlighter-rouge">&lt;lakefs-hooks-image-name&gt;</code> image built, you can add this image in the lakeFS everything bagel docker. This ensures that flask server and lakeFS server are running inside the same docker container, and are part of the same docker network. This is to simplify the setup, and is not mandatory to have both the services running in the same container.</p>
-<h2 id="setup-lakefs-server">
-  
-  
-    <a href="#setup-lakefs-server" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setup lakeFS server
-  
-  
-</h2>
-    
-
-<p>To get a local lakeFS instance running on docker, you can use everything bagel docker. Let us start with cloning the <a href="https://github.com/treeverse/lakeFS">lakeFS</a> repository.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/treeverse/lakeFS.git <span class="o">&amp;&amp;</span> <span class="nb">cd </span>lakeFS/deployments/compose
-</code></pre></div></div>
-
-<p>The python flask server image we built in the above section needs to be added to everything bagel <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> file. So add the following contents to the yaml file. For lakeFS instance running on everything bagel, the lakeFS endpoint, access key id and secret key are found in the <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> file under <code class="language-plaintext highlighter-rouge">lakefs</code> section.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  lakefs-webhooks:
-    image: &lt;lakefs-hooks-image-name&gt;
-    container_name: lakefs-hooks
-    ports:
-      - 5001:5001
-    environment:
-      - <span class="nv">LAKEFS_SERVER_ADDRESS</span><span class="o">=</span>&lt;lakefs_server_endpoint&gt;
-      - <span class="nv">LAKEFS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;lakefs_access_key_id&gt;
-      - <span class="nv">LAKEFS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;lakefs_secret_key&gt;
-</code></pre></div></div>
-<p>Start the docker container to run lakeFS server and hooks server: <code class="language-plaintext highlighter-rouge">docker compose up -d</code></p>
-
-<p>Next step is to configure the custom logic for your hooks server and configuring hooks in lakeFS.</p>
-<h2 id="set-up-your-first-lakefs-webhook-under-10-minutes">
-  
-  
-    <a href="#set-up-your-first-lakefs-webhook-under-10-minutes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Set up your first lakeFS webhook under 10 minutes
-  
-  
-</h2>
-    
-
-<p>To configure and set up a pre-merge lakeFS hook that validates file format of your data on staging branch before promoting it to production, refer to <a href="https://github.com/treeverse/lakeFS-samples/blob/main/notebooks/hooks-demo.ipynb">this notebook</a> in the <a href="https://github.com/treeverse/lakeFS-samples">lakeFS samples repository</a>.</p>
 
 <p>To explore different checks and validations on your data, refer to <a href="https://github.com/treeverse/lakeFS-hooks#included-webhooks">pre-built hooks config</a> by the lakeFS team.</p>
 
