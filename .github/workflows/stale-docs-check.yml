@@ -37,46 +37,14 @@ jobs:
   
       - name: Compare Generated Site 1
         run: |
+          pwd
           diff --brief --recursive docs-lakeFS lakeFS/docs/_site | \
                   grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' | \
-                  grep -v -e ": .git" -e ": versions.json" -e ": CNAME" -e "docs-lakeFS\/assets\/js\/search-data.json" -e "docs-lakeFS\/posts\/index.html" -e "docs-lakeFS\/redirects.json" > /tmp/diffs.txt
-
-          if [ -e "/tmp/diffs.txt" ]; then
-            echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
-            echo " "
-            cat /tmp/diffs.txt
-
-            mkdir -p /tmp/mismatched-files/docs-lakeFS 
-            mkdir -p /tmp/mismatched-files/lakeFS/docs/_site
-            while read -r line; do
-              file1=$(echo "$line" | cut -d' ' -f2)
-              file2=$(echo "$line" | cut -d' ' -f4)
-              cp "$file1" /tmp/mismatched-files/docs-lakeFS 
-              cp "$file2" /tmp/mismatched-files/lakeFS/docs/_site
-            done < /tmp/diffs.txt
-
-            exit 1
-          else
-            echo "✅ Docs match"
-            true
-          fi
-
-          
-      - name: Compare Generated Site 2
-        run: |
+                  grep -v -e ": .git" -e ": versions.json" -e ": CNAME" > /tmp/diffs0.txt
           pwd
-          ls -l 
-          diff --brief --recursive docs-lakeFS lakeFS/docs/_site > /tmp/raw_diff.txt
-          pwd
-          grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' /tmp/raw_diff.txt | \
-          grep -v -e ": .git" \
-                  -e ": versions.json" \
-                  -e ": CNAME" \
-                  -e "docs-lakeFS\/assets\/js\/search-data.json" \
-                  -e "docs-lakeFS\/posts\/index.html" \
-                  -e "docs-lakeFS\/redirects.json" \
-                > /tmp/diffs.txt
-
+          grep -v -e "docs-lakeFS/assets/js/search-data.json" \
+                  -e "docs-lakeFS/posts/index.html" \
+                  -e "docs-lakeFS/redirects.json" /tmp/diffs0.txt > /tmp/diffs.txt
           pwd
 
           if [ -e "/tmp/diffs.txt" ]; then
