@@ -31,32 +31,26 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-      - name: pwd1
-        run: pwd
-
       - name: Build Docs from Source    
         working-directory: lakeFS/docs
         run: bundle exec jekyll build --config _config.yml 
   
-      - name: pwd2
-        run: pwd
-
       - name: Compare Generated Site
         run: |
           pwd
           ls -l 
-          diff --brief --recursive docs-lakeFS lakeFS/docs/_site | \
-                  grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' | \
-                  grep -v -e ": .git" \
-                          -e ": versions.json" \
-                          -e ": CNAME" \
-                          -e "Files docs-lakeFS/assets/js/search-data.json and lakeFS/docs/_site/assets/js/search-data.json differ" \
-                          -e "Files docs-lakeFS/posts/index.html and lakeFS/docs/_site/posts/index.html differ" \
-                          -e "Files docs-lakeFS/redirects.json and lakeFS/docs/_site/redirects.json differ" \
-                        > /tmp/diffs.txt
+          diff --brief --recursive docs-lakeFS lakeFS/docs/_site > /tmp/raw_diff.txt
+          pwd
+          grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' /tmp/raw_diff.txt | \
+          grep -v -e ": .git" \
+                  -e ": versions.json" \
+                  -e ": CNAME" \
+                  -e "Files docs-lakeFS/assets/js/search-data.json and lakeFS/docs/_site/assets/js/search-data.json differ" \
+                  -e "Files docs-lakeFS/posts/index.html and lakeFS/docs/_site/posts/index.html differ" \
+                  -e "Files docs-lakeFS/redirects.json and lakeFS/docs/_site/redirects.json differ" \
+                > /tmp/diffs.txt
 
           pwd
-          ls -l /tmp/
 
           if [ -e "/tmp/diffs.txt" ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
