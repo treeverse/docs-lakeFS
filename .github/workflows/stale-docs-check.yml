@@ -39,9 +39,16 @@ jobs:
         run: |
           diff --brief --recursive docs-lakeFS lakeFS/docs/_site | \
                   grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' | \
-                  grep -v -e ": .git" -e ": versions.json" -e ": CNAME" > diffs.txt
-          diffs=$(wc -l < diffs.txt | tr -d '[:space:]')
-          if [ "$diffs" -ne 0 ]; then
+                  grep -v -e ": .git" \
+                          -e ": versions.json" \
+                          -e ": CNAME" \
+                          -e "Files docs-lakeFS/assets/js/search-data.json and lakeFS/docs/_site/assets/js/search-data.json differ" \
+                          -e "Files docs-lakeFS/posts/index.html and lakeFS/docs/_site/posts/index.html differ" \
+                          -e ": CNAME" \
+                        > diffs.txt
+          diff_ct=$(wc -l < diffs.txt | tr -d '[:space:]')
+
+          if [ "$diff_ct" -ne 0 ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
             echo " "
             cat diffs.txt
