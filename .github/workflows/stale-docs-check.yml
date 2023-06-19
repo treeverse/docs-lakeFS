@@ -31,13 +31,20 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
+      - name: pwd1
+        run: pwd
+
       - name: Build Docs from Source    
         working-directory: lakeFS/docs
         run: bundle exec jekyll build --config _config.yml 
   
+      - name: pwd2
+        run: pwd
+
       - name: Compare Generated Site
         run: |
           pwd
+          ls -l 
           diff --brief --recursive docs-lakeFS lakeFS/docs/_site | \
                   grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' | \
                   grep -v -e ": .git" \
