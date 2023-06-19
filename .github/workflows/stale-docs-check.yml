@@ -35,18 +35,18 @@ jobs:
         working-directory: lakeFS/docs
         run: bundle exec jekyll build --config _config.yml 
   
-      - name: Compare Generated Site 1
+      - name: Compare Generated Site to live
         run: |
-          pwd
           diff --brief --recursive docs-lakeFS lakeFS/docs/_site | \
                   grep -v --extended-regexp 'Only in docs-lakeFS: v?[[:digit:]]+(\.[[:digit:]]+)?' | \
-                  grep -v -e ": .git" -e ": versions.json" -e ": CNAME" > /tmp/diffs0.txt
-          pwd
-          grep -v -e "docs-lakeFS/assets/js/search-data.json" \
-                  -e "docs-lakeFS/posts/index.html" \
-                  -e "docs-lakeFS/redirects.json" /tmp/diffs0.txt > /tmp/diffs.txt || true
-          pwd
-
+                  grep -v -e ": .git" \
+                          -e ": versions.json" \
+                          -e ": CNAME" \
+                          -e "docs-lakeFS/assets/js/search-data.json" \
+                          -e "docs-lakeFS/posts/index.html" \
+                          -e "docs-lakeFS/redirects.json" > /tmp/diffs.txt || true
+          ls -l /tmp/
+          [ -e "/tmp/diffs.txt" ]
           if [ -e "/tmp/diffs.txt" ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
             echo " "
