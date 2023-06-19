@@ -45,9 +45,8 @@ jobs:
                           -e "docs-lakeFS/assets/js/search-data.json" \
                           -e "docs-lakeFS/posts/index.html" \
                           -e "docs-lakeFS/redirects.json" > /tmp/diffs.txt || true
-          ls -l /tmp/
-          [ -e "/tmp/diffs.txt" ]
-          if [ -e "/tmp/diffs.txt" ]; then
+
+          if [ -s "/tmp/diffs.txt" ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
             echo " "
             cat /tmp/diffs.txt
