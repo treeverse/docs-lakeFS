@@ -46,9 +46,8 @@ jobs:
                           -e "Files docs-lakeFS/posts/index.html and lakeFS/docs/_site/posts/index.html differ" \
                           -e "Files docs-lakeFS/redirects.json and lakeFS/docs/_site/redirects.json differ" \
                         > /tmp/diffs.txt
-          diff_ct=$(wc -l < /tmp/diffs.txt | tr -d '[:space:]')
 
-          if [ "$diff_ct" -ne 0 ]; then
+          if [ -e "/tmp/diffs.txt" ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
             echo " "
             cat /tmp/diffs.txt
@@ -65,7 +64,6 @@ jobs:
             exit 1
           else
             echo "✅ Docs match"
-            true
           fi
 
       - name: Upload artifacts if mismatches found
