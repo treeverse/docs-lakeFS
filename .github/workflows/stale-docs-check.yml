@@ -47,6 +47,8 @@ jobs:
                           -e "Files docs-lakeFS/redirects.json and lakeFS/docs/_site/redirects.json differ" \
                         > /tmp/diffs.txt
 
+          ls -l /tmp/diffs.txt
+
           if [ -e "/tmp/diffs.txt" ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
             echo " "
@@ -64,6 +66,7 @@ jobs:
             exit 1
           else
             echo "✅ Docs match"
+            true
           fi
 
       - name: Upload artifacts if mismatches found
