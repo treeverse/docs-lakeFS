@@ -45,13 +45,13 @@ jobs:
                           -e "Files docs-lakeFS/assets/js/search-data.json and lakeFS/docs/_site/assets/js/search-data.json differ" \
                           -e "Files docs-lakeFS/posts/index.html and lakeFS/docs/_site/posts/index.html differ" \
                           -e "Files docs-lakeFS/redirects.json and lakeFS/docs/_site/redirects.json differ" \
-                        > diffs.txt
-          diff_ct=$(wc -l < diffs.txt | tr -d '[:space:]')
+                        > /tmp/diffs.txt
+          diff_ct=$(wc -l < /tmp/diffs.txt | tr -d '[:space:]')
 
           if [ "$diff_ct" -ne 0 ]; then
             echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
             echo " "
-            cat diffs.txt
+            cat /tmp/diffs.txt
 
             mkdir -p /tmp/mismatched-files/docs-lakeFS 
             mkdir -p /tmp/mismatched-files/lakeFS/docs/_site
@@ -60,9 +60,12 @@ jobs:
               file2=$(echo "$line" | cut -d' ' -f4)
               cp "$file1" /tmp/mismatched-files/docs-lakeFS 
               cp "$file2" /tmp/mismatched-files/lakeFS/docs/_site
-            done < diffs.txt            
-           
+            done < /tmp/diffs.txt
+
             exit 1
+          else
+            echo "✅ Docs match"
+            true
           fi
 
       - name: Upload artifacts if mismatches found
@@ -70,4 +73,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: mismatched-files
-          path: /tmp/mismatched-files/        
+          path: |
+            /tmp/mismatched-files/
+            /tmp/diffs.txt
