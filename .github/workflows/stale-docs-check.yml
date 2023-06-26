@@ -47,10 +47,14 @@ jobs:
                           -e "docs-lakeFS/redirects.json" > /tmp/diffs.txt || true
 
           if [ -s "/tmp/diffs.txt" ]; then
-            echo "🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨"
-            echo " "
-            cat /tmp/diffs.txt
+            echo "## 🚨 Docs published on docs.lakefs.io don't match docs generated from source 🚨" >> $GITHUB_STEP_SUMMARY
+            echo " " >> $GITHUB_STEP_SUMMARY
+            sed 's/^/* /' /tmp/diffs.txt >> $GITHUB_STEP_SUMMARY
+            cat $GITHUB_STEP_SUMMARY
 
+            # If there are any mismatched files (rather than just files that 
+            # only exist on one side) then copy them to a folder for upload
+            # as an artifact of the github workflow
             mkdir -p /tmp/mismatched-files/docs-lakeFS 
             mkdir -p /tmp/mismatched-files/lakeFS/docs/_site
             while read -r line; do
@@ -58,11 +62,11 @@ jobs:
               file2=$(echo "$line" | cut -d' ' -f4)
               cp "$file1" /tmp/mismatched-files/docs-lakeFS 
               cp "$file2" /tmp/mismatched-files/lakeFS/docs/_site
-            done < /tmp/diffs.txt
+            done < <(grep -e "^Files.* and .* differ" /tmp/diffs.txt)
 
             exit 1
           else
-            echo "✅ Docs match"
+            echo "## ✅ Docs match" >> $GITHUB_STEP_SUMMARY
             true
           fi
 
