@@ -25,18 +25,18 @@
   
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Iceberg | lakeFS</title>
+<title>Apache Iceberg | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="Iceberg" />
+<meta property="og:title" content="Apache Iceberg" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="How to integrate lakeFS with Apache Iceberg" />
 <meta property="og:description" content="How to integrate lakeFS with Apache Iceberg" />
 <meta property="og:site_name" content="lakeFS" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Iceberg" />
+<meta property="twitter:title" content="Apache Iceberg" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"How to integrate lakeFS with Apache Iceberg","headline":"Iceberg","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/integrations/iceberg.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"How to integrate lakeFS with Apache Iceberg","headline":"Apache Iceberg","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/integrations/iceberg.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -233,7 +233,7 @@
                    class="nav-list-link">Hive</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/cloudera.html"
                    class="nav-list-link">Cloudera</a></li><li class="nav-list-item  active"><a href="/integrations/iceberg.html"
-                   class="nav-list-link active">Iceberg</a></li></ul></li><li
+                   class="nav-list-link active">Apache Iceberg</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/hooks/"
@@ -466,24 +466,220 @@
                     <li class="breadcrumb-nav-list-item"><a href="/integrations/">Integrations</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Iceberg</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Apache Iceberg</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 id="using-lakefs-with-iceberg">
+                    <h1 id="using-lakefs-with-apache-iceberg">
   
   
-    <a href="#using-lakefs-with-iceberg" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Iceberg
+    <a href="#using-lakefs-with-apache-iceberg" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Apache Iceberg
   
   
 </h1>
     
 
-<p>Currently, lakeFS does not support the Iceberg table format, but we have concrete 
-<a href="/roadmap.html#iceberg-support-spanhigh-priorityspan-label-label-blue-">plans</a> to add it in the near future.</p>
+<div class="toc-block">
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ol id="markdown-toc">
+  <li><a href="#setup" id="markdown-toc-setup">Setup</a></li>
+  <li><a href="#configure" id="markdown-toc-configure">Configure</a></li>
+  <li><a href="#using-iceberg-tables-with-lakefs" id="markdown-toc-using-iceberg-tables-with-lakefs">Using Iceberg tables with lakeFS</a></li>
+  <li><a href="#migrating-an-existing-iceberg-table-to-lakefs-catalog" id="markdown-toc-migrating-an-existing-iceberg-table-to-lakefs-catalog">Migrating an existing Iceberg Table to lakeFS Catalog</a></li>
+</ol>
+
+</div>
+
+<p>lakeFS provides its own implementation of the <code class="language-plaintext highlighter-rouge">SparkCatalog</code>, which handles the writing of the Iceberg data to lakeFS as well as reading from it and branching. Using straightforward table identifiers you can switch between branches when reading and writing data:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="k">catalog</span><span class="p">.</span><span class="k">ref</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="k">table</span>
+</code></pre></div></div>
+<h2 id="setup">
+  
+  
+    <a href="#setup" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setup
+  
+  
+</h2>
+    
+
+<div class="tabs">
+  <ul>
+    <li><a href="#maven">Maven</a></li>
+    <li><a href="#pyspark">PySpark</a></li>
+  </ul>
+  <div id="maven">
+
+    <p>Use the following Maven dependency to install the lakeFS custom catalog:</p>
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>io.lakefs<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>lakefs-iceberg<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>0.1.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>    </div>
+
+  </div>
+  <div id="pyspark">
+    <p>Include the <code class="language-plaintext highlighter-rouge">lakefs-iceberg</code> jar in your package list along with Iceberg. For example:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.jars.packages"</span><span class="p">,</span> <span class="s">"org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.3.0,io.lakefs:lakefs-iceberg:0.1.0"</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+</div>
+<h2 id="configure">
+  
+  
+    <a href="#configure" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configure
+  
+  
+</h2>
+    
+
+<ol>
+  <li>
+    <p>Set up the Spark SQL catalog:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs"</span><span class="p">,</span> <span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span> <span class="s">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"lakefs://</span><span class="si">{</span><span class="n">repo_name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.uri"</span><span class="p">,</span> <span class="n">lakefsEndPoint</span><span class="p">)</span> \
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Optionally, you can set the <code class="language-plaintext highlighter-rouge">lakeFS</code> catalog to be the default one, which means that you don’t need to include the prefix when referencing tables.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.defaultCatalog"</span><span class="p">,</span> <span class="s">"lakefs"</span><span class="p">)</span> \
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configure the S3A Hadoop FileSystem for lakeFS.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3.impl"</span><span class="p">,</span> <span class="s">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.endpoint"</span><span class="p">,</span> <span class="n">lakefsEndPoint</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.access.key"</span><span class="p">,</span> <span class="n">lakefsAccessKey</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.secret.key"</span><span class="p">,</span> <span class="n">lakefsSecretKey</span><span class="p">)</span> \
+ <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">)</span> \
+</code></pre></div>    </div>
+  </li>
+</ol>
+<h2 id="using-iceberg-tables-with-lakefs">
+  
+  
+    <a href="#using-iceberg-tables-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Iceberg tables with lakeFS
+  
+  
+</h2>
+    
+
+<p>When referencing tables you need to ensure that they have a database specified (as you would anyway), and then a lakeFS <a href="/understand/model.html#ref-expressions">reference</a> prefix.</p>
+
+<p>A reference is one of:</p>
+
+<ul>
+  <li>Branch</li>
+  <li>Tag</li>
+  <li>Expression (for example, <code class="language-plaintext highlighter-rouge">main~17</code> means <em>17 commits before main</em>)</li>
+</ul>
+
+<p><em>If you have not set your default catalog then you need to include this as a prefix to the lakeFS reference.</em></p>
+
+<p>Here are some examples:</p>
+
+<ul>
+  <li>
+    <p>The table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">main</code> branch of lakeFS:</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">main</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>The table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS:</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">dev</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>The table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS, configured through the Spark SQL catalog <code class="language-plaintext highlighter-rouge">foo</code>:</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">foo</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>One commit previous to the table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="nv">`dev~1`</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Only committed data on the table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="nv">`dev@`</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+<h2 id="migrating-an-existing-iceberg-table-to-lakefs-catalog">
+  
+  
+    <a href="#migrating-an-existing-iceberg-table-to-lakefs-catalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migrating an existing Iceberg Table to lakeFS Catalog
+  
+  
+</h2>
+    
+
+<p>This is done through an incremental copy from the original table into lakeFS.</p>
+
+<ol>
+  <li>Create a new lakeFS repository <code class="language-plaintext highlighter-rouge">lakectl repo create lakefs://example-repo &lt;base storage path&gt;</code></li>
+  <li>
+    <p>Initiate a spark session that can interact with the source iceberg table and the target lakeFS catalog.</p>
+
+    <p>Here’s an example of Hadoop and S3 session and lakeFS catalog with <a href="https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.4/bk_cloud-data-access/content/s3-per-bucket-configs.html">per-bucket config</a>:</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nc">SparkConf</span> <span class="n">conf</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">();</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">);</span>
+
+ <span class="c1">// set hadoop on S3 config (source tables we want to copy) for spark</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.catalog.hadoop_prod"</span><span class="o">,</span> <span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.catalog.hadoop_prod.type"</span><span class="o">,</span> <span class="s">"hadoop"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.catalog.hadoop_prod.warehouse"</span><span class="o">,</span> <span class="s">"s3a://my-bucket/warehouse/hadoop/"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.extensions"</span><span class="o">,</span> <span class="s">"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.my-bucket.access.key"</span><span class="o">,</span> <span class="s">"&lt;AWS_ACCESS_KEY&gt;"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.my-bucket.secret.key"</span><span class="o">,</span> <span class="s">"&lt;AWS_SECRET_KEY&gt;"</span><span class="o">);</span>
+
+ <span class="c1">// set lakeFS config (target catalog and repository)</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.catalog.lakefs"</span><span class="o">,</span> <span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="o">,</span> <span class="s">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.catalog.lakefs.warehouse"</span><span class="o">,</span> <span class="s">"lakefs://example-repo"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.sql.extensions"</span><span class="o">,</span> <span class="s">"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.access.key"</span><span class="o">,</span> <span class="s">"&lt;LAKEFS_ACCESS_KEY&gt;"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.secret.key"</span><span class="o">,</span> <span class="s">"&lt;LAKEFS_SECRET_KEY&gt;"</span><span class="o">);</span>
+ <span class="n">conf</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.endpoint"</span>  <span class="o">,</span> <span class="s">"&lt;LAKEFS_ENDPOINT&gt;"</span><span class="o">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Create Schema in lakeFS and copy the data</p>
+
+    <p>Example of copy with spark-sql:</p>
+
+    <pre><code class="language-SQL"> -- Create Iceberg Schema in lakeFS
+ CREATE SCHEMA IF NOT EXISTS &lt;lakefs-catalog&gt;.&lt;branch&gt;.&lt;db&gt;
+ -- Create new iceberg table in lakeFS from the source table (pre-lakeFS)
+ CREATE TABLE IF NOT EXISTS &lt;lakefs-catalog&gt;.&lt;branch&gt;.&lt;db&gt; USING iceberg AS SELECT * FROM &lt;iceberg-original-table&gt;
+</code></pre>
+  </li>
+</ol>
 
                 
 
