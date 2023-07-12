@@ -25,18 +25,18 @@
   
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Using R with lakeFS | lakeFS</title>
+<title>R | lakeFS</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="Using R with lakeFS" />
+<meta property="og:title" content="R" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="How to use lakeFS from R including creating branches, committing changes, and merging." />
 <meta property="og:description" content="How to use lakeFS from R including creating branches, committing changes, and merging." />
 <meta property="og:site_name" content="lakeFS" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Using R with lakeFS" />
+<meta property="twitter:title" content="R" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"How to use lakeFS from R including creating branches, committing changes, and merging.","headline":"Using R with lakeFS","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/integrations/r.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"How to use lakeFS from R including creating branches, committing changes, and merging.","headline":"R","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/integrations/r.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -224,7 +224,7 @@
                    class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/duckdb.html"
                    class="nav-list-link">DuckDB</a></li><li class="nav-list-item "><a href="/integrations/glue_hive_metastore.html"
                    class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item  active"><a href="/integrations/r.html"
-                   class="nav-list-link active">Using R with lakeFS</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
+                   class="nav-list-link active">R</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
                    class="nav-list-link">Presto/Trino</a></li><li class="nav-list-item "><a href="/integrations/athena.html"
                    class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/airbyte.html"
@@ -468,7 +468,7 @@
                     <li class="breadcrumb-nav-list-item"><a href="/integrations/">Integrations</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Using R with lakeFS</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>R</span></li>
                 </ol>
             </nav>
             
@@ -523,6 +523,7 @@
 <p>You can use any library that interfaces with S3. In this example we’ll use the <a href="https://github.com/cloudyr/aws.s3">aws.s3</a> library.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">install.packages</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s2">"aws.s3"</span><span class="p">))</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">aws.s3</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 <h3 id="configuration">
   
@@ -640,6 +641,49 @@
 </span></code></pre></div></div>
 
 <p>When listing objects in lakeFS there is a special case which is the repository/bucket level. When you list at this level you will get the branches returned as folders. These are not listed recursively, unless you list something under the branch. To understand more about this please refer to <a href="https://github.com/treeverse/lakeFS/issues/5441">#5441</a></p>
+<h3 id="working-with-arrow">
+  
+  
+    <a href="#working-with-arrow" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Working with Arrow
+  
+  
+</h3>
+    
+
+<p>Arrow’s <a href="https://arrow.apache.org/docs/r/index.html">R library</a> includes <a href="https://arrow.apache.org/docs/r/index.html#what-can-the-arrow-package-do">powerful support</a> for data analysis, including reading and writing multiple file formats including Parquet, Arrow, CSV, and JSON. It has functionality for <a href="https://arrow.apache.org/docs/r/articles/fs.html">connecting to S3</a>, and thus integrates perfectly with lakeFS.</p>
+
+<p>To start with install and load the library</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">install.packages</span><span class="p">(</span><span class="s2">"arrow"</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">arrow</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Then create an S3FileSystem object to connect to your lakeFS instance</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lakefs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">S3FileSystem</span><span class="o">$</span><span class="n">create</span><span class="p">(</span><span class="w">
+    </span><span class="n">endpoint_override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"lakefs.mycorp.com:8000"</span><span class="p">,</span><span class="w">
+    </span><span class="n">scheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http"</span><span class="w">
+    </span><span class="n">access_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">secret_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w"> 
+    </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>From here you can list the contents of a particular lakeFS repository and branch</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lakefs</span><span class="o">$</span><span class="n">ls</span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"quickstart/main"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>To read a Parquet from lakeFS with R use the <code class="language-plaintext highlighter-rouge">read_parquet</code> function</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lakes</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read_parquet</span><span class="p">(</span><span class="n">lakefs</span><span class="o">$</span><span class="n">path</span><span class="p">(</span><span class="s2">"quickstart/main/lakes.parquet"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Writing a file follows a similar pattern. Here is rewriting the same file as above but in Arrow format</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">write_feather</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lakes</span><span class="p">,</span><span class="w">
+              </span><span class="n">sink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lakefs</span><span class="o">$</span><span class="n">path</span><span class="p">(</span><span class="s2">"quickstart/main/lakes.arrow"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
 <h2 id="performing-lakefs-operations-using-the-lakefs-api-from-r">
   
   
