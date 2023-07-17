@@ -496,7 +496,10 @@
 
 <ol id="markdown-toc">
   <li><a href="#setup" id="markdown-toc-setup">Setup</a></li>
-  <li><a href="#configure" id="markdown-toc-configure">Configure</a></li>
+  <li><a href="#configure" id="markdown-toc-configure">Configure</a>    <ol>
+      <li><a href="#iceberg-and-catalog-metadata-caching" id="markdown-toc-iceberg-and-catalog-metadata-caching">Iceberg and Catalog Metadata Caching</a></li>
+    </ol>
+  </li>
   <li><a href="#using-iceberg-tables-with-lakefs" id="markdown-toc-using-iceberg-tables-with-lakefs">Using Iceberg tables with lakeFS</a></li>
   <li><a href="#migrating-an-existing-iceberg-table-to-lakefs-catalog" id="markdown-toc-migrating-an-existing-iceberg-table-to-lakefs-catalog">Migrating an existing Iceberg Table to lakeFS Catalog</a></li>
 </ol>
@@ -575,6 +578,21 @@
 </code></pre></div>    </div>
   </li>
 </ol>
+<h3 id="iceberg-and-catalog-metadata-caching">
+  
+  
+    <a href="#iceberg-and-catalog-metadata-caching" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Iceberg and Catalog Metadata Caching
+  
+  
+</h3>
+    
+
+<p>By default, Iceberg caches metadata entries. This can result in unexpected behaviour when working on the same table with different references (such as branches) as it doesn’t invalidate the cache. You can read more about this in more detail <a href="https://github.com/treeverse/lakefs-iceberg/issues/27">here</a>.</p>
+
+<p>For this reason it is recommended to disable the cache:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.cache-enabled"</span><span class="p">,</span> <span class="s">"false"</span><span class="p">)</span> \
+</code></pre></div></div>
 <h2 id="using-iceberg-tables-with-lakefs">
   
   

@@ -1604,7 +1604,7 @@
   },"229": {
     "doc": "Apache Iceberg",
     "title": "Table of contents",
-    "content": ". | Setup | Configure | Using Iceberg tables with lakeFS | Migrating an existing Iceberg Table to lakeFS Catalog | . lakeFS provides its own implementation of the SparkCatalog, which handles the writing of the Iceberg data to lakeFS as well as reading from it and branching. Using straightforward table identifiers you can switch between branches when reading and writing data: . SELECT * FROM catalog.ref.db.table . ",
+    "content": ". | Setup | Configure . | Iceberg and Catalog Metadata Caching | . | Using Iceberg tables with lakeFS | Migrating an existing Iceberg Table to lakeFS Catalog | . lakeFS provides its own implementation of the SparkCatalog, which handles the writing of the Iceberg data to lakeFS as well as reading from it and branching. Using straightforward table identifiers you can switch between branches when reading and writing data: . SELECT * FROM catalog.ref.db.table . ",
     "url": "/integrations/iceberg.html#table-of-contents",
     
     "relUrl": "/integrations/iceberg.html#table-of-contents"
@@ -1618,7 +1618,7 @@
   },"231": {
     "doc": "Apache Iceberg",
     "title": "Configure",
-    "content": ". | Set up the Spark SQL catalog: .config(\"spark.sql.catalog.lakefs\", \"org.apache.iceberg.spark.SparkCatalog\") \\ .config(\"spark.sql.catalog.lakefs.catalog-impl\", \"io.lakefs.iceberg.LakeFSCatalog\") \\ .config(\"spark.sql.catalog.lakefs.warehouse\", f\"lakefs://{repo_name}\") \\ . | Optionally, you can set the lakeFS catalog to be the default one, which means that you don’t need to include the prefix when referencing tables.config(\"spark.sql.defaultCatalog\", \"lakefs\") \\ . | Configure the S3A Hadoop FileSystem for lakeFS.config(\"spark.hadoop.fs.s3.impl\", \"org.apache.hadoop.fs.s3a.S3AFileSystem\") \\ .config(\"spark.hadoop.fs.s3a.endpoint\", lakefsEndPoint) \\ .config(\"spark.hadoop.fs.s3a.access.key\", lakefsAccessKey) \\ .config(\"spark.hadoop.fs.s3a.secret.key\", lakefsSecretKey) \\ .config(\"spark.hadoop.fs.s3a.path.style.access\", \"true\") \\ . | . ",
+    "content": ". | Set up the Spark SQL catalog: .config(\"spark.sql.catalog.lakefs\", \"org.apache.iceberg.spark.SparkCatalog\") \\ .config(\"spark.sql.catalog.lakefs.catalog-impl\", \"io.lakefs.iceberg.LakeFSCatalog\") \\ .config(\"spark.sql.catalog.lakefs.warehouse\", f\"lakefs://{repo_name}\") \\ . | Optionally, you can set the lakeFS catalog to be the default one, which means that you don’t need to include the prefix when referencing tables.config(\"spark.sql.defaultCatalog\", \"lakefs\") \\ . | Configure the S3A Hadoop FileSystem for lakeFS.config(\"spark.hadoop.fs.s3.impl\", \"org.apache.hadoop.fs.s3a.S3AFileSystem\") \\ .config(\"spark.hadoop.fs.s3a.endpoint\", lakefsEndPoint) \\ .config(\"spark.hadoop.fs.s3a.access.key\", lakefsAccessKey) \\ .config(\"spark.hadoop.fs.s3a.secret.key\", lakefsSecretKey) \\ .config(\"spark.hadoop.fs.s3a.path.style.access\", \"true\") \\ . | . Iceberg and Catalog Metadata Caching . By default, Iceberg caches metadata entries. This can result in unexpected behaviour when working on the same table with different references (such as branches) as it doesn’t invalidate the cache. You can read more about this in more detail here. For this reason it is recommended to disable the cache: .config(\"spark.sql.catalog.lakefs.cache-enabled\", \"false\") \\ . ",
     "url": "/integrations/iceberg.html#configure",
     
     "relUrl": "/integrations/iceberg.html#configure"
