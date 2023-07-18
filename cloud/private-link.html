@@ -281,10 +281,8 @@
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/cloud/"
            class="nav-list-link">lakeFS Cloud</a><ul class="nav-list "><li class="nav-list-item "><a href="/cloud/auditing.html"
-                   class="nav-list-link">Auditing</a></li><li class="nav-list-item "><a href="/cloud/azure-private-link.html"
-                   class="nav-list-link">Azure Private Link</a></li><li class="nav-list-item "><a href="/cloud/managed-gc.html"
-                   class="nav-list-link">Managed Garbage Collection</a></li><li class="nav-list-item "><a href="/cloud/setup-azure.html"
-                   class="nav-list-link">On Azure</a></li><li class="nav-list-item  active"><a href="/cloud/private-link.html"
+                   class="nav-list-link">Auditing</a></li><li class="nav-list-item "><a href="/cloud/managed-gc.html"
+                   class="nav-list-link">Managed Garbage Collection</a></li><li class="nav-list-item  active"><a href="/cloud/private-link.html"
                    class="nav-list-link active">Private Link</a></li><li class="nav-list-item "><a href="/cloud/sso.html"
                    class="nav-list-link">Single Sign On (SSO)</a></li><li class="nav-list-item "><a href="/cloud/unity-delta-sharing.html"
                    class="nav-list-link">Unity Delta Sharing</a></li></ul></li><li
@@ -508,6 +506,9 @@
   <li><a href="#supported-vendors" id="markdown-toc-supported-vendors">Supported Vendors</a></li>
   <li><a href="#access-methods" id="markdown-toc-access-methods">Access Methods</a></li>
   <li><a href="#setting-up-private-link" id="markdown-toc-setting-up-private-link">Setting up Private Link</a></li>
+  <li><a href="#register-your-azure-subscription" id="markdown-toc-register-your-azure-subscription">Register your Azure subscription</a></li>
+  <li><a href="#create-an-azure-private-link-connection-to-lakefs-cloud" id="markdown-toc-create-an-azure-private-link-connection-to-lakefs-cloud">Create an Azure Private Link connection to lakeFS Cloud</a></li>
+  <li><a href="#create-a-dns-entry-for-your-private-endpoint" id="markdown-toc-create-a-dns-entry-for-your-private-endpoint">Create a DNS entry for your private endpoint</a></li>
 </ol>
 
 </div>
@@ -520,7 +521,14 @@
 </h2>
     
 
-<p>At the moment, we support Private-Link with AWS. If you are looking for Private Link for Azure or GCP please <a href="mailto:support@treeverse.io">contact us</a>.</p>
+<p>At the moment, we support Private-Link with <strong>AWS</strong> and <strong>Azure</strong>. If you are looking for Private Link for GCP please <a href="mailto:support@treeverse.io">contact us</a>.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#aws">AWS</a></li>
+    <li><a href="#azure">Azure</a></li>
+  </ul>
+  <div id="aws">
 <h2 id="access-methods">
   
   
@@ -530,18 +538,18 @@
 </h2>
     
 
-<p>There are two types of Private Link implementation:</p>
+    <p>There are two types of Private Link implementation:</p>
 
-<ul>
-  <li>
-    <p><strong>Front-End Access</strong> refers to API and UI access. Use this option if you’d like your lakeFS application to be exposed only to your infrastructure and not to the whole internet.</p>
-  </li>
-  <li>
-    <p><strong>Back-End Access</strong> refers to the network communication between the lakeFS clusters we host, and your infrastructure. Use this option if you’d like lakeFS to communicate with your servers privately and not over the internet.</p>
-  </li>
-</ul>
+    <ul>
+      <li>
+        <p><strong>Front-End Access</strong> refers to API and UI access. Use this option if you’d like your lakeFS application to be exposed only to your infrastructure and not to the whole internet.</p>
+      </li>
+      <li>
+        <p><strong>Back-End Access</strong> refers to the network communication between the lakeFS clusters we host, and your infrastructure. Use this option if you’d like lakeFS to communicate with your servers privately and not over the internet.</p>
+      </li>
+    </ul>
 
-<p>The two types of access are not mutually exclusive nor are they dependent on each other.</p>
+    <p>The two types of access are not mutually exclusive nor are they dependent on each other.</p>
 <h2 id="setting-up-private-link">
   
   
@@ -559,31 +567,31 @@
 </h3>
     
 
-<p>Prerequisites:</p>
-<ul>
-  <li>Administrator access to your AWS account</li>
-  <li>In order for us to communicate with your account privately, we’ll need to create a service endpoint on our end first.</li>
-</ul>
-
-<p>Steps:</p>
-<ol>
-  <li>Login to your AWS account</li>
-  <li>Go to AWS VPC Service</li>
-  <li>Filter the relevant VPC &amp; Navigate to <strong>Endpoints</strong></li>
-  <li>Click <strong>Create endpoint</strong></li>
-  <li>Fill in the following:
+    <p>Prerequisites:</p>
     <ul>
-      <li><strong>Name</strong>: lakefs-cloud</li>
-      <li><strong>Service category</strong>: Other endpoint services</li>
-      <li><strong>Service name</strong>: input from Treeverse team (see prerequisites)</li>
-      <li>Click <strong>Verify service</strong></li>
-      <li>Pick the VPC you’d like to expose this service to.</li>
-      <li>Click <strong>Create endpoint</strong></li>
+      <li>Administrator access to your AWS account</li>
+      <li>In order for us to communicate with your account privately, we’ll need to create a service endpoint on our end first.</li>
     </ul>
-  </li>
-</ol>
 
-<p>Now you can access your infrastructure privately using the endpoint DNS name. If you would like to change the DNS name to a friendly one please contact <a href="mailto:support@treeverse.io">support@treeverse.io</a>.</p>
+    <p>Steps:</p>
+    <ol>
+      <li>Login to your AWS account</li>
+      <li>Go to AWS VPC Service</li>
+      <li>Filter the relevant VPC &amp; Navigate to <strong>Endpoints</strong></li>
+      <li>Click <strong>Create endpoint</strong></li>
+      <li>Fill in the following:
+        <ul>
+          <li><strong>Name</strong>: lakefs-cloud</li>
+          <li><strong>Service category</strong>: Other endpoint services</li>
+          <li><strong>Service name</strong>: input from Treeverse team (see prerequisites)</li>
+          <li>Click <strong>Verify service</strong></li>
+          <li>Pick the VPC you’d like to expose this service to.</li>
+          <li>Click <strong>Create endpoint</strong></li>
+        </ul>
+      </li>
+    </ol>
+
+    <p>Now you can access your infrastructure privately using the endpoint DNS name. If you would like to change the DNS name to a friendly one please contact <a href="mailto:support@treeverse.io">support@treeverse.io</a>.</p>
 <h3 id="back-end-access">
   
   
@@ -593,33 +601,92 @@
 </h3>
     
 
-<p>Prerequisites:</p>
-<ul>
-  <li>Administrator access to your AWS account</li>
-</ul>
-
-<p>Steps:</p>
-<ol>
-  <li>Login to your AWS account</li>
-  <li>Go to AWS VPC Service</li>
-  <li>Filter the relevant VPC &amp; Navigate to <strong>Endpoints</strong></li>
-  <li>Click <strong>endpoint service</strong></li>
-  <li>Fill in the following:
+    <p>Prerequisites:</p>
     <ul>
-      <li><strong>Name</strong>: lakefs-cloud</li>
-      <li><strong>Load Balancer Type</strong>: Network</li>
-      <li><strong>Available load balancers</strong>: pick the load balancer you’d like lakefs-cloud to send events to.</li>
-      <li>Click <strong>Create</strong></li>
+      <li>Administrator access to your AWS account</li>
     </ul>
-  </li>
-  <li>Pick the newly created <strong>Endpoint Service</strong> from within the <strong>Endpoint Services</strong> page.</li>
-  <li>Navigate to the <strong>Allow principals</strong> tab.</li>
-  <li>Click <strong>Allow principals</strong></li>
-  <li>Fill in the following ARN: <code class="language-plaintext highlighter-rouge">arn:aws:iam::924819537486:root</code></li>
-  <li>Click <strong>Allow principals</strong></li>
-</ol>
 
-<p>That’s it on your end! Now, we’ll need the <strong>service name</strong> you’ve just created in order to assosicate it with our infrastructure, once we do, we’ll be ready to use the back-end access privately.</p>
+    <p>Steps:</p>
+    <ol>
+      <li>Login to your AWS account</li>
+      <li>Go to AWS VPC Service</li>
+      <li>Filter the relevant VPC &amp; Navigate to <strong>Endpoints</strong></li>
+      <li>Click <strong>endpoint service</strong></li>
+      <li>Fill in the following:
+        <ul>
+          <li><strong>Name</strong>: lakefs-cloud</li>
+          <li><strong>Load Balancer Type</strong>: Network</li>
+          <li><strong>Available load balancers</strong>: pick the load balancer you’d like lakefs-cloud to send events to.</li>
+          <li>Click <strong>Create</strong></li>
+        </ul>
+      </li>
+      <li>Pick the newly created <strong>Endpoint Service</strong> from within the <strong>Endpoint Services</strong> page.</li>
+      <li>Navigate to the <strong>Allow principals</strong> tab.</li>
+      <li>Click <strong>Allow principals</strong></li>
+      <li>Fill in the following ARN: <code class="language-plaintext highlighter-rouge">arn:aws:iam::924819537486:root</code></li>
+      <li>Click <strong>Allow principals</strong></li>
+    </ol>
+
+    <p>That’s it on your end! Now, we’ll need the <strong>service name</strong> you’ve just created in order to associate it with our infrastructure, once we do, we’ll be ready to use the back-end access privately.</p>
+  </div>
+
+  <div id="azure">
+    <p><a href="https://learn.microsoft.com/en-us/azure/private-link/private-link-overview">Azure Private Link</a> enables secure access to Azure services from a private endpoint within your virtual network.
+By using Azure Private Link with lakeFS, you can securely access lakeFS services without exposing traffic to the public internet.
+In this manual, we will guide you through the steps to enable Azure Private Link to your lakeFS instance.</p>
+<h2 id="register-your-azure-subscription">
+  
+  
+    <a href="#register-your-azure-subscription" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Register your Azure subscription
+  
+  
+</h2>
+    
+
+    <p>To automatically approve private endpoint connections to the lakeFS network, please provide us with your subscription. If required, you can register multiple subscriptions.</p>
+<h2 id="create-an-azure-private-link-connection-to-lakefs-cloud">
+  
+  
+    <a href="#create-an-azure-private-link-connection-to-lakefs-cloud" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create an Azure Private Link connection to lakeFS Cloud
+  
+  
+</h2>
+    
+
+    <p>Once your subscription is in our trusted subscriptions navigate to the Azure portal and do the following steps:</p>
+    <ol>
+      <li>Navigate to the private endpoint</li>
+      <li>Click Create</li>
+      <li>On the first step (basics):
+        <ul>
+          <li>Select your subscription</li>
+          <li>Specify the desired resource group used to access lakeFS</li>
+          <li>Provide a name for your private endpoint instance</li>
+          <li>Specify the region of your lakeFS instance</li>
+        </ul>
+      </li>
+      <li>On the second step (Resource)
+        <ul>
+          <li>In connection method select <code class="language-plaintext highlighter-rouge">connect to an Azure resource by resource ID or alias</code></li>
+          <li>Insert the alias provided by us into the Resource ID or alias</li>
+          <li>No need to add a request message</li>
+        </ul>
+      </li>
+      <li>Continue with the steps and run Review + Create</li>
+    </ol>
+<h2 id="create-a-dns-entry-for-your-private-endpoint">
+  
+  
+    <a href="#create-a-dns-entry-for-your-private-endpoint" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a DNS entry for your private endpoint
+  
+  
+</h2>
+    
+
+    <p>Update your DNS server to resolve your account URL (which will be provided by us) to the Private Link IP address.
+You can add the DNS entry to your on-premises DNS server or private DNS on your VNet, to access lakeFS services.</p>
+  </div>
+</div>
 
                 
 
