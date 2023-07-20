@@ -167,68 +167,68 @@
     
     "relUrl": "/integrations/airbyte.html"
   },"24": {
-    "doc": "Airflow Hooks",
-    "title": "Airflow Hooks",
-    "content": " ",
-    "url": "/hooks/airflow.html",
-    
-    "relUrl": "/hooks/airflow.html"
-  },"25": {
-    "doc": "Airflow Hooks",
-    "title": "Table of contents",
-    "content": ". | Action file Airflow hook properties | Hook Record in configuration field | . Airflow Hook triggers a DAG run in an Airflow installation using Airflow’s REST API. The hook run succeeds if the DAG was triggered, and fails otherwise. ",
-    "url": "/hooks/airflow.html#table-of-contents",
-    
-    "relUrl": "/hooks/airflow.html#table-of-contents"
-  },"26": {
-    "doc": "Airflow Hooks",
-    "title": "Action file Airflow hook properties",
-    "content": "See the Action configuration for overall configuration schema and details. | Property | Description | Data Type | Example | Required | Environment Variables Supported | . | url | The URL of the Airflow instance | String | http://localhost:8080 | yes | no | . | dag_id | The DAG to trigger | String | example_dag | yes | no | . | username | The name of the Airflow user performing the request | String | admin | yes | no | . | password | The password of the Airflow user performing the request | String | admin | yes | yes | . | dag_conf | DAG run configuration that will be passed as is | JSON |   | no | no | . | wait_for_dag | Wait for DAG run to complete and reflect state (default: false) | Boolean |   | no | no | . | timeout | Time to wait for the DAG run to complete (default: 1m) | String (golang’s Duration representation) |   | no | no | . Example: ... hooks: - id: trigger_my_dag type: airflow description: Trigger an example_dag properties: url: \"http://localhost:8000\" dag_id: \"example_dag\" username: \"admin\" password: \"{{ ENV.AIRFLOW_SECRET }}\" dag_conf: some: \"additional_conf\" ... ",
-    "url": "/hooks/airflow.html#action-file-airflow-hook-properties",
-    
-    "relUrl": "/hooks/airflow.html#action-file-airflow-hook-properties"
-  },"27": {
-    "doc": "Airflow Hooks",
-    "title": "Hook Record in configuration field",
-    "content": "lakeFS will add an entry to the Airflow request configuration property (conf) with the event that triggered the action. The key of the record will be lakeFS_event and the value will match the one described here . ",
-    "url": "/hooks/airflow.html#hook-record-in-configuration-field",
-    
-    "relUrl": "/hooks/airflow.html#hook-record-in-configuration-field"
-  },"28": {
     "doc": "Airflow",
     "title": "Using lakeFS with Airflow",
     "content": "Apache Airflow is a platform that allows users to programmatically author, schedule, and monitor workflows. To run Airflow with lakeFS, you need to follow a few steps. ",
     "url": "/integrations/airflow.html#using-lakefs-with-airflow",
     
     "relUrl": "/integrations/airflow.html#using-lakefs-with-airflow"
-  },"29": {
+  },"25": {
     "doc": "Airflow",
     "title": "Create a lakeFS connection on Airflow",
     "content": "To access the lakeFS server and authenticate with it, create a new Airflow Connection of type HTTP and add it to your DAG. You can do that using the Airflow UI or the CLI. Here’s an example Airflow command that does just that: . airflow connections add conn_lakefs --conn-type=HTTP --conn-host=http://&lt;LAKEFS_ENDPOINT&gt; \\ --conn-extra='{\"access_key_id\":\"&lt;LAKEFS_ACCESS_KEY_ID&gt;\",\"secret_access_key\":\"&lt;LAKEFS_SECRET_ACCESS_KEY&gt;\"}' . ",
     "url": "/integrations/airflow.html#create-a-lakefs-connection-on-airflow",
     
     "relUrl": "/integrations/airflow.html#create-a-lakefs-connection-on-airflow"
-  },"30": {
+  },"26": {
     "doc": "Airflow",
     "title": "Install the lakeFS Airflow package",
     "content": "You can use pip to install the package . pip install airflow-provider-lakefs . ",
     "url": "/integrations/airflow.html#install-the-lakefs-airflow-package",
     
     "relUrl": "/integrations/airflow.html#install-the-lakefs-airflow-package"
-  },"31": {
+  },"27": {
     "doc": "Airflow",
     "title": "Use the package",
     "content": "Operators . The package exposes several operations to interact with a lakeFS server: . | CreateBranchOperator creates a new lakeFS branch from the source branch (main by default). task_create_branch = CreateBranchOperator( task_id='create_branch', repo='example-repo', branch='example-branch', source_branch='main' ) . | CommitOperator commits uncommitted changes to a branch. task_commit = CommitOperator( task_id='commit', repo='example-repo', branch='example-branch', msg='committing to lakeFS using airflow!', metadata={'committed_from\": \"airflow-operator'} ) . | MergeOperator merges 2 lakeFS branches. task_merge = MergeOperator( task_id='merge_branches', source_ref='example-branch', destination_branch='main', msg='merging job outputs', metadata={'committer': 'airflow-operator'} ) . | . Sensors . Sensors are also available that allow synchronizing a running DAG with external operations: . | CommitSensor waits until a commit has been applied to the branch . task_sense_commit = CommitSensor( repo='example-repo', branch='example-branch', task_id='sense_commit' ) . | FileSensor waits until a given file is present on a branch. task_sense_file = FileSensor( task_id='sense_file', repo='example-repo', branch='example-branch', path=\"file/to/sense\" ) . | . Example . This example DAG in the airflow-provider-lakeFS repository shows how to use all of these. Performing other operations . Sometimes an operator might not be supported by airflow-provider-lakeFS yet. You can access lakeFS directly by using: . | SimpleHttpOperator to send API requests to lakeFS. | BashOperator with lakectl commands. For example, deleting a branch using BashOperator: commit_extract = BashOperator( task_id='delete_branch', bash_command='lakectl branch delete lakefs://example-repo/example-branch', dag=dag, ) . | . Note lakeFS version &lt;= v0.33.1 uses ‘@’ (instead of ‘/’) as separator between repository and branch. ",
     "url": "/integrations/airflow.html#use-the-package",
     
     "relUrl": "/integrations/airflow.html#use-the-package"
-  },"32": {
+  },"28": {
     "doc": "Airflow",
     "title": "Airflow",
     "content": " ",
     "url": "/integrations/airflow.html",
     
     "relUrl": "/integrations/airflow.html"
+  },"29": {
+    "doc": "Airflow Hooks",
+    "title": "Airflow Hooks",
+    "content": " ",
+    "url": "/hooks/airflow.html",
+    
+    "relUrl": "/hooks/airflow.html"
+  },"30": {
+    "doc": "Airflow Hooks",
+    "title": "Table of contents",
+    "content": ". | Action file Airflow hook properties | Hook Record in configuration field | . Airflow Hook triggers a DAG run in an Airflow installation using Airflow’s REST API. The hook run succeeds if the DAG was triggered, and fails otherwise. ",
+    "url": "/hooks/airflow.html#table-of-contents",
+    
+    "relUrl": "/hooks/airflow.html#table-of-contents"
+  },"31": {
+    "doc": "Airflow Hooks",
+    "title": "Action file Airflow hook properties",
+    "content": "See the Action configuration for overall configuration schema and details. | Property | Description | Data Type | Example | Required | Environment Variables Supported | . | url | The URL of the Airflow instance | String | http://localhost:8080 | yes | no | . | dag_id | The DAG to trigger | String | example_dag | yes | no | . | username | The name of the Airflow user performing the request | String | admin | yes | no | . | password | The password of the Airflow user performing the request | String | admin | yes | yes | . | dag_conf | DAG run configuration that will be passed as is | JSON |   | no | no | . | wait_for_dag | Wait for DAG run to complete and reflect state (default: false) | Boolean |   | no | no | . | timeout | Time to wait for the DAG run to complete (default: 1m) | String (golang’s Duration representation) |   | no | no | . Example: ... hooks: - id: trigger_my_dag type: airflow description: Trigger an example_dag properties: url: \"http://localhost:8000\" dag_id: \"example_dag\" username: \"admin\" password: \"{{ ENV.AIRFLOW_SECRET }}\" dag_conf: some: \"additional_conf\" ... ",
+    "url": "/hooks/airflow.html#action-file-airflow-hook-properties",
+    
+    "relUrl": "/hooks/airflow.html#action-file-airflow-hook-properties"
+  },"32": {
+    "doc": "Airflow Hooks",
+    "title": "Hook Record in configuration field",
+    "content": "lakeFS will add an entry to the Airflow request configuration property (conf) with the event that triggered the action. The key of the record will be lakeFS_event and the value will match the one described here . ",
+    "url": "/hooks/airflow.html#hook-record-in-configuration-field",
+    
+    "relUrl": "/hooks/airflow.html#hook-record-in-configuration-field"
   },"33": {
     "doc": "API Reference",
     "title": "API Reference",
@@ -1721,180 +1721,180 @@
     
     "relUrl": "/howto/import.html#copying-data-into-a-lakefs-repository"
   },"246": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks in lakeFS",
-    "content": " ",
-    "url": "/hooks/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/hooks/#actions-and-hooks-in-lakefs"
-  },"247": {
-    "doc": "Actions and Hooks",
-    "title": "Table of contents",
-    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
-    "url": "/hooks/#table-of-contents",
-    
-    "relUrl": "/hooks/#table-of-contents"
-  },"248": {
-    "doc": "Actions and Hooks",
-    "title": "Overview",
-    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
-    "url": "/hooks/#overview",
-    
-    "relUrl": "/hooks/#overview"
-  },"249": {
-    "doc": "Actions and Hooks",
-    "title": "Configuration",
-    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
-    "url": "/hooks/#configuration",
-    
-    "relUrl": "/hooks/#configuration"
-  },"250": {
-    "doc": "Actions and Hooks",
-    "title": "Supported Events",
-    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
-    "url": "/hooks/#supported-events",
-    
-    "relUrl": "/hooks/#supported-events"
-  },"251": {
-    "doc": "Actions and Hooks",
-    "title": "Runs API &amp; CLI",
-    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
-    "url": "/hooks/#runs-api--cli",
-    
-    "relUrl": "/hooks/#runs-api--cli"
-  },"252": {
-    "doc": "Actions and Hooks",
-    "title": "Result Files",
-    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
-    "url": "/hooks/#result-files",
-    
-    "relUrl": "/hooks/#result-files"
-  },"253": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks",
-    "content": " ",
-    "url": "/hooks/",
-    
-    "relUrl": "/hooks/"
-  },"254": {
     "doc": "Integrations",
     "title": "Integrations",
     "content": " ",
     "url": "/integrations/",
     
     "relUrl": "/integrations/"
+  },"247": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks in lakeFS",
+    "content": " ",
+    "url": "/hooks/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/hooks/#actions-and-hooks-in-lakefs"
+  },"248": {
+    "doc": "Actions and Hooks",
+    "title": "Table of contents",
+    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
+    "url": "/hooks/#table-of-contents",
+    
+    "relUrl": "/hooks/#table-of-contents"
+  },"249": {
+    "doc": "Actions and Hooks",
+    "title": "Overview",
+    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
+    "url": "/hooks/#overview",
+    
+    "relUrl": "/hooks/#overview"
+  },"250": {
+    "doc": "Actions and Hooks",
+    "title": "Configuration",
+    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
+    "url": "/hooks/#configuration",
+    
+    "relUrl": "/hooks/#configuration"
+  },"251": {
+    "doc": "Actions and Hooks",
+    "title": "Supported Events",
+    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
+    "url": "/hooks/#supported-events",
+    
+    "relUrl": "/hooks/#supported-events"
+  },"252": {
+    "doc": "Actions and Hooks",
+    "title": "Runs API &amp; CLI",
+    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
+    "url": "/hooks/#runs-api--cli",
+    
+    "relUrl": "/hooks/#runs-api--cli"
+  },"253": {
+    "doc": "Actions and Hooks",
+    "title": "Result Files",
+    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
+    "url": "/hooks/#result-files",
+    
+    "relUrl": "/hooks/#result-files"
+  },"254": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks",
+    "content": " ",
+    "url": "/hooks/",
+    
+    "relUrl": "/hooks/"
   },"255": {
-    "doc": "⭐ Quickstart ⭐",
-    "title": "lakeFS Quickstart",
-    "content": "Welcome to lakeFS 👋🏻 . lakeFS provides a “Git for data” platform enabling you to implement best practices from software engineering on your data lake, including branching and merging, CI/CD, and production-like dev/test environments. This quickstart will introduce you to some of the core ideas in lakeFS and show what you can do by illustrating the concept of branching, merging, and rolling back changes to data. It’s laid out in five short sections: . Launch . Spin up the quickstart environment locally under Docker . Query . Query the pre-populated data on the main branch . Branch . Make changes to the data on a new branch . Merge . Merge the changed data back to the main branch . Rollback . Change our mind and revert the changes . Actions . Use Actions to trigger code when an event occurs . You can use the 30-day free trial of lakeFS Cloud if you want to try out lakeFS without installing anything. ",
-    "url": "/quickstart/#lakefs-quickstart",
-    
-    "relUrl": "/quickstart/#lakefs-quickstart"
-  },"256": {
-    "doc": "⭐ Quickstart ⭐",
-    "title": "⭐ Quickstart ⭐",
-    "content": " ",
-    "url": "/quickstart/",
-    
-    "relUrl": "/quickstart/"
-  },"257": {
-    "doc": "Deploy and Setup lakeFS",
-    "title": "Deploy and setup lakeFS",
-    "content": "For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . ",
-    "url": "/deploy/#deploy-and-setup-lakefs",
-    
-    "relUrl": "/deploy/#deploy-and-setup-lakefs"
-  },"258": {
-    "doc": "Deploy and Setup lakeFS",
-    "title": "Deploy and Setup lakeFS",
-    "content": " ",
-    "url": "/deploy/",
-    
-    "relUrl": "/deploy/"
-  },"259": {
-    "doc": "Use Cases",
-    "title": "Use Cases",
-    "content": " ",
-    "url": "/use_cases/",
-    
-    "relUrl": "/use_cases/"
-  },"260": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management",
-    "content": " ",
-    "url": "/understand/data_lifecycle_management/",
-    
-    "relUrl": "/understand/data_lifecycle_management/"
-  },"261": {
-    "doc": "How it Works",
-    "title": "How it Works",
-    "content": "This section includes all the details about lakeFS internals and implementation details . ",
-    "url": "/understand/how/",
-    
-    "relUrl": "/understand/how/"
-  },"262": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": "This section includes all the details about the lakeFS open source project. ",
-    "url": "/understand/",
-    
-    "relUrl": "/understand/"
-  },"263": {
     "doc": "Reference",
     "title": "Reference",
     "content": " ",
     "url": "/reference/",
     
     "relUrl": "/reference/"
-  },"264": {
+  },"256": {
     "doc": "lakeFS Cloud",
     "title": "lakeFS Cloud",
     "content": "lakeFS Cloud is a fully-managed lakeFS solution provided by Treeverse, implemented using our best practices, providing high availability, auto-scaling, support and enterprise-ready features. ",
     "url": "/cloud/",
     
     "relUrl": "/cloud/"
-  },"265": {
+  },"257": {
     "doc": "lakeFS Cloud",
     "title": "lakeFS Cloud Features",
     "content": ". | Role-Based Access Control | Auditing | Single-Sign-On (including support for SAML, OIDC, AD FS, Okta, and Azure AD) | Managed Garbage Collection | Private-Link | SOC 2 Type II Compliance | . ",
     "url": "/cloud/#lakefs-cloud-features",
     
     "relUrl": "/cloud/#lakefs-cloud-features"
-  },"266": {
+  },"258": {
     "doc": "lakeFS Cloud",
     "title": "How lakeFS Cloud interacts with your infrastructure",
     "content": "Treeverse hosts and manages a dedicated lakeFS instance that interfaces with data held in your object store, such as S3. flowchart TD U[Users] --&gt; LFC subgraph Your Infrastructure IAMM[lakeFS Managed GC IAM Role] --&gt; ObjectStore[Client's Object Store] IAMA[lakeFS Application IAM Role] --&gt; ObjectStore end subgraph Treeverse's Infrastructure MGC[Managed Garbage Collection] --&gt; EMR[Elastic Map Reduce] EMR --&gt; IAMM MGC --&gt; CP CP[Control Plane] LFC --&gt; CP subgraph Client's Tenant LFC[lakeFS Cloud] --&gt; DB[Refstore Database] end LFC --&gt; IAMC[lakeFS Connector IAM Role] IAMC --&gt;|ExternalID| IAMA end . ",
     "url": "/cloud/#how-lakefs-cloud-interacts-with-your-infrastructure",
     
     "relUrl": "/cloud/#how-lakefs-cloud-interacts-with-your-infrastructure"
-  },"267": {
+  },"259": {
     "doc": "lakeFS Cloud",
     "title": "Setting up lakeFS Cloud",
     "content": "AWS / Azure . Please follow the self-service setup wizard on lakeFS Cloud . GCP . Please contact us for onboarding instructions. ",
     "url": "/cloud/#setting-up-lakefs-cloud",
     
     "relUrl": "/cloud/#setting-up-lakefs-cloud"
-  },"268": {
-    "doc": "lakeFS Enterprise",
-    "title": "lakeFS Enterprise",
-    "content": "lakeFS Enterprise is an enterprise-ready lakeFS solution that provides a support SLA and additional features to the open-source version of lakeFS. The additional features are: . | RBAC | SSO | Support SLA | . ",
-    "url": "/enterprise/",
+  },"260": {
+    "doc": "Use Cases",
+    "title": "Use Cases",
+    "content": " ",
+    "url": "/use_cases/",
     
-    "relUrl": "/enterprise/"
-  },"269": {
+    "relUrl": "/use_cases/"
+  },"261": {
     "doc": "How-To",
     "title": "How-To",
     "content": " ",
     "url": "/howto/",
     
     "relUrl": "/howto/"
-  },"270": {
+  },"262": {
+    "doc": "How it Works",
+    "title": "How it Works",
+    "content": "This section includes all the details about lakeFS internals and implementation details . ",
+    "url": "/understand/how/",
+    
+    "relUrl": "/understand/how/"
+  },"263": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management",
+    "content": " ",
+    "url": "/understand/data_lifecycle_management/",
+    
+    "relUrl": "/understand/data_lifecycle_management/"
+  },"264": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": "This section includes all the details about the lakeFS open source project. ",
+    "url": "/understand/",
+    
+    "relUrl": "/understand/"
+  },"265": {
+    "doc": "lakeFS Enterprise",
+    "title": "lakeFS Enterprise",
+    "content": "lakeFS Enterprise is an enterprise-ready lakeFS solution that provides a support SLA and additional features to the open-source version of lakeFS. The additional features are: . | RBAC | SSO | Support SLA | . ",
+    "url": "/enterprise/",
+    
+    "relUrl": "/enterprise/"
+  },"266": {
     "doc": "Slack",
     "title": "Slack",
     "content": " ",
     "url": "/slack/",
     
     "relUrl": "/slack/"
+  },"267": {
+    "doc": "Deploy and Setup lakeFS",
+    "title": "Deploy and setup lakeFS",
+    "content": "For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . ",
+    "url": "/deploy/#deploy-and-setup-lakefs",
+    
+    "relUrl": "/deploy/#deploy-and-setup-lakefs"
+  },"268": {
+    "doc": "Deploy and Setup lakeFS",
+    "title": "Deploy and Setup lakeFS",
+    "content": " ",
+    "url": "/deploy/",
+    
+    "relUrl": "/deploy/"
+  },"269": {
+    "doc": "⭐ Quickstart ⭐",
+    "title": "lakeFS Quickstart",
+    "content": "Welcome to lakeFS 👋🏻 . lakeFS provides a “Git for data” platform enabling you to implement best practices from software engineering on your data lake, including branching and merging, CI/CD, and production-like dev/test environments. This quickstart will introduce you to some of the core ideas in lakeFS and show what you can do by illustrating the concept of branching, merging, and rolling back changes to data. It’s laid out in five short sections: . Launch . Spin up the quickstart environment locally under Docker . Query . Query the pre-populated data on the main branch . Branch . Make changes to the data on a new branch . Merge . Merge the changed data back to the main branch . Rollback . Change our mind and revert the changes . Actions . Use Actions to trigger code when an event occurs . You can use the 30-day free trial of lakeFS Cloud if you want to try out lakeFS without installing anything. ",
+    "url": "/quickstart/#lakefs-quickstart",
+    
+    "relUrl": "/quickstart/#lakefs-quickstart"
+  },"270": {
+    "doc": "⭐ Quickstart ⭐",
+    "title": "⭐ Quickstart ⭐",
+    "content": " ",
+    "url": "/quickstart/",
+    
+    "relUrl": "/quickstart/"
   },"271": {
     "doc": "lakeFS",
     "title": "Welcome to the Lake!",
@@ -2785,54 +2785,54 @@
     
     "relUrl": "/roadmap.html"
   },"398": {
-    "doc": "5️⃣ Roll back Changes",
-    "title": "Rolling back Changes in lakeFS ↩️",
-    "content": "Our intrepid user (you) merged a change back into the main branch and realised that they had made a mistake 🤦🏻. The good news for them (you) is that lakeFS can revert changes made, similar to how you would in Git 😅. From your terminal window run lakectl with the revert command: . docker exec -it lakefs \\ lakectl branch revert \\ lakefs://quickstart/main \\ main --parent-number 1 --yes . You should see a confirmation of a successful rollback: . Branch: lakefs://quickstart/main commit main successfully reverted . Back in the object page and the DuckDB query we can see that the original file is now back to how it was: . ",
-    "url": "/quickstart/rollback.html#rolling-back-changes-in-lakefs-%EF%B8%8F",
-    
-    "relUrl": "/quickstart/rollback.html#rolling-back-changes-in-lakefs-️"
-  },"399": {
-    "doc": "5️⃣ Roll back Changes",
-    "title": "5️⃣ Roll back Changes",
-    "content": " ",
-    "url": "/quickstart/rollback.html",
-    
-    "relUrl": "/quickstart/rollback.html"
-  },"400": {
     "doc": "Rollback",
     "title": "Rollbacks",
     "content": " ",
     "url": "/use_cases/rollback.html#rollbacks",
     
     "relUrl": "/use_cases/rollback.html#rollbacks"
-  },"401": {
+  },"399": {
     "doc": "Rollback",
     "title": "What Is a Rollback?",
     "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a signficant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
     "url": "/use_cases/rollback.html#what-is-a-rollback",
     
     "relUrl": "/use_cases/rollback.html#what-is-a-rollback"
-  },"402": {
+  },"400": {
     "doc": "Rollback",
     "title": "Why Rollbacks Are Useful",
     "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
     "url": "/use_cases/rollback.html#why-rollbacks-are-useful",
     
     "relUrl": "/use_cases/rollback.html#why-rollbacks-are-useful"
-  },"403": {
+  },"401": {
     "doc": "Rollback",
     "title": "Performing Rollbacks with lakeFS",
     "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
     "url": "/use_cases/rollback.html#performing-rollbacks-with-lakefs",
     
     "relUrl": "/use_cases/rollback.html#performing-rollbacks-with-lakefs"
-  },"404": {
+  },"402": {
     "doc": "Rollback",
     "title": "Rollback",
     "content": " ",
     "url": "/use_cases/rollback.html",
     
     "relUrl": "/use_cases/rollback.html"
+  },"403": {
+    "doc": "5️⃣ Roll back Changes",
+    "title": "Rolling back Changes in lakeFS ↩️",
+    "content": "Our intrepid user (you) merged a change back into the main branch and realised that they had made a mistake 🤦🏻. The good news for them (you) is that lakeFS can revert changes made, similar to how you would in Git 😅. From your terminal window run lakectl with the revert command: . docker exec -it lakefs \\ lakectl branch revert \\ lakefs://quickstart/main \\ main --parent-number 1 --yes . You should see a confirmation of a successful rollback: . Branch: lakefs://quickstart/main commit main successfully reverted . Back in the object page and the DuckDB query we can see that the original file is now back to how it was: . ",
+    "url": "/quickstart/rollback.html#rolling-back-changes-in-lakefs-%EF%B8%8F",
+    
+    "relUrl": "/quickstart/rollback.html#rolling-back-changes-in-lakefs-️"
+  },"404": {
+    "doc": "5️⃣ Roll back Changes",
+    "title": "5️⃣ Roll back Changes",
+    "content": " ",
+    "url": "/quickstart/rollback.html",
+    
+    "relUrl": "/quickstart/rollback.html"
   },"405": {
     "doc": "S3 Supported API",
     "title": "S3-Supported API",
