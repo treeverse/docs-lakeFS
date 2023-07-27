@@ -291,7 +291,33 @@
             </svg></a><a href="/understand/"
            class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item  active"><a href="/understand/architecture.html"
                    class="nav-list-link active">Architecture</a></li><li class="nav-list-item "><a href="/understand/model.html"
-                   class="nav-list-link">Model</a></li><li class="nav-list-item "><a href="/understand/performance-best-practices.html"
+                   class="nav-list-link">Concepts and  Model</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/understand/data_lifecycle_management/"
+                   class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/understand/data_lifecycle_management/ci.html"
+                           class="nav-list-link">During Deployment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/data_lifecycle_management/production.html"
+                           class="nav-list-link">In Production</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/data_lifecycle_management/data-devenv.html"
+                           class="nav-list-link">In Test</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/understand/faq.html"
+                   class="nav-list-link">FAQ</a></li><li class="nav-list-item "><a href="/understand/glossary.html"
+                   class="nav-list-link">Glossary</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/understand/how/"
+                   class="nav-list-link">How lakeFS Works</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/understand/how/kv.html"
+                           class="nav-list-link">Internal database structure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/how/merge.html"
+                           class="nav-list-link">Merge</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/understand/how/versioning-internals.html"
+                           class="nav-list-link">Versioning Internals</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/understand/performance-best-practices.html"
                    class="nav-list-link">Performance Best Practices</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/understand/use_cases/"
@@ -307,33 +333,7 @@
                     </li><li class="nav-list-item ">
                         <a href="/understand/use_cases/rollback.html"
                            class="nav-list-link">Rollback</a>
-                    </li></ul></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                        <use xlink:href="#svg-arrow-right"></use>
-                    </svg></a><a href="/understand/how/"
-                   class="nav-list-link">How lakeFS Works</a><ul class="nav-list"><li class="nav-list-item ">
-                        <a href="/understand/how/versioning-internals.html"
-                           class="nav-list-link">Versioning Internals</a>
-                    </li><li class="nav-list-item ">
-                        <a href="/understand/how/kv.html"
-                           class="nav-list-link">Internal database structure</a>
-                    </li><li class="nav-list-item ">
-                        <a href="/understand/how/merge.html"
-                           class="nav-list-link">Merge</a>
-                    </li></ul></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
-                        <use xlink:href="#svg-arrow-right"></use>
-                    </svg></a><a href="/understand/data_lifecycle_management/"
-                   class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list"><li class="nav-list-item ">
-                        <a href="/understand/data_lifecycle_management/data-devenv.html"
-                           class="nav-list-link">In Test</a>
-                    </li><li class="nav-list-item ">
-                        <a href="/understand/data_lifecycle_management/ci.html"
-                           class="nav-list-link">During Deployment</a>
-                    </li><li class="nav-list-item ">
-                        <a href="/understand/data_lifecycle_management/production.html"
-                           class="nav-list-link">In Production</a>
-                    </li></ul></li><li class="nav-list-item "><a href="/understand/glossary.html"
-                   class="nav-list-link">Glossary</a></li><li class="nav-list-item "><a href="/understand/faq.html"
-                   class="nav-list-link">FAQ</a></li></ul></li><li
+                    </li></ul></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/reference/"
@@ -504,14 +504,20 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 id="architecture-overview">
+                    <h1 id="lakefs-architecture">
   
   
-    <a href="#architecture-overview" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Architecture Overview
+    <a href="#lakefs-architecture" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Architecture
   
   
 </h1>
     
+
+<p>lakeFS is distributed as a single binary encapsulating several logical services.</p>
+
+<p>The server itself is stateless, meaning you can easily add more instances to handle a bigger load.</p>
+
+<p><img src="/assets/img/architecture.png" alt="Architecture" /></p>
 
 <div class="toc-block">
 <h2 class="no_toc text-delta" id="table-of-contents">
@@ -524,11 +530,9 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
-  <li><a href="#ways-to-deploy-lakefs" id="markdown-toc-ways-to-deploy-lakefs">Ways to deploy lakeFS</a>    <ol>
-      <li><a href="#load-balancing" id="markdown-toc-load-balancing">Load Balancing</a></li>
-    </ol>
-  </li>
+  <li><a href="#object-storage" id="markdown-toc-object-storage">Object Storage</a></li>
+  <li><a href="#metadata-storage" id="markdown-toc-metadata-storage">Metadata Storage</a></li>
+  <li><a href="#load-balancing" id="markdown-toc-load-balancing">Load Balancing</a></li>
   <li><a href="#lakefs-components" id="markdown-toc-lakefs-components">lakeFS Components</a>    <ol>
       <li><a href="#s3-gateway" id="markdown-toc-s3-gateway">S3 Gateway</a></li>
       <li><a href="#openapi-server" id="markdown-toc-openapi-server">OpenAPI Server</a></li>
@@ -550,53 +554,36 @@
 </ol>
 
 </div>
-<h2 id="overview">
+<h3 id="object-storage">
   
   
-    <a href="#overview" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Overview
+    <a href="#object-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Object Storage
   
   
-</h2>
+</h3>
     
 
-<p>lakeFS is distributed as a single binary encapsulating several logical services:</p>
-
-<p>The server itself is stateless, meaning you can easily add more instances to handle a bigger load.</p>
-
-<p>The following underlying object stores (or any S3-compatible store) can be used by lakeFS to store data:</p>
+<p>lakeFS stores data in object stores. Those supported include:</p>
 
 <ul>
+  <li>AWS S3</li>
   <li>Google Cloud Storage</li>
   <li>Azure Blob Storage</li>
-  <li>AWS S3</li>
   <li>MinIO</li>
   <li>Ceph</li>
 </ul>
-
-<p>In additional a Key Value storage is used for storing metadata:</p>
-
-<ul>
-  <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></li>
-  <li><a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB</a></li>
-</ul>
-
-<p>Instructions of how to deploy such database on AWS can be found <a href="/howto/deploy/aws.md#grant-dynamodb-permissions-to-lakefs">here</a>.</p>
-
-<p>Additional information on the data format can be found in <a href="/understand/how/versioning-internals.md">Versioning internals</a>.</p>
-
-<p><img src="/assets/img/architecture.png" alt="Architecture" /></p>
-<h2 id="ways-to-deploy-lakefs">
+<h3 id="metadata-storage">
   
   
-    <a href="#ways-to-deploy-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Ways to deploy lakeFS
+    <a href="#metadata-storage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Metadata Storage
   
   
-</h2>
+</h3>
     
 
-<p>lakeFS releases include <a href="https://github.com/treeverse/lakeFS/releases">binaries</a> for common operating systems, a <a href="https://hub.docker.com/r/treeverse/lakefs">containerized option</a> or 
-a <a href="https://artifacthub.io/packages/helm/lakefs/lakefs">Helm chart</a>.
-Check out our guides for running lakeFS on <a href="/howto/deploy/aws.md">AWS</a>, <a href="/howto/deploy/gcp.md">GCP</a> and <a href="/howto/deploy">more</a>.</p>
+<p>In additional a Key Value storage is used for storing metadata, with supported databases including PostgreSQL, DynamoDB, and CosmosDB Instructions of how to deploy such database on AWS can be found <a href="/howto/deploy/aws.md#grant-dynamodb-permissions-to-lakefs">here</a>.</p>
+
+<p>Additional information on the data format can be found in <a href="/understand/how/versioning-internals.html">Versioning internals</a> and <a href="/understand/how/kv.html">Internal database structure</a></p>
 <h3 id="load-balancing">
   
   
@@ -663,7 +650,7 @@ Its implementations allow compatibility with many types of underlying storage su
     
 
 <p>The Graveler handles lakeFS versioning by translating lakeFS addresses to the actual stored objects.
-To learn about the data model used to store lakeFS metadata, see the <a href="/understand/how/versioning-internals.md">data model section</a>.</p>
+To learn about the data model used to store lakeFS metadata, see the <a href="/understand/how/versioning-internals.md">versioning internals page</a>.</p>
 <h3 id="authentication--authorization-service">
   
   
