@@ -586,7 +586,7 @@ For a hosted lakeFS service with guaranteed SLAs, try <a href="https://lakefs.cl
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p class="note">💡 You can also use lakeFS with PostgreSQL instead of DynamoDB! See the <a href="/reference/configuration.md">configuration reference</a> for more information.</p>
+<p class="note">💡 You can also use lakeFS with PostgreSQL instead of DynamoDB! See the <a href="/reference/configuration.html">configuration reference</a> for more information.</p>
 <h2 id="run-the-lakefs-server">
   
   
@@ -622,7 +622,7 @@ For a hosted lakeFS service with guaranteed SLAs, try <a href="https://lakefs.cl
   <span class="na">type</span><span class="pi">:</span> <span class="s">s3</span>
 </code></pre></div>        </div>
       </li>
-      <li><a href="/index.md#downloads">Download the binary</a> to the EC2 instance.</li>
+      <li><a href="/#downloads">Download the binary</a> to run on the EC2 instance.</li>
       <li>
         <p>Run the <code class="language-plaintext highlighter-rouge">lakefs</code> binary on the EC2 instance:</p>
 
@@ -672,7 +672,7 @@ For a hosted lakeFS service with guaranteed SLAs, try <a href="https://lakefs.cl
       <li>
         <p>Fill in the missing values and save the file as <code class="language-plaintext highlighter-rouge">conf-values.yaml</code>. For more configuration options, see our Helm chart <a href="https://github.com/treeverse/charts/blob/master/charts/lakefs/README.md#custom-configuration" target="_blank">README</a>.</p>
 
-        <p class="note">The <code class="language-plaintext highlighter-rouge">lakefsConfig</code> parameter is the lakeFS configuration documented <a href="https://docs.lakefs.io/reference/configuration.html">here</a> but without sensitive information.
+        <p class="note">The <code class="language-plaintext highlighter-rouge">lakefsConfig</code> parameter is the lakeFS configuration documented <a href="/reference/configuration.html">here</a> but without sensitive information.
 Sensitive information like <code class="language-plaintext highlighter-rouge">databaseConnectionString</code> is given through separate parameters, and the chart will inject it into Kubernetes secrets.</p>
       </li>
       <li>
@@ -703,8 +703,8 @@ If you can’t provide such access, configure lakeFS with an AWS key-pair.</p>
 By default, lakeFS operates on port 8000 and exposes a <code class="language-plaintext highlighter-rouge">/_health</code> endpoint that you can use for health checks.</p>
 
     <p class="note">💡 The NGINX Ingress Controller by default limits the client body size to 1 MiB.
-Some clients use bigger chunks to upload objects - for example, multipart upload to lakeFS using the <a href="/understand/architecture.md#s3-gateway">S3 Gateway</a> or 
-a simple PUT request using the <a href="/understand/architecture.md#openapi-server">OpenAPI Server</a>.
+Some clients use bigger chunks to upload objects - for example, multipart upload to lakeFS using the <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> or 
+a simple PUT request using the <a href="/understand/architecture.html#openapi-server">OpenAPI Server</a>.
 Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-max-body-size">documentation</a> for increasing the limit, or an example of Nginx configuration with <a href="https://docs.min.io/docs/setup-nginx-proxy-with-minio.html">MinIO</a>.</p>
 
   </div>
@@ -766,16 +766,16 @@ Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/ng
         <ul>
           <li>Replace <code class="language-plaintext highlighter-rouge">[BUCKET_NAME]</code>, <code class="language-plaintext highlighter-rouge">[ACCOUNT_ID]</code> and <code class="language-plaintext highlighter-rouge">[IAM_ROLE]</code> with values relevant to your environment.</li>
           <li><code class="language-plaintext highlighter-rouge">[BUCKET_NAME_AND_PREFIX]</code> can be the bucket name. If you want to minimize the bucket policy permissions, use the bucket name together with a prefix (e.g. <code class="language-plaintext highlighter-rouge">example-bucket/a/b/c</code>).
-This way, lakeFS will be able to create repositories only under this specific path (see: <a href="/understand/model.md#repository">Storage Namespace</a>).</li>
+This way, lakeFS will be able to create repositories only under this specific path (see: <a href="/understand/model.html#repository">Storage Namespace</a>).</li>
           <li>lakeFS will try to assume the role <code class="language-plaintext highlighter-rouge">[IAM_ROLE]</code>.</li>
         </ul>
       </div>
       <div id="bucket-policy-minimal">
-        <p>This permission is useful if you are using the <a href="/integrations/spark.md#use-the-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>.
+        <p>This permission is useful if you are using the <a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>.
 Since this FileSystem performs many operations directly on the storage, lakeFS requires less permissive permissions, resulting in increased security.</p>
 
         <p>lakeFS always requires permissions to access the <code class="language-plaintext highlighter-rouge">_lakefs</code> prefix under your storage namespace, in which metadata
-is stored (<a href="/understand/how/versioning-internals.md#constructing-a-consistent-view-of-the-keyspace-ie-a-commit">learn more</a>).<br />
+is stored (<a href="/understand/how/versioning-internals.html#constructing-a-consistent-view-of-the-keyspace-ie-a-commit">learn more</a>).
 By setting this policy you’ll be able to perform only metadata operations through lakeFS, meaning that you’ll <strong>not</strong> be able
 to use lakeFS to upload or download objects. Specifically you won’t be able to:</p>
         <ul>
