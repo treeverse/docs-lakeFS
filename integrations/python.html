@@ -625,7 +625,7 @@ production setting.</p>
     
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">repo</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">RepositoryCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">storage_namespace</span><span class="o">=</span><span class="s">'s3://storage-bucket/repos/example-repo'</span><span class="p">,</span> <span class="n">default_branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
-<span class="n">client</span><span class="p">.</span><span class="n">repositories</span><span class="p">.</span><span class="n">create_repository</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="n">repositories_api</span><span class="p">.</span><span class="n">create_repository</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
 <span class="c1"># output:
 # {'creation_date': 1617532175,
 #  'default_branch': 'main',
@@ -643,21 +643,21 @@ production setting.</p>
 
 <p>List the repository branches:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">list_branches</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">list_branches</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">)</span>
 <span class="c1"># output:
 # [{'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'main'}]
 </span></code></pre></div></div>
 
 <p>Create a new branch:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">create_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch_creation</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s">'main'</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">create_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch_creation</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s">'main'</span><span class="p">))</span>
 <span class="c1"># output:
 # 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656'
 </span></code></pre></div></div>
 
 <p>List again to see your newly created branch:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">list_branches</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">).</span><span class="n">results</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">list_branches</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">).</span><span class="n">results</span>
 <span class="c1"># output:
 # [{'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'experiment-aggregations1'}, {'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'main'}]
 </span></code></pre></div></div>
@@ -665,7 +665,7 @@ production setting.</p>
 <p>Great. Now, let’s upload a file into your new branch:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'file.csv'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">client</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">upload_object</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">'path/to/file.csv'</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">client</span><span class="p">.</span><span class="n">objects_api</span><span class="p">.</span><span class="n">upload_object</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">'path/to/file.csv'</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
 <span class="c1"># output:
 # {'checksum': '0d3b39380e2500a0f60fb3c09796fdba',
 #  'mtime': 1617534834,
@@ -677,14 +677,14 @@ production setting.</p>
 
 <p>Diffing a single branch will show all the uncommitted changes on that branch:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
 <span class="c1"># output:
 # [{'path': 'path/to/file.csv', 'path_type': 'object', 'type': 'added'}]
 </span></code></pre></div></div>
 
 <p>As expected, our change appears here. Let’s commit it and attach some arbitrary metadata:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">commits</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">commits_api</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span>
     <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
     <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span>
     <span class="n">commit_creation</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">CommitCreation</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">'Added a CSV file!'</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'using'</span><span class="p">:</span> <span class="s">'python_api'</span><span class="p">}))</span>
@@ -700,7 +700,7 @@ production setting.</p>
 
 <p>Diffing again, this time there should be no uncommitted files:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
 <span class="c1"># output:
 # []
 </span></code></pre></div></div>
@@ -715,7 +715,7 @@ production setting.</p>
 
 <p>Let’s diff between your branch and the main branch:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
 <span class="c1"># output:
 # [{'path': 'path/to/file.csv', 'path_type': 'object', 'type': 'added'}]
 </span>
@@ -723,7 +723,7 @@ production setting.</p>
 
 <p>Looks like you have a change. Let’s merge it:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs</span><span class="p">.</span><span class="n">merge_into_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">source_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">destination_branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">merge_into_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">source_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">destination_branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
 <span class="c1"># output:
 # {'reference': 'd0414a3311a8c1cef1ef355d6aca40db72abe545e216648fe853e25db788fa2e',
 #  'summary': {'added': 1, 'changed': 0, 'conflict': 0, 'removed': 0}}
@@ -731,7 +731,7 @@ production setting.</p>
 
 <p>Let’s diff again - there should be no changes as all changes are on our main branch already:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
 <span class="c1"># output:
 # []
 </span></code></pre></div></div>
