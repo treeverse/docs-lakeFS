@@ -25,21 +25,21 @@
   
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Airbyte | lakeFS Documentation</title>
+<title>Internals | lakeFS Documentation</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="Airbyte" />
+<meta property="og:title" content="Internals" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Use Airbyte with lakeFS to easily sync data between applications and S3 with lakeFS version control." />
-<meta property="og:description" content="Use Airbyte with lakeFS to easily sync data between applications and S3 with lakeFS version control." />
+<meta name="description" content="How Garbage Collection in lakeFS works" />
+<meta property="og:description" content="How Garbage Collection in lakeFS works" />
 <meta property="og:site_name" content="lakeFS Documentation" />
 <meta property="og:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
-<meta property="twitter:title" content="Airbyte" />
+<meta property="twitter:title" content="Internals" />
 <meta name="twitter:site" content="@lakeFS" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Use Airbyte with lakeFS to easily sync data between applications and S3 with lakeFS version control.","headline":"Airbyte","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/integrations/airbyte.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"How Garbage Collection in lakeFS works","headline":"Internals","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/howto/garbage-collection/internals.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -208,7 +208,7 @@
                    class="nav-list-link">5️⃣ Roll back Changes</a></li><li class="nav-list-item "><a href="/quickstart/actions-and-hooks.html"
                    class="nav-list-link">6️⃣ Using Actions and Hooks in lakeFS</a></li><li class="nav-list-item "><a href="/quickstart/learning-more-lakefs.html"
                    class="nav-list-link">🧑🏻‍🎓 Learn more about lakeFS</a></li></ul></li><li
-            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/howto/"
            class="nav-list-link">How-To</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
@@ -243,12 +243,12 @@
                            class="nav-list-link">Webhooks</a>
                     </li></ul></li><li class="nav-list-item "><a href="/howto/copying.html"
                    class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/export.html"
-                   class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                   class="nav-list-link">Export Data</a></li><li class="nav-list-item  active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/howto/garbage-collection/"
-                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item ">
+                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item  active">
                         <a href="/howto/garbage-collection/internals.html"
-                           class="nav-list-link">Internals</a>
+                           class="nav-list-link active">Internals</a>
                     </li><li class="nav-list-item ">
                         <a href="/howto/garbage-collection/committed.html"
                            class="nav-list-link">(deprecated) Committed Objects</a>
@@ -260,12 +260,12 @@
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/protect-branches.html"
                    class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li></ul></li><li
-            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/integrations/"
            class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/integrations/aws_cli.html"
-                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item  active"><a href="/integrations/airbyte.html"
-                   class="nav-list-link active">Airbyte</a></li><li class="nav-list-item "><a href="/integrations/athena.html"
+                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/integrations/airbyte.html"
+                   class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/integrations/athena.html"
                    class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/integrations/sagemaker.html"
                    class="nav-list-link">Amazon SageMaker</a></li><li class="nav-list-item "><a href="/integrations/airflow.html"
                    class="nav-list-link">Apache Airflow</a></li><li class="nav-list-item "><a href="/integrations/hive.html"
@@ -491,123 +491,148 @@
             <nav aria-label="Breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb-nav-list">
                     
-                    <li class="breadcrumb-nav-list-item"><a href="/integrations/">Integrations</a>
+                    <li class="breadcrumb-nav-list-item"><a
+                                href="/howto/">How-To</a>
+                    </li>
+                    <li class="breadcrumb-nav-list-item"><a href="/howto/garbage-collection/">Garbage Collection</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Airbyte</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Internals</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 id="airbyte">
+                    <h1 id="committed-garbage-collection-internals">
   
   
-    <a href="#airbyte" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Airbyte
+    <a href="#committed-garbage-collection-internals" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Committed Garbage Collection Internals
   
   
 </h1>
     
 
-<p><a href="https://airbyte.io/">Airbyte</a> is an open-source platform for syncing data from applications, APIs, and databases to
-warehouses, lakes, and other destinations. You can use Airbyte’s connectors to get your data pipelines to consolidate
-many input sources.</p>
-
-<p>The integration between Airbyte and lakeFS brings resilience and manageability when you use Airbyte
-connectors to sync data to your S3 buckets by leveraging lakeFS branches and atomic commits and merges.</p>
-<h2 id="use-cases">
-  
-  
-    <a href="#use-cases" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use cases
-  
-  
-</h2>
-    
-
-<p>You can take advantage of lakeFS consistency guarantees and <a href="/understand/data_lifecycle_management/">Data Lifecycle Management</a> when ingesting data to S3 using lakeFS:</p>
-
-<ol>
-  <li>Consolidate many data sources to a single branch and expose them to consumers simultaneously when merging to the <code class="language-plaintext highlighter-rouge">main</code> branch.</li>
-  <li>Test incoming data for breaking schema changes using <a href="/understand/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">lakeFS hooks</a>.</li>
-  <li>Prevent consumers from reading partial data from connectors which failed half-way through sync.</li>
-  <li>Experiment with ingested data on a branch before exposing it.</li>
-</ol>
-<h2 id="s3-connector">
-  
-  
-    <a href="#s3-connector" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> S3 Connector
-  
-  
-</h2>
-    
-
-<p>lakeFS exposes an <a href="/understand/architecture.html#s3-gateway">S3 Gateway</a> that enables applications to communicate
-with lakeFS the same way they would with Amazon S3.
-You can use Airbyte’s <a href="https://airbyte.com/connectors/s3">S3 Connector</a> to upload data to lakeFS.</p>
-
 <blockquote class="warning-title">
-  <p>Note</p>
+  <p>Deprecation notice</p>
 
-  <p>If using Airbyte OSS, please ensure you are using S3 destination connector version <a href="https://docs.airbyte.com/integrations/destinations/s3#changelog">0.3.17 or higher</a>.
-Previous connector versions are not supported.</p>
+  <p>This page describes a deprecated feature. Please visit the new <a href="./index.html">garbage collection documentation</a>.</p>
 </blockquote>
-<h3 id="configuring-lakefs-using-the-connector">
+<h2 id="what-gets-collected">
   
   
-    <a href="#configuring-lakefs-using-the-connector" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring lakeFS using the connector
+    <a href="#what-gets-collected" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What gets collected
   
   
-</h3>
+</h2>
     
 
-<p>Set the following parameters when creating a new Destination of type S3:</p>
+<p>Because each object in lakeFS may be accessible from multiple branches, it
+might not be obvious which objects will be considered garbage and collected.</p>
 
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Value</th>
-      <th>Example</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Endpoint</td>
-      <td>The lakeFS S3 gateway URL</td>
-      <td><code class="language-plaintext highlighter-rouge">https://cute-axolotol.lakefs-demo.io</code></td>
-    </tr>
-    <tr>
-      <td>S3 Bucket Name</td>
-      <td>The lakeFS repository where the data will be written</td>
-      <td><code class="language-plaintext highlighter-rouge">example-repo</code></td>
-    </tr>
-    <tr>
-      <td>S3 Bucket Path</td>
-      <td>The branch and the path where the data will be written</td>
-      <td><code class="language-plaintext highlighter-rouge">main/data/from/airbyte</code> Where <code class="language-plaintext highlighter-rouge">main</code> is the branch name, and <code class="language-plaintext highlighter-rouge">data/from/airbyte</code> is the path under the branch.</td>
-    </tr>
-    <tr>
-      <td>S3 Bucket Region</td>
-      <td>Not applicable to lakeFS, use <code class="language-plaintext highlighter-rouge">us-east-1</code></td>
-      <td><code class="language-plaintext highlighter-rouge">us-east-1</code></td>
-    </tr>
-    <tr>
-      <td>S3 Key ID</td>
-      <td>The lakeFS access key id used to authenticate to lakeFS.</td>
-      <td><code class="language-plaintext highlighter-rouge">AKIAlakefs12345EXAMPLE</code></td>
-    </tr>
-    <tr>
-      <td>S3 Access Key</td>
-      <td>The lakeFS secret access key used to authenticate to lakeFS.</td>
-      <td><code class="language-plaintext highlighter-rouge">abc/lakefs/1234567bPxRfiCYEXAMPLEKEY</code></td>
-    </tr>
-  </tbody>
-</table></div>
+<p>Garbage collection is configured by specifying the number of days to retain
+objects on each branch. If a branch is configured to retain objects for a
+given number of days, any object that was accessible from the HEAD of a
+branch in that past number of days will be retained.</p>
 
-<p>The UI configuration will look as follows:</p>
+<p>The garbage collection process proceeds in three main phases:</p>
 
-<p><img src="/assets/img/airbyte.png" alt="S3 Destination Connector Configuration" /></p>
+<ul>
+  <li>
+    <p><strong>Discover which commits will retain their objects.</strong>  For every branch,
+the garbage collection job looks at the HEAD of the branch that many days
+ago; every commit at or since that HEAD must be retained.</p>
+
+    <p><img src="/assets/img/gc-sample-commits.png" alt="mermaid diagram" /></p>
+
+    <p>Continuing the example, branch <code class="language-plaintext highlighter-rouge">main</code> retains for 21 days and branch <code class="language-plaintext highlighter-rouge">dev</code>
+for 7. When running GC on 2022-03-31:</p>
+
+    <ul>
+      <li>7 days ago, on 2022-03-24 the head of branch <code class="language-plaintext highlighter-rouge">dev</code> was <code class="language-plaintext highlighter-rouge">d:
+2022-03-23</code>. So, that commit is retained (along with all more recent
+commits on <code class="language-plaintext highlighter-rouge">dev</code>) but all older commits <code class="language-plaintext highlighter-rouge">d: *</code> will be collected.</li>
+      <li>21 days ago, on 2022-03-10, the head of branch <code class="language-plaintext highlighter-rouge">main</code> was
+<code class="language-plaintext highlighter-rouge">2022-03-09</code>. So that commit is retained (along with all more recent
+commits on <code class="language-plaintext highlighter-rouge">main</code>) but commits <code class="language-plaintext highlighter-rouge">2022-02-27</code> and <code class="language-plaintext highlighter-rouge">2022-03-01</code> will be
+collected.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Discover which objects need to be garbage collected.</strong> Hold (<em>only</em>)
+objects accessible on some retained commits.</p>
+
+    <p>In the example, all objects of commit <code class="language-plaintext highlighter-rouge">2022-03-12</code>, for instance, are
+retained. This <em>includes</em> objects added in previous commits. However,
+objects added in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-14</code> which were overwritten or
+deleted in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
+and will be garbage collected.</p>
+  </li>
+  <li>
+    <p><strong>Garbage collect those objects by deleting them.</strong> The data of any
+deleted object will no longer be accessible. lakeFS retains all metadata
+about the object, but attempting to read it via the lakeFS API or the S3
+gateway will return HTTP status 410 (“Gone”).</p>
+  </li>
+</ul>
+<h2 id="what-does-not-get-collected">
+  
+  
+    <a href="#what-does-not-get-collected" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What does <em>not</em> get collected
+  
+  
+</h2>
+    
+
+<p>Some objects will <em>not</em> be collected regardless of configured GC rules:</p>
+<ul>
+  <li>Any object that is accessible from any branch’s HEAD.</li>
+  <li>Objects stored outside the repository’s <a href="/understand/glossary.html#storage-namespace">storage namespace</a>.
+For example, objects imported using the lakeFS import UI are not collected.</li>
+  <li>Uncommitted objects, see <a href="./uncommitted.html">Uncommitted Garbage Collection</a>,</li>
+</ul>
+<h2 id="performance">
+  
+  
+    <a href="#performance" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Performance
+  
+  
+</h2>
+    
+
+<p>Garbage collection reads many commits.  It uses Spark to spread the load of
+reading the contents of all of these commits.  For very large jobs running
+on very large clusters, you may want to tweak this load.  To do this:</p>
+
+<ul>
+  <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.gc.range.num_partitions=RANGE_PARTITIONS</code>
+(default 50) to spread the initial load of reading commits across more
+Spark executors.</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.gc.address.num_partitions=RANGE_PARTITIONS</code>
+(default 200) to spread the load of reading all objects included in a
+commit across more Spark executors.</li>
+</ul>
+
+<p>Normally this should not be needed.</p>
+<h2 id="networking">
+  
+  
+    <a href="#networking" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Networking
+  
+  
+</h2>
+    
+
+<p>Garbage collection communicates with the lakeFS server.  Very large
+repositories may require increasing a read timeout.  If you run into timeout errors during communication from the Spark job to lakeFS consider increasing these timeouts:</p>
+
+<ul>
+  <li>Add <code class="language-plaintext highlighter-rouge">-c spark.hadoop.lakefs.api.read.timeout_seconds=TIMEOUT_IN_SECONDS</code>
+(default 10) to allow lakeFS more time to respond to requests.</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">-c
+spark.hadoop.lakefs.api.connection.timeout_seconds=TIMEOUT_IN_SECONDS</code>
+(default 10) to wait longer for lakeFS to accept connections.</li>
+</ul>
 
                 
 
