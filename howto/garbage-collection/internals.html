@@ -334,18 +334,31 @@
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/reference/"
-           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/configuration.html"
-                   class="nav-list-link">Configuration</a></li><li class="nav-list-item "><a href="/reference/cli.html"
-                   class="nav-list-link">lakectl (lakeFS command-line tool)</a></li><li class="nav-list-item "><a href="/reference/api.html"
-                   class="nav-list-link">API Reference</a></li><li class="nav-list-item "><a href="/reference/spark-client.html"
-                   class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/reference/s3.html"
-                   class="nav-list-link">S3 Supported API</a></li><li class="nav-list-item "><a href="/reference/authentication.html"
-                   class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/reference/remote-authenticator.html"
-                   class="nav-list-link">Remote Authenticator</a></li><li class="nav-list-item "><a href="/reference/rbac.html"
-                   class="nav-list-link">Role-Based Access Control (RBAC)</a></li><li class="nav-list-item "><a href="/reference/monitor.html"
-                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/access-control-lists.html"
-                   class="nav-list-link">Access Control Lists (ACLs)</a></li><li class="nav-list-item "><a href="/reference/presigned-url.html"
-                   class="nav-list-link">Presigned URL</a></li></ul></li><li
+           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/reference/monitor.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/reference/s3.html"
+                   class="nav-list-link">S3 Gateway API</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/reference/security/"
+                   class="nav-list-link">Security</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/reference/security/access-control-lists.html"
+                           class="nav-list-link">Access Control Lists (ACLs)</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/reference/security/authentication.html"
+                           class="nav-list-link">Authentication</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/reference/security/presigned-url.html"
+                           class="nav-list-link">Presigned URL</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/reference/security/remote-authenticator.html"
+                           class="nav-list-link">Remote Authenticator</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/reference/security/rbac.html"
+                           class="nav-list-link">Role-Based Access Control (RBAC)</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/reference/spark-client.html"
+                   class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/reference/api.html"
+                   class="nav-list-link">lakeFS API</a></li><li class="nav-list-item "><a href="/reference/configuration.html"
+                   class="nav-list-link">lakeFS Server Configuration</a></li><li class="nav-list-item "><a href="/reference/cli.html"
+                   class="nav-list-link">lakectl (lakeFS command-line tool)</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
             </svg></a><a href="/cloud/"
@@ -537,16 +550,35 @@ branch in that past number of days will be retained.</p>
 
 <p>The garbage collection process proceeds in three main phases:</p>
 
-<ul>
+<ol>
   <li>
     <p><strong>Discover which commits will retain their objects.</strong>  For every branch,
-the garbage collection job looks at the HEAD of the branch that many days
-ago; every commit at or since that HEAD must be retained.</p>
+  the garbage collection job looks at the HEAD of the branch that many days
+  ago; every commit at or since that HEAD must be retained.</p>
 
-    <p><img src="/assets/img/gc-sample-commits.png" alt="mermaid diagram" /></p>
+    <pre><code class="language-mermaid">   %%{init: { 'theme': 'base', 'gitGraph': {'rotateCommitLabel': true}} }%%
+   gitGraph
+     commit id: "2022-02-27 🚮"
+     commit id: "2022-03-01 🚮"
+     commit id: "2022-03-09"
+   branch dev
+   checkout main
+     commit id: "2022-03-12"
+   checkout dev
+     commit id: "d: 2022-03-14 🚮"
+     commit id: "d: 2022-03-16 🚮"
+   checkout main
+     commit id: "2022-03-18"
+   checkout dev
+     commit id: "d: 2022-03-20 🚮"
+     commit id: "d: 2022-03-23"
+   checkout main
+   merge dev
+     commit id: "2022-03-26"
+</code></pre>
 
     <p>Continuing the example, branch <code class="language-plaintext highlighter-rouge">main</code> retains for 21 days and branch <code class="language-plaintext highlighter-rouge">dev</code>
-for 7. When running GC on 2022-03-31:</p>
+ for 7. When running GC on 2022-03-31:</p>
 
     <ul>
       <li>7 days ago, on 2022-03-24 the head of branch <code class="language-plaintext highlighter-rouge">dev</code> was <code class="language-plaintext highlighter-rouge">d:
@@ -560,21 +592,21 @@ collected.</li>
   </li>
   <li>
     <p><strong>Discover which objects need to be garbage collected.</strong> Hold (<em>only</em>)
-objects accessible on some retained commits.</p>
+  objects accessible on some retained commits.</p>
 
     <p>In the example, all objects of commit <code class="language-plaintext highlighter-rouge">2022-03-12</code>, for instance, are
-retained. This <em>includes</em> objects added in previous commits. However,
-objects added in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-14</code> which were overwritten or
-deleted in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
-and will be garbage collected.</p>
+ retained. This <em>includes</em> objects added in previous commits. However,
+ objects added in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-14</code> which were overwritten or
+ deleted in commit <code class="language-plaintext highlighter-rouge">d: 2022-03-20</code> are not visible in any retained commit
+ and will be garbage collected.</p>
   </li>
   <li>
     <p><strong>Garbage collect those objects by deleting them.</strong> The data of any
-deleted object will no longer be accessible. lakeFS retains all metadata
-about the object, but attempting to read it via the lakeFS API or the S3
-gateway will return HTTP status 410 (“Gone”).</p>
+  deleted object will no longer be accessible. lakeFS retains all metadata
+  about the object, but attempting to read it via the lakeFS API or the S3
+  gateway will return HTTP status 410 (“Gone”).</p>
   </li>
-</ul>
+</ol>
 <h2 id="what-does-not-get-collected">
   
   
