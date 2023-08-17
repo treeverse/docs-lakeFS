@@ -25,21 +25,21 @@
   
 
   <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Protect Branches | lakeFS Documentation</title>
+<title>Managed Garbage Collection | lakeFS Documentation</title>
 <meta name="generator" content="Jekyll v3.9.3" />
-<meta property="og:title" content="Protect Branches" />
+<meta property="og:title" content="Managed Garbage Collection" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Branch protection rules prevent direct changes from being applied to your important branches." />
-<meta property="og:description" content="Branch protection rules prevent direct changes from being applied to your important branches." />
+<meta name="description" content="Reduce the operational overhead of running garbage collection manually." />
+<meta property="og:description" content="Reduce the operational overhead of running garbage collection manually." />
 <meta property="og:site_name" content="lakeFS Documentation" />
 <meta property="og:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
-<meta property="twitter:title" content="Protect Branches" />
+<meta property="twitter:title" content="Managed Garbage Collection" />
 <meta name="twitter:site" content="@lakeFS" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Branch protection rules prevent direct changes from being applied to your important branches.","headline":"Protect Branches","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/howto/protect-branches.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Reduce the operational overhead of running garbage collection manually.","headline":"Managed Garbage Collection","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/assets/logo.svg"}},"url":"/howto/garbage-collection/managed-gc.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -243,12 +243,12 @@
                            class="nav-list-link">Webhooks</a>
                     </li></ul></li><li class="nav-list-item "><a href="/howto/copying.html"
                    class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/export.html"
-                   class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                   class="nav-list-link">Export Data</a></li><li class="nav-list-item  active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/howto/garbage-collection/"
-                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item ">
+                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item  active">
                         <a href="/howto/garbage-collection/managed-gc.html"
-                           class="nav-list-link">Managed Garbage Collection</a>
+                           class="nav-list-link active">Managed Garbage Collection</a>
                     </li><li class="nav-list-item ">
                         <a href="/howto/garbage-collection/internals.html"
                            class="nav-list-link">Internals</a>
@@ -261,8 +261,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/howto/import.html"
                    class="nav-list-link">Import Data</a></li><li class="nav-list-item "><a href="/howto/migrate-away.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/private-link.html"
-                   class="nav-list-link">Private Link</a></li><li class="nav-list-item  active"><a href="/howto/protect-branches.html"
-                   class="nav-list-link active">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
+                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/howto/protect-branches.html"
+                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -497,30 +497,46 @@
             <nav aria-label="Breadcrumb" class="breadcrumb-nav">
                 <ol class="breadcrumb-nav-list">
                     
-                    <li class="breadcrumb-nav-list-item"><a href="/howto/">How-To</a>
+                    <li class="breadcrumb-nav-list-item"><a
+                                href="/howto/">How-To</a>
+                    </li>
+                    <li class="breadcrumb-nav-list-item"><a href="/howto/garbage-collection/">Garbage Collection</a>
                     </li>
                     
-                    <li class="breadcrumb-nav-list-item"><span>Protect Branches</span></li>
+                    <li class="breadcrumb-nav-list-item"><span>Managed Garbage Collection</span></li>
                 </ol>
             </nav>
             
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 id="branch-protection-rules">
+                    <h1 class="d-inline-block" id="managed-garbage-collection">
   
   
-    <a href="#branch-protection-rules" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Branch Protection Rules
+    <a href="#managed-garbage-collection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Managed Garbage Collection
   
   
 </h1>
     
+<p class="label label-green">lakeFS Cloud</p>
 
-<p>Define branch protection rules to prevent direct changes and commits to specific branches.
-Only merges are allowed into protected branches. Together with the power of pre-merge <a href="/understand/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">hooks</a>,
-you can run validations on your data before it reaches your important branches and is exposed to consumers.</p>
-
-<p>You can create rules for a specific branch or any branch that matches a name pattern you specify with <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> syntax (supporting <code class="language-plaintext highlighter-rouge">?</code> and <code class="language-plaintext highlighter-rouge">*</code> wildcards).</p>
+<blockquote class="note">
+  <p>Managed GC is only available for <a href="/understand/lakefs-cloud.html">lakeFS Cloud</a>. If you are using the self-managed lakeFS, garbage collection is <a href="/howto/garbage-collection/">available to run manually</a>.</p>
+</blockquote>
+<h2 id="benefits-of-using-managed-gc">
+  
+  
+    <a href="#benefits-of-using-managed-gc" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Benefits of using managed GC
+  
+  
+</h2>
+    
+<ul>
+  <li>The quick and safe way to delete your unnecessary objects</li>
+  <li>No operational overhead</li>
+  <li>SLA for when your objects are deleted</li>
+  <li>Support from the Treeverse team</li>
+</ul>
 <h2 id="how-it-works">
   
   
@@ -529,66 +545,18 @@ you can run validations on your data before it reaches your important branches a
   
 </h2>
     
-
-<p>When at least one protection rule applies to a branch, the branch is protected. The following operations will fail on protected branches:</p>
-<ol>
-  <li>Object write operations: <strong>upload</strong> and <strong>delete</strong> objects.</li>
-  <li>Branch operations: <strong>commit</strong> and <strong>reset uncommitted changes</strong>.</li>
-</ol>
-
-<p>To operate on a protected branch, merge commits from other branches into
-it. Use pre-merge <a href="/understand/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">hooks</a> to validate the changes before
-they are merged.</p>
-
-<p class="note">Reverting a previous commit using <code class="language-plaintext highlighter-rouge">lakectl branch revert</code> is <strong>allowed</strong> on a protected branch.</p>
-<h2 id="managing-branch-protection-rules">
+<p>Similarly to the self-managed lakeFS, managed GC uses <a href="/howto/garbage-collection/">garbage collection rules</a> to determine which objects to delete.
+However, it uses our super-fast and efficient engine to detect stale objects and branches (depends on your configuration) and prioritize them for deletion.</p>
+<h2 id="setting-up">
   
   
-    <a href="#managing-branch-protection-rules" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Managing branch protection rules
+    <a href="#setting-up" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setting up
   
   
 </h2>
     
-
-<p>This section explains how to use the lakeFS UI to manage rules. You can also use the <a href="/reference/cli.html#lakectl-branch-protect">command line</a> and <a href="/reference/api.html">API</a>.</p>
-<h3 id="reaching-the-branch-protection-rules-page">
-  
-  
-    <a href="#reaching-the-branch-protection-rules-page" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Reaching the branch protection rules page
-  
-  
-</h3>
-    
-
-<ol>
-  <li>On lakeFS, navigate to the main page of the repository.</li>
-  <li>Click on the <em>Settings</em> tab.</li>
-  <li>In the left menu, click <em>Branches</em>.</li>
-</ol>
-<h3 id="adding-a-rule">
-  
-  
-    <a href="#adding-a-rule" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Adding a rule
-  
-  
-</h3>
-    
-
-<p>To add a new rule, click the <em>Add</em> button. In the dialog, enter the branch name pattern and then click <em>Create</em>.</p>
-
-<p><img alt="Adding a branch protection rule" src="/assets/img/add_branch_protection_rule.png" style="max-width:500px; display:block; margin-left:auto; margin-right:auto;" /></p>
-<h3 id="deleting-a-rule">
-  
-  
-    <a href="#deleting-a-rule" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Deleting a rule
-  
-  
-</h3>
-    
-
-<p>To delete a rule, click the <em>Delete</em> button next to it.</p>
-
-<p><img src="/assets/img/delete_branch_protection_rule.png" alt="Deleting a branch protection rule" /></p>
+<p>Enable managed GC through the lakeFS Cloud onboarding setup wizard.
+This will create additional cloud resources for us to use and have access to delete those objects.</p>
 
                 
 
