@@ -550,13 +550,62 @@
     
 
 <ol id="markdown-toc">
+  <li><a href="#using-delta-lake-with-lakefs-from-apache-spark" id="markdown-toc-using-delta-lake-with-lakefs-from-apache-spark">Using Delta Lake with lakeFS from Apache Spark</a></li>
+  <li><a href="#using-delta-lake-with-lakefs-from-python" id="markdown-toc-using-delta-lake-with-lakefs-from-python">Using Delta Lake with lakeFS from Python</a></li>
   <li><a href="#viewing-delta-lake-table-changes-in-lakefs-beta" id="markdown-toc-viewing-delta-lake-table-changes-in-lakefs-beta">Viewing Delta Lake table changes in lakeFS <sup>BETA</sup></a></li>
-  <li><a href="#spark-configuration" id="markdown-toc-spark-configuration">Spark Configuration</a></li>
   <li><a href="#best-practices" id="markdown-toc-best-practices">Best Practices</a></li>
   <li><a href="#further-reading" id="markdown-toc-further-reading">Further Reading</a></li>
 </ol>
 
 </div>
+<h2 id="using-delta-lake-with-lakefs-from-apache-spark">
+  
+  
+    <a href="#using-delta-lake-with-lakefs-from-apache-spark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Delta Lake with lakeFS from Apache Spark
+  
+  
+</h2>
+    
+
+<p><em>Given the native integration between Delta Lake and Spark, it’s most common that you’ll interact with Delta tables in a Spark environment.</em></p>
+
+<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you’d do with any <a href="/integrations/spark.html">Spark</a> environment.</p>
+
+<p>Once set, you can interact with Delta tables using regular Spark path URIs. Make sure that you include the lakeFS repository and branch name:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">df</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">format</span><span class="o">(</span><span class="s">"delta"</span><span class="o">).</span><span class="py">save</span><span class="o">(</span><span class="s">"s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Note: If using the Databricks Analytics Platform, see the <a href="/integrations/spark.html#installation">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
+
+<p>To see the integration in action see <a href="https://github.com/treeverse/lakeFS-samples/blob/main/00_notebooks/delta-lake.ipynb">this notebook</a> in the <a href="https://github.com/treeverse/lakeFS-samples/">lakeFS Samples Repository</a>.</p>
+<h2 id="using-delta-lake-with-lakefs-from-python">
+  
+  
+    <a href="#using-delta-lake-with-lakefs-from-python" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Delta Lake with lakeFS from Python
+  
+  
+</h2>
+    
+
+<p>The <a href="https://github.com/delta-io/delta-rs">delta-rs</a> library provides bindings for Python. This means that you can use Delta Lake and lakeFS directly from Python without needing Spark. Integration is done through the <a href="/understand/architecture.html#s3-gateway">lakeFS S3 Gateway</a></p>
+
+<p>The documentation for the <code class="language-plaintext highlighter-rouge">deltalake</code> Python module details how to <a href="https://delta-io.github.io/delta-rs/python/usage.html#loading-a-delta-table">read</a>, <a href="https://delta-io.github.io/delta-rs/python/usage.html#writing-delta-tables">write</a>, and <a href="https://delta-io.github.io/delta-rs/python/usage.html#querying-delta-tables">query</a> Delta Lake tables. To use it with lakeFS use an <code class="language-plaintext highlighter-rouge">s3a</code> path for the table based on your repository and branch (for example, <code class="language-plaintext highlighter-rouge">s3a://delta-lake-demo/main/my_table/</code>) and specify the following <code class="language-plaintext highlighter-rouge">storage_options</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">storage_options</span> <span class="o">=</span> <span class="p">{</span><span class="s">"AWS_ENDPOINT"</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">your</span> <span class="n">lakeFS</span> <span class="n">endpoint</span><span class="o">&gt;</span><span class="p">,</span>
+                   <span class="s">"AWS_ACCESS_KEY_ID"</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">your</span> <span class="n">lakeFS</span> <span class="n">access</span> <span class="n">key</span><span class="o">&gt;</span><span class="p">,</span>
+                   <span class="s">"AWS_SECRET_ACCESS_KEY"</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">your</span> <span class="n">lakeFS</span> <span class="n">secret</span> <span class="n">key</span><span class="o">&gt;</span><span class="p">,</span>
+                   <span class="s">"AWS_REGION"</span><span class="p">:</span> <span class="s">"us-east-1"</span><span class="p">,</span>
+                   <span class="s">"AWS_S3_ALLOW_UNSAFE_RENAME"</span><span class="p">:</span> <span class="s">"true"</span>
+                  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>If your lakeFS is not using HTTPS (for example, you’re just running it locally) then add the option</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                   <span class="s">"AWS_STORAGE_ALLOW_HTTP"</span><span class="p">:</span> <span class="s">"true"</span>
+</code></pre></div></div>
+
+<p>To see the integration in action see <a href="https://github.com/treeverse/lakeFS-samples/blob/main/00_notebooks/delta-lake-python.ipynb">this notebook</a> in the <a href="https://github.com/treeverse/lakeFS-samples/">lakeFS Samples Repository</a>.</p>
 <h2 id="viewing-delta-lake-table-changes-in-lakefs-beta">
   
   
@@ -597,25 +646,6 @@ Rename the <code class="language-plaintext highlighter-rouge">delta_diff</code> 
 <code class="language-plaintext highlighter-rouge">plugin.properties.&lt;plugin name&gt;.path</code> configurations in the <a href="/reference/configuration.html#plugins"><code class="language-plaintext highlighter-rouge">.lakefs.yaml</code></a> file.</p>
 
 <p><strong>Notice</strong>: If you’re using the lakeFS <a href="/howto/deploy/onprem.html#docker">docker image</a>, the plugin is installed by default.</p>
-<h2 id="spark-configuration">
-  
-  
-    <a href="#spark-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Spark Configuration
-  
-  
-</h2>
-    
-
-<p><em>Given the native integration between Delta Lake and Spark, it’s most common that you’ll interact with Delta tables in a Spark environment.</em></p>
-
-<p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you’d do with any <a href="/integrations/spark.html">Spark</a> environment.</p>
-
-<p>Once set, you can interact with Delta tables using regular Spark path URIs. Make sure that you include the lakeFS repository and branch name:</p>
-
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">df</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">format</span><span class="o">(</span><span class="s">"delta"</span><span class="o">).</span><span class="py">save</span><span class="o">(</span><span class="s">"s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table"</span><span class="o">)</span>
-</code></pre></div></div>
-
-<p>Note: If using the Databricks Analytics Platform, see the <a href="/integrations/spark.html#installation">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
 <h2 id="best-practices">
   
   
