@@ -298,7 +298,8 @@
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
                    class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/integrations/python.html"
                    class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/r.html"
-                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/integrations/dbt.html"
+                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/integrations/vertex_ai.html"
+                   class="nav-list-link">Vertex AI</a></li><li class="nav-list-item "><a href="/integrations/dbt.html"
                    class="nav-list-link">dbt</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -918,6 +919,50 @@
   <span class="p">{</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"column_a"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"INT32"</span> <span class="p">},</span>
   <span class="p">{</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"column_b"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"BYTE_ARRAY"</span> <span class="p">}</span>
 <span class="p">}</span>
+</code></pre></div></div>
+<h3 id="gcloud">
+  
+  
+    <a href="#gcloud" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">gcloud</code>
+  
+  
+</h3>
+    
+<h3 id="gcloudgs_clientgcs_credentials_json_string">
+  
+  
+    <a href="#gcloudgs_clientgcs_credentials_json_string" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">gcloud/gs_client(gcs_credentials_json_string)</code>
+  
+  
+</h3>
+    
+
+<p>Create a new Google Cloud Storage client using a string that contains a valid <a href="https://developers.google.com/workspace/guides/create-credentials"><code class="language-plaintext highlighter-rouge">credentials.json</code></a> file content.</p>
+<h3 id="gcloudgswrite_fuse_symlinksource-destination-mount_info">
+  
+  
+    <a href="#gcloudgswrite_fuse_symlinksource-destination-mount_info" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">gcloud/gs.write_fuse_symlink(source, destination, mount_info)</code>
+  
+  
+</h3>
+    
+
+<p>Will create a <a href="https://github.com/GoogleCloudPlatform/gcsfuse/blob/master/docs/semantics.md#symlink-inodes">gcsfuse symlink</a>
+from the source (typically a lakeFS physical address for an object) to a given destination.</p>
+
+<p><code class="language-plaintext highlighter-rouge">mount_info</code> is a Lua table with <code class="language-plaintext highlighter-rouge">"from"</code> and <code class="language-plaintext highlighter-rouge">"to"</code> keys - since symlinks don’t work for <code class="language-plaintext highlighter-rouge">gs://...</code> URIs, they need to point
+to the mounted location instead. <code class="language-plaintext highlighter-rouge">from</code> will be removed from the beginning of <code class="language-plaintext highlighter-rouge">source</code>, and <code class="language-plaintext highlighter-rouge">destination</code> will be added instead.</p>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">source</span> <span class="o">=</span> <span class="s2">"gs://bucket/lakefs/data/abc/def"</span>
+<span class="n">destination</span> <span class="o">=</span> <span class="s2">"gs://bucket/exported/path/to/object"</span>
+<span class="n">mount_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">[</span><span class="s2">"from"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"gs://bucket"</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">"to"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"/home/user/gcs-mount"</span>
+<span class="p">}</span>
+<span class="n">gs</span><span class="p">.</span><span class="n">write_fuse_symlink</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">mount_info</span><span class="p">)</span>
+<span class="c1">-- Symlink: "/home/user/gcs-mount/exported/path/to/object" -&gt; "/home/user/gcs-mount/lakefs/data/abc/def"</span>
 </code></pre></div></div>
 <h3 id="lakefs">
   
