@@ -797,17 +797,19 @@ This way, lakeFS will be able to create repositories only under this specific pa
         </ul>
       </div>
       <div id="bucket-policy-minimal">
-        <p>This permission is useful if you are using the <a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>.
+        <p>If required lakeFS can operate without accessing the data itself, this permission section is useful if you are using <a href="/reference/security/presigned-url.html#">presigned URLs mode</a> or the <a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem Spark integration</a>.
 Since this FileSystem performs many operations directly on the storage, lakeFS requires less permissive permissions, resulting in increased security.</p>
 
         <p>lakeFS always requires permissions to access the <code class="language-plaintext highlighter-rouge">_lakefs</code> prefix under your storage namespace, in which metadata
-is stored (<a href="/understand/how/versioning-internals.html#constructing-a-consistent-view-of-the-keyspace-ie-a-commit">learn more</a>).
-By setting this policy you’ll be able to perform only metadata operations through lakeFS, meaning that you’ll <strong>not</strong> be able
+is stored (<a href="/understand/how/versioning-internals.html#constructing-a-consistent-view-of-the-keyspace-ie-a-commit">learn more</a>).</p>
+
+        <p>By setting this policy <strong>without</strong> presign mode you’ll be able to perform only metadata operations through lakeFS, meaning that you’ll <strong>not</strong> be able
 to use lakeFS to upload or download objects. Specifically you won’t be able to:</p>
         <ul>
-          <li>Upload objects using the lakeFS GUI</li>
+          <li>Upload objects using the lakeFS GUI (<strong>Works with presign mode</strong>)</li>
           <li>Upload objects through Spark using the S3 gateway</li>
-          <li>Run <code class="language-plaintext highlighter-rouge">lakectl fs</code> commands (unless using the <code class="language-plaintext highlighter-rouge">--direct</code> flag)</li>
+          <li>Run <code class="language-plaintext highlighter-rouge">lakectl fs</code> commands (unless using the <code class="language-plaintext highlighter-rouge">--direct</code> flag or using <strong>presign mode</strong> with <code class="language-plaintext highlighter-rouge">--pre-sign</code> flag)</li>
+          <li>Use <a href="/howto/hooks/">Actions and Hooks</a></li>
         </ul>
 
         <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
@@ -842,6 +844,37 @@ to use lakeFS to upload or download objects. Specifically you won’t be able to
  </span><span class="p">}</span><span class="w">
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
+</span></code></pre></div>        </div>
+
+        <p>We can use <a href="/reference/security/presigned-url.html#">presigned URLs mode</a> without allowing access to the data from the lakeFS server directly. 
+We can achieve this by using <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html">condition keys</a> such as <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-referer">aws:referer</a>, <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-sourcevpc">aws:SourceVpc</a> and <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-sourceip">aws:SourceIp</a>.</p>
+
+        <p>For example, assume the following scenario:</p>
+        <ul>
+          <li>lakeFS is deployed outside the company (i.e lakeFS cloud or other VPC <strong>not</strong> <code class="language-plaintext highlighter-rouge">vpc-123</code>)</li>
+          <li>We don’t want lakeFS to be able to access the data, so we use presign URL, we still need lakeFS role to be able to sign the URL.</li>
+          <li>We want to allow access from the internal company VPC: <code class="language-plaintext highlighter-rouge">vpc-123</code>.</li>
+        </ul>
+
+        <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">      </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allowLakeFSRoleFromCompanyOnly"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+             </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]"</span><span class="w">
+         </span><span class="p">},</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+             </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+             </span><span class="s2">"s3:PutObject"</span><span class="p">,</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"arn:aws:s3:::[BUCKET]/*"</span><span class="p">,</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+             </span><span class="nl">"StringEquals"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                 </span><span class="nl">"aws:SourceVpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vpc-123"</span><span class="w">
+             </span><span class="p">}</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+     </span><span class="p">}</span><span class="w">
 </span></code></pre></div>        </div>
 
       </div>
