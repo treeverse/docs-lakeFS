@@ -529,6 +529,10 @@
   
 </h1>
     
+
+<p class="warning"><strong>Deprecated Feature:</strong> Having heard the feedback from the community, we are planning to replace the below manual steps with an automated process.
+You can read more about it <a href="https://github.com/treeverse/lakeFS/issues/6461">here</a>.</p>
+
 <p class="pb-5"><a href="https://aws.amazon.com/athena/">Amazon Athena</a> is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL.</p>
 
 <p>Amazon Athena works directly above S3 and can’t access lakeFS. Tables created using Athena aren’t readable by lakeFS.
@@ -574,14 +578,14 @@ After inserting some data into it, the object structure under <code class="langu
 <p>To query that table with Athena, you need to use the <code class="language-plaintext highlighter-rouge">create-symlink</code> command as follows:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl metastore create-symlink <span class="se">\</span>
-<span class="nt">--repo</span> example <span class="se">\</span>
-<span class="nt">--branch</span> main <span class="se">\</span>
-<span class="nt">--path</span> my_table <span class="se">\</span>
-<span class="nt">--from-client-type</span> hive <span class="se">\</span>
-<span class="nt">--from-schema</span> default <span class="se">\</span>
-<span class="nt">--from-table</span> my_table <span class="se">\</span>
-<span class="nt">--to-schema</span> default <span class="se">\ </span>
-<span class="nt">--to-table</span> my_table  
+  <span class="nt">--repo</span> example <span class="se">\</span>
+  <span class="nt">--branch</span> main <span class="se">\</span>
+  <span class="nt">--path</span> my_table <span class="se">\</span>
+  <span class="nt">--from-client-type</span> hive <span class="se">\</span>
+  <span class="nt">--from-schema</span> default <span class="se">\</span>
+  <span class="nt">--from-table</span> my_table <span class="se">\</span>
+  <span class="nt">--to-schema</span> default <span class="se">\ </span>
+  <span class="nt">--to-table</span> my_table  
 </code></pre></div></div>
 
 <p>The command will generate two notable outputs:</p>
@@ -590,13 +594,14 @@ After inserting some data into it, the object structure under <code class="langu
   <li>For each partition, the command will create a symlink file:</li>
 </ol>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜   aws s3 <span class="nb">ls </span>s3://my-bucket/my-repo-prefix/my_table/ <span class="nt">--recursive</span>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws s3 <span class="nb">ls </span>s3://my-bucket/my-repo-prefix/my_table/ <span class="nt">--recursive</span>
 2021-11-23 17:46:29          0 my-repo-prefix/my_table/symlinks/example/main/my_table/year<span class="o">=</span>2021/month<span class="o">=</span>11/symlink.txt
 2021-11-23 17:46:29         60 my-repo-prefix/my_table/symlinks/example/main/my_table/year<span class="o">=</span>2021/month<span class="o">=</span>12/symlink.txt
 2021-11-23 17:46:30         60 my-repo-prefix/my_table/symlinks/example/main/my_table/year<span class="o">=</span>2022/month<span class="o">=</span>1/symlink.txt
 </code></pre></div></div>
 
 <p>An example content of a symlink file, where each line represents a single object of the specific partition:</p>
+
 <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>s3://my-bucket/my-repo-prefix/5bdc62da516944b49889770d98274227
 s3://my-bucket/my-repo-prefix/64262fbf3d6347a79ead641d2b2baee6
 s3://my-bucket/my-repo-prefix/64486c8de6484de69f12d7d26804c93e
