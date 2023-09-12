@@ -696,8 +696,6 @@ If you are using the enteprrise version of lakeFS, you can set this to “intern
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.credentials.session_token</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a static session token</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, custom endpoint for the AWS S3 API (https://s3_compatible_service_endpoint:port)</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.force_path_style</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - When true, use path-style S3 URLs (https://<host>/<bucket> instead of https://<bucket>.<host>)</host></bucket></bucket></host></li>
-  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.streaming_chunk_size</code> <code class="language-plaintext highlighter-rouge">(int : 1048576)</code> - Object chunk size to buffer before streaming to blockstore (use a lower value for less reliable networks). Minimum is 8192.</li>
-  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.streaming_chunk_timeout</code> <code class="language-plaintext highlighter-rouge">(time duration : "60s")</code> - Per object chunk timeout for blockstore streaming operations (use a larger value for less reliable networks).</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.discover_bucket_region</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API).</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.skip_verify_certificate_test_only</code> <code class="language-plaintext highlighter-rouge">(boolean : false)</code> - Skip certificate verification while connecting to the storage endpoint. Should be used only for testing.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.server_side_encryption</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Server side encryption format used (Example on AWS using SSE-KMS while passing “aws:kms”)</li>
@@ -705,6 +703,8 @@ If you are using the enteprrise version of lakeFS, you can set this to “intern
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.pre_signed_expiry</code> <code class="language-plaintext highlighter-rouge">(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.disable_pre_signed</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Disable use of pre-signed URL.</li>
   <li><code class="language-plaintext highlighter-rouge">blockstore.s3.disable_pre_signed_ui</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.client_log_request</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Set SDK logging bit to log requests</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstore.s3.client_log_retries</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Set SDK logging bit to log retries</li>
   <li><code class="language-plaintext highlighter-rouge">graveler.reposiory_cache.size</code> <code class="language-plaintext highlighter-rouge">(int : 1000)</code> - How many items to store in the repository cache.</li>
   <li><code class="language-plaintext highlighter-rouge">graveler.reposiory_cache.ttl</code> <code class="language-plaintext highlighter-rouge">(time duration : "5s")</code> - How long to store an item in the repository cache.</li>
   <li><code class="language-plaintext highlighter-rouge">graveler.reposiory_cache.jitter</code> <code class="language-plaintext highlighter-rouge">(time duration : "2s")</code> - A random amount of time between 0 and this value is added to each item’s TTL.</li>
@@ -821,7 +821,7 @@ To set an environment variable, prepend <code class="language-plaintext highligh
 
 <span class="na">auth</span><span class="pi">:</span>
   <span class="na">encrypt</span><span class="pi">:</span>
-    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">10a718b3f285d89c36e9864494cdd1507f3bc85b342df24736ea81f9a1134bcc09e90b6641"</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">10a718b3f285d89c36e9864494cdd1507f3bc85b342df24736ea81f9a1134bcc"</span>
 
 <span class="na">blockstore</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">local</span>
