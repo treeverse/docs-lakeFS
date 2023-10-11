@@ -599,69 +599,6 @@ Server or the S3 Gateway.</p>
 
 <p>lakeFS server supports external authentication, the feature can be configured by providing an HTTP endpoint to an external authentication service. This integration can be especially useful if you already have an existing authentication system in place, as it allows you to reuse that system instead of maintaining a new one.
 To configure a Remote Authenticator see the <a href="/reference/configuration.html#authentication-and-authorization">configuration fields</a>.</p>
-<h4 id="ldap-server">
-  
-  
-    <a href="#ldap-server" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> LDAP server
-  
-  
-</h4>
-    
-
-<p class="note"><strong>Note</strong>
-This feature is deprecated (<a href="/posts/security_update.html">learn more</a>). For single sign-on with lakeFS, try <a href="https://lakefs.cloud">lakeFS Cloud</a></p>
-
-<p>Configure lakeFS to authenticate users on an LDAP server. Once configured,
-users can additionally log into lakeFS using their credentials LDAP. These
-users may then generate an access key and a secret access key on the Web UI
-at Administration / My Credentials. lakeFS generates an internal user once
-logged in via the LDAP server. Adding this internal user to a group allows
-assigning them a different policy.</p>
-
-<p>Configure the LDAP server using the <a href="/reference/configuration.html">configuration fields</a>:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">server_endpoint</code>: the <code class="language-plaintext highlighter-rouge">ldaps:</code> (or <code class="language-plaintext highlighter-rouge">ldap:</code>) URL of the LDAP server.</li>
-  <li><code class="language-plaintext highlighter-rouge">bind_dn</code>, <code class="language-plaintext highlighter-rouge">bind_password</code>: Credentials for lakeFS to use to query the
-LDAP server for users. They must identify a user with Basic
-Authentication, and are used to convert a user ID attribute to a full
-user DN.</li>
-  <li>
-    <p><code class="language-plaintext highlighter-rouge">default_user_group</code>: A group to add users the first time they log in
-using LDAP.  Typically <code class="language-plaintext highlighter-rouge">Viewers</code> or <code class="language-plaintext highlighter-rouge">Developers</code>.</p>
-
-    <p>Once logged in, LDAP users may be added as normal to any other group.</p>
-  </li>
-  <li><code class="language-plaintext highlighter-rouge">username_attribute</code>: Attribute on LDAP user to identify user when
-logging in.  Typically <code class="language-plaintext highlighter-rouge">uid</code> or <code class="language-plaintext highlighter-rouge">cn</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">user_base_dn</code>: DN of root of DAP tree containing users,
-e.g. <code class="language-plaintext highlighter-rouge">ou=Users,dc=treeverse,dc=io</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">user_filter</code>: An additional filter for users allowed to login,
-e.g. <code class="language-plaintext highlighter-rouge">(objectClass=person)</code>.</li>
-</ul>
-
-<p>LDAP users log in using the following flow:</p>
-
-<ol>
-  <li>Bind the lakeFS control connection to <code class="language-plaintext highlighter-rouge">server_endpoint</code> using <code class="language-plaintext highlighter-rouge">bind_dn</code>,
-<code class="language-plaintext highlighter-rouge">bind_password</code>.</li>
-  <li>Receive an LDAP user-ID (e.g. “joebloggs”) and a password entered on the
-Web UI login page.</li>
-  <li>Attempt to log in as internally-defined users; fail.</li>
-  <li>
-    <p>Search the LDAP server using the control connection for the user: out of
-all users under <code class="language-plaintext highlighter-rouge">user_base_dn</code> that satisfy <code class="language-plaintext highlighter-rouge">user_filter</code>, there must be
-a single user whose <code class="language-plaintext highlighter-rouge">username_attribute</code> was specified by the user. Get
-their DN.</p>
-
-    <p>In our example, this may be <code class="language-plaintext highlighter-rouge">uid=joebloggs,ou=Users,dc=treeverse,dc=io</code>
-(this entry must have <code class="language-plaintext highlighter-rouge">objectClass: person</code> because of <code class="language-plaintext highlighter-rouge">user_filter</code>).</p>
-  </li>
-  <li>Attempt to bind the received DN on the LDAP server using the password.</li>
-  <li>On success, the user is authenticated.</li>
-  <li>Create a new internal user with that DN if needed. When creating a user,
-add them to the internal group named <code class="language-plaintext highlighter-rouge">default_user_group</code>.</li>
-</ol>
 <h3 id="api-server-authentication">
   
   
