@@ -538,17 +538,22 @@
 
 <ol id="markdown-toc">
   <li><a href="#setup" id="markdown-toc-setup">Setup</a></li>
-  <li><a href="#configure" id="markdown-toc-configure">Configure</a>    <ol>
-      <li><a href="#iceberg-and-catalog-metadata-caching" id="markdown-toc-iceberg-and-catalog-metadata-caching">Iceberg and Catalog Metadata Caching</a></li>
+  <li><a href="#configure" id="markdown-toc-configure">Configure</a></li>
+  <li><a href="#using-iceberg-tables-with-lakefs" id="markdown-toc-using-iceberg-tables-with-lakefs">Using Iceberg tables with lakeFS</a>    <ol>
+      <li><a href="#create-a-table" id="markdown-toc-create-a-table">Create a table</a></li>
+      <li><a href="#insert-data-into-the-table" id="markdown-toc-insert-data-into-the-table">Insert data into the table</a></li>
+      <li><a href="#create-a-branch" id="markdown-toc-create-a-branch">Create a branch</a></li>
+      <li><a href="#make-changes-on-the-branch" id="markdown-toc-make-changes-on-the-branch">Make changes on the branch</a></li>
+      <li><a href="#query-the-table" id="markdown-toc-query-the-table">Query the table</a></li>
     </ol>
   </li>
-  <li><a href="#using-iceberg-tables-with-lakefs" id="markdown-toc-using-iceberg-tables-with-lakefs">Using Iceberg tables with lakeFS</a></li>
   <li><a href="#migrating-an-existing-iceberg-table-to-lakefs-catalog" id="markdown-toc-migrating-an-existing-iceberg-table-to-lakefs-catalog">Migrating an existing Iceberg Table to lakeFS Catalog</a></li>
 </ol>
 
 </div>
 
-<p>lakeFS provides its own implementation of the <code class="language-plaintext highlighter-rouge">SparkCatalog</code>, which handles the writing of the Iceberg data to lakeFS as well as reading from it and branching. Using straightforward table identifiers you can switch between branches when reading and writing data:</p>
+<p>To enrich your Iceberg tables with lakeFS capabilities, you can use the lakeFS implementation of the Iceberg catalog.
+You will then be able to query your Iceberg tables using lakeFS references, such as branches, tags, and commit hashes:</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="k">catalog</span><span class="p">.</span><span class="k">ref</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="k">table</span>
 </code></pre></div></div>
@@ -573,7 +578,7 @@
     <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependency&gt;</span>
   <span class="nt">&lt;groupId&gt;</span>io.lakefs<span class="nt">&lt;/groupId&gt;</span>
   <span class="nt">&lt;artifactId&gt;</span>lakefs-iceberg<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>0.1.2<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;version&gt;</span>0.1.4<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </code></pre></div>    </div>
 
@@ -581,7 +586,7 @@
   <div id="pyspark">
     <p>Include the <code class="language-plaintext highlighter-rouge">lakefs-iceberg</code> jar in your package list along with Iceberg. For example:</p>
 
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.jars.packages"</span><span class="p">,</span> <span class="s">"org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.3.0,io.lakefs:lakefs-iceberg:0.1.2"</span><span class="p">)</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.jars.packages"</span><span class="p">,</span> <span class="s">"org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.3.0,io.lakefs:lakefs-iceberg:0.1.4"</span><span class="p">)</span>
 </code></pre></div>    </div>
   </div>
 </div>
@@ -594,47 +599,45 @@
 </h2>
     
 
-<ol>
-  <li>
+<div class="tabs">
+  <ul>
+    <li><a href="#conf-pyspark">PySpark</a></li>
+    <li><a href="#conf-sparkshell">Spark Shell</a></li>
+  </ul>
+  <div id="conf-pyspark">
+
     <p>Set up the Spark SQL catalog:</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs"</span><span class="p">,</span> <span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">)</span> \
- <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span> <span class="s">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">)</span> \
- <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"lakefs://</span><span class="si">{</span><span class="n">repo_name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span> \
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs"</span><span class="p">,</span> <span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">)</span> \
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span> <span class="s">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">)</span> \
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"lakefs://</span><span class="si">{</span><span class="n">repo_name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span> \ 
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.cache-enabled"</span><span class="p">,</span> <span class="s">"false"</span><span class="p">)</span>
 </code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Optionally, you can set the <code class="language-plaintext highlighter-rouge">lakeFS</code> catalog to be the default one, which means that you don’t need to include the prefix when referencing tables.</p>
 
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.defaultCatalog"</span><span class="p">,</span> <span class="s">"lakefs"</span><span class="p">)</span> \
+    <p>Configure the S3A Hadoop FileSystem with your lakeFS connection details.
+Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3.impl"</span><span class="p">,</span> <span class="s">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="p">)</span> \
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.endpoint"</span><span class="p">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">)</span> \
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.access.key"</span><span class="p">,</span> <span class="s">"AKIAIO5FODNN7EXAMPLE"</span><span class="p">)</span> \
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.secret.key"</span><span class="p">,</span> <span class="s">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span> \
+<span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">)</span>
 </code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Configure the S3A Hadoop FileSystem for lakeFS.</p>
 
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3.impl"</span><span class="p">,</span> <span class="s">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="p">)</span> \
- <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.endpoint"</span><span class="p">,</span> <span class="n">lakefsEndPoint</span><span class="p">)</span> \
- <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.access.key"</span><span class="p">,</span> <span class="n">lakefsAccessKey</span><span class="p">)</span> \
- <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.secret.key"</span><span class="p">,</span> <span class="n">lakefsSecretKey</span><span class="p">)</span> \
- <span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">)</span> \
+  </div>
+
+  <div id="conf-sparkshell">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.sql.catalog.lakefs<span class="o">=</span><span class="s2">"org.apache.iceberg.spark.SparkCatalog"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.sql.catalog.lakefs.catalog-impl<span class="o">=</span><span class="s2">"io.lakefs.iceberg.LakeFSCatalog"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.sql.catalog.lakefs.warehouse<span class="o">=</span><span class="s2">"lakefs://example-repo"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.sql.catalog.lakefs.cache-enabled<span class="o">=</span><span class="s2">"false"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.hadoop.fs.s3.impl<span class="o">=</span><span class="s2">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span><span class="s2">"AKIAIO5FODNN7EXAMPLE"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span> <span class="se">\</span>
+   <span class="nt">--conf</span> spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="s2">"true"</span>
 </code></pre></div>    </div>
-  </li>
-</ol>
-<h3 id="iceberg-and-catalog-metadata-caching">
-  
-  
-    <a href="#iceberg-and-catalog-metadata-caching" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Iceberg and Catalog Metadata Caching
-  
-  
-</h3>
-    
-
-<p>By default, Iceberg caches metadata entries. This can result in unexpected behaviour when working on the same table with different references (such as branches) as it doesn’t invalidate the cache. You can read more about this in more detail <a href="https://github.com/treeverse/lakefs-iceberg/issues/27">here</a>.</p>
-
-<p>For this reason it is recommended to disable the cache:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">config</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.cache-enabled"</span><span class="p">,</span> <span class="s">"false"</span><span class="p">)</span> \
-</code></pre></div></div>
+  </div>
+</div>
 <h2 id="using-iceberg-tables-with-lakefs">
   
   
@@ -643,53 +646,99 @@
   
 </h2>
     
+<h3 id="create-a-table">
+  
+  
+    <a href="#create-a-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a table
+  
+  
+</h3>
+    
 
-<p>When referencing tables you need to ensure that they have a database specified (as you would anyway), and then a lakeFS <a href="/understand/model.html#ref-expressions">reference</a> prefix.</p>
+<p>To create a table on your main branch, use the following syntax:</p>
 
-<p>A reference is one of:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span> <span class="p">(</span><span class="n">id</span> <span class="nb">int</span><span class="p">,</span> <span class="k">data</span> <span class="n">string</span><span class="p">);</span>
+</code></pre></div></div>
+<h3 id="insert-data-into-the-table">
+  
+  
+    <a href="#insert-data-into-the-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Insert data into the table
+  
+  
+</h3>
+    
 
-<ul>
-  <li>Branch</li>
-  <li>Tag</li>
-  <li>Expression (for example, <code class="language-plaintext highlighter-rouge">main~17</code> means <em>17 commits before main</em>)</li>
-</ul>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'data1'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'data2'</span><span class="p">);</span>
+</code></pre></div></div>
+<h3 id="create-a-branch">
+  
+  
+    <a href="#create-a-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a branch
+  
+  
+</h3>
+    
 
-<p><em>If you have not set your default catalog then you need to include this as a prefix to the lakeFS reference.</em></p>
+<p>We can now commit the creation of the table to the main branch:</p>
 
-<p>Here are some examples:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl commit lakefs://example-repo/main <span class="nt">-m</span> <span class="s2">"my first iceberg commit"</span>
+</code></pre></div></div>
 
-<ul>
-  <li>
-    <p>The table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">main</code> branch of lakeFS:</p>
+<p>Then, create a branch:</p>
 
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">main</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>The table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch create lakefs://example-repo/dev <span class="nt">-s</span> lakefs://example-repo/main
+</code></pre></div></div>
+<h3 id="make-changes-on-the-branch">
+  
+  
+    <a href="#make-changes-on-the-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Make changes on the branch
+  
+  
+</h3>
+    
 
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">dev</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>The table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS, configured through the Spark SQL catalog <code class="language-plaintext highlighter-rouge">foo</code>:</p>
+<p>We can now make changes on the branch:</p>
 
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">foo</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>One commit previous to the table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'data3'</span><span class="p">);</span>
+</code></pre></div></div>
+<h3 id="query-the-table">
+  
+  
+    <a href="#query-the-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Query the table
+  
+  
+</h3>
+    
 
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="nv">`dev~1`</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Only committed data on the table <code class="language-plaintext highlighter-rouge">db.table1</code> on the <code class="language-plaintext highlighter-rouge">dev</code> branch of lakeFS</p>
+<p>If we query the table on the branch, we will see the data we inserted:</p>
 
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="nv">`dev@`</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
-</code></pre></div>    </div>
-  </li>
-</ul>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Results in:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----+------+
+| id | data |
++----+------+
+| 1  | data1|
+| 2  | data2|
+| 3  | data3|
++----+------+
+</code></pre></div></div>
+
+<p>However, if we query the table on the main branch, we will not see the new changes:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Results in:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----+------+
+| id | data |
++----+------+
+| 1  | data1|
+| 2  | data2|
++----+------+
+</code></pre></div></div>
 <h2 id="migrating-an-existing-iceberg-table-to-lakefs-catalog">
   
   
