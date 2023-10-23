@@ -541,6 +541,10 @@
       <li><a href="#installing" id="markdown-toc-installing">Installing</a></li>
       <li><a href="#initializing" id="markdown-toc-initializing">Initializing</a></li>
       <li><a href="#usage-examples" id="markdown-toc-usage-examples">Usage Examples</a></li>
+      <li><a href="#list-branches" id="markdown-toc-list-branches">List branches</a></li>
+      <li><a href="#upload" id="markdown-toc-upload">Upload</a></li>
+      <li><a href="#uncommitted-changes" id="markdown-toc-uncommitted-changes">Uncommitted changes</a></li>
+      <li><a href="#read-data-from-main-branch" id="markdown-toc-read-data-from-main-branch">Read data from main branch</a></li>
       <li><a href="#python-client-documentation" id="markdown-toc-python-client-documentation">Python Client documentation</a></li>
       <li><a href="#full-api-reference" id="markdown-toc-full-api-reference">Full API reference</a></li>
     </ol>
@@ -579,7 +583,7 @@
 
 <p>Install the Python client using pip:</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="s1">'lakefs_client==&lt;lakeFS version&gt;'</span>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="s1">'lakefs_sdk~=1.0'</span>
 </code></pre></div></div>
 <h3 id="initializing">
   
@@ -592,16 +596,14 @@
 
 <p>Here’s how to instantiate a client:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_client</span>
-<span class="kn">from</span> <span class="nn">lakefs_client</span> <span class="kn">import</span> <span class="n">models</span>
-<span class="kn">from</span> <span class="nn">lakefs_client.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
 
-<span class="c1"># lakeFS credentials and endpoint
-</span><span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="p">.</span><span class="n">Configuration</span><span class="p">()</span>
-<span class="n">configuration</span><span class="p">.</span><span class="n">username</span> <span class="o">=</span> <span class="s">'AKIAIOSFODNN7EXAMPLE'</span>
-<span class="n">configuration</span><span class="p">.</span><span class="n">password</span> <span class="o">=</span> <span class="s">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span>
-<span class="n">configuration</span><span class="p">.</span><span class="n">host</span> <span class="o">=</span> <span class="s">'http://localhost:8000'</span>
-
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_sdk</span><span class="p">.</span><span class="n">Configuration</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s">"http://localhost:8000"</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -629,6 +631,18 @@ production setting.</p>
     
 
 <p>Now that you have a client object, you can use it to interact with the API.</p>
+
+<p>To shorten the code example, let’s create a helper function that will iterate over all results of a paginated API:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">pagination_helper</span><span class="p">(</span><span class="n">page_fetcher</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="s">"""Helper function to iterate over paginated results"""</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">page_fetcher</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="k">from</span> <span class="n">resp</span><span class="p">.</span><span class="n">results</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">.</span><span class="n">pagination</span><span class="p">.</span><span class="n">has_more</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s">'after'</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="n">pagination</span><span class="p">.</span><span class="n">next_offset</span>
+</code></pre></div></div>
 <h4 id="creating-a-repository">
   
   
@@ -638,86 +652,269 @@ production setting.</p>
 </h4>
     
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">repo</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">RepositoryCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">storage_namespace</span><span class="o">=</span><span class="s">'s3://storage-bucket/repos/example-repo'</span><span class="p">,</span> <span class="n">default_branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
-<span class="n">client</span><span class="p">.</span><span class="n">repositories_api</span><span class="p">.</span><span class="n">create_repository</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-<span class="c1"># output:
-# {'creation_date': 1617532175,
-#  'default_branch': 'main',
-#  'id': 'example-repo',
-#  'storage_namespace': 's3://storage-bucket/repos/example-repo'}
-</span></code></pre></div></div>
-<h4 id="creating-a-branch-uploading-files-committing-changes">
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.models</span> <span class="kn">import</span> <span class="n">RepositoryCreation</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">repositories_api</span><span class="p">.</span><span class="n">create_repository</span><span class="p">(</span>
+    <span class="n">RepositoryCreation</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">"example-repo"</span><span class="p">,</span>
+        <span class="n">storage_namespace</span><span class="o">=</span><span class="s">"s3://storage-bucket/repos/example-repo"</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output">
   
   
-    <a href="#creating-a-branch-uploading-files-committing-changes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Creating a branch, uploading files, committing changes
+    <a href="#output" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>id='example-repo' creation_date=1697815536 default_branch='main' storage_namespace='s3://storage-bucket/repos/example-repo'
+</code></pre></div></div>
+<h4 id="list-repositories">
+  
+  
+    <a href="#list-repositories" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> List repositories
   
   
 </h4>
     
 
-<p>List the repository branches:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">list_branches</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">)</span>
-<span class="c1"># output:
-# [{'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'main'}]
-</span></code></pre></div></div>
+<span class="c1"># ... client and pagination_helper ...
+</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Listing repositories:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">pagination_helper</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">repositories_api</span><span class="p">.</span><span class="n">list_repositories</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
 
-<p>Create a new branch:</p>
+</code></pre></div></div>
+<h4 id="output-1">
+  
+  
+    <a href="#output-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Listing repositories:
+id='example-repo' creation_date=1697815536 default_branch='main' storage_namespace='s3://storage-bucket/repos/example-repo'
+</code></pre></div></div>
+<h4 id="creating-a-branch">
+  
+  
+    <a href="#creating-a-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Creating a branch
+  
+  
+</h4>
+    
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">create_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch_creation</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s">'main'</span><span class="p">))</span>
-<span class="c1"># output:
-# 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656'
-</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.models</span> <span class="kn">import</span> <span class="n">BranchCreation</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
 
-<p>List again to see your newly created branch:</p>
+<span class="c1"># ... client ...
+</span>
+<span class="n">ref1</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">create_branch</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'experiment1'</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s">'main'</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"experiment1 ref:"</span><span class="p">,</span> <span class="n">ref1</span><span class="p">)</span>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">list_branches</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">).</span><span class="n">results</span>
-<span class="c1"># output:
-# [{'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'experiment-aggregations1'}, {'commit_id': 'cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656', 'id': 'main'}]
-</span></code></pre></div></div>
+<span class="n">ref2</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">create_branch</span><span class="p">(</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'experiment2'</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s">'main'</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"experiment2 ref:"</span><span class="p">,</span> <span class="n">ref2</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-2">
+  
+  
+    <a href="#output-2" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>experiment1 ref: 7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859
+experiment2 ref: 7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859
+</code></pre></div></div>
+<h3 id="list-branches">
+  
+  
+    <a href="#list-branches" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> List branches
+  
+  
+</h3>
+    
 
-<p>Great. Now, let’s upload a file into your new branch:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'file.csv'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">client</span><span class="p">.</span><span class="n">objects_api</span><span class="p">.</span><span class="n">upload_object</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">'path/to/file.csv'</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-<span class="c1"># output:
-# {'checksum': '0d3b39380e2500a0f60fb3c09796fdba',
-#  'mtime': 1617534834,
-#  'path': 'path/to/file.csv',
-#  'path_type': 'object',
-#  'physical_address': 'local://example-repo/1865650a296c42e28183ad08e9b068a3',
-#  'size_bytes': 18}
-</span></code></pre></div></div>
+<span class="c1"># .. client and pagination_helper
+</span>
+<span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">pagination_helper</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">list_branches</span><span class="p">,</span> <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+
+</code></pre></div></div>
+<h4 id="output-3">
+  
+  
+    <a href="#output-3" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>id='experiment1' commit_id='7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859'
+id='experiment2' commit_id='7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859'
+id='main' commit_id='7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859'
+</code></pre></div></div>
+<h3 id="upload">
+  
+  
+    <a href="#upload" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Upload
+  
+  
+</h3>
+    
+
+<p>Great. Now, let’s upload some data:
+Generate “sample_data.csv” or use your own data</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="n">sample_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s">"Alice"</span><span class="p">,</span> <span class="s">"alice@example.com"</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="s">"Bob"</span><span class="p">,</span> <span class="s">"bob@example.com"</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="s">"Carol"</span><span class="p">,</span> <span class="s">"carol@example.com"</span><span class="p">],</span>
+<span class="p">]</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">"sample_data.csv"</span><span class="p">,</span> <span class="s">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="p">.</span><span class="n">writer</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+    <span class="n">writer</span><span class="p">.</span><span class="n">writerow</span><span class="p">([</span><span class="s">"ID"</span><span class="p">,</span> <span class="s">"Name"</span><span class="p">,</span> <span class="s">"Email"</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sample_data</span><span class="p">:</span>
+        <span class="n">writer</span><span class="p">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Upload the data file by passing the filename as content:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">objects_api</span><span class="p">.</span><span class="n">upload_object</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">"example-repo"</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">"experiment1"</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">"csv/sample_data.csv"</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s">"sample_data.csv"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-4">
+  
+  
+    <a href="#output-4" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>path='csv/sample_data.csv' path_type='object' physical_address='s3://storage-bucket/repos/example-repo/data/gke0ignnl531fa6k90p0/ckpfk4fnl531fa6k90pg' physical_address_expiry=None checksum='b6b6a1a17ff85291376ae6a5d7fa69d0' size_bytes=92 mtime=1697839635 metadata=None content_type='text/csv'
+</code></pre></div></div>
+
+<p>We can also upload content a bytes:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">objects_api</span><span class="p">.</span><span class="n">upload_object</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">"example-repo"</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">"experiment1"</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">"raw/file1.data"</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="sa">b</span><span class="s">"Hello Object World"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-5">
+  
+  
+    <a href="#output-5" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>path='rawv/file1.data' path_type='object' physical_address='s3://storage-bucket/repos/example-repo/data/gke0ignnl531fa6k90p0/ckpfltvnl531fa6k90q0' physical_address_expiry=None checksum='0ef432f8eb0305f730b0c57bbd7a6b08' size_bytes=18 mtime=1697839863 metadata=None content_type='application/octet-stream
+</code></pre></div></div>
+<h3 id="uncommitted-changes">
+  
+  
+    <a href="#uncommitted-changes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Uncommitted changes
+  
+  
+</h3>
+    
 
 <p>Diffing a single branch will show all the uncommitted changes on that branch:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
-<span class="c1"># output:
-# [{'path': 'path/to/file.csv', 'path_type': 'object', 'type': 'added'}]
-</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client and pagination_helper ...
+</span>
+<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">pagination_helper</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">,</span> <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment1'</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+
+</code></pre></div></div>
+<h4 id="output-6">
+  
+  
+    <a href="#output-6" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>type='added' path='csv/sample_data.csv' path_type='object' size_bytes=92
+type='added' path='raw/file1.data' path_type='object' size_bytes=18
+</code></pre></div></div>
 
 <p>As expected, our change appears here. Let’s commit it and attach some arbitrary metadata:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">commits_api</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.models</span> <span class="kn">import</span> <span class="n">CommitCreation</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">commits_api</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span>
     <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
-    <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">,</span>
-    <span class="n">commit_creation</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">CommitCreation</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">'Added a CSV file!'</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'using'</span><span class="p">:</span> <span class="s">'python_api'</span><span class="p">}))</span>
-<span class="c1"># output:
-# {'committer': 'barak',
-#  'creation_date': 1617535120,
-#  'id': 'e80899a5709509c2daf797c69a6118be14733099f5928c14d6b65c9ac2ac841b',
-#  'message': 'Added a CSV file!',
-#  'meta_range_id': '',
-#  'metadata': {'using': 'python_api'},
-#  'parents': ['cdd673a4c5f42d33acdf3505ecce08e4d839775485990d231507f586ebe97656']}
-</span></code></pre></div></div>
+    <span class="n">branch</span><span class="o">=</span><span class="s">'experiment1'</span><span class="p">,</span>
+    <span class="n">commit_creation</span><span class="o">=</span><span class="n">CommitCreation</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">'Add some data!'</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'using'</span><span class="p">:</span> <span class="s">'python_api'</span><span class="p">})</span>
+<span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-7">
+  
+  
+    <a href="#output-7" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>id='d51b2428106921fcb893813b1eb668b46284067bb5264d89ed409ccb95676e3d' parents=['7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859'] committer='barak' message='Add some data!' creation_date=1697884139 meta_range_id='' metadata={'using': 'python_api'}
+</code></pre></div></div>
 
-<p>Diffing again, this time there should be no uncommitted files:</p>
+<p>Calling diff again on the same branch, this time there should be no uncommitted files:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
-<span class="c1"># output:
-# []
-</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'experiment1'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-8">
+  
+  
+    <a href="#output-8" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pagination=Pagination(has_more=False, next_offset='', results=0, max_per_page=1000) results=[]
+</code></pre></div></div>
 <h4 id="merging-changes-from-a-branch-into-main">
   
   
@@ -729,10 +926,25 @@ production setting.</p>
 
 <p>Let’s diff between your branch and the main branch:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
-<span class="c1"># output:
-# [{'path': 'path/to/file.csv', 'path_type': 'object', 'type': 'added'}]
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client and pagination_helper ...
 </span>
+<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">pagination_helper</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">,</span> <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment1'</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+
+</code></pre></div></div>
+<h4 id="output-9">
+  
+  
+    <a href="#output-9" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>type='added' path='csv/sample_data.csv' path_type='object' size_bytes=92
+type='added' path='raw/file1.data' path_type='object' size_bytes=18
 </code></pre></div></div>
 
 <p>Looks like you have a change. Let’s merge it:</p>
@@ -745,10 +957,65 @@ production setting.</p>
 
 <p>Let’s diff again - there should be no changes as all changes are on our main branch already:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">diff_refs</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">left_ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span> <span class="n">right_ref</span><span class="o">=</span><span class="s">'experiment-aggregations1'</span><span class="p">).</span><span class="n">results</span>
-<span class="c1"># output:
-# []
-</span></code></pre></div></div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">refs_api</span><span class="p">.</span><span class="n">merge_into_branch</span><span class="p">(</span>
+    <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
+    <span class="n">source_ref</span><span class="o">=</span><span class="s">'experiment1'</span><span class="p">,</span>
+    <span class="n">destination_branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-10">
+  
+  
+    <a href="#output-10" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reference='a3ea99167a25748cf1d33ba284bda9c1400a8acfae8477562032d2b2435fd37b'
+</code></pre></div></div>
+<h3 id="read-data-from-main-branch">
+  
+  
+    <a href="#read-data-from-main-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Read data from main branch
+  
+  
+</h3>
+    
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+
+<span class="c1"># ... client ...
+</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">objects_api</span><span class="p">.</span><span class="n">get_object</span><span class="p">(</span>
+    <span class="n">repository</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span>
+    <span class="n">ref</span><span class="o">=</span><span class="s">'main'</span><span class="p">,</span>
+    <span class="n">path</span><span class="o">=</span><span class="s">'csv/sample_data.csv'</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">.</span><span class="n">reader</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="output-11">
+  
+  
+    <a href="#output-11" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>['ID', 'Name', 'Email']
+['1', 'Alice', 'alice@example.com']
+['2', 'Bob', 'bob@example.com']
+['3', 'Carol', 'carol@example.com']
+</code></pre></div></div>
 <h3 id="python-client-documentation">
   
   
@@ -758,7 +1025,7 @@ production setting.</p>
 </h3>
     
 
-<p>For the documentation of lakeFS’s Python package, see <a href="https://pydocs.lakefs.io">https://pydocs.lakefs.io</a></p>
+<p>For the documentation of lakeFS’s Python package, see <a href="https://pydocs-sdk.lakefs.io">https://pydocs-sdk.lakefs.io</a></p>
 <h3 id="full-api-reference">
   
   
@@ -792,6 +1059,7 @@ requests to either S3 or lakeFS according to the provided bucket name.</p>
     
 
 <p>Create a Boto3 S3 client with your lakeFS endpoint and key-pair:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
 <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s">'s3'</span><span class="p">,</span>
     <span class="n">endpoint_url</span><span class="o">=</span><span class="s">'https://lakefs.example.com'</span><span class="p">,</span>
@@ -856,6 +1124,7 @@ requests to either S3 or lakeFS according to the provided bucket name.</p>
     
 
 <p>Get object metadata using branch and path:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">s3</span><span class="p">.</span><span class="n">head_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="s">'example-repo'</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="s">'main/example-file.parquet'</span><span class="p">)</span>
 <span class="c1"># output:
 # {'ResponseMetadata': {'RequestId': '72A9EBD1210E90FA',
