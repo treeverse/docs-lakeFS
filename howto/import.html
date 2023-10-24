@@ -543,9 +543,8 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
   <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
       <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
       <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
-      <li><a href="#lakectl-import" id="markdown-toc-lakectl-import"><em>lakectl import</em></a></li>
+      <li><a href="#using-the-cli-lakectl-import" id="markdown-toc-using-the-cli-lakectl-import">Using the CLI: <em>lakectl import</em></a></li>
       <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
-      <li><a href="#working-with-imported-data" id="markdown-toc-working-with-imported-data">Working with imported data</a></li>
     </ol>
   </li>
   <li><a href="#copying-data-into-a-lakefs-repository" id="markdown-toc-copying-data-into-a-lakefs-repository">Copying data into a lakeFS repository</a></li>
@@ -560,6 +559,8 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
   
 </h2>
     
+
+<p>Mirror an existing object store location into a lakeFS repository, without copying the data.</p>
 <h3 id="prerequisites">
   
   
@@ -568,34 +569,123 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
   
 </h3>
     
-<h4 id="user-permissions">
+
+<ul>
+  <li>Importing is permitted for users in the Supers (lakeFS open-source) group or the SuperUsers (lakeFS Cloud/Enterprise) group.
+ To learn how lakeFS Cloud and lakeFS Enterprise users can fine-tune import permissions, see <a href="#fine-grained-permissions">Fine-grained permissions</a> below.</li>
+  <li>The lakeFS <em>server</em> must have permissions to list the objects in the source bucket.</li>
+  <li>The source bucket must be in the same region as your repository.</li>
+</ul>
+<h3 id="using-the-lakefs-ui">
   
   
-    <a href="#user-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User Permissions
+    <a href="#using-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the lakeFS UI
+  
+  
+</h3>
+    
+
+<ol>
+  <li>
+    <p>In your repository’s main page, click the <em>Import</em> button to open the import dialog:</p>
+
+    <p><img src="/assets/img/UI-Import-Dialog.png" alt="lakeFS UI import dialog" /></p>
+  </li>
+  <li>Under <em>Import from</em>, fill in the location on your object store you would like to import from.</li>
+  <li>Fill in the import destination in lakeFS</li>
+  <li>Add a commit message, and optionally metadata.</li>
+  <li>Press <em>Import</em></li>
+</ol>
+
+<p>Once the import is complete, a new commit containing the imported objects will be created in the destination branch.</p>
+<h4 id="notes">
+  
+  
+    <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
   
   
 </h4>
     
+<ul>
+  <li>Any previously existing objects under the destination prefix will be deleted.</li>
+  <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
+</ul>
+<h3 id="using-the-cli-lakectl-import">
+  
+  
+    <a href="#using-the-cli-lakectl-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the CLI: <em>lakectl import</em>
+  
+  
+</h3>
+    
+<p>The <em>lakectl import</em> command acts the same as the UI import wizard. It commits the changes to the selected branch.</p>
 
-<p>To run import you need the following permissions:
-<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:ImportCancel</code>. 
-The first 3 permissions are available by default to users in the default Developers group (<a href="/reference/security/rbac.html">RBAC</a>) or the 
-Writers group (<a href="/reference/security/access-control-lists.html">ACL</a>). The <code class="language-plaintext highlighter-rouge">fs:Import*</code> permissions enable the user to import data from any location of the storage 
-provider that lakeFS has access to and cancel the operation if needed. 
-Thus, it’s only available to users in group Supers (<a href="/reference/security/access-control-lists.html">ACL</a>) or SuperUsers(<a href="/reference/security/rbac.html">RBAC</a>).
-RBAC installations can modify policies to add that permission to any group, such as Developers.</p>
-<h4 id="lakefs-permissions">
+<div class="tabs">
+  <ul>
+  <li><a href="#import-tabs-1">AWS S3 or S3 API Compatible storage</a></li>
+  <li><a href="#import-tabs-2">Azure Blob</a></li>
+  <li><a href="#import-tabs-3">Google Cloud Storage</a></li>
+</ul>
+  <div id="import-tabs-1">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
+  <span class="nt">--from</span> s3://bucket/optional/prefix/ <span class="se">\</span>
+  <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
+</code></pre></div>    </div>
+  </div>
+  <div id="import-tabs-2">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
+   <span class="nt">--from</span> https://storageAccountName.blob.core.windows.net/container/optional/prefix/ <span class="se">\</span>
+   <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
+</code></pre></div>    </div>
+  </div>
+  <div id="import-tabs-3">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
+   <span class="nt">--from</span> gs://bucket/optional/prefix/ <span class="se">\</span>
+   <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
+</code></pre></div>    </div>
+  </div>
+</div>
+<h3 id="limitations">
   
   
-    <a href="#lakefs-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Permissions
+    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
   
   
-</h4>
+</h3>
     
 
-<p>lakeFS must have permissions to list the objects in the source object store,
-and the source bucket must be in the same region of your destination bucket.<br />
-In addition, see the following storage provider specific instructions:</p>
+<ol>
+  <li>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</li>
+  <li>For security reasons, if you are using lakeFS on top of your local disk (<code class="language-plaintext highlighter-rouge">blockstore.type=local</code>), you need to enable the import feature explicitly. 
+To do so, set the <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> to <code class="language-plaintext highlighter-rouge">true</code> and specify the allowed import paths in <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> (see <a href="/reference/configuration.html">configuration reference</a>).
+Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</li>
+  <li>Making changes to data in the original bucket will not be reflected in lakeFS, and may cause inconsistencies.</li>
+</ol>
+<h3 class="no_toc d-inline-block" id="fine-grained-permissions">
+  
+  
+    <a href="#fine-grained-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Fine-grained permissions
+  
+  
+</h3>
+    
+<p class="label label-green">lakeFS Cloud</p>
+<p class="label label-purple">lakeFS Enterprise</p>
+
+<p>With RBAC support, The lakeFS user running the import command should have the following permissions in lakeFS:
+<code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:ImportCancel</code>.</p>
+
+<p>As mentioned above, all of these permissions are available by default to the Supers (lakeFS open-source) group or the SuperUsers (lakeFS Cloud/Enterprise).</p>
+<h3 class="no_toc" id="provider-specific-permissions">
+  
+  
+    <a href="#provider-specific-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Provider-specific permissions
+  
+  
+</h3>
+    
+
+<p>In addition, the following for provider-specific permissions may be required:</p>
 
 <div class="tabs">
   <ul>
@@ -674,137 +764,7 @@ the following policy needs to be attached to the lakeFS S3 service-account to al
   <div id="gcs">
     <p>No specific prerequisites</p>
   </div>
-</div><hr />
-<h3 id="using-the-lakefs-ui">
-  
-  
-    <a href="#using-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the lakeFS UI
-  
-  
-</h3>
-    
-
-<p class="note">To import using the UI, lakeFS must have permissions to list the objects in the source object store.</p>
-
-<ol>
-  <li>
-    <p>In your repository’s main page, click the <em>Import</em> button to open the import dialog:</p>
-
-    <p><img src="/assets/img/UI-Import-Dialog.png" alt="img.png" /></p>
-  </li>
-  <li>Under <em>Import from</em>, fill in the location on your object store you would like to import from.</li>
-  <li>Fill in the import destination in lakeFS</li>
-  <li>Add a commit message, and optionally metadata.</li>
-  <li>Press <em>Import</em></li>
-</ol>
-
-<p>Once the import is complete, the changes are merged into the destination branch.</p>
-<h4 id="notes">
-  
-  
-    <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
-  
-  
-</h4>
-    
-
-<ul>
-  <li>Import uses the <code class="language-plaintext highlighter-rouge">src-wins</code> merge strategy. Therefore - import of existing objects and prefixes in the destination will override them.</li>
-  <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
-</ul>
-<h3 id="lakectl-import">
-  
-  
-    <a href="#lakectl-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <em>lakectl import</em>
-  
-  
-</h3>
-    
-
-<p>Prerequisite: have <a href="/reference/cli.html">lakectl</a> installed.</p>
-
-<p>The <em>lakectl import</em> command acts the same as the UI import wizard. It commits the changes to a dedicated branch, with an optional
-flag to merge the changes to <code class="language-plaintext highlighter-rouge">&lt;branch_name&gt;</code>.</p>
-
-<div class="tabs">
-  <ul>
-  <li><a href="#import-tabs-1">AWS S3 or S3 API Compatible storage</a></li>
-  <li><a href="#import-tabs-2">Azure Blob</a></li>
-  <li><a href="#import-tabs-3">Google Cloud Storage</a></li>
-</ul>
-  <div id="import-tabs-1">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
-  <span class="nt">--from</span> s3://bucket/optional/prefix/ <span class="se">\</span>
-  <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
-</code></pre></div>    </div>
-  </div>
-  <div id="import-tabs-2">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
-   <span class="nt">--from</span> https://storageAccountName.blob.core.windows.net/container/optional/prefix/ <span class="se">\</span>
-   <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
-</code></pre></div>    </div>
-  </div>
-  <div id="import-tabs-3">
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl import <span class="se">\</span>
-   <span class="nt">--from</span> gs://bucket/optional/prefix/ <span class="se">\</span>
-   <span class="nt">--to</span> lakefs://my-repo/my-branch/optional/path/
-</code></pre></div>    </div>
-  </div>
 </div>
-<h3 id="limitations">
-  
-  
-    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
-  
-  
-</h3>
-    
-
-<ol>
-  <li>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</li>
-  <li>Import is available for S3, GCP and Azure.</li>
-  <li>For security reasons, if you are lakeFS on top of your local disk, you need to enable the import feature explicitly. 
-To do so, set the <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> to <code class="language-plaintext highlighter-rouge">true</code> and specify the allowed import paths in <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> (see <a href="/reference/configuration.html">configuration reference</a>).
-Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</li>
-</ol>
-<h3 id="working-with-imported-data">
-  
-  
-    <a href="#working-with-imported-data" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Working with imported data
-  
-  
-</h3>
-    
-
-<p>Note that lakeFS cannot manage your metadata if you make changes to data in the original bucket.
-The following table describes the results of making changes in the original bucket, without importing it to lakeFS:</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Object action in the original bucket</th>
-      <th>ListObjects result in lakeFS</th>
-      <th>GetObject result in lakeFS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Create</td>
-      <td>Object not visible</td>
-      <td>Object not accessible</td>
-    </tr>
-    <tr>
-      <td>Overwrite</td>
-      <td>Object visible with outdated metadata</td>
-      <td>Updated object accessible</td>
-    </tr>
-    <tr>
-      <td>Delete</td>
-      <td>Object visible</td>
-      <td>Object not accessible</td>
-    </tr>
-  </tbody>
-</table></div>
 <h2 id="copying-data-into-a-lakefs-repository">
   
   
