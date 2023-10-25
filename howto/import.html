@@ -515,17 +515,16 @@
             
             <div id="main-content" class="main-content" role="main">
                 
-                    <h1 id="import-data-into-lakefs">
+                    <p class="mt-5 mb-1"><em>This section describes how to import existing data into a lakeFS repository, without copying it.
+If you are interested in copying data into lakeFS, see <a href="/howto/copying.html">Copying data to/from lakeFS</a>.</em></p>
+<h1 class="mt-2" id="importing-data-into-lakefs">
   
   
-    <a href="#import-data-into-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Import data into lakeFS
+    <a href="#importing-data-into-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing data into lakeFS
   
   
 </h1>
     
-
-<p>The simplest way to bring data into lakeFS is by <a href="#copying-data-into-a-lakefs-repository">copying it</a>, but this approach may not be suitable when a lot of data is involved.
-To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy import</a>. With this approach, lakeFS only creates pointers to your existing objects in your new repository.</p>
 
 <div class="toc-block">
 <h2 class="no_toc text-delta" id="table-of-contents">
@@ -538,34 +537,19 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
     
 
 <ol id="markdown-toc">
-  <li><a href="#zero-copy-import" id="markdown-toc-zero-copy-import">Zero-copy import</a>    <ol>
-      <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
-      <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
-      <li><a href="#using-the-cli-lakectl-import" id="markdown-toc-using-the-cli-lakectl-import">Using the CLI: <em>lakectl import</em></a></li>
-      <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
-    </ol>
-  </li>
-  <li><a href="#copying-data-into-a-lakefs-repository" id="markdown-toc-copying-data-into-a-lakefs-repository">Copying data into a lakeFS repository</a></li>
+  <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
+  <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
+  <li><a href="#using-the-cli-lakectl-import" id="markdown-toc-using-the-cli-lakectl-import">Using the CLI: <em>lakectl import</em></a></li>
 </ol>
 
 </div>
-<h2 id="zero-copy-import">
-  
-  
-    <a href="#zero-copy-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Zero-copy import
-  
-  
-</h2>
-    
-
-<p>Mirror an existing object store location into a lakeFS repository, without copying the data.</p>
-<h3 id="prerequisites">
+<h2 id="prerequisites">
   
   
     <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
   
   
-</h3>
+</h2>
     
 
 <ul>
@@ -574,47 +558,33 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
   <li>The lakeFS <em>server</em> must have permissions to list the objects in the source bucket.</li>
   <li>The source bucket must be in the same region as your repository.</li>
 </ul>
-<h3 id="using-the-lakefs-ui">
+<h2 id="using-the-lakefs-ui">
   
   
     <a href="#using-the-lakefs-ui" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the lakeFS UI
   
   
-</h3>
+</h2>
     
 
 <ol>
-  <li>
-    <p>In your repository’s main page, click the <em>Import</em> button to open the import dialog:</p>
-
-    <p><img src="/assets/img/UI-Import-Dialog.png" alt="lakeFS UI import dialog" /></p>
-  </li>
+  <li>In your repository’s main page, click the <em>Import</em> button to open the import dialog.</li>
   <li>Under <em>Import from</em>, fill in the location on your object store you would like to import from.</li>
-  <li>Fill in the import destination in lakeFS</li>
-  <li>Add a commit message, and optionally metadata.</li>
-  <li>Press <em>Import</em></li>
+  <li>Fill in the import destination in lakeFS. This should be a path under the current branch.</li>
+  <li>Add a commit message, and optionally commit metadata.</li>
+  <li>Press <em>Import</em>.</li>
 </ol>
 
 <p>Once the import is complete, a new commit containing the imported objects will be created in the destination branch.</p>
-<h4 id="notes">
-  
-  
-    <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
-  
-  
-</h4>
-    
-<ul>
-  <li>Any previously existing objects under the destination prefix will be deleted.</li>
-  <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
-</ul>
-<h3 id="using-the-cli-lakectl-import">
+
+<p><img src="/assets/img/UI-Import-Dialog.png" alt="lakeFS UI import dialog" /></p>
+<h2 id="using-the-cli-lakectl-import">
   
   
     <a href="#using-the-cli-lakectl-import" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using the CLI: <em>lakectl import</em>
   
   
-</h3>
+</h2>
     
 <p>The <em>lakectl import</em> command acts the same as the UI import wizard. It commits the changes to the selected branch.</p>
 
@@ -643,29 +613,31 @@ To avoid copying the data, lakeFS offers <a href="#zero-copy-import">Zero-copy i
 </code></pre></div>    </div>
   </div>
 </div>
-<h3 id="limitations">
+<h2 class="no_toc" id="notes">
   
   
-    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+    <a href="#notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Notes
   
   
-</h3>
+</h2>
     
 
 <ol>
+  <li>Any previously existing objects under the destination prefix will be deleted.</li>
+  <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
   <li>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</li>
   <li>For security reasons, if you are using lakeFS on top of your local disk (<code class="language-plaintext highlighter-rouge">blockstore.type=local</code>), you need to enable the import feature explicitly. 
 To do so, set the <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> to <code class="language-plaintext highlighter-rouge">true</code> and specify the allowed import paths in <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> (see <a href="/reference/configuration.html">configuration reference</a>).
 Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</li>
   <li>Making changes to data in the original bucket will not be reflected in lakeFS, and may cause inconsistencies.</li>
 </ol>
-<h3 class="no_toc d-inline-block" id="fine-grained-permissions">
+<h2 class="no_toc d-inline-block" id="fine-grained-permissions">
   
   
     <a href="#fine-grained-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Fine-grained permissions
   
   
-</h3>
+</h2>
     
 <p class="label label-green">lakeFS Cloud</p>
 <p class="label label-purple">lakeFS Enterprise</p>
@@ -674,13 +646,13 @@ Since there are some differences between object-stores and file-systems in the w
 <code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:ImportCancel</code>.</p>
 
 <p>As mentioned above, all of these permissions are available by default to the Supers (lakeFS open-source) group or the SuperUsers (lakeFS Cloud/Enterprise).</p>
-<h3 class="no_toc" id="provider-specific-permissions">
+<h2 class="no_toc" id="provider-specific-permissions">
   
   
     <a href="#provider-specific-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Provider-specific permissions
   
   
-</h3>
+</h2>
     
 
 <p>In addition, the following for provider-specific permissions may be required:</p>
@@ -692,13 +664,13 @@ Since there are some differences between object-stores and file-systems in the w
   <li><a href="#gcs">Google Cloud Storage</a></li>
 </ul>
   <div id="aws-s3">
-<h4 id="aws-s3-importing-from-public-buckets">
+<h2 class="no_toc" id="aws-s3-importing-from-public-buckets">
   
   
     <a href="#aws-s3-importing-from-public-buckets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AWS S3: Importing from public buckets
   
   
-</h4>
+</h2>
     
 
     <p>lakeFS needs access to the imported location to first list the files to import and later read the files upon users request.</p>
@@ -740,13 +712,13 @@ the following policy needs to be attached to the lakeFS S3 service-account to al
   </div>
   <div id="azure-storage">
     <p>See <a href="/howto/deploy/azure.html#storage-account-credentials">Azure deployment</a> on limitations when using account credentials.</p>
-<h4 id="azure-data-lake-gen2">
+<h3 class="no_toc" id="azure-data-lake-gen2">
   
   
     <a href="#azure-data-lake-gen2" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Azure Data Lake Gen2
   
   
-</h4>
+</h3>
     
 
     <p>lakeFS requires a hint in the import source URL to understand that the provided storage account is ADLS Gen2</p>
@@ -763,24 +735,6 @@ the following policy needs to be attached to the lakeFS S3 service-account to al
     <p>No specific prerequisites</p>
   </div>
 </div>
-<h2 id="copying-data-into-a-lakefs-repository">
-  
-  
-    <a href="#copying-data-into-a-lakefs-repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Copying data into a lakeFS repository
-  
-  
-</h2>
-    
-
-<p>Another way of getting existing data into a lakeFS repository is by copying it. This has the advantage of having the objects along with their metadata managed by the lakeFS installation, along with lifecycle rules, immutability guarantees and consistent listing. However, do make sure to account for storage cost and time.</p>
-
-<p>To copy data into lakeFS you can use the following tools:</p>
-
-<ol>
-  <li>The <code class="language-plaintext highlighter-rouge">lakectl</code> command line tool - see the <a href="/reference/cli.html#lakectl-fs-upload">reference</a> to learn more about using it to copy local data into lakeFS. Using <code class="language-plaintext highlighter-rouge">lakectl fs upload --recursive</code> you can upload multiple objects together from a given directory.</li>
-  <li>Using <a href="/howto/copying.html#using-rclone">rclone</a></li>
-  <li>Using Hadoop’s <a href="/howto/copying.html#using-distcp">DistCp</a></li>
-</ol>
 
                 
 
