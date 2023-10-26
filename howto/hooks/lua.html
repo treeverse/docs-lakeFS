@@ -255,7 +255,8 @@
                         <a href="/howto/hooks/webhooks.html"
                            class="nav-list-link">Webhooks</a>
                     </li></ul></li><li class="nav-list-item "><a href="/howto/copying.html"
-                   class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/export.html"
+                   class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/catalog_exports.html"
+                   class="nav-list-link">Data Catalogs Export</a></li><li class="nav-list-item "><a href="/howto/export.html"
                    class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                         <use xlink:href="#svg-arrow-right"></use>
                     </svg></a><a href="/howto/garbage-collection/"
@@ -288,7 +289,8 @@
                    class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/integrations/dremio.html"
                    class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/integrations/duckdb.html"
                    class="nav-list-link">DuckDB</a></li><li class="nav-list-item "><a href="/integrations/glue_hive_metastore.html"
-                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
+                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/integrations/glue_metastore.html"
+                   class="nav-list-link">Glue Data Catalog</a></li><li class="nav-list-item "><a href="/integrations/kubeflow.html"
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
                    class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/integrations/python.html"
                    class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/r.html"
@@ -768,6 +770,82 @@
     
 
 <p>Deletes all objects under the given prefix</p>
+<h3 id="awsglue">
+  
+  
+    <a href="#awsglue" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue</code>
+  
+  
+</h3>
+    
+
+<p>Glue client library.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">aws</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"aws"</span><span class="p">)</span>
+<span class="c1">-- pass valid AWS credentials</span>
+<span class="kd">local</span> <span class="n">glue</span> <span class="o">=</span> <span class="n">aws</span><span class="p">.</span><span class="n">glue_client</span><span class="p">(</span><span class="s2">"ACCESS_KEY_ID"</span><span class="p">,</span> <span class="s2">"SECRET_ACCESS_KEY"</span><span class="p">,</span> <span class="s2">"REGION"</span><span class="p">)</span>
+</code></pre></div></div>
+<h3 id="awsglueget_tabledatabase-table--catalog_id">
+  
+  
+    <a href="#awsglueget_tabledatabase-table--catalog_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue.get_table(database, table [, catalog_id)</code>
+  
+  
+</h3>
+    
+
+<p>Describe a table from the Glue catalog.</p>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">table</span><span class="p">,</span> <span class="n">exists</span> <span class="o">=</span> <span class="n">glue</span><span class="p">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">table_name</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">exists</span> <span class="k">then</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">marshal</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+</code></pre></div></div>
+<h3 id="awsgluecreate_tabledatabase-table_input--catalog_id">
+  
+  
+    <a href="#awsgluecreate_tabledatabase-table_input--catalog_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue.create_table(database, table_input, [, catalog_id])</code>
+  
+  
+</h3>
+    
+
+<p>Create a new table in Glue Catalog.
+The <code class="language-plaintext highlighter-rouge">table_input</code> argument is a JSON that is passed “as is” to AWS and is parallel to the AWS SDK <a href="https://docs.aws.amazon.com/glue/latest/webapi/API_CreateTable.html#API_CreateTable_RequestSyntax">TableInput</a></p>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">json</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"encoding/json"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">input</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">Name</span> <span class="o">=</span> <span class="s2">"my-table"</span><span class="p">,</span>
+    <span class="n">PartitionKeys</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">partitions</span><span class="p">),</span>
+    <span class="c1">-- etc...</span>
+<span class="p">}</span>
+<span class="kd">local</span> <span class="n">json_input</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">marshal</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
+<span class="n">glue</span><span class="p">.</span><span class="n">create_table</span><span class="p">(</span><span class="s2">"my-db"</span><span class="p">,</span> <span class="n">table_input</span><span class="p">)</span>
+</code></pre></div></div>
+<h3 id="awsglueupdate_tabledatabase-table_input--catalog_id-version_id-skip_archive">
+  
+  
+    <a href="#awsglueupdate_tabledatabase-table_input--catalog_id-version_id-skip_archive" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue.update_table(database, table_input, [, catalog_id, version_id, skip_archive])</code>
+  
+  
+</h3>
+    
+
+<p>Update an existing Table in Glue Catalog.
+The <code class="language-plaintext highlighter-rouge">table_input</code> is the same as the argument in <code class="language-plaintext highlighter-rouge">glue.create_table</code> function.</p>
+<h3 id="awsgluedelete_tabledatabase-table_input--catalog_id">
+  
+  
+    <a href="#awsgluedelete_tabledatabase-table_input--catalog_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue.delete_table(database, table_input, [, catalog_id])</code>
+  
+  
+</h3>
+    
+
+<p>Delete an existing Table in Glue Catalog.</p>
 <h3 id="cryptoaesencryptcbckey-plaintext">
   
   
@@ -1056,6 +1134,219 @@ If delimiter is empty, will default to a recursive listing. Otherwise, common pr
     
 
 <p>Returns an object-wise diff of uncommitted changes on <code class="language-plaintext highlighter-rouge">branch_id</code>.</p>
+<h3 id="lakefscatalogexporttable_extractor">
+  
+  
+    <a href="#lakefscatalogexporttable_extractor" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/table_extractor</code>
+  
+  
+</h3>
+    
+
+<p>Utility package to parse <code class="language-plaintext highlighter-rouge">_lakefs_tables/</code> descriptors.</p>
+<h3 id="lakefscatalogexporttable_extractorlist_table_descriptor_entriesclient-repo_id-commit_id">
+  
+  
+    <a href="#lakefscatalogexporttable_extractorlist_table_descriptor_entriesclient-repo_id-commit_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/table_extractor.list_table_descriptor_entries(client, repo_id, commit_id)</code>
+  
+  
+</h3>
+    
+
+<p>List all YAML files under <code class="language-plaintext highlighter-rouge">_lakefs_tables/*</code> and return a list of type <code class="language-plaintext highlighter-rouge">[{physical_address, path}]</code>, ignores hidden files. 
+The <code class="language-plaintext highlighter-rouge">client</code> is <code class="language-plaintext highlighter-rouge">lakefs</code> client.</p>
+<h3 id="lakefscatalogexporttable_extractorget_table_descriptorclient-repo_id-commit_id-logical_path">
+  
+  
+    <a href="#lakefscatalogexporttable_extractorget_table_descriptorclient-repo_id-commit_id-logical_path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/table_extractor.get_table_descriptor(client, repo_id, commit_id, logical_path)</code>
+  
+  
+</h3>
+    
+
+<p>Read a table descriptor and parse YAML object. Will set <code class="language-plaintext highlighter-rouge">partition_columns</code> to <code class="language-plaintext highlighter-rouge">{}</code> if no partitions are defined.
+The <code class="language-plaintext highlighter-rouge">client</code> is <code class="language-plaintext highlighter-rouge">lakefs</code> client.</p>
+<h3 id="lakefscatalogexporthiveextract_partition_pagerclient-repo_id-commit_id-base_path-partition_cols-page_size">
+  
+  
+    <a href="#lakefscatalogexporthiveextract_partition_pagerclient-repo_id-commit_id-base_path-partition_cols-page_size" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/hive.extract_partition_pager(client, repo_id, commit_id, base_path, partition_cols, page_size)</code>
+  
+  
+</h3>
+    
+
+<p>Hive format partition iterator each result set is a collection of files under the same partition in lakeFS.</p>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">lakefs</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">pager</span> <span class="o">=</span> <span class="n">hive</span><span class="p">.</span><span class="n">extract_partition_pager</span><span class="p">(</span><span class="n">lakefs</span><span class="p">,</span> <span class="n">repo_id</span><span class="p">,</span> <span class="n">commit_id</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">partitions</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">part_key</span><span class="p">,</span> <span class="n">entries</span> <span class="k">in</span> <span class="n">pager</span> <span class="k">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"partition: "</span> <span class="o">..</span> <span class="n">part_key</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">entry</span> <span class="k">in</span> <span class="nb">ipairs</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"path: "</span> <span class="o">..</span> <span class="n">entry</span><span class="p">.</span><span class="n">path</span> <span class="o">..</span> <span class="s2">" physical: "</span> <span class="o">..</span> <span class="n">entry</span><span class="p">.</span><span class="n">physical_address</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<h3 id="lakefscatalogexportsymlink_exporter">
+  
+  
+    <a href="#lakefscatalogexportsymlink_exporter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/symlink_exporter</code>
+  
+  
+</h3>
+    
+
+<p>Writes metadata for a table using Hive’s <a href="https://svn.apache.org/repos/infra/websites/production/hive/content/javadocs/r2.1.1/api/org/apache/hadoop/hive/ql/io/SymlinkTextInputFormat.html">SymlinkTextInputFormat</a>.
+Currently only <code class="language-plaintext highlighter-rouge">S3</code> is supported.</p>
+
+<p>The default export paths per commit:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>${storageNamespace}
+_lakefs/
+    exported/
+        ${ref}/
+            ${commitId}/
+                ${tableName}/
+                    p1=v1/symlink.txt
+                    p1=v2/symlink.txt
+                    p1=v3/symlink.txt
+                    ...
+</code></pre></div></div>
+<h3 id="lakefscatalogexportsymlink_exporterexport_s3s3_client-table_src_path-action_info--options">
+  
+  
+    <a href="#lakefscatalogexportsymlink_exporterexport_s3s3_client-table_src_path-action_info--options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/symlink_exporter.export_s3(s3_client, table_src_path, action_info [, options])</code>
+  
+  
+</h3>
+    
+
+<p>Export Symlink files that represent a table to S3 location.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">s3_client</code>: Configured client.</li>
+  <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: Path to the table spec YAML file in <code class="language-plaintext highlighter-rouge">_lakefs_tables</code> (i.e _lakefs_tables/my_table.yaml).</li>
+  <li><code class="language-plaintext highlighter-rouge">action_info(table)</code>: The global action object.</li>
+  <li><code class="language-plaintext highlighter-rouge">options(table)</code>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">debug(boolean)</code>: Print extra info.</li>
+      <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the prefix in S3 i.e <code class="language-plaintext highlighter-rouge">s3://other-bucket/path/</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">writer(function(bucket, key, data))</code>: If passed then will not use s3 client, helpful for debug.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">exporter</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs/catalogexport/symlink_exporter"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">aws</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"aws"</span><span class="p">)</span>
+<span class="c1">-- args are user inputs from a lakeFS action.</span>
+<span class="kd">local</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">aws</span><span class="p">.</span><span class="n">s3_client</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">aws</span><span class="p">.</span><span class="n">aws_access_key_id</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">aws</span><span class="p">.</span><span class="n">aws_secret_access_key</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">aws</span><span class="p">.</span><span class="n">aws_region</span><span class="p">)</span>
+<span class="n">exporter</span><span class="p">.</span><span class="n">export_s3</span><span class="p">(</span><span class="n">s3</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">table_descriptor_path</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="p">{</span><span class="n">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">})</span>
+</code></pre></div></div>
+<h3 id="lakefscatalogexportsymlink_exporterget_storage_uri_prefixstorage_ns-commit_id-action_info">
+  
+  
+    <a href="#lakefscatalogexportsymlink_exporterget_storage_uri_prefixstorage_ns-commit_id-action_info" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/symlink_exporter.get_storage_uri_prefix(storage_ns, commit_id, action_info)</code>
+  
+  
+</h3>
+    
+
+<p>Generate prefix for Symlink file(s) structure that represents a <code class="language-plaintext highlighter-rouge">ref</code> and a <code class="language-plaintext highlighter-rouge">commit</code> in lakeFS.
+The output pattern <code class="language-plaintext highlighter-rouge">${storage_ns}_lakefs/exported/${ref}/${commit_id}/</code>.
+The <code class="language-plaintext highlighter-rouge">ref</code> is deduced from the action event in <code class="language-plaintext highlighter-rouge">action_info</code> (i.e branch name).</p>
+<h3 id="lakefscatalogexportglue_exporter">
+  
+  
+    <a href="#lakefscatalogexportglue_exporter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/glue_exporter</code>
+  
+  
+</h3>
+    
+
+<p>A Package for automating the export process from lakeFS stored tables into Glue catalog.</p>
+<h3 id="lakefscatalogexportglue_exporterexport_glueglue-db-table_src_path-create_table_input-action_info-options">
+  
+  
+    <a href="#lakefscatalogexportglue_exporterexport_glueglue-db-table_src_path-create_table_input-action_info-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/glue_exporter.export_glue(glue, db, table_src_path, create_table_input, action_info, options)</code>
+  
+  
+</h3>
+    
+
+<p>Represent lakeFS table in Glue Catalog. 
+This function will create a table in Glue based on configuration. 
+It assumes that there is a symlink location that is already created and only configures it by default for the same commit.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">glue</code>: AWS glue client</li>
+  <li><code class="language-plaintext highlighter-rouge">db(string)</code>: glue database name</li>
+  <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: path to table spec (i.e _lakefs_tables/my_table.yaml)</li>
+  <li><code class="language-plaintext highlighter-rouge">create_table_input(Table)</code>: Input equal mapping to <a href="https://docs.aws.amazon.com/glue/latest/webapAPI_CreateTable.html#API_CreateTable_RequestSyntax">table_input</a> in AWS, the same as we use for <code class="language-plaintext highlighter-rouge">glue.create_table</code>.
+should contain inputs describing the data format (i.e InputFormat, OutputFormat, SerdeInfo) since the exporter is agnostic to this. 
+by default this function will configure table location and schema.</li>
+  <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: the global action object.</li>
+  <li><code class="language-plaintext highlighter-rouge">options(Table)</code>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">table_name(string)</code>: Override default glue table name</li>
+      <li><code class="language-plaintext highlighter-rouge">debug(boolean</code></li>
+      <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the default prefix in S3 for symlink location i.e s3://other-bucket/path/</li>
+    </ul>
+  </li>
+</ul>
+
+<p>When creating a glue table, the final table input will consist of the <code class="language-plaintext highlighter-rouge">create_table_input</code> input parameter and lakeFS computed defaults that will override it:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Name</code> Gable table name <code class="language-plaintext highlighter-rouge">get_full_table_name(descriptor, action_info)</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">PartitionKeys</code> Partition columns usually deduced from <code class="language-plaintext highlighter-rouge">_lakefs_tables/${table_src_path}</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">TableType</code> = “EXTERNAL_TABLE”</li>
+  <li><code class="language-plaintext highlighter-rouge">StorageDescriptor</code>: Columns usually deduced from <code class="language-plaintext highlighter-rouge">_lakefs_tables/${table_src_path}</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">StorageDescriptor.Location</code> = symlink_location</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">aws</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"aws"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">exporter</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs/catalogexport/glue_exporter"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">glue</span> <span class="o">=</span> <span class="n">aws</span><span class="p">.</span><span class="n">glue_client</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">aws_access_key_id</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">aws_secret_access_key</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">aws_region</span><span class="p">)</span>
+<span class="c1">-- table_input can be passed as a simple Key-Value object in YAML as an argument from an action, this is inline example:</span>
+<span class="kd">local</span> <span class="n">table_input</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="n">StorageDescriptor</span><span class="p">:</span> 
+    <span class="n">InputFormat</span><span class="p">:</span> <span class="s2">"org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat"</span>
+    <span class="n">OutputFormat</span><span class="p">:</span> <span class="s2">"org.apache.hadoop.hive.ql.io.IgnoreKeyTextOutputFormat"</span>
+    <span class="n">SerdeInfo</span><span class="p">:</span>
+      <span class="n">SerializationLibrary</span><span class="p">:</span> <span class="s2">"org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"</span>
+  <span class="n">Parameters</span><span class="p">:</span> 
+    <span class="n">classification</span><span class="p">:</span> <span class="s2">"parquet"</span>
+    <span class="n">EXTERNAL</span><span class="p">:</span> <span class="s2">"TRUE"</span>
+    <span class="s2">"parquet.compression"</span><span class="p">:</span> <span class="s2">"SNAPPY"</span>
+<span class="p">}</span>
+<span class="n">exporter</span><span class="p">.</span><span class="n">export_glue</span><span class="p">(</span><span class="n">glue</span><span class="p">,</span> <span class="s2">"my-db"</span><span class="p">,</span> <span class="s2">"_lakefs_tables/animals.yaml"</span><span class="p">,</span> <span class="n">table_input</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="p">{</span><span class="n">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">})</span>
+</code></pre></div></div>
+<h3 id="lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info">
+  
+  
+    <a href="#lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/glue_exporter.get_full_table_name(descriptor, action_info)</code>
+  
+  
+</h3>
+    
+
+<p>Generate glue table name.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">descriptor(Table)</code>: Object from (i.e _lakefs_tables/my_table.yaml).</li>
+  <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: The global action object.</li>
+</ul>
 <h3 id="pathparsepath_string">
   
   
