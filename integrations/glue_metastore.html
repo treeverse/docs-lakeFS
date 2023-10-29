@@ -562,7 +562,7 @@
 
 <p>The integration between Glue and lakeFS is based on <a href="/howto/catalog_exports.html">Data Catalog Exports</a>.</p>
 
-<p>This guide will show you how to use lakeFS with the Glue Data Catalog.
+<p>This guide describes how to use lakeFS with the Glue Data Catalog.
 You’ll be able to query your lakeFS data by specifying the repository, branch and commit in your SQL query.
 Currently, only read operations are supported on the tables.
 You will set up the automation required to work with lakeFS on top of the Glue Data Catalog, including:</p>
@@ -574,7 +574,7 @@ You will set up the automation required to work with lakeFS on top of the Glue D
       <li>Export the table descriptors from your branch to the Glue Catalog.</li>
     </ul>
   </li>
-  <li>Set up lakeFS <a href="/howto/catalog_exports.html#running-an-exporter">hooks</a> that will run the above script when specific events occur.</li>
+  <li>Set up lakeFS <a href="/howto/catalog_exports.html#running-an-exporter">hooks</a> to trigger the above script when specific events occur.</li>
 </ol>
 <h2 id="example-using-athena-to-query-lakefs-data">
   
@@ -597,7 +597,8 @@ You will set up the automation required to work with lakeFS on top of the Glue D
 <ol>
   <li>An active lakeFS installation with S3 as the backing storage, and a repository in this installation.</li>
   <li>A database in Glue Data Catalog (lakeFS does not create one).</li>
-  <li>AWS Credentials with permission to manage Glue, Athena Query and S3 access.
+  <li>AWS Credentials with permission to manage Glue, Athena Query and S3 access.</li>
+</ol>
 <h3 id="add-table-descriptor">
   
   
@@ -606,10 +607,8 @@ You will set up the automation required to work with lakeFS on top of the Glue D
   
 </h3>
     
-  </li>
-</ol>
 
-<p>Let’s define a table and commit to lakeFS. 
+<p>Let’s define a table, and commit it to lakeFS. 
 Save the YAML below as <code class="language-plaintext highlighter-rouge">animals.yaml</code> and upload it to lakeFS.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs upload lakefs://catalogs/main/_lakefs_tables/animals.yaml <span class="nt">-s</span> ./animals.yaml <span class="o">&amp;&amp;</span> <span class="se">\</span>
@@ -649,8 +648,8 @@ lakectl commit lakefs://catalogs/main <span class="nt">-m</span> <span class="s2
 </h3>
     
 
-<p>Insert data under the table path, using your preferred method (i.e <a href="/integrations/spark.html">Spark</a>) and commit the data when done.. 
-In this example we used CSV and the files added to lakeFS should look something like this:</p>
+<p>Insert data into the table path, using your preferred method (e.g. <a href="/integrations/spark.html">Spark</a>), and commit upon completion.
+This example uses CSV files, and the files added to lakeFS should look like this:</p>
 
 <p><img src="/assets/img/csv_export_hooks_data.png" alt="lakeFS Uploaded CSV Files" /></p>
 <h3 id="the-exporter-script">
@@ -694,8 +693,8 @@ In this example we used CSV and the files added to lakeFS should look something 
 </h3>
     
 
-<p>The hooks are the mechanism that will trigger exporter execution.
-To learn more about how to configure exporter hooks read <a href="/howto/catalog_exports.html#running-an-exporter">Running an Exporter</a>.</p>
+<p>Hooks serve as the mechanism that triggers the execution of the exporter.
+For more detailed information on how to configure exporter hooks, you can refer to <a href="/howto/catalog_exports.html#running-an-exporter">Running an Exporter</a>.</p>
 
 <blockquote class="note">
   <p>The <code class="language-plaintext highlighter-rouge">args.catalog.table_input</code> argument in the Lua script is assumed to be passed from the action arguments, that way the same script can be reused for different tables. Check the <a href="/howto/hooks/lua.html#lakefscatalogexportglue_exporterexport_glueglue-db-table_src_path-create_table_input-action_info-options">example</a> to construct the table input in the lua code.</p>
@@ -708,13 +707,13 @@ To learn more about how to configure exporter hooks read <a href="/howto/catalog
     <li><a href="#multiple-hooks">Multiple Hooks / Inline script</a></li>
   </ul>
   <div id="single-hook-csv">
-<h5 id="single-hook-with-csv-table">
+<h4 id="single-hook-with-csv-table">
   
   
     <a href="#single-hook-with-csv-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Single hook with CSV Table
   
   
-</h5>
+</h4>
     
 
     <p>Upload to <code class="language-plaintext highlighter-rouge">_lakefs_actions/animals_glue.yaml</code>:</p>
@@ -751,39 +750,55 @@ To learn more about how to configure exporter hooks read <a href="/howto/catalog
 
   </div>
   <div id="single-hook">
-<h5 id="spark-parquet-example">
+<h4 id="spark-parquet-example">
   
   
     <a href="#spark-parquet-example" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Spark Parquet Example
   
   
-</h5>
+</h4>
     
 
-    <p>The following snippet is a reference example of a table in parquet format input that can be used as <code class="language-plaintext highlighter-rouge">table_input</code>.</p>
+    <p>When working with Parquet files, upload the following to <code class="language-plaintext highlighter-rouge">_lakefs_actions/animals_glue.yaml</code>:</p>
 
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">catalog</span><span class="pi">:</span>
-  <span class="na">table_input</span><span class="pi">:</span>
-    <span class="na">StorageDescriptor</span><span class="pi">:</span> 
-      <span class="na">InputFormat</span><span class="pi">:</span> <span class="s2">"</span><span class="s">org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat"</span>
-      <span class="na">OutputFormat</span><span class="pi">:</span> <span class="s2">"</span><span class="s">org.apache.hadoop.hive.ql.io.IgnoreKeyTextOutputFormat"</span>
-      <span class="na">SerdeInfo</span><span class="pi">:</span>
-          <span class="na">SerializationLibrary</span><span class="pi">:</span> <span class="s2">"</span><span class="s">org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"</span>
-    <span class="na">Parameters</span><span class="pi">:</span> 
-      <span class="na">classification</span><span class="pi">:</span> <span class="s2">"</span><span class="s">parquet"</span>
-      <span class="na">EXTERNAL</span><span class="pi">:</span> <span class="s2">"</span><span class="s">TRUE"</span>
-      <span class="s2">"</span><span class="s">parquet.compression"</span><span class="pi">:</span> <span class="s2">"</span><span class="s">SNAPPY"</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Glue Exporter</span>
+<span class="na">on</span><span class="pi">:</span>
+   <span class="na">post-commit</span><span class="pi">:</span>
+      <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">main"</span><span class="pi">]</span>
+<span class="na">hooks</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">animals_table_glue_exporter</span>
+     <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
+     <span class="na">properties</span><span class="pi">:</span>
+        <span class="na">script_path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">scripts/animals_exporter.lua"</span>
+        <span class="na">args</span><span class="pi">:</span>
+           <span class="na">aws</span><span class="pi">:</span>
+              <span class="na">aws_access_key_id</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;AWS_ACCESS_KEY_ID&gt;"</span>
+              <span class="na">aws_secret_access_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;AWS_SECRET_ACCESS_KEY&gt;"</span>
+              <span class="na">aws_region</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;AWS_REGION&gt;"</span>
+           <span class="na">table_source</span><span class="pi">:</span> <span class="s1">'</span><span class="s">_lakefs_tables/animals.yaml'</span>
+           <span class="na">catalog</span><span class="pi">:</span>
+              <span class="na">db_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">my-glue-db"</span>
+              <span class="na">table_input</span><span class="pi">:</span>
+                 <span class="na">StorageDescriptor</span><span class="pi">:</span>
+                   <span class="na">InputFormat</span><span class="pi">:</span> <span class="s2">"</span><span class="s">org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat"</span>
+                   <span class="na">OutputFormat</span><span class="pi">:</span> <span class="s2">"</span><span class="s">org.apache.hadoop.hive.ql.io.IgnoreKeyTextOutputFormat"</span>
+                   <span class="na">SerdeInfo</span><span class="pi">:</span>
+                       <span class="na">SerializationLibrary</span><span class="pi">:</span> <span class="s2">"</span><span class="s">org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"</span>
+                 <span class="na">Parameters</span><span class="pi">:</span>
+                   <span class="na">classification</span><span class="pi">:</span> <span class="s2">"</span><span class="s">parquet"</span>
+                   <span class="na">EXTERNAL</span><span class="pi">:</span> <span class="s2">"</span><span class="s">TRUE"</span>
+                   <span class="s2">"</span><span class="s">parquet.compression"</span><span class="pi">:</span> <span class="s2">"</span><span class="s">SNAPPY"</span>
 </code></pre></div>    </div>
 
   </div>
   <div id="multiple-hooks">
-<h5 id="multiple-hooks--inline-script">
+<h4 id="multiple-hooks--inline-script">
   
   
     <a href="#multiple-hooks--inline-script" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Multiple Hooks / Inline script
   
   
-</h5>
+</h4>
     
 
     <p>The following example demonstrates how to separate the symlink and glue exporter into building blocks running in separate hooks.
@@ -831,14 +846,14 @@ It also shows how to run the lua script inline instead of a file, depending on u
   </div>
 </div>
 
-<p>Adding the script and the action file to the repository and commit it.  This is a post-commit action - it will run after the commit!</p>
+<p>Adding the script and the action files to the repository and commit it. This is a post-commit action, meaning it will be executed after the commit operation has taken place.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl fs upload lakefs://catalogs/main/scripts/animals_exporter.lua <span class="nt">-s</span> ./animals_exporter.lua
 lakectl fs upload lakefs://catalogs/main/_lakefs_actions/animals_glue.yaml <span class="nt">-s</span> ./animals_glue.yaml
 lakectl commit lakefs://catalogs/main <span class="nt">-m</span> <span class="s2">"trigger first export hook"</span>
 </code></pre></div></div>
 
-<p>After the action finishes running we can see the result in the action logs.</p>
+<p>Once the action has completed its execution, you can review the results in the action logs.</p>
 
 <p><img src="/assets/img/glue_export_hook_result_log.png" alt="Hooks log result in lakeFS UI" /></p>
 <h3 id="use-athena">
@@ -853,7 +868,7 @@ lakectl commit lakefs://catalogs/main <span class="nt">-m</span> <span class="s2
 <p>We can use the exported Glue table with any tool that supports Glue Catalog (or Hive compatible) such as Athena, Trino, Spark and others.
 To use Athena we can simply run <code class="language-plaintext highlighter-rouge">MSCK REPAIR TABLE</code> and then query the tables.</p>
 
-<p>In Athena Run (Make sure the correct database is configured):</p>
+<p>In Athena, make sure that the correct database (<code class="language-plaintext highlighter-rouge">my-glue-db</code> in the example above) is configured, then run:</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MSCK</span> <span class="n">REPAIR</span> <span class="k">TABLE</span> <span class="nv">`animals_catalogs_main_9255e5`</span><span class="p">;</span> <span class="c1">-- load partitions for the first time </span>
 <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="nv">`animals_catalogs_main_9255e5`</span> <span class="k">limit</span> <span class="mi">50</span><span class="p">;</span>
