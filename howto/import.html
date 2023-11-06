@@ -542,6 +542,7 @@ If you are interested in copying data into lakeFS, see <a href="/howto/copying.h
   <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
   <li><a href="#using-the-lakefs-ui" id="markdown-toc-using-the-lakefs-ui">Using the lakeFS UI</a></li>
   <li><a href="#using-the-cli-lakectl-import" id="markdown-toc-using-the-cli-lakectl-import">Using the CLI: <em>lakectl import</em></a></li>
+  <li><a href="#examples" id="markdown-toc-examples">Examples</a></li>
 </ol>
 
 </div>
@@ -555,10 +556,10 @@ If you are interested in copying data into lakeFS, see <a href="/howto/copying.h
     
 
 <ul>
-  <li>Importing is permitted for users in the Supers (lakeFS open-source) group or the SuperUsers (lakeFS Cloud/Enterprise) group.
+  <li>Importing is permitted for users in the Supers (open-source) group or the SuperUsers (Cloud/Enterprise) group.
  To learn how lakeFS Cloud and lakeFS Enterprise users can fine-tune import permissions, see <a href="#fine-grained-permissions">Fine-grained permissions</a> below.</li>
   <li>The lakeFS <em>server</em> must have permissions to list the objects in the source bucket.</li>
-  <li>The source bucket must be in the same region as your repository.</li>
+  <li>The source bucket must be on the same cloud provider and in the same region as your repository.</li>
 </ul>
 <h2 id="using-the-lakefs-ui">
   
@@ -627,12 +628,21 @@ If you are interested in copying data into lakeFS, see <a href="/howto/copying.h
 <ol>
   <li>Any previously existing objects under the destination prefix will be deleted.</li>
   <li>The import duration depends on the amount of imported objects, but will roughly be a few thousand objects per second.</li>
-  <li>Importing is only possible from the object storage service in which your installation stores its data. For example, if lakeFS is configured to use S3, you cannot import data from Azure.</li>
   <li>For security reasons, if you are using lakeFS on top of your local disk (<code class="language-plaintext highlighter-rouge">blockstore.type=local</code>), you need to enable the import feature explicitly. 
 To do so, set the <code class="language-plaintext highlighter-rouge">blockstore.local.import_enabled</code> to <code class="language-plaintext highlighter-rouge">true</code> and specify the allowed import paths in <code class="language-plaintext highlighter-rouge">blockstore.local.allowed_external_prefixes</code> (see <a href="/reference/configuration.html">configuration reference</a>).
-Since there are some differences between object-stores and file-systems in the way directories/prefixes are treated, local import is allowed only for directories.</li>
+Presently, local import is allowed only for directories, and not single objects.</li>
   <li>Making changes to data in the original bucket will not be reflected in lakeFS, and may cause inconsistencies.</li>
 </ol>
+<h2 id="examples">
+  
+  
+    <a href="#examples" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Examples
+  
+  
+</h2>
+    
+<p>To explore practical examples and real-world use cases of importing data into lakeFS,
+we recommend checking out our comprehensive <a href="https://lakefs.io/blog/import-data-lakefs/">blog post on the subject</a>.</p>
 <h2 class="no_toc d-inline-block" id="fine-grained-permissions">
   
   
@@ -647,7 +657,7 @@ Since there are some differences between object-stores and file-systems in the w
 <p>With RBAC support, The lakeFS user running the import command should have the following permissions in lakeFS:
 <code class="language-plaintext highlighter-rouge">fs:WriteObject</code>, <code class="language-plaintext highlighter-rouge">fs:CreateMetaRange</code>, <code class="language-plaintext highlighter-rouge">fs:CreateCommit</code>, <code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code> and <code class="language-plaintext highlighter-rouge">fs:ImportCancel</code>.</p>
 
-<p>As mentioned above, all of these permissions are available by default to the Supers (lakeFS open-source) group or the SuperUsers (lakeFS Cloud/Enterprise).</p>
+<p>As mentioned above, all of these permissions are available by default to the Supers (open-source) group or the SuperUsers (Cloud/Enterprise).</p>
 <h2 class="no_toc" id="provider-specific-permissions">
   
   
