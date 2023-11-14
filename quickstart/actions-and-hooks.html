@@ -561,41 +561,41 @@
   <li>
     <p>Open up your favorite text editor (or emacs), and paste the following YAML:</p>
 
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">name</span><span class="pi">:</span> <span class="s">Check Commit Message and Metadata</span>
- <span class="na">on</span><span class="pi">:</span>
- <span class="na">pre-commit</span><span class="pi">:</span>
-     <span class="na">branches</span><span class="pi">:</span> 
-     <span class="pi">-</span> <span class="s">etl**</span>
- <span class="na">hooks</span><span class="pi">:</span>
- <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">check_metadata</span>
-     <span class="s">type</span><span class="pi">:</span> <span class="s">lua</span>
-     <span class="s">properties</span><span class="pi">:</span>
-     <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
-         <span class="s">commit_message=action.commit.message</span>
-         <span class="s">if commit_message and #commit_message&gt;0 then</span>
-             <span class="s">print("✅ The commit message exists and is not empty: " .. commit_message)</span>
-         <span class="s">else</span>
-             <span class="s">error("\n\n❌ A commit message must be provided")</span>
-         <span class="s">end</span>
-
-         <span class="s">job_name=action.commit.metadata["job_name"]</span>
-         <span class="s">if job_name == nil then</span>
-             <span class="s">error("\n❌ Commit metadata must include job_name")</span>
-         <span class="s">else</span>
-             <span class="s">print("✅ Commit metadata includes job_name: " .. job_name)</span>
-         <span class="s">end</span>
-
-         <span class="s">version=action.commit.metadata["version"]</span>
-         <span class="s">if version == nil then</span>
-             <span class="s">error("\n❌ Commit metadata must include version")</span>
-         <span class="s">else</span>
-             <span class="s">print("✅ Commit metadata includes version: " .. version)</span>
-             <span class="s">if tonumber(version) then</span>
-                 <span class="s">print("✅ Commit metadata version is numeric")</span>
-             <span class="s">else</span>
-                 <span class="s">error("\n❌ Version metadata must be numeric: " .. version)</span>
-             <span class="s">end</span>
-         <span class="s">end</span>
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Check Commit Message and Metadata</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">pre-commit</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">etl**</span>
+<span class="na">hooks</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">check_metadata</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
+  <span class="na">properties</span><span class="pi">:</span>
+    <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">commit_message=action.commit.message</span>
+        <span class="s">if commit_message and #commit_message&gt;0 then</span>
+            <span class="s">print("✅ The commit message exists and is not empty: " .. commit_message)</span>
+        <span class="s">else</span>
+            <span class="s">error("\n\n❌ A commit message must be provided")</span>
+        <span class="s">end</span>
+   
+        <span class="s">job_name=action.commit.metadata["job_name"]</span>
+        <span class="s">if job_name == nil then</span>
+            <span class="s">error("\n❌ Commit metadata must include job_name")</span>
+        <span class="s">else</span>
+            <span class="s">print("✅ Commit metadata includes job_name: " .. job_name)</span>
+        <span class="s">end</span>
+   
+        <span class="s">version=action.commit.metadata["version"]</span>
+        <span class="s">if version == nil then</span>
+            <span class="s">error("\n❌ Commit metadata must include version")</span>
+        <span class="s">else</span>
+            <span class="s">print("✅ Commit metadata includes version: " .. version)</span>
+            <span class="s">if tonumber(version) then</span>
+                <span class="s">print("✅ Commit metadata version is numeric")</span>
+            <span class="s">else</span>
+                <span class="s">error("\n❌ Version metadata must be numeric: " .. version)</span>
+            <span class="s">end</span>
+        <span class="s">end</span>
 </code></pre></div>    </div>
   </li>
   <li>
