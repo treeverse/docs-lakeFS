@@ -943,6 +943,47 @@ spark.hadoop.fs.lakefs.endpoint=â€˜https://example-org.us-east-1.lakefscloud.ioâ
 </code></pre></div></div>
 
 <p>For more details about <a href="https://docs.databricks.com/dbfs/mounts.html">Mounting cloud object storage on Databricks</a>.</p>
+<h3 id="configuring-databricks-sql-warehouse-with-the-s3-compatible-api">
+  
+  
+    <a href="#configuring-databricks-sql-warehouse-with-the-s3-compatible-api" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring Databricks SQL Warehouse with the S3-compatible API
+  
+  
+</h3>
+    
+
+<p>A SQL warehouse is a compute resource that lets you run SQL commands on data 
+objects within Databricks SQL.</p>
+
+<p>If you use Databricks SQL warehouse, you can take advantage of the lakeFS 
+S3-compatible API with the S3A FileSystem.</p>
+
+<p>Define your SQL Warehouse configurations in the following way:</p>
+
+<ol>
+  <li>
+    <p>In the top right, select <code class="language-plaintext highlighter-rouge">Admin Settings</code> and then <code class="language-plaintext highlighter-rouge">SQL warehouse settings</code>.</p>
+  </li>
+  <li>
+    <p>Under <code class="language-plaintext highlighter-rouge">Data Access Configuration</code> add the following key-value pairs for 
+each lakeFS repository you want to access:</p>
+  </li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.s3a.impl shaded.databricks.org.apache.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.s3a.bucket.example-repo.access.key AKIAIOSFODNN7EXAMPLE // The access key to your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.secret.key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY // The secret key to your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.endpoint https://example-org.us-east-1.lakefscloud.io // The endpoint of your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.path.style.access true               
+</code></pre></div></div>
+
+<ol>
+  <li>Changes are applied automatically after the SQL Warehouse restarts.</li>
+  <li>You can now use the lakeFS S3-compatible API with your SQL Warehouse, e.g.:</li>
+</ol>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">delta</span><span class="p">.</span><span class="nv">`s3a://example-repo/main/datasets/delta-table/`</span> <span class="k">LIMIT</span> <span class="mi">100</span>
+</code></pre></div></div>
 <h2 id="lakefs-hadoop-filesystem">
   
   
