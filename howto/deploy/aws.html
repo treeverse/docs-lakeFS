@@ -744,11 +744,14 @@ Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/ng
     
 
 <ol>
-  <li>From the S3 Administration console, choose <em>Create Bucket</em>.</li>
-  <li>Use the following as your bucket policy, filling in the placeholders:
+  <li>Take note of the bucket name you want to use with lakeFS</li>
+  <li>
+    <p>Use the following as your bucket policy, filling in the placeholders:</p>
+
     <div class="tabs">
       <ul>
       <li><a href="#bucket-policy-standard">Standard Permissions</a></li>
+      <li><a href="#bucket-policy-minimal">Standard Permissions (with s3express)</a></li>
       <li><a href="#bucket-policy-minimal">Minimal Permissions (Advanced)</a></li>
    </ul>
       <div id="bucket-policy-standard">
@@ -783,6 +786,60 @@ Checkout Nginx <a href="https://kubernetes.github.io/ingress-nginx/user-guide/ng
          </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
             </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]"</span><span class="p">]</span><span class="w">
          </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+   </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>        </div>
+
+        <ul>
+          <li>Replace <code class="language-plaintext highlighter-rouge">[BUCKET_NAME]</code>, <code class="language-plaintext highlighter-rouge">[ACCOUNT_ID]</code> and <code class="language-plaintext highlighter-rouge">[IAM_ROLE]</code> with values relevant to your environment.</li>
+          <li><code class="language-plaintext highlighter-rouge">[BUCKET_NAME_AND_PREFIX]</code> can be the bucket name. If you want to minimize the bucket policy permissions, use the bucket name together with a prefix (e.g. <code class="language-plaintext highlighter-rouge">example-bucket/a/b/c</code>).
+This way, lakeFS will be able to create repositories only under this specific path (see: <a href="/understand/model.html#repository">Storage Namespace</a>).</li>
+          <li>lakeFS will try to assume the role <code class="language-plaintext highlighter-rouge">[IAM_ROLE]</code>.</li>
+        </ul>
+      </div>
+      <div id="bucket-policy-express">
+
+        <p>To use an S3 Express One Zone <em>directory bucket</em>, use the following policy. Note the <code class="language-plaintext highlighter-rouge">lakeFSDirectoryBucket</code> statement which is specifically required for using a directory bucket.</p>
+
+        <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+   </span><span class="nl">"Id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSPolicy"</span><span class="p">,</span><span class="w">
+   </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+   </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSObjects"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:PutObject"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:AbortMultipartUpload"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListMultipartUploadParts"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::[BUCKET_NAME_AND_PREFIX]/*"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]"</span><span class="p">]</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSBucket"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:GetBucketLocation"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"s3:ListBucketMultipartUploads"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:s3:::[BUCKET]"</span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]"</span><span class="p">]</span><span class="w">
+         </span><span class="p">}</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+         </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"lakeFSDirectoryBucket"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"s3express:CreateSession"</span><span class="w">
+         </span><span class="p">],</span><span class="w">
+         </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+         </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3express:[REGION]:[ACCOUNT_ID]:bucket/[BUCKET_NAME]"</span><span class="w">
       </span><span class="p">}</span><span class="w">
    </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
