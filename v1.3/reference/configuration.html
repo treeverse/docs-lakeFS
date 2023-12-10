@@ -581,8 +581,10 @@ Example: <code class="language-plaintext highlighter-rouge">LAKEFS_LOGGING_LEVEL
   <li><code class="language-plaintext highlighter-rouge">logging.file_max_size_mb</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - Output file maximum size in megabytes.</li>
   <li><code class="language-plaintext highlighter-rouge">logging.files_keep</code> <code class="language-plaintext highlighter-rouge">(int : 0)</code> - Number of log files to keep, default is all.</li>
   <li><code class="language-plaintext highlighter-rouge">actions.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Setting this to false will block hooks from being executed.</li>
+  <li><code class="language-plaintext highlighter-rouge">actions.lua.net_http_enabled</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Setting this to true will load the <code class="language-plaintext highlighter-rouge">net/http</code> package.</li>
+  <li><code class="language-plaintext highlighter-rouge">actions.env.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Environment variables accessible by hooks, disabled values evaluated to empty strings</li>
   <li>
-    <p><code class="language-plaintext highlighter-rouge">actions.lua.net_http_enabled</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Setting this to true will load the <code class="language-plaintext highlighter-rouge">net/http</code> package.</p>
+    <p><code class="language-plaintext highlighter-rouge">actions.env.prefix</code> <code class="language-plaintext highlighter-rouge">(string : "LAKEFSACTION_")</code> - Access to environment variables is restricted to those with the prefix. When environment access is enabled and no prefix is provided, all variables are accessible.</p>
 
     <p class="note"><strong>Note:</strong> Deprecated - See <code class="language-plaintext highlighter-rouge">database</code> section</p>
   </li>
@@ -764,6 +766,7 @@ representing the S3 endpoint used by S3 clients to call this server
 local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html">virtual-host addressing</a>.</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - AWS region we’re pretending to be in, it should match the region configuration used in AWS SDK clients</li>
   <li><code class="language-plaintext highlighter-rouge">gateways.s3.fallback_url</code> <code class="language-plaintext highlighter-rouge">(string)</code> - If specified, requests with a non-existing repository will be forwarded to this URL. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an <a href="https://github.com/gaul/s3proxy">S3Proxy</a> instance.</li>
+  <li><code class="language-plaintext highlighter-rouge">gateways.s3.verify_unsupported</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - The S3 gateway errors on unsupported requests, but when disabled, defers to target-based handlers.</li>
   <li><code class="language-plaintext highlighter-rouge">stats.enabled</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Whether to periodically collect anonymous usage statistics</li>
   <li><code class="language-plaintext highlighter-rouge">stats.flush_interval</code> <code class="language-plaintext highlighter-rouge">(duration : 30s)</code> - Interval used to post anonymous statistics collected</li>
   <li><code class="language-plaintext highlighter-rouge">stats.flush_size</code> <code class="language-plaintext highlighter-rouge">(int : 100)</code> - A size (in records) of anonymous statistics collected in which we post</li>

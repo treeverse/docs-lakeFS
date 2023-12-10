@@ -323,7 +323,7 @@
   },"46": {
     "doc": "AWS",
     "title": "Prepare your S3 bucket",
-    "content": ". | From the S3 Administration console, choose Create Bucket. | Use the following as your bucket policy, filling in the placeholders: . | Standard Permissions | Minimal Permissions (Advanced) | . { \"Id\": \"lakeFSPolicy\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"lakeFSObjects\", \"Action\": [ \"s3:GetObject\", \"s3:PutObject\", \"s3:AbortMultipartUpload\", \"s3:ListMultipartUploadParts\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET_NAME_AND_PREFIX]/*\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } }, { \"Sid\": \"lakeFSBucket\", \"Action\": [ \"s3:ListBucket\", \"s3:GetBucketLocation\", \"s3:ListBucketMultipartUploads\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET]\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } } ] } . | Replace [BUCKET_NAME], [ACCOUNT_ID] and [IAM_ROLE] with values relevant to your environment. | [BUCKET_NAME_AND_PREFIX] can be the bucket name. If you want to minimize the bucket policy permissions, use the bucket name together with a prefix (e.g. example-bucket/a/b/c). This way, lakeFS will be able to create repositories only under this specific path (see: Storage Namespace). | lakeFS will try to assume the role [IAM_ROLE]. | . If required lakeFS can operate without accessing the data itself, this permission section is useful if you are using presigned URLs mode or the lakeFS Hadoop FileSystem Spark integration. Since this FileSystem performs many operations directly on the storage, lakeFS requires less permissive permissions, resulting in increased security. lakeFS always requires permissions to access the _lakefs prefix under your storage namespace, in which metadata is stored (learn more). By setting this policy without presign mode you’ll be able to perform only metadata operations through lakeFS, meaning that you’ll not be able to use lakeFS to upload or download objects. Specifically you won’t be able to: . | Upload objects using the lakeFS GUI (Works with presign mode) | Upload objects through Spark using the S3 gateway | Run lakectl fs commands (unless using presign mode with --pre-sign flag) | Use Actions and Hooks | . { \"Id\": \"[POLICY_ID]\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"lakeFSObjects\", \"Action\": [ \"s3:GetObject\", \"s3:PutObject\" ], \"Effect\": \"Allow\", \"Resource\": [ \"arn:aws:s3:::[STORAGE_NAMESPACE]/_lakefs/*\" ], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } }, { \"Sid\": \"lakeFSBucket\", \"Action\": [ \"s3:ListBucket\", \"s3:GetBucketLocation\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET]\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } } ] } . We can use presigned URLs mode without allowing access to the data from the lakeFS server directly. We can achieve this by using condition keys such as aws:referer, aws:SourceVpc and aws:SourceIp. For example, assume the following scenario: . | lakeFS is deployed outside the company (i.e lakeFS cloud or other VPC not vpc-123) | We don’t want lakeFS to be able to access the data, so we use presign URL, we still need lakeFS role to be able to sign the URL. | We want to allow access from the internal company VPC: vpc-123. | . { \"Sid\": \"allowLakeFSRoleFromCompanyOnly\", \"Effect\": \"Allow\", \"Principal\": { \"AWS\": \"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\" }, \"Action\": [ \"s3:GetObject\", \"s3:PutObject\", ], \"Resource\": [ \"arn:aws:s3:::[BUCKET]/*\", ], \"Condition\": { \"StringEquals\": { \"aws:SourceVpc\": \"vpc-123\" } } } . | . Alternative: use an AWS user . lakeFS can authenticate with your AWS account using an AWS user, using an access key and secret. To allow this, change the policy’s Principal accordingly: . \"Principal\": { \"AWS\": [\"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;\"] } . ",
+    "content": ". | Take note of the bucket name you want to use with lakeFS | Use the following as your bucket policy, filling in the placeholders: . | Standard Permissions | Standard Permissions (with s3express) | Minimal Permissions (Advanced) | . { \"Id\": \"lakeFSPolicy\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"lakeFSObjects\", \"Action\": [ \"s3:GetObject\", \"s3:PutObject\", \"s3:AbortMultipartUpload\", \"s3:ListMultipartUploadParts\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET_NAME_AND_PREFIX]/*\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } }, { \"Sid\": \"lakeFSBucket\", \"Action\": [ \"s3:ListBucket\", \"s3:GetBucketLocation\", \"s3:ListBucketMultipartUploads\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET]\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } } ] } . | Replace [BUCKET_NAME], [ACCOUNT_ID] and [IAM_ROLE] with values relevant to your environment. | [BUCKET_NAME_AND_PREFIX] can be the bucket name. If you want to minimize the bucket policy permissions, use the bucket name together with a prefix (e.g. example-bucket/a/b/c). This way, lakeFS will be able to create repositories only under this specific path (see: Storage Namespace). | lakeFS will try to assume the role [IAM_ROLE]. | . To use an S3 Express One Zone directory bucket, use the following policy. Note the lakeFSDirectoryBucket statement which is specifically required for using a directory bucket. { \"Id\": \"lakeFSPolicy\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"lakeFSObjects\", \"Action\": [ \"s3:GetObject\", \"s3:PutObject\", \"s3:AbortMultipartUpload\", \"s3:ListMultipartUploadParts\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET_NAME_AND_PREFIX]/*\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } }, { \"Sid\": \"lakeFSBucket\", \"Action\": [ \"s3:ListBucket\", \"s3:GetBucketLocation\", \"s3:ListBucketMultipartUploads\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET]\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } }, { \"Sid\": \"lakeFSDirectoryBucket\", \"Action\": [ \"s3express:CreateSession\" ], \"Effect\": \"Allow\", \"Resource\": \"arn:aws:s3express:[REGION]:[ACCOUNT_ID]:bucket/[BUCKET_NAME]\" } ] } . | Replace [BUCKET_NAME], [ACCOUNT_ID] and [IAM_ROLE] with values relevant to your environment. | [BUCKET_NAME_AND_PREFIX] can be the bucket name. If you want to minimize the bucket policy permissions, use the bucket name together with a prefix (e.g. example-bucket/a/b/c). This way, lakeFS will be able to create repositories only under this specific path (see: Storage Namespace). | lakeFS will try to assume the role [IAM_ROLE]. | . If required lakeFS can operate without accessing the data itself, this permission section is useful if you are using presigned URLs mode or the lakeFS Hadoop FileSystem Spark integration. Since this FileSystem performs many operations directly on the storage, lakeFS requires less permissive permissions, resulting in increased security. lakeFS always requires permissions to access the _lakefs prefix under your storage namespace, in which metadata is stored (learn more). By setting this policy without presign mode you’ll be able to perform only metadata operations through lakeFS, meaning that you’ll not be able to use lakeFS to upload or download objects. Specifically you won’t be able to: . | Upload objects using the lakeFS GUI (Works with presign mode) | Upload objects through Spark using the S3 gateway | Run lakectl fs commands (unless using presign mode with --pre-sign flag) | Use Actions and Hooks | . { \"Id\": \"[POLICY_ID]\", \"Version\": \"2012-10-17\", \"Statement\": [ { \"Sid\": \"lakeFSObjects\", \"Action\": [ \"s3:GetObject\", \"s3:PutObject\" ], \"Effect\": \"Allow\", \"Resource\": [ \"arn:aws:s3:::[STORAGE_NAMESPACE]/_lakefs/*\" ], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } }, { \"Sid\": \"lakeFSBucket\", \"Action\": [ \"s3:ListBucket\", \"s3:GetBucketLocation\" ], \"Effect\": \"Allow\", \"Resource\": [\"arn:aws:s3:::[BUCKET]\"], \"Principal\": { \"AWS\": [\"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\"] } } ] } . We can use presigned URLs mode without allowing access to the data from the lakeFS server directly. We can achieve this by using condition keys such as aws:referer, aws:SourceVpc and aws:SourceIp. For example, assume the following scenario: . | lakeFS is deployed outside the company (i.e lakeFS cloud or other VPC not vpc-123) | We don’t want lakeFS to be able to access the data, so we use presign URL, we still need lakeFS role to be able to sign the URL. | We want to allow access from the internal company VPC: vpc-123. | . { \"Sid\": \"allowLakeFSRoleFromCompanyOnly\", \"Effect\": \"Allow\", \"Principal\": { \"AWS\": \"arn:aws:iam::[ACCOUNT_ID]:role/[IAM_ROLE]\" }, \"Action\": [ \"s3:GetObject\", \"s3:PutObject\", ], \"Resource\": [ \"arn:aws:s3:::[BUCKET]/*\", ], \"Condition\": { \"StringEquals\": { \"aws:SourceVpc\": \"vpc-123\" } } } . | . Alternative: use an AWS user . lakeFS can authenticate with your AWS account using an AWS user, using an access key and secret. To allow this, change the policy’s Principal accordingly: . \"Principal\": { \"AWS\": [\"arn:aws:iam::&lt;ACCOUNT_ID&gt;:user/&lt;IAM_USER&gt;\"] } . ",
     "url": "/v1.3/howto/deploy/aws.html#prepare-your-s3-bucket",
     
     "relUrl": "/howto/deploy/aws.html#prepare-your-s3-bucket"
@@ -771,7 +771,7 @@
   },"110": {
     "doc": "lakeFS Server Configuration",
     "title": "Reference",
-    "content": ". | logging.format (one of [\"json\", \"text\"] : \"text\") - Format to output log message in | logging.level (one of [\"TRACE\", \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", \"NONE\"] : \"INFO\") - Logging level to output | logging.audit_log_level (one of [\"TRACE\", \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", \"NONE\"] : \"DEBUG\") - Audit logs level to output. Note: In case you configure this field to be lower than the main logger level, you won’t be able to get the audit logs . | logging.output (string : \"-\") - A path or paths to write logs to. A - means the standard output, = means the standard error. | logging.file_max_size_mb (int : 100) - Output file maximum size in megabytes. | logging.files_keep (int : 0) - Number of log files to keep, default is all. | actions.enabled (bool : true) - Setting this to false will block hooks from being executed. | actions.lua.net_http_enabled (bool : false) - Setting this to true will load the net/http package. Note: Deprecated - See database section . | database - Configuration section for the lakeFS key-value store database . | database.type (string [\"postgres\"|\"dynamodb\"|\"cosmosdb\"|\"local\"] : ) - lakeFS database type | database.postgres - Configuration section when using database.type=\"postgres\" . | database.postgres.connection_string (string : \"postgres://localhost:5432/postgres?sslmode=disable\") - PostgreSQL connection string to use | database.postgres.max_open_connections (int : 25) - Maximum number of open connections to the database | database.postgres.max_idle_connections (int : 25) - Maximum number of connections in the idle connection pool | database.postgres.connection_max_lifetime (duration : 5m) - Sets the maximum amount of time a connection may be reused (valid units: ns|us|ms|s|m|h) | . | database.dynamodb - Configuration section when using database.type=\"dynamodb\" . | database.dynamodb.table_name (string : \"kvstore\") - Table used to store the data | database.dynamodb.scan_limit (int : 1025) - Maximal number of items per page during scan operation . Note: Refer to the following AWS documentation for further information . | database.dynamodb.endpoint (string : ) - Endpoint URL for database instance | database.dynamodb.aws_region (string : ) - AWS Region of database instance | database.dynamodb.aws_profile (string : ) - AWS named profile to use | database.dynamodb.aws_access_key_id (string : ) - AWS access key ID | database.dynamodb.aws_secret_access_key (string : ) - AWS secret access key | Note: endpoint aws_region aws_access_key_id aws_secret_access_key are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials. | database.dynamodb.health_check_interval (duration : 0s) - Interval to run health check for the DynamoDB instance (won’t run if equal to 0). | . | database.cosmosdb - Configuration section when using database.type=\"cosmosdb\" . | database.cosmosdb.key (string : \"\") - If specified, will be used to authenticate to the CosmosDB account. Otherwise, Azure SDK default authentication (with env vars) will be used. | database.cosmosdb.endpoint (string : \"\") - CosmosDB account endpoint, e.g. https://&lt;account&gt;.documents.azure.com/. | database.cosmosdb.database (string : \"\") - CosmosDB database name. | database.cosmosdb.container (string : \"\") - CosmosDB container name. | database.cosmosdb.throughput (int32 : ) - CosmosDB container’s RU/s. If not set - the default CosmosDB container throughput is used. | database.cosmosdb.autoscale (bool : false) - If set, CosmosDB container throughput is autoscaled (See CosmosDB docs for minimum throughput requirement). Otherwise, uses “Manual” mode (Docs). | . | database.local - Configuration section when using database.type=\"local\" . | database.local.path (string : \"~/lakefs/metadata\") - Local path on the filesystem to store embedded KV metadata, like branches and uncommitted entries | database.local.sync_writes (bool: true) - Ensure each write is written to the disk. Disable to increase performance | database.local.prefetch_size (int: 256) - How many items to prefetch when iterating over embedded KV records | database.local.enable_logging (bool: false) - Enable trace logging for local driver | . | . | listen_address (string : \"0.0.0.0:8000\") - A &lt;host&gt;:&lt;port&gt; structured string representing the address to listen on | tls.enabled (bool :false) - Enable TLS listening. The listen_address will be used to serve HTTPS requests. (mainly for local development) | tls.cert_file (string : ) - Server certificate file path used while serve HTTPS (.cert or .crt file - signed certificates). | tls.key_file (string : ) - Server secret key file path used whie serve HTTPS (.key file - private key). | auth.cache.enabled (bool : true) - Whether to cache access credentials and user policies in-memory. Can greatly improve throughput when enabled. | auth.cache.size (int : 1024) - How many items to store in the auth cache. Systems with a very high user count should use a larger value at the expense of ~1kb of memory per cached user. | auth.cache.ttl (time duration : \"20s\") - How long to store an item in the auth cache. Using a higher value reduces load on the database, but will cause changes longer to take effect for cached users. | auth.cache.jitter (time duration : \"3s\") - A random amount of time between 0 and this value is added to each item’s TTL. This is done to avoid a large bulk of keys expiring at once and overwhelming the database. | auth.encrypt.secret_key (string : required) - A random (cryptographically safe) generated string that is used for encryption and HMAC signing | auth.login_duration (time duration : \"168h\") - The duration the login token is valid for | auth.cookie_domain (string : \"\") - Domain attribute to set the access_token cookie on (the default is an empty string which defaults to the same host that sets the cookie) | auth.api.endpoint (string: https://external.service/api/v1) - URL to external Authorization Service described at authorization.yml; | auth.api.token (string: eyJhbGciOiJIUzI1NiIsInR5...) - API token used to authenticate requests to api endpoint | auth.api.health_check_timeout (time duration : \"20s\") - Timeout duration for external auth API health check | auth.api.skip_health_check (bool : false) - Skip external auth API health check . Note: It is best to keep this somewhere safe such as KMS or Hashicorp Vault, and provide it to the system at run time . | auth.remote_authenticator.enabled (bool : false) - If specified, also authenticate users via this Remote Authenticator server. | auth.remote_authenticator.endpoint (string : required) - Endpoint URL of the remote authentication service (e.g. https://my-auth.example.com/auth). | auth.remote_authenticator.default_user_group (string : Viewers) - Create users in this group (i.e Viewers, Developers, etc). | auth.remote_authenticator.request_timeout (duration : 10s) - If specified, timeout for remote authentication requests. | auth.cookie_auth_verification.validate_id_token_claims (map[string]string : ) - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values. | auth.cookie_auth_verification.default_initial_groups (string[] : [])` - By default, users will be assigned to these groups | auth.cookie_auth_verification.initial_groups_claim_name (string[] : []) - Use this claim from the ID token to provide the initial group for new users. This will take priority if auth.cookie_auth_verification.default_initial_groups is also set. | auth.cookie_auth_verification.friendly_name_claim_name (string[] : ) - If specified, the value from the claim with this name will be used as the user’s display name. | auth.cookie_auth_verification.external_user_id_claim_name - (string : ) - If specified, the value from the claim with this name will be used as the user’s id name. | auth.cookie_auth_verification.auth_source - (string : ) - If specified, user will be labeled with this auth source. | auth.oidc.default_initial_groups (string[] : []) - By default, OIDC users will be assigned to these groups | auth.oidc.initial_groups_claim_name (string[] : []) - Use this claim from the ID token to provide the initial group for new users. This will take priority if auth.oidc.default_initial_groups is also set. | auth.oidc.friendly_name_claim_name (string[] : ) - If specified, the value from the claim with this name will be used as the user’s display name. | auth.oidc.validate_id_token_claims (map[string]string : ) - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values. | auth.ui_config.rbac (string: \"simplified\") - “simplified”, “external” or “internal” (enterprise feature). In simplified mode, do not display policy in GUI. If you have configured an external auth server you can set this to “external” to support the policy editor. If you are using the enteprrise version of lakeFS, you can set this to “internal” to use the built-in policy editor. | blockstore.type (one of [\"local\", \"s3\", \"gs\", \"azure\", \"mem\"] : required). Block adapter to use. This controls where the underlying data will be stored | blockstore.default_namespace_prefix (string : ) - Use this to help your users choose a storage namespace for their repositories. If specified, the storage namespace will be filled with this default value as a prefix when creating a repository from the UI. The user may still change it to something else. | blockstore.local.path (string: \"~/lakefs/data\") - When using the local Block Adapter, which directory to store files in | blockstore.local.import_enabled (bool: false) - Enable import for local Block Adapter, relevant only if you are using shared location | blockstore.local.import_hidden (bool: false) - When enabled import will scan and import any file or folder that starts with a dot character. | blockstore.local.allowed_external_prefixes ([]string: []) - List of absolute path prefixes used to match any access for external location (ex: /var/data/). Empty list mean no access to external location. | blockstore.gs.credentials_file (string : ) - If specified will be used as a file path of the JSON file that contains your Google service account key | blockstore.gs.credentials_json (string : ) - If specified will be used as JSON string that contains your Google service account key (when credentials_file is not set) | blockstore.gs.pre_signed_expiry (time duration : \"15m\") - Expiry of pre-signed URL. | blockstore.gs.disable_pre_signed (bool : false) - Disable use of pre-signed URL. | blockstore.gs.disable_pre_signed_ui (bool : true) - Disable use of pre-signed URL in the UI. | blockstore.azure.storage_account (string : ) - If specified, will be used as the Azure storage account | blockstore.azure.storage_access_key (string : ) - If specified, will be used as the Azure storage access key | blockstore.azure.pre_signed_expiry (time duration : \"15m\") - Expiry of pre-signed URL. | blockstore.azure.disable_pre_signed (bool : false) - Disable use of pre-signed URL. | blockstore.azure.disable_pre_signed_ui (bool : true) - Disable use of pre-signed URL in the UI. | blockstore.s3.region (string : \"us-east-1\") - Default region for lakeFS to use when interacting with S3. | blockstore.s3.profile (string : ) - If specified, will be used as a named credentials profile | blockstore.s3.credentials_file (string : ) - If specified, will be used as a credentials file | blockstore.s3.credentials.access_key_id (string : ) - If specified, will be used as a static set of credential | blockstore.s3.credentials.secret_access_key (string : ) - If specified, will be used as a static set of credential | blockstore.s3.credentials.session_token (string : ) - If specified, will be used as a static session token | blockstore.s3.endpoint (string : ) - If specified, custom endpoint for the AWS S3 API (https://s3_compatible_service_endpoint:port) | blockstore.s3.force_path_style (bool : false) - When true, use path-style S3 URLs (https:/// instead of https://.) . | blockstore.s3.discover_bucket_region (bool : true) - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API). | blockstore.s3.skip_verify_certificate_test_only (boolean : false) - Skip certificate verification while connecting to the storage endpoint. Should be used only for testing. | blockstore.s3.server_side_encryption (string : ) - Server side encryption format used (Example on AWS using SSE-KMS while passing “aws:kms”) | blockstore.s3.server_side_encryption_kms_key_id (string : ) - Server side encryption KMS key ID | blockstore.s3.pre_signed_expiry (time duration : \"15m\") - Expiry of pre-signed URL. | blockstore.s3.disable_pre_signed (bool : false) - Disable use of pre-signed URL. | blockstore.s3.disable_pre_signed_ui (bool : true) - Disable use of pre-signed URL in the UI. | blockstore.s3.client_log_request (bool : false) - Set SDK logging bit to log requests | blockstore.s3.client_log_retries (bool : false) - Set SDK logging bit to log retries | graveler.reposiory_cache.size (int : 1000) - How many items to store in the repository cache. | graveler.reposiory_cache.ttl (time duration : \"5s\") - How long to store an item in the repository cache. | graveler.reposiory_cache.jitter (time duration : \"2s\") - A random amount of time between 0 and this value is added to each item’s TTL. | graveler.ensure_readable_root_namespace (bool: true) - When creating a new repository use this to verify that lakeFS has access to the root of the underlying storage namespace. Set false only if lakeFS should not have access (i.e pre-sign mode only). | graveler.commit_cache.size (int : 50000) - How many items to store in the commit cache. | graveler.commit_cache.ttl (time duration : \"10m\") - How long to store an item in the commit cache. | graveler.commit_cache.jitter (time duration : \"2s\") - A random amount of time between 0 and this value is added to each item’s TTL. | graveler.background.rate_limit (int : 0) - Advence configuration to control background work done rate limit in requests per second (default: 0 - unlimited). | committed.local_cache - an object describing the local (on-disk) cache of metadata from permanent storage: . | committed.local_cache.size_bytes (int : 1073741824) - bytes for local cache to use on disk. The cache may use more storage for short periods of time. | committed.local_cache.dir (string, ~/lakefs/local_tier) - directory to store local cache. | committed.local_cache.range_proportion (float : 0.9) - proportion of local cache to use for storing ranges (leaves of committed metadata storage). | committed.local_cache.range.open_readers (int : 500) - maximal number of unused open SSTable readers to keep for ranges. | committed.local_cache.range.num_shards (int : 30) - sharding factor for open SSTable readers for ranges. Should be at least sqrt(committed.local_cache.range.open_readers). | committed.local_cache.metarange_proportion (float : 0.1) - proportion of local cache to use for storing metaranges (roots of committed metadata storage). | committed.local_cache.metarange.open_readers (int : 50) - maximal number of unused open SSTable readers to keep for metaranges. | committed.local_cache.metarange.num_shards (int : 10) - sharding factor for open SSTable readers for metaranges. Should be at least sqrt(committed.local_cache.metarange.open_readers). | . | committed.block_storage_prefix (string : _lakefs) - Prefix for metadata file storage in each repository’s storage namespace | committed.permanent.min_range_size_bytes (int : 0) - Smallest allowable range in metadata. Increase to somewhat reduce random access time on committed metadata, at the cost of increased committed metadata storage cost. | committed.permanent.max_range_size_bytes (int : 20971520) - Largest allowable range in metadata. Should be close to the size at which fetching from remote storage becomes linear. | committed.permanent.range_raggedness_entries (int : 50_000) - Average number of object pointers to store in each range (subject to min_range_size_bytes and max_range_size_bytes). | committed.sstable.memory.cache_size_bytes (int : 200_000_000) - maximal size of in-memory cache used for each SSTable reader. | email.smtp_host (string) - A string representing the URL of the SMTP host. | email.smtp_port (int) - An integer representing the port of the SMTP service (465, 587, 993, 25 are some standard ports) | email.use_ssl (bool : false) - Use SSL connection with SMTP host. | email.username (string) - A string representing the username of the specific account at the SMTP. It’s recommended to provide this value at runtime from a secret vault of some sort. | email.password (string) - A string representing the password of the account. It’s recommended to provide this value at runtime from a secret vault of some sort. | email.local_name (string) - A string representing the hostname sent to the SMTP server with the HELO command. By default, “localhost” is sent. | email.sender (string) - A string representing the email account which is set as the sender. | email.limit_every_duration (duration : 1m) - The average time between sending emails. If zero is entered, there is no limit to the amount of emails that can be sent. | email.burst (int: 10) - Maximal burst of emails before applying limit_every_duration. The zero value means no burst and therefore no emails can be sent. | email.lakefs_base_url (string : \"http://localhost:8000\") - A string representing the base lakeFS endpoint to be directed to when emails are sent inviting users, reseting passwords etc. | gateways.s3.domain_name (string : \"s3.local.lakefs.io\") - a FQDN representing the S3 endpoint used by S3 clients to call this server (*.s3.local.lakefs.io always resolves to 127.0.0.1, useful for local development, if using virtual-host addressing. | gateways.s3.region (string : \"us-east-1\") - AWS region we’re pretending to be in, it should match the region configuration used in AWS SDK clients | gateways.s3.fallback_url (string) - If specified, requests with a non-existing repository will be forwarded to this URL. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an S3Proxy instance. | stats.enabled (bool : true) - Whether to periodically collect anonymous usage statistics | stats.flush_interval (duration : 30s) - Interval used to post anonymous statistics collected | stats.flush_size (int : 100) - A size (in records) of anonymous statistics collected in which we post | security.audit_check_interval (duration : 24h) - Duration in which we check for security audit. | ui.enabled (bool: true) - Whether to server the embedded UI from the binary | ugc.prepare_max_file_size (int: 125829120) - Uncommitted garbage collection prepare request, limit the produced file maximum size | ugc.prepare_interval (duraction: 1m) - Uncommitted garbage collection prepare request, limit produce time to interval | diff.delta.plugin (string : ) - Name of the Delta Lake diff plugin. | plugins.default_path (string : ~/.lakefs/plugins) - Absolute path to the root of lakeFS’s plugins location. | plugins.properties.&lt;plugin name&gt;.path (string : ) - Absolute path to the location of &lt;plugin name&gt;’s binary location. | plugins.properties.&lt;plugin name&gt;.version (uint : ) - Version of the &lt;plugin name&gt; plugin. The version must be &gt; 0. | installation.user_name (string : ) - When specified, an initial admin user will be created when the server is first run. Works only when database.type is set to local. Requires installation.access_key_id and installation.secret_access_key. | installation.access_key_id (string : ) - Admin’s initial access key id (used once in the initial setup process) | installation.secret_access_key (string : ) - Admin’s initial secret access key (used once in the initial setup process) | . ",
+    "content": ". | logging.format (one of [\"json\", \"text\"] : \"text\") - Format to output log message in | logging.level (one of [\"TRACE\", \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", \"NONE\"] : \"INFO\") - Logging level to output | logging.audit_log_level (one of [\"TRACE\", \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", \"NONE\"] : \"DEBUG\") - Audit logs level to output. Note: In case you configure this field to be lower than the main logger level, you won’t be able to get the audit logs . | logging.output (string : \"-\") - A path or paths to write logs to. A - means the standard output, = means the standard error. | logging.file_max_size_mb (int : 100) - Output file maximum size in megabytes. | logging.files_keep (int : 0) - Number of log files to keep, default is all. | actions.enabled (bool : true) - Setting this to false will block hooks from being executed. | actions.lua.net_http_enabled (bool : false) - Setting this to true will load the net/http package. | actions.env.enabled (bool : true) - Environment variables accessible by hooks, disabled values evaluated to empty strings | actions.env.prefix (string : \"LAKEFSACTION_\") - Access to environment variables is restricted to those with the prefix. When environment access is enabled and no prefix is provided, all variables are accessible. Note: Deprecated - See database section . | database - Configuration section for the lakeFS key-value store database . | database.type (string [\"postgres\"|\"dynamodb\"|\"cosmosdb\"|\"local\"] : ) - lakeFS database type | database.postgres - Configuration section when using database.type=\"postgres\" . | database.postgres.connection_string (string : \"postgres://localhost:5432/postgres?sslmode=disable\") - PostgreSQL connection string to use | database.postgres.max_open_connections (int : 25) - Maximum number of open connections to the database | database.postgres.max_idle_connections (int : 25) - Maximum number of connections in the idle connection pool | database.postgres.connection_max_lifetime (duration : 5m) - Sets the maximum amount of time a connection may be reused (valid units: ns|us|ms|s|m|h) | . | database.dynamodb - Configuration section when using database.type=\"dynamodb\" . | database.dynamodb.table_name (string : \"kvstore\") - Table used to store the data | database.dynamodb.scan_limit (int : 1025) - Maximal number of items per page during scan operation . Note: Refer to the following AWS documentation for further information . | database.dynamodb.endpoint (string : ) - Endpoint URL for database instance | database.dynamodb.aws_region (string : ) - AWS Region of database instance | database.dynamodb.aws_profile (string : ) - AWS named profile to use | database.dynamodb.aws_access_key_id (string : ) - AWS access key ID | database.dynamodb.aws_secret_access_key (string : ) - AWS secret access key | Note: endpoint aws_region aws_access_key_id aws_secret_access_key are not required and used mainly for experimental purposes when working with DynamoDB with different AWS credentials. | database.dynamodb.health_check_interval (duration : 0s) - Interval to run health check for the DynamoDB instance (won’t run if equal to 0). | . | database.cosmosdb - Configuration section when using database.type=\"cosmosdb\" . | database.cosmosdb.key (string : \"\") - If specified, will be used to authenticate to the CosmosDB account. Otherwise, Azure SDK default authentication (with env vars) will be used. | database.cosmosdb.endpoint (string : \"\") - CosmosDB account endpoint, e.g. https://&lt;account&gt;.documents.azure.com/. | database.cosmosdb.database (string : \"\") - CosmosDB database name. | database.cosmosdb.container (string : \"\") - CosmosDB container name. | database.cosmosdb.throughput (int32 : ) - CosmosDB container’s RU/s. If not set - the default CosmosDB container throughput is used. | database.cosmosdb.autoscale (bool : false) - If set, CosmosDB container throughput is autoscaled (See CosmosDB docs for minimum throughput requirement). Otherwise, uses “Manual” mode (Docs). | . | database.local - Configuration section when using database.type=\"local\" . | database.local.path (string : \"~/lakefs/metadata\") - Local path on the filesystem to store embedded KV metadata, like branches and uncommitted entries | database.local.sync_writes (bool: true) - Ensure each write is written to the disk. Disable to increase performance | database.local.prefetch_size (int: 256) - How many items to prefetch when iterating over embedded KV records | database.local.enable_logging (bool: false) - Enable trace logging for local driver | . | . | listen_address (string : \"0.0.0.0:8000\") - A &lt;host&gt;:&lt;port&gt; structured string representing the address to listen on | tls.enabled (bool :false) - Enable TLS listening. The listen_address will be used to serve HTTPS requests. (mainly for local development) | tls.cert_file (string : ) - Server certificate file path used while serve HTTPS (.cert or .crt file - signed certificates). | tls.key_file (string : ) - Server secret key file path used whie serve HTTPS (.key file - private key). | auth.cache.enabled (bool : true) - Whether to cache access credentials and user policies in-memory. Can greatly improve throughput when enabled. | auth.cache.size (int : 1024) - How many items to store in the auth cache. Systems with a very high user count should use a larger value at the expense of ~1kb of memory per cached user. | auth.cache.ttl (time duration : \"20s\") - How long to store an item in the auth cache. Using a higher value reduces load on the database, but will cause changes longer to take effect for cached users. | auth.cache.jitter (time duration : \"3s\") - A random amount of time between 0 and this value is added to each item’s TTL. This is done to avoid a large bulk of keys expiring at once and overwhelming the database. | auth.encrypt.secret_key (string : required) - A random (cryptographically safe) generated string that is used for encryption and HMAC signing | auth.login_duration (time duration : \"168h\") - The duration the login token is valid for | auth.cookie_domain (string : \"\") - Domain attribute to set the access_token cookie on (the default is an empty string which defaults to the same host that sets the cookie) | auth.api.endpoint (string: https://external.service/api/v1) - URL to external Authorization Service described at authorization.yml; | auth.api.token (string: eyJhbGciOiJIUzI1NiIsInR5...) - API token used to authenticate requests to api endpoint | auth.api.health_check_timeout (time duration : \"20s\") - Timeout duration for external auth API health check | auth.api.skip_health_check (bool : false) - Skip external auth API health check . Note: It is best to keep this somewhere safe such as KMS or Hashicorp Vault, and provide it to the system at run time . | auth.remote_authenticator.enabled (bool : false) - If specified, also authenticate users via this Remote Authenticator server. | auth.remote_authenticator.endpoint (string : required) - Endpoint URL of the remote authentication service (e.g. https://my-auth.example.com/auth). | auth.remote_authenticator.default_user_group (string : Viewers) - Create users in this group (i.e Viewers, Developers, etc). | auth.remote_authenticator.request_timeout (duration : 10s) - If specified, timeout for remote authentication requests. | auth.cookie_auth_verification.validate_id_token_claims (map[string]string : ) - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values. | auth.cookie_auth_verification.default_initial_groups (string[] : [])` - By default, users will be assigned to these groups | auth.cookie_auth_verification.initial_groups_claim_name (string[] : []) - Use this claim from the ID token to provide the initial group for new users. This will take priority if auth.cookie_auth_verification.default_initial_groups is also set. | auth.cookie_auth_verification.friendly_name_claim_name (string[] : ) - If specified, the value from the claim with this name will be used as the user’s display name. | auth.cookie_auth_verification.external_user_id_claim_name - (string : ) - If specified, the value from the claim with this name will be used as the user’s id name. | auth.cookie_auth_verification.auth_source - (string : ) - If specified, user will be labeled with this auth source. | auth.oidc.default_initial_groups (string[] : []) - By default, OIDC users will be assigned to these groups | auth.oidc.initial_groups_claim_name (string[] : []) - Use this claim from the ID token to provide the initial group for new users. This will take priority if auth.oidc.default_initial_groups is also set. | auth.oidc.friendly_name_claim_name (string[] : ) - If specified, the value from the claim with this name will be used as the user’s display name. | auth.oidc.validate_id_token_claims (map[string]string : ) - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values. | auth.ui_config.rbac (string: \"simplified\") - “simplified”, “external” or “internal” (enterprise feature). In simplified mode, do not display policy in GUI. If you have configured an external auth server you can set this to “external” to support the policy editor. If you are using the enteprrise version of lakeFS, you can set this to “internal” to use the built-in policy editor. | blockstore.type (one of [\"local\", \"s3\", \"gs\", \"azure\", \"mem\"] : required). Block adapter to use. This controls where the underlying data will be stored | blockstore.default_namespace_prefix (string : ) - Use this to help your users choose a storage namespace for their repositories. If specified, the storage namespace will be filled with this default value as a prefix when creating a repository from the UI. The user may still change it to something else. | blockstore.local.path (string: \"~/lakefs/data\") - When using the local Block Adapter, which directory to store files in | blockstore.local.import_enabled (bool: false) - Enable import for local Block Adapter, relevant only if you are using shared location | blockstore.local.import_hidden (bool: false) - When enabled import will scan and import any file or folder that starts with a dot character. | blockstore.local.allowed_external_prefixes ([]string: []) - List of absolute path prefixes used to match any access for external location (ex: /var/data/). Empty list mean no access to external location. | blockstore.gs.credentials_file (string : ) - If specified will be used as a file path of the JSON file that contains your Google service account key | blockstore.gs.credentials_json (string : ) - If specified will be used as JSON string that contains your Google service account key (when credentials_file is not set) | blockstore.gs.pre_signed_expiry (time duration : \"15m\") - Expiry of pre-signed URL. | blockstore.gs.disable_pre_signed (bool : false) - Disable use of pre-signed URL. | blockstore.gs.disable_pre_signed_ui (bool : true) - Disable use of pre-signed URL in the UI. | blockstore.azure.storage_account (string : ) - If specified, will be used as the Azure storage account | blockstore.azure.storage_access_key (string : ) - If specified, will be used as the Azure storage access key | blockstore.azure.pre_signed_expiry (time duration : \"15m\") - Expiry of pre-signed URL. | blockstore.azure.disable_pre_signed (bool : false) - Disable use of pre-signed URL. | blockstore.azure.disable_pre_signed_ui (bool : true) - Disable use of pre-signed URL in the UI. | blockstore.s3.region (string : \"us-east-1\") - Default region for lakeFS to use when interacting with S3. | blockstore.s3.profile (string : ) - If specified, will be used as a named credentials profile | blockstore.s3.credentials_file (string : ) - If specified, will be used as a credentials file | blockstore.s3.credentials.access_key_id (string : ) - If specified, will be used as a static set of credential | blockstore.s3.credentials.secret_access_key (string : ) - If specified, will be used as a static set of credential | blockstore.s3.credentials.session_token (string : ) - If specified, will be used as a static session token | blockstore.s3.endpoint (string : ) - If specified, custom endpoint for the AWS S3 API (https://s3_compatible_service_endpoint:port) | blockstore.s3.force_path_style (bool : false) - When true, use path-style S3 URLs (https:/// instead of https://.) . | blockstore.s3.discover_bucket_region (bool : true) - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API). | blockstore.s3.skip_verify_certificate_test_only (boolean : false) - Skip certificate verification while connecting to the storage endpoint. Should be used only for testing. | blockstore.s3.server_side_encryption (string : ) - Server side encryption format used (Example on AWS using SSE-KMS while passing “aws:kms”) | blockstore.s3.server_side_encryption_kms_key_id (string : ) - Server side encryption KMS key ID | blockstore.s3.pre_signed_expiry (time duration : \"15m\") - Expiry of pre-signed URL. | blockstore.s3.disable_pre_signed (bool : false) - Disable use of pre-signed URL. | blockstore.s3.disable_pre_signed_ui (bool : true) - Disable use of pre-signed URL in the UI. | blockstore.s3.client_log_request (bool : false) - Set SDK logging bit to log requests | blockstore.s3.client_log_retries (bool : false) - Set SDK logging bit to log retries | graveler.reposiory_cache.size (int : 1000) - How many items to store in the repository cache. | graveler.reposiory_cache.ttl (time duration : \"5s\") - How long to store an item in the repository cache. | graveler.reposiory_cache.jitter (time duration : \"2s\") - A random amount of time between 0 and this value is added to each item’s TTL. | graveler.ensure_readable_root_namespace (bool: true) - When creating a new repository use this to verify that lakeFS has access to the root of the underlying storage namespace. Set false only if lakeFS should not have access (i.e pre-sign mode only). | graveler.commit_cache.size (int : 50000) - How many items to store in the commit cache. | graveler.commit_cache.ttl (time duration : \"10m\") - How long to store an item in the commit cache. | graveler.commit_cache.jitter (time duration : \"2s\") - A random amount of time between 0 and this value is added to each item’s TTL. | graveler.background.rate_limit (int : 0) - Advence configuration to control background work done rate limit in requests per second (default: 0 - unlimited). | committed.local_cache - an object describing the local (on-disk) cache of metadata from permanent storage: . | committed.local_cache.size_bytes (int : 1073741824) - bytes for local cache to use on disk. The cache may use more storage for short periods of time. | committed.local_cache.dir (string, ~/lakefs/local_tier) - directory to store local cache. | committed.local_cache.range_proportion (float : 0.9) - proportion of local cache to use for storing ranges (leaves of committed metadata storage). | committed.local_cache.range.open_readers (int : 500) - maximal number of unused open SSTable readers to keep for ranges. | committed.local_cache.range.num_shards (int : 30) - sharding factor for open SSTable readers for ranges. Should be at least sqrt(committed.local_cache.range.open_readers). | committed.local_cache.metarange_proportion (float : 0.1) - proportion of local cache to use for storing metaranges (roots of committed metadata storage). | committed.local_cache.metarange.open_readers (int : 50) - maximal number of unused open SSTable readers to keep for metaranges. | committed.local_cache.metarange.num_shards (int : 10) - sharding factor for open SSTable readers for metaranges. Should be at least sqrt(committed.local_cache.metarange.open_readers). | . | committed.block_storage_prefix (string : _lakefs) - Prefix for metadata file storage in each repository’s storage namespace | committed.permanent.min_range_size_bytes (int : 0) - Smallest allowable range in metadata. Increase to somewhat reduce random access time on committed metadata, at the cost of increased committed metadata storage cost. | committed.permanent.max_range_size_bytes (int : 20971520) - Largest allowable range in metadata. Should be close to the size at which fetching from remote storage becomes linear. | committed.permanent.range_raggedness_entries (int : 50_000) - Average number of object pointers to store in each range (subject to min_range_size_bytes and max_range_size_bytes). | committed.sstable.memory.cache_size_bytes (int : 200_000_000) - maximal size of in-memory cache used for each SSTable reader. | email.smtp_host (string) - A string representing the URL of the SMTP host. | email.smtp_port (int) - An integer representing the port of the SMTP service (465, 587, 993, 25 are some standard ports) | email.use_ssl (bool : false) - Use SSL connection with SMTP host. | email.username (string) - A string representing the username of the specific account at the SMTP. It’s recommended to provide this value at runtime from a secret vault of some sort. | email.password (string) - A string representing the password of the account. It’s recommended to provide this value at runtime from a secret vault of some sort. | email.local_name (string) - A string representing the hostname sent to the SMTP server with the HELO command. By default, “localhost” is sent. | email.sender (string) - A string representing the email account which is set as the sender. | email.limit_every_duration (duration : 1m) - The average time between sending emails. If zero is entered, there is no limit to the amount of emails that can be sent. | email.burst (int: 10) - Maximal burst of emails before applying limit_every_duration. The zero value means no burst and therefore no emails can be sent. | email.lakefs_base_url (string : \"http://localhost:8000\") - A string representing the base lakeFS endpoint to be directed to when emails are sent inviting users, reseting passwords etc. | gateways.s3.domain_name (string : \"s3.local.lakefs.io\") - a FQDN representing the S3 endpoint used by S3 clients to call this server (*.s3.local.lakefs.io always resolves to 127.0.0.1, useful for local development, if using virtual-host addressing. | gateways.s3.region (string : \"us-east-1\") - AWS region we’re pretending to be in, it should match the region configuration used in AWS SDK clients | gateways.s3.fallback_url (string) - If specified, requests with a non-existing repository will be forwarded to this URL. This can be useful for using lakeFS side-by-side with S3, with the URL pointing at an S3Proxy instance. | gateways.s3.verify_unsupported (bool : true) - The S3 gateway errors on unsupported requests, but when disabled, defers to target-based handlers. | stats.enabled (bool : true) - Whether to periodically collect anonymous usage statistics | stats.flush_interval (duration : 30s) - Interval used to post anonymous statistics collected | stats.flush_size (int : 100) - A size (in records) of anonymous statistics collected in which we post | security.audit_check_interval (duration : 24h) - Duration in which we check for security audit. | ui.enabled (bool: true) - Whether to server the embedded UI from the binary | ugc.prepare_max_file_size (int: 125829120) - Uncommitted garbage collection prepare request, limit the produced file maximum size | ugc.prepare_interval (duraction: 1m) - Uncommitted garbage collection prepare request, limit produce time to interval | diff.delta.plugin (string : ) - Name of the Delta Lake diff plugin. | plugins.default_path (string : ~/.lakefs/plugins) - Absolute path to the root of lakeFS’s plugins location. | plugins.properties.&lt;plugin name&gt;.path (string : ) - Absolute path to the location of &lt;plugin name&gt;’s binary location. | plugins.properties.&lt;plugin name&gt;.version (uint : ) - Version of the &lt;plugin name&gt; plugin. The version must be &gt; 0. | installation.user_name (string : ) - When specified, an initial admin user will be created when the server is first run. Works only when database.type is set to local. Requires installation.access_key_id and installation.secret_access_key. | installation.access_key_id (string : ) - Admin’s initial access key id (used once in the initial setup process) | installation.secret_access_key (string : ) - Admin’s initial secret access key (used once in the initial setup process) | . ",
     "url": "/v1.3/reference/configuration.html#reference",
     
     "relUrl": "/reference/configuration.html#reference"
@@ -1630,425 +1630,425 @@
     
     "relUrl": "/integrations/"
   },"233": {
-    "doc": "⭐ Quickstart",
-    "title": "lakeFS Quickstart",
-    "content": "Welcome to lakeFS! . lakeFS provides a “Git for data” platform enabling you to implement best practices from software engineering on your data lake, including branching and merging, CI/CD, and production-like dev/test environments. This quickstart will introduce you to some of the core ideas in lakeFS and show what you can do by illustrating the concept of branching, merging, and rolling back changes to data. It’s laid out in five short sections: . Launch . Spin up the quickstart environment locally under Docker . Query . Query the pre-populated data on the main branch . Branch . Make changes to the data on a new branch . Merge . Merge the changed data back to the main branch . Rollback . Change our mind and revert the changes . Actions . Use Actions to trigger code when an event occurs . You can use the 30-day free trial of lakeFS Cloud if you want to try out lakeFS without installing anything. ",
-    "url": "/v1.3/quickstart/#lakefs-quickstart",
-    
-    "relUrl": "/quickstart/#lakefs-quickstart"
-  },"234": {
-    "doc": "⭐ Quickstart",
-    "title": "⭐ Quickstart",
-    "content": " ",
-    "url": "/v1.3/quickstart/",
-    
-    "relUrl": "/quickstart/"
-  },"235": {
-    "doc": "Slack",
-    "title": "Slack",
-    "content": " ",
-    "url": "/v1.3/slack/",
-    
-    "relUrl": "/slack/"
-  },"236": {
     "doc": "Security",
     "title": "lakeFS Security Reference",
     "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | . ",
     "url": "/v1.3/reference/security/#lakefs-security-reference",
     
     "relUrl": "/reference/security/#lakefs-security-reference"
-  },"237": {
+  },"234": {
     "doc": "Security",
     "title": "Security",
     "content": " ",
     "url": "/v1.3/reference/security/",
     
     "relUrl": "/reference/security/"
-  },"238": {
+  },"235": {
     "doc": "Reference",
     "title": "lakeFS Reference",
     "content": ". ",
     "url": "/v1.3/reference/#lakefs-reference",
     
     "relUrl": "/reference/#lakefs-reference"
-  },"239": {
+  },"236": {
     "doc": "Reference",
     "title": "API",
     "content": ". | lakeFS API | S3 Gateway API | . ",
     "url": "/v1.3/reference/#api",
     
     "relUrl": "/reference/#api"
-  },"240": {
+  },"237": {
     "doc": "Reference",
     "title": "Components",
     "content": ". | Server Configuration | lakeFS command-line tool lakectl | . ",
     "url": "/v1.3/reference/#components",
     
     "relUrl": "/reference/#components"
-  },"241": {
+  },"238": {
     "doc": "Reference",
     "title": "Clients",
     "content": ". | Spark Metadata Client | lakeFS Hadoop FileSystem | Python Client | . ",
     "url": "/v1.3/reference/#clients",
     
     "relUrl": "/reference/#clients"
-  },"242": {
+  },"239": {
     "doc": "Reference",
     "title": "Security",
     "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | . ",
     "url": "/v1.3/reference/#security",
     
     "relUrl": "/reference/#security"
-  },"243": {
+  },"240": {
     "doc": "Reference",
     "title": "Other Reference Documentation",
     "content": ". | Monitoring using Prometheus | Auditing | . ",
     "url": "/v1.3/reference/#other-reference-documentation",
     
     "relUrl": "/reference/#other-reference-documentation"
-  },"244": {
+  },"241": {
     "doc": "Reference",
     "title": "Reference",
     "content": " ",
     "url": "/v1.3/reference/",
     
     "relUrl": "/reference/"
-  },"245": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks in lakeFS",
-    "content": " ",
-    "url": "/v1.3/howto/hooks/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/howto/hooks/#actions-and-hooks-in-lakefs"
-  },"246": {
-    "doc": "Actions and Hooks",
-    "title": "Table of contents",
-    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
-    "url": "/v1.3/howto/hooks/#table-of-contents",
-    
-    "relUrl": "/howto/hooks/#table-of-contents"
-  },"247": {
-    "doc": "Actions and Hooks",
-    "title": "Overview",
-    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
-    "url": "/v1.3/howto/hooks/#overview",
-    
-    "relUrl": "/howto/hooks/#overview"
-  },"248": {
-    "doc": "Actions and Hooks",
-    "title": "Configuration",
-    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
-    "url": "/v1.3/howto/hooks/#configuration",
-    
-    "relUrl": "/howto/hooks/#configuration"
-  },"249": {
-    "doc": "Actions and Hooks",
-    "title": "Supported Events",
-    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
-    "url": "/v1.3/howto/hooks/#supported-events",
-    
-    "relUrl": "/howto/hooks/#supported-events"
-  },"250": {
-    "doc": "Actions and Hooks",
-    "title": "Runs API &amp; CLI",
-    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
-    "url": "/v1.3/howto/hooks/#runs-api--cli",
-    
-    "relUrl": "/howto/hooks/#runs-api--cli"
-  },"251": {
-    "doc": "Actions and Hooks",
-    "title": "Result Files",
-    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
-    "url": "/v1.3/howto/hooks/#result-files",
-    
-    "relUrl": "/howto/hooks/#result-files"
-  },"252": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks",
-    "content": " ",
-    "url": "/v1.3/howto/hooks/",
-    
-    "relUrl": "/howto/hooks/"
-  },"253": {
-    "doc": "Garbage Collection",
-    "title": "Garbage Collection",
-    "content": "lakeFS Cloud users enjoy a managed garbage collection service, and do not need to run this Spark program. ",
-    "url": "/v1.3/howto/garbage-collection/",
-    
-    "relUrl": "/howto/garbage-collection/"
-  },"254": {
-    "doc": "Install lakeFS",
-    "title": "Deploy and Setup lakeFS",
-    "content": "The instructions given here are for a self-managed deployment of lakeFS. For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . This section will guide you through deploying lakeFS on top of an object store. You will require a database, and can optionally configure authentication using providers specific to your deployment platform. Which options are available depends on your deployment platform. For example, the object store available on Azure differs from that on AWS. ",
-    "url": "/v1.3/howto/deploy/#deploy-and-setup-lakefs",
-    
-    "relUrl": "/howto/deploy/#deploy-and-setup-lakefs"
-  },"255": {
-    "doc": "Install lakeFS",
-    "title": "Deployment and Setup Details",
-    "content": "lakeFS releases include binaries for common operating systems, a containerized option or a Helm chart. Check out our guides below for full deployment details: . | AWS | Azure | GCP | On-premises and other cloud providers | . ",
-    "url": "/v1.3/howto/deploy/#deployment-and-setup-details",
-    
-    "relUrl": "/howto/deploy/#deployment-and-setup-details"
-  },"256": {
-    "doc": "Install lakeFS",
-    "title": "Install lakeFS",
-    "content": " ",
-    "url": "/v1.3/howto/deploy/",
-    
-    "relUrl": "/howto/deploy/"
-  },"257": {
-    "doc": "How-To",
-    "title": "lakeFS - How To",
-    "content": ". ",
-    "url": "/v1.3/howto/#lakefs---how-to",
-    
-    "relUrl": "/howto/#lakefs---how-to"
-  },"258": {
-    "doc": "How-To",
-    "title": "Installation and upgrades",
-    "content": ". | Step-by-step instructions for deploying and configuring lakeFS on AWS, GCP, Azure, and on-premises. | Details on how to upgrade lakeFS . | . ",
-    "url": "/v1.3/howto/#installation-and-upgrades",
-    
-    "relUrl": "/howto/#installation-and-upgrades"
-  },"259": {
-    "doc": "How-To",
-    "title": "Getting data in and out of lakeFS",
-    "content": ". | Import and Export Data from lakeFS | Copy data to/from lakeFS | Using external Data Catalogs with data stored on lakeFS | Migrating away from lakeFS | . ",
-    "url": "/v1.3/howto/#getting-data-in-and-out-of-lakefs",
-    
-    "relUrl": "/howto/#getting-data-in-and-out-of-lakefs"
-  },"260": {
-    "doc": "How-To",
-    "title": "Actions and Hooks in lakeFS",
-    "content": ". | Use Actions and Hooks as part of your workflow to validate data, enforce constraints, and do more when events occur. | . ",
-    "url": "/v1.3/howto/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/howto/#actions-and-hooks-in-lakefs"
-  },"261": {
-    "doc": "How-To",
-    "title": "Branch Protection",
-    "content": ". | Branch Protection prevents commits directly to a branch. This is a good way to enforce good practice and make sure that changes to important branches are only done by a merge. | . ",
-    "url": "/v1.3/howto/#branch-protection",
-    
-    "relUrl": "/howto/#branch-protection"
-  },"262": {
-    "doc": "How-To",
-    "title": "lakeFS Sizing Guide",
-    "content": ". | This comprehensive guide details all you need to know to correctly size and test your lakeFS deployment for production use at scale, including: . | System Requirements | Scaling factors | Benchmarks | Important metrics | Reference architectures | . | . ",
-    "url": "/v1.3/howto/#lakefs-sizing-guide",
-    
-    "relUrl": "/howto/#lakefs-sizing-guide"
-  },"263": {
-    "doc": "How-To",
-    "title": "Garbage Collection",
-    "content": ". | lakeFS will keep all of your objects forever, unless you tell it otherwise. Use Garbage Collection (GC) to remove objects from the underlying storage. If you want GC to happen automagically then you can use Managed Garbage Collection which is available as part of lakeFS Cloud. | . ",
-    "url": "/v1.3/howto/#garbage-collection",
-    
-    "relUrl": "/howto/#garbage-collection"
-  },"264": {
-    "doc": "How-To",
-    "title": "Private Link",
-    "content": ". | Private Link enables lakeFS Cloud to interact with your infrastructure using private networking. | . ",
-    "url": "/v1.3/howto/#private-link",
-    
-    "relUrl": "/howto/#private-link"
-  },"265": {
-    "doc": "How-To",
-    "title": "Unity Delta Sharing",
-    "content": ". | lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. | . ",
-    "url": "/v1.3/howto/#unity-delta-sharing",
-    
-    "relUrl": "/howto/#unity-delta-sharing"
-  },"266": {
-    "doc": "How-To",
-    "title": "How-To",
-    "content": " ",
-    "url": "/v1.3/howto/",
-    
-    "relUrl": "/howto/"
-  },"267": {
-    "doc": "Use Cases",
-    "title": "lakeFS Use Cases",
-    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/v1.3/understand/use_cases/#lakefs-use-cases",
-    
-    "relUrl": "/understand/use_cases/#lakefs-use-cases"
-  },"268": {
-    "doc": "Use Cases",
-    "title": "Use Cases",
-    "content": " ",
-    "url": "/v1.3/understand/use_cases/",
-    
-    "relUrl": "/understand/use_cases/"
-  },"269": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management in lakeFS",
-    "content": "lakeFS provides full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/v1.3/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs",
-    
-    "relUrl": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs"
-  },"270": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management",
-    "content": " ",
-    "url": "/v1.3/understand/data_lifecycle_management/",
-    
-    "relUrl": "/understand/data_lifecycle_management/"
-  },"271": {
-    "doc": "How lakeFS Works",
-    "title": "How lakeFS Works",
-    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
-    "url": "/v1.3/understand/how/",
-    
-    "relUrl": "/understand/how/"
-  },"272": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": ". ",
-    "url": "/v1.3/understand/",
-    
-    "relUrl": "/understand/"
-  },"273": {
-    "doc": "Understanding lakeFS",
-    "title": "Architecture and Internals",
-    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
-    "url": "/v1.3/understand/#architecture-and-internals",
-    
-    "relUrl": "/understand/#architecture-and-internals"
-  },"274": {
-    "doc": "Understanding lakeFS",
-    "title": "lakeFS Use Cases",
-    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/v1.3/understand/#lakefs-use-cases",
-    
-    "relUrl": "/understand/#lakefs-use-cases"
-  },"275": {
-    "doc": "Understanding lakeFS",
-    "title": "lakeFS Concepts and Model",
-    "content": "lakeFS adopts many of the terms and concepts from git. This page goes into details on the similarities and differences, and provides a good background to the concepts used in lakeFS. ",
-    "url": "/v1.3/understand/#lakefs-concepts-and-model",
-    
-    "relUrl": "/understand/#lakefs-concepts-and-model"
-  },"276": {
-    "doc": "Understanding lakeFS",
-    "title": "Performance",
-    "content": "Check out the Performance best practices guide for useful hints and tips on ensuring high performance from lakeFS. ",
-    "url": "/v1.3/understand/#performance",
-    
-    "relUrl": "/understand/#performance"
-  },"277": {
-    "doc": "Understanding lakeFS",
-    "title": "FAQ and Glossary",
-    "content": "The FAQ covers many common questions around lakeFS, and the glossary provides a useful reference for the terms used in lakeFS. ",
-    "url": "/v1.3/understand/#faq-and-glossary",
-    
-    "relUrl": "/understand/#faq-and-glossary"
-  },"278": {
-    "doc": "Understanding lakeFS",
-    "title": "Products",
-    "content": "lakeFS is an Apache 2.0 licensed open-source project. Treeverse also provides two commercial products: . | lakeFS Cloud | lakeFS Enterprise | . Find out more on the pricing page, or contact us for details. ",
-    "url": "/v1.3/understand/#products",
-    
-    "relUrl": "/understand/#products"
-  },"279": {
+  },"242": {
     "doc": "Documentation",
     "title": "lakeFS Documentation",
     "content": "Any contribution to the docs, whether it is in conjunction with a code contribution or as a standalone, is appreciated. Please see the contributing guide for details on contributing to lakeFS in general. ",
     "url": "/v1.3/project/docs/#lakefs-documentation",
     
     "relUrl": "/project/docs/#lakefs-documentation"
-  },"280": {
+  },"243": {
     "doc": "Documentation",
     "title": "Table of contents",
     "content": ". | lakeFS Documentation Philosophy | lakeFS Style Guide: | Headings and Table of Contents | Callouts 💬 | Links 🔗 | Test your changes locally | Link Checking locally | . 📝 Notice! lakeFS documentation is written using Markdown. Make sure to familiarize yourself with the Markdown Guide. Customizing the lakeFS docs site should follow the following guidelines: Just The Docs Customization and style-guide. ",
     "url": "/v1.3/project/docs/#table-of-contents",
     
     "relUrl": "/project/docs/#table-of-contents"
-  },"281": {
+  },"244": {
     "doc": "Documentation",
     "title": "lakeFS Documentation Philosophy",
     "content": "We are heavily inspired by the Diátaxis approach to documentation. At a very high-level, it defines documentation as falling into one of four categories: . | How To | Tutorial | Reference | Explanation | . There is a lot more to it than this, and you are encouraged to read the Diátaxis website for more details. Its application to lakeFS was discussed in #6197 . ",
     "url": "/v1.3/project/docs/#lakefs-documentation-philosophy",
     
     "relUrl": "/project/docs/#lakefs-documentation-philosophy"
-  },"282": {
+  },"245": {
     "doc": "Documentation",
     "title": "lakeFS Style Guide:",
     "content": ". | Don’t use unnecessary tech jargon or vague/wordy constructions - keep it friendly, not condescending. | Be inclusive and welcoming - use gender-neutral words and pronouns when talking about abstract people like users and developers. | Replace complex expressions with simpler ones. | Keep it short - 25-30 words max per sentence. Otherwise, your readers might get lost on the way. | Use active voice instead of passive. For example: This feature can be used to do task X. vs. You can use this feature to do task X. The second one reads much better, right? | You can explain things better by including examples. Show, not tell. Use illustrations, images, gifs, code snippets, etc. | Establish a visual hierarchy to help people quickly find the information they need. Use text formatting to create levels of title and subtitle (such as # to ###### markdown headings). The title of every page should use the topmost heading #; all other headings on the page should use lower headers ## to ######. | . ",
     "url": "/v1.3/project/docs/#lakefs-style-guide",
     
     "relUrl": "/project/docs/#lakefs-style-guide"
-  },"283": {
+  },"246": {
     "doc": "Documentation",
     "title": "Headings and Table of Contents",
     "content": "The title of the page should be H1 (# in markdown). Use headings in descending order and do not skip any. Pages should generally have a table of contents to help the user navigate it. Use the following snippet to add it to your page: . &lt;div class=\"toc-block\"&gt; ## {: .no_toc .text-delta } 1. TOC {:toc} {::options toc_levels=\"2\" /} &lt;/div&gt; . By default the page’s Table of Contents will include only H2 headings. If you want to include H2 and H3 then use this snippet instead: . &lt;div class=\"toc-block\"&gt; ## {: .no_toc .text-delta } 1. TOC {:toc} {::options toc_levels=\"2..3\" /} &lt;/div&gt; . Both of these snippets invoke {:toc} which is used by Kramdown (the Markdown processor that Jekyll uses) to insert a table of contents from the headings present in the markdown. ",
     "url": "/v1.3/project/docs/#headings-and-table-of-contents",
     
     "relUrl": "/project/docs/#headings-and-table-of-contents"
-  },"284": {
+  },"247": {
     "doc": "Documentation",
     "title": "Callouts 💬",
     "content": "Multiple callout types are available. Please review this page for details. ",
     "url": "/v1.3/project/docs/#callouts-",
     
     "relUrl": "/project/docs/#callouts-"
-  },"285": {
+  },"248": {
     "doc": "Documentation",
     "title": "Links 🔗",
     "content": "Links should use absolute paths in conjunction with {% link %}, e.g. {% link foo/example.md %}. Adding a link with an anchor is a bit trickier. Create a reference [link text][link-reference] and then define the anchor at the end of the document: . [link-reference]: {% link foo.example.md %}#anchor . This is so that references work within the versioned documentation that is deployed. Relative links, unless within the local folder, are discouraged as it can cause additional work when moving pages at a later date. ",
     "url": "/v1.3/project/docs/#links-",
     
     "relUrl": "/project/docs/#links-"
-  },"286": {
+  },"249": {
     "doc": "Documentation",
     "title": "Test your changes locally",
     "content": "If you have the necessary dependencies installed, you can run Jekyll to build and serve the documentation from your machine using the provided Makefile target: . make docs-serve . The alternative is to use Docker which has the benefit of handling all the dependencies for you. Docker . | Launch the Docker container: . docker run --rm \\ --name lakefs_docs \\ -e TZ=\"Etc/UTC\" \\ --publish 4000:4000 --publish 35729:35729 \\ --volume=\"$PWD/docs:/srv/jekyll:Z\" \\ --volume=\"$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z\" \\ --interactive --tty \\ jekyll/jekyll:3.8 \\ jekyll serve --livereload . If you have make installed, you can also run make docs-serve-docker instead. | The first time you run the container it will need to download dependencies and will take several minutes to be ready. Once you see the following output, the docs server is ready to open in your web browser: . Server running... press ctrl-c to stop. | When you make a change to a page’s source the server will automatically rebuild the page which will be shown in the server log by this entry: . Regenerating: 1 file(s) changed at 2023-01-26 08:34:47 contributing.md Remote Theme: Using theme pmarsceill/just-the-docs . This can take a short while—you’ll see something like this in the server’s output when it’s done...done in 34.714073460 seconds. Your page will automatically reload to show the changes. | . If you are doing lots of work on the docs you may want to leave the Docker container in place (so that you don’t have to wait for the dependencies to load each time you re-create it). To do this replace the --rm with --detach in the docker run command, and use docker logs -f lakefs_docs to view the server log. ",
     "url": "/v1.3/project/docs/#test-your-changes-locally",
     
     "relUrl": "/project/docs/#test-your-changes-locally"
-  },"287": {
+  },"250": {
     "doc": "Documentation",
     "title": "Link Checking locally",
     "content": "When making a pull request to lakeFS that involves a docs/* file, a GitHub action will automagically check the links. You can also run this link checker manually on your local machine: . | Build the site: . docker run --rm \\ --name lakefs_docs \\ -e TZ=\"Etc/UTC\" \\ --volume=\"$PWD/docs:/srv/jekyll:Z\" \\ --volume=\"$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z\" \\ --interactive --tty \\ jekyll/jekyll:3.8 \\ jekyll build --config _config.yml -d _site --watch . | Check the links: . docker run --rm \\ --name lakefs_docs_lychee \\ --volume \"$PWD:/data\"\\ --volume \"/tmp:/output\"\\ --tty \\ lycheeverse/lychee:master \\ --exclude-file /data/docs/.lycheeignore \\ --output /output/lychee_report.md \\ --format markdown \\ /data/docs/_site . | Review the lychee_report.md in your local /tmp folder . | . ",
     "url": "/v1.3/project/docs/#link-checking-locally",
     
     "relUrl": "/project/docs/#link-checking-locally"
-  },"288": {
+  },"251": {
     "doc": "Documentation",
     "title": "Documentation",
     "content": " ",
     "url": "/v1.3/project/docs/",
     
     "relUrl": "/project/docs/"
-  },"289": {
+  },"252": {
     "doc": "The lakeFS Project",
     "title": "The lakeFS Project",
     "content": "lakeFS provides version control over the data lake and lakehouse, and uses Git-like semantics to create and access those versions. If you know git, you’ll be right at home with lakeFS. lakeFS is an open-source project under the Apache 2.0 license. The project was created and is supported by Treeverse, a commercial company founded by engineers passionate about providing solutions to the evolving world of data engineering. ",
     "url": "/v1.3/project/",
     
     "relUrl": "/project/"
-  },"290": {
+  },"253": {
     "doc": "The lakeFS Project",
     "title": "Table of contents",
     "content": ". | Our commitment to open source | Roadmap | . ",
     "url": "/v1.3/project/#table-of-contents",
     
     "relUrl": "/project/#table-of-contents"
-  },"291": {
+  },"254": {
     "doc": "The lakeFS Project",
     "title": "Our commitment to open source",
     "content": "lakeFS is an open-source project under the Apache 2.0 license. The project was created and is supported by Treeverse, a commercial company founded by engineers passionate about providing solutions to the evolving world of data engineering. Why did we choose to open the source of our core capabilities? . We believe in the bottom-up adoption of technologies. We believe collaborative communities have the power to bring the best solutions to the community. We believe that every engineer should be able to use, contribute to, and influence cutting edge technologies, so they can innovate in their domain. What is our commitment to open source? . We created lakeFS, our open-source project, to provide a Git-like interface on top of object stores - so that you can fully take advantage of with any data application at any scale. For that reason, we commit that the following capabilities are and will remain open-source as part of lakeFS: . | All versioning capabilities, | Git-Like interface for the versioning operations, | Support for public object store APIs, | Integrations with publicly available applications accessing an object store, | CLI, API, and GUI interfaces. | . We also commit to keeping lakeFS scalable in throughput and performance. We are deeply committed to our community of engineers who use and contribute to the project. We are and will continue to be highly responsive and shape lakeFS together to provide the data versioning capabilities we are all looking for. What is lakeFS Cloud? . Treeverse offers lakeFS Cloud, which provides all the same benefits of the Git-like interface on top of object stores as a fully-managed service. The vision behind lakeFS Cloud is to provide a managed data versioning and management solution for data practitioners. lakeFS Cloud will leverage the lakeFS open-source technology, integrate capabilities and unique features, and lead its users to implement best practices. As part of our commitment to the open source values of transparency and interoperability, we believe everyone should be able to enjoy these benefits, regardless of whether or not they choose to use the managed offering. Because of that, we will not intentionally make it harder to build these features independently on top of the open source solution. ",
     "url": "/v1.3/project/#our-commitment-to-open-source",
     
     "relUrl": "/project/#our-commitment-to-open-source"
-  },"292": {
+  },"255": {
     "doc": "The lakeFS Project",
     "title": "Roadmap",
     "content": "This is the lakeFS public roadmap. As the project evolves and the community grows, this roadmap might change. Please share your feedback on the #dev on Slack or by starting a GitHub Discussion! . ",
     "url": "/v1.3/project/#roadmap",
     
     "relUrl": "/project/#roadmap"
+  },"256": {
+    "doc": "Garbage Collection",
+    "title": "Garbage Collection",
+    "content": "lakeFS Cloud users enjoy a managed garbage collection service, and do not need to run this Spark program. ",
+    "url": "/v1.3/howto/garbage-collection/",
+    
+    "relUrl": "/howto/garbage-collection/"
+  },"257": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks in lakeFS",
+    "content": " ",
+    "url": "/v1.3/howto/hooks/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/howto/hooks/#actions-and-hooks-in-lakefs"
+  },"258": {
+    "doc": "Actions and Hooks",
+    "title": "Table of contents",
+    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
+    "url": "/v1.3/howto/hooks/#table-of-contents",
+    
+    "relUrl": "/howto/hooks/#table-of-contents"
+  },"259": {
+    "doc": "Actions and Hooks",
+    "title": "Overview",
+    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
+    "url": "/v1.3/howto/hooks/#overview",
+    
+    "relUrl": "/howto/hooks/#overview"
+  },"260": {
+    "doc": "Actions and Hooks",
+    "title": "Configuration",
+    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
+    "url": "/v1.3/howto/hooks/#configuration",
+    
+    "relUrl": "/howto/hooks/#configuration"
+  },"261": {
+    "doc": "Actions and Hooks",
+    "title": "Supported Events",
+    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
+    "url": "/v1.3/howto/hooks/#supported-events",
+    
+    "relUrl": "/howto/hooks/#supported-events"
+  },"262": {
+    "doc": "Actions and Hooks",
+    "title": "Runs API &amp; CLI",
+    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
+    "url": "/v1.3/howto/hooks/#runs-api--cli",
+    
+    "relUrl": "/howto/hooks/#runs-api--cli"
+  },"263": {
+    "doc": "Actions and Hooks",
+    "title": "Result Files",
+    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
+    "url": "/v1.3/howto/hooks/#result-files",
+    
+    "relUrl": "/howto/hooks/#result-files"
+  },"264": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks",
+    "content": " ",
+    "url": "/v1.3/howto/hooks/",
+    
+    "relUrl": "/howto/hooks/"
+  },"265": {
+    "doc": "Install lakeFS",
+    "title": "Deploy and Setup lakeFS",
+    "content": "The instructions given here are for a self-managed deployment of lakeFS. For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . This section will guide you through deploying lakeFS on top of an object store. You will require a database, and can optionally configure authentication using providers specific to your deployment platform. Which options are available depends on your deployment platform. For example, the object store available on Azure differs from that on AWS. ",
+    "url": "/v1.3/howto/deploy/#deploy-and-setup-lakefs",
+    
+    "relUrl": "/howto/deploy/#deploy-and-setup-lakefs"
+  },"266": {
+    "doc": "Install lakeFS",
+    "title": "Deployment and Setup Details",
+    "content": "lakeFS releases include binaries for common operating systems, a containerized option or a Helm chart. Check out our guides below for full deployment details: . | AWS | Azure | GCP | On-premises and other cloud providers | . ",
+    "url": "/v1.3/howto/deploy/#deployment-and-setup-details",
+    
+    "relUrl": "/howto/deploy/#deployment-and-setup-details"
+  },"267": {
+    "doc": "Install lakeFS",
+    "title": "Install lakeFS",
+    "content": " ",
+    "url": "/v1.3/howto/deploy/",
+    
+    "relUrl": "/howto/deploy/"
+  },"268": {
+    "doc": "How-To",
+    "title": "lakeFS - How To",
+    "content": ". ",
+    "url": "/v1.3/howto/#lakefs---how-to",
+    
+    "relUrl": "/howto/#lakefs---how-to"
+  },"269": {
+    "doc": "How-To",
+    "title": "Installation and upgrades",
+    "content": ". | Step-by-step instructions for deploying and configuring lakeFS on AWS, GCP, Azure, and on-premises. | Details on how to upgrade lakeFS . | . ",
+    "url": "/v1.3/howto/#installation-and-upgrades",
+    
+    "relUrl": "/howto/#installation-and-upgrades"
+  },"270": {
+    "doc": "How-To",
+    "title": "Getting data in and out of lakeFS",
+    "content": ". | Import and Export Data from lakeFS | Copy data to/from lakeFS | Using external Data Catalogs with data stored on lakeFS | Migrating away from lakeFS | . ",
+    "url": "/v1.3/howto/#getting-data-in-and-out-of-lakefs",
+    
+    "relUrl": "/howto/#getting-data-in-and-out-of-lakefs"
+  },"271": {
+    "doc": "How-To",
+    "title": "Actions and Hooks in lakeFS",
+    "content": ". | Use Actions and Hooks as part of your workflow to validate data, enforce constraints, and do more when events occur. | . ",
+    "url": "/v1.3/howto/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/howto/#actions-and-hooks-in-lakefs"
+  },"272": {
+    "doc": "How-To",
+    "title": "Branch Protection",
+    "content": ". | Branch Protection prevents commits directly to a branch. This is a good way to enforce good practice and make sure that changes to important branches are only done by a merge. | . ",
+    "url": "/v1.3/howto/#branch-protection",
+    
+    "relUrl": "/howto/#branch-protection"
+  },"273": {
+    "doc": "How-To",
+    "title": "lakeFS Sizing Guide",
+    "content": ". | This comprehensive guide details all you need to know to correctly size and test your lakeFS deployment for production use at scale, including: . | System Requirements | Scaling factors | Benchmarks | Important metrics | Reference architectures | . | . ",
+    "url": "/v1.3/howto/#lakefs-sizing-guide",
+    
+    "relUrl": "/howto/#lakefs-sizing-guide"
+  },"274": {
+    "doc": "How-To",
+    "title": "Garbage Collection",
+    "content": ". | lakeFS will keep all of your objects forever, unless you tell it otherwise. Use Garbage Collection (GC) to remove objects from the underlying storage. If you want GC to happen automagically then you can use Managed Garbage Collection which is available as part of lakeFS Cloud. | . ",
+    "url": "/v1.3/howto/#garbage-collection",
+    
+    "relUrl": "/howto/#garbage-collection"
+  },"275": {
+    "doc": "How-To",
+    "title": "Private Link",
+    "content": ". | Private Link enables lakeFS Cloud to interact with your infrastructure using private networking. | . ",
+    "url": "/v1.3/howto/#private-link",
+    
+    "relUrl": "/howto/#private-link"
+  },"276": {
+    "doc": "How-To",
+    "title": "Unity Delta Sharing",
+    "content": ". | lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. | . ",
+    "url": "/v1.3/howto/#unity-delta-sharing",
+    
+    "relUrl": "/howto/#unity-delta-sharing"
+  },"277": {
+    "doc": "How-To",
+    "title": "How-To",
+    "content": " ",
+    "url": "/v1.3/howto/",
+    
+    "relUrl": "/howto/"
+  },"278": {
+    "doc": "Slack",
+    "title": "Slack",
+    "content": " ",
+    "url": "/v1.3/slack/",
+    
+    "relUrl": "/slack/"
+  },"279": {
+    "doc": "Use Cases",
+    "title": "lakeFS Use Cases",
+    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/v1.3/understand/use_cases/#lakefs-use-cases",
+    
+    "relUrl": "/understand/use_cases/#lakefs-use-cases"
+  },"280": {
+    "doc": "Use Cases",
+    "title": "Use Cases",
+    "content": " ",
+    "url": "/v1.3/understand/use_cases/",
+    
+    "relUrl": "/understand/use_cases/"
+  },"281": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management in lakeFS",
+    "content": "lakeFS provides full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/v1.3/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs",
+    
+    "relUrl": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs"
+  },"282": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management",
+    "content": " ",
+    "url": "/v1.3/understand/data_lifecycle_management/",
+    
+    "relUrl": "/understand/data_lifecycle_management/"
+  },"283": {
+    "doc": "How lakeFS Works",
+    "title": "How lakeFS Works",
+    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
+    "url": "/v1.3/understand/how/",
+    
+    "relUrl": "/understand/how/"
+  },"284": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": ". ",
+    "url": "/v1.3/understand/",
+    
+    "relUrl": "/understand/"
+  },"285": {
+    "doc": "Understanding lakeFS",
+    "title": "Architecture and Internals",
+    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
+    "url": "/v1.3/understand/#architecture-and-internals",
+    
+    "relUrl": "/understand/#architecture-and-internals"
+  },"286": {
+    "doc": "Understanding lakeFS",
+    "title": "lakeFS Use Cases",
+    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/v1.3/understand/#lakefs-use-cases",
+    
+    "relUrl": "/understand/#lakefs-use-cases"
+  },"287": {
+    "doc": "Understanding lakeFS",
+    "title": "lakeFS Concepts and Model",
+    "content": "lakeFS adopts many of the terms and concepts from git. This page goes into details on the similarities and differences, and provides a good background to the concepts used in lakeFS. ",
+    "url": "/v1.3/understand/#lakefs-concepts-and-model",
+    
+    "relUrl": "/understand/#lakefs-concepts-and-model"
+  },"288": {
+    "doc": "Understanding lakeFS",
+    "title": "Performance",
+    "content": "Check out the Performance best practices guide for useful hints and tips on ensuring high performance from lakeFS. ",
+    "url": "/v1.3/understand/#performance",
+    
+    "relUrl": "/understand/#performance"
+  },"289": {
+    "doc": "Understanding lakeFS",
+    "title": "FAQ and Glossary",
+    "content": "The FAQ covers many common questions around lakeFS, and the glossary provides a useful reference for the terms used in lakeFS. ",
+    "url": "/v1.3/understand/#faq-and-glossary",
+    
+    "relUrl": "/understand/#faq-and-glossary"
+  },"290": {
+    "doc": "Understanding lakeFS",
+    "title": "Products",
+    "content": "lakeFS is an Apache 2.0 licensed open-source project. Treeverse also provides two commercial products: . | lakeFS Cloud | lakeFS Enterprise | . Find out more on the pricing page, or contact us for details. ",
+    "url": "/v1.3/understand/#products",
+    
+    "relUrl": "/understand/#products"
+  },"291": {
+    "doc": "⭐ Quickstart",
+    "title": "lakeFS Quickstart",
+    "content": "Welcome to lakeFS! . lakeFS provides a “Git for data” platform enabling you to implement best practices from software engineering on your data lake, including branching and merging, CI/CD, and production-like dev/test environments. This quickstart will introduce you to some of the core ideas in lakeFS and show what you can do by illustrating the concept of branching, merging, and rolling back changes to data. It’s laid out in five short sections: . Launch . Spin up the quickstart environment locally under Docker . Query . Query the pre-populated data on the main branch . Branch . Make changes to the data on a new branch . Merge . Merge the changed data back to the main branch . Rollback . Change our mind and revert the changes . Actions . Use Actions to trigger code when an event occurs . You can use the 30-day free trial of lakeFS Cloud if you want to try out lakeFS without installing anything. ",
+    "url": "/v1.3/quickstart/#lakefs-quickstart",
+    
+    "relUrl": "/quickstart/#lakefs-quickstart"
+  },"292": {
+    "doc": "⭐ Quickstart",
+    "title": "⭐ Quickstart",
+    "content": " ",
+    "url": "/v1.3/quickstart/",
+    
+    "relUrl": "/quickstart/"
   },"293": {
     "doc": "Welcome to lakeFS",
     "title": "Welcome to the Lake!",
@@ -2974,54 +2974,54 @@
     
     "relUrl": "/understand/use_cases/reproducibility.html"
   },"425": {
-    "doc": "5️⃣ Roll back Changes",
-    "title": "Rolling back Changes in lakeFS",
-    "content": "Our intrepid user (you) merged a change back into the main branch and realised that they had made a mistake 🤦🏻. The good news for them (you) is that lakeFS can revert changes made, similar to how you would in Git 😅. From your terminal window run lakectl with the revert command: . docker exec -it lakefs \\ lakectl branch revert \\ lakefs://quickstart/main \\ main --parent-number 1 --yes . You should see a confirmation of a successful rollback: . Branch: lakefs://quickstart/main commit main successfully reverted . Back in the object page and the DuckDB query we can see that the original file is now back to how it was: . ",
-    "url": "/v1.3/quickstart/rollback.html#rolling-back-changes-in-lakefs",
-    
-    "relUrl": "/quickstart/rollback.html#rolling-back-changes-in-lakefs"
-  },"426": {
-    "doc": "5️⃣ Roll back Changes",
-    "title": "5️⃣ Roll back Changes",
-    "content": " ",
-    "url": "/v1.3/quickstart/rollback.html",
-    
-    "relUrl": "/quickstart/rollback.html"
-  },"427": {
     "doc": "Rollback",
     "title": "Rollbacks",
     "content": " ",
     "url": "/v1.3/understand/use_cases/rollback.html#rollbacks",
     
     "relUrl": "/understand/use_cases/rollback.html#rollbacks"
-  },"428": {
+  },"426": {
     "doc": "Rollback",
     "title": "What Is a Rollback?",
     "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a significant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
     "url": "/v1.3/understand/use_cases/rollback.html#what-is-a-rollback",
     
     "relUrl": "/understand/use_cases/rollback.html#what-is-a-rollback"
-  },"429": {
+  },"427": {
     "doc": "Rollback",
     "title": "Why Rollbacks Are Useful",
     "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
     "url": "/v1.3/understand/use_cases/rollback.html#why-rollbacks-are-useful",
     
     "relUrl": "/understand/use_cases/rollback.html#why-rollbacks-are-useful"
-  },"430": {
+  },"428": {
     "doc": "Rollback",
     "title": "Performing Rollbacks with lakeFS",
     "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
     "url": "/v1.3/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs",
     
     "relUrl": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs"
-  },"431": {
+  },"429": {
     "doc": "Rollback",
     "title": "Rollback",
     "content": " ",
     "url": "/v1.3/understand/use_cases/rollback.html",
     
     "relUrl": "/understand/use_cases/rollback.html"
+  },"430": {
+    "doc": "5️⃣ Roll back Changes",
+    "title": "Rolling back Changes in lakeFS",
+    "content": "Our intrepid user (you) merged a change back into the main branch and realised that they had made a mistake 🤦🏻. The good news for them (you) is that lakeFS can revert changes made, similar to how you would in Git 😅. From your terminal window run lakectl with the revert command: . docker exec -it lakefs \\ lakectl branch revert \\ lakefs://quickstart/main \\ main --parent-number 1 --yes . You should see a confirmation of a successful rollback: . Branch: lakefs://quickstart/main commit main successfully reverted . Back in the object page and the DuckDB query we can see that the original file is now back to how it was: . ",
+    "url": "/v1.3/quickstart/rollback.html#rolling-back-changes-in-lakefs",
+    
+    "relUrl": "/quickstart/rollback.html#rolling-back-changes-in-lakefs"
+  },"431": {
+    "doc": "5️⃣ Roll back Changes",
+    "title": "5️⃣ Roll back Changes",
+    "content": " ",
+    "url": "/v1.3/quickstart/rollback.html",
+    
+    "relUrl": "/quickstart/rollback.html"
   },"432": {
     "doc": "S3 Gateway API",
     "title": "S3-Supported API",
@@ -3235,7 +3235,7 @@
   },"462": {
     "doc": "Single Sign On (SSO)",
     "title": "Azure Active Directory (AD)",
-    "content": "Prerequisites: . | Azure account with permissions to manage applications in Azure Active Directory | . Note: If you’ve already set up lakeFS Cloud with your Azure account, you can skip the Register lakeFS Cloud with Azure and Add client secret and go directly to Add a redirect URI. Register lakeFS Cloud with Azure . Steps: . | Sign in to the Azure portal. | If you have access to multiple tenants, use the Directories + subscriptions filter in the top menu to switch to the tenant in which you want to register the application. | Search for and select Azure Active Directory. | Under Manage, select App registrations &gt; New registration. | Enter a display Name for your application. Users of your application might see the display name when they use the app, for example during sign-in. You can change the display name at any time and multiple app registrations can share the same name. The app registration’s automatically generated Application (client) ID, not its display name, uniquely identifies your app within the identity platform. | Specify who can use the application, sometimes called its sign-in audience. Note: don’t enter anything for Redirect URI (optional). You’ll configure a redirect URI in the next section. | Select Register to complete the initial app registration. | . When registration finishes, the Azure portal displays the app registration’s Overview pane. You see the Application (client) ID. Also called the client ID, this value uniquely identifies your application in the Microsoft identity platform. Important: new app registrations are hidden to users by default. When you are ready for users to see the app on their My Apps page you can enable it. To enable the app, in the Azure portal navigate to Azure Active Directory &gt; Enterprise applications and select the app. Then on the Properties page toggle Visible to users? to Yes. Add a secret . Sometimes called an application password, a client secret is a string value your app can use in place of a certificate to identity itself. Client secrets are considered less secure than certificate credentials. Application developers sometimes use client secrets during local app development because of their ease of use. However, you should use certificate credentials for any of your applications that are running in production. Steps: . | In the Azure portal, in App registrations, select your application. | Select Certificates &amp; secrets &gt; Client secrets &gt; New client secret. | Add a description for your client secret. | Select an expiration for the secret or specify a custom lifetime. | Client secret lifetime is limited to two years (24 months) or less. You can’t specify a custom lifetime longer than 24 months. | Microsoft recommends that you set an expiration value of less than 12 months. | . | Select Add. | Record the secret’s value for use in your client application code. This secret value is never displayed again after you leave this page. | . Add a redirect URI . A redirect URI is the location where the Microsoft identity platform redirects a user’s client and sends security tokens after authentication. You add and modify redirect URIs for your registered applications by configuring their platform settings. Enter https://lakefs-cloud.us.auth0.com/login/callback or https://lakefs-cloud.eu.auth0.com/login/callback (depends on your organization data location) as your redirect URI. Settings for each application type, including redirect URIs, are configured in Platform configurations in the Azure portal. Some platforms, like Web and Single-page applications, require you to manually specify a redirect URI. For other platforms, like mobile and desktop, you can select from redirect URIs generated for you when you configure their other settings. Steps: . | In the Azure portal, in App registrations, select your application. | Under Manage, select Authentication. | Under Platform configurations, select Add a platform. | Under Configure platforms, select the web option. | Select Configure to complete the platform configuration. | . Once you finish registering lakeFS Cloud with Azure AD, save the Application (Client) ID, Application Secret Value and send this to Treeverse’s team to finish the integration. ",
+    "content": "Prerequisites: . | Azure account with permissions to manage applications in Azure Active Directory | . Note: If you’ve already set up lakeFS Cloud with your Azure account, you can skip the Register lakeFS Cloud with Azure and Add client secret and go directly to Add a redirect URI. Register lakeFS Cloud with Azure . Steps: . | Sign in to the Azure portal. | If you have access to multiple tenants, use the Directories + subscriptions filter in the top menu to switch to the tenant in which you want to register the application. | Search for and select Azure Active Directory. | Under Manage, select App registrations &gt; New registration. | Enter a display Name for your application. Users of your application might see the display name when they use the app, for example during sign-in. You can change the display name at any time and multiple app registrations can share the same name. The app registration’s automatically generated Application (client) ID, not its display name, uniquely identifies your app within the identity platform. | Specify who can use the application, sometimes called its sign-in audience. Note: don’t enter anything for Redirect URI (optional). You’ll configure a redirect URI in the next section. | Select Register to complete the initial app registration. | . When registration finishes, the Azure portal displays the app registration’s Overview pane. You see the Application (client) ID. Also called the client ID, this value uniquely identifies your application in the Microsoft identity platform. Important: new app registrations are hidden to users by default. When you are ready for users to see the app on their My Apps page you can enable it. To enable the app, in the Azure portal navigate to Azure Active Directory &gt; Enterprise applications and select the app. Then on the Properties page toggle Visible to users? to Yes. Add a secret . Sometimes called an application password, a client secret is a string value your app can use in place of a certificate to identity itself. Steps: . | In the Azure portal, in App registrations, select your application. | Select Certificates &amp; secrets &gt; Client secrets &gt; New client secret. | Add a description for your client secret. | Select an expiration for the secret or specify a custom lifetime. | Client secret lifetime is limited to two years (24 months) or less. You can’t specify a custom lifetime longer than 24 months. | Microsoft recommends that you set an expiration value of less than 12 months. | . | Select Add. | Record the secret’s value for use in your client application code. This secret value is never displayed again after you leave this page. | . Add a redirect URI . A redirect URI is the location where the Microsoft identity platform redirects a user’s client and sends security tokens after authentication. You add and modify redirect URIs for your registered applications by configuring their platform settings. Enter https://lakefs-cloud.us.auth0.com/login/callback as your redirect URI. Settings for each application type, including redirect URIs, are configured in Platform configurations in the Azure portal. Some platforms, like Web and Single-page applications, require you to manually specify a redirect URI. For other platforms, like mobile and desktop, you can select from redirect URIs generated for you when you configure their other settings. Steps: . | In the Azure portal, in App registrations, select your application. | Under Manage, select Authentication. | Under Platform configurations, select Add a platform. | Under Configure platforms, select the web option. | Select Configure to complete the platform configuration. | . Once you finish registering lakeFS Cloud with Azure AD send the following items to the Treeverse’s team: . | Client ID | Client Secret | Azure AD Domain | Identity API Version (v1 for Azure AD or v2 for Microsoft Identity Platform/Entra) | . ",
     "url": "/v1.3/reference/security/sso.html#azure-active-directory-ad",
     
     "relUrl": "/reference/security/sso.html#azure-active-directory-ad"
@@ -3403,7 +3403,7 @@
   },"486": {
     "doc": "Webhooks",
     "title": "Action File Webhook properties",
-    "content": "See the Action configuration for overall configuration schema and details. | Property | Description | Data Type | Required | Default Value | Env Vars Support | . | url | The URL address of the request | String | true |   | no | . | timeout | Time to wait for response before failing the hook | String (golang’s Duration representation) | false | 1 minute | no | . | query_params | List of query params that will be added to the request | Dictionary(String:String or String:List(String) | false |   | yes | . | headers | Headers to add to the request | Dictionary(String:String) | false |   | yes | . Secrets &amp; Environment Variables lakeFS Actions supports secrets by using environment variables. The format {{ ENV.SOME_ENV_VAR }} will be replaced with the value of $SOME_ENV_VAR during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail. Example: ... hooks: - id: prevent_user_columns type: webhook description: Ensure no user_* columns under public/ properties: url: \"http://&lt;host:port&gt;/webhooks/schema\" timeout: 1m30s query_params: disallow: [\"user_\", \"private_\"] prefix: public/ headers: secret_header: \"{{ ENV.MY_SECRET }}\" ... ",
+    "content": "See the Action configuration for overall configuration schema and details. | Property | Description | Data Type | Required | Default Value | Env Vars Support | . | url | The URL address of the request | String | true |   | no | . | timeout | Time to wait for response before failing the hook | String (golang’s Duration representation) | false | 1 minute | no | . | query_params | List of query params that will be added to the request | Dictionary(String:String or String:List(String) | false |   | yes | . | headers | Headers to add to the request | Dictionary(String:String) | false |   | yes | . Secrets &amp; Environment Variables lakeFS Actions supports secrets by using environment variables. The format {{ ENV.SOME_ENV_VAR }} will be replaced with the value of $SOME_ENV_VAR during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail. For security purposes, any environment variable whose name begins with “LAKEFS” will be blocked. In this case, the variable will be evaluated to an empty string, effectively making it inaccessible. Additionally, the actions.env.enabled configuration parameter can be set to false to block access to all environment variables. Example: ... hooks: - id: prevent_user_columns type: webhook description: Ensure no user_* columns under public/ properties: url: \"http://&lt;host:port&gt;/webhooks/schema\" timeout: 1m30s query_params: disallow: [\"user_\", \"private_\"] prefix: public/ headers: secret_header: \"{{ ENV.MY_SECRET }}\" ... ",
     "url": "/v1.3/howto/hooks/webhooks.html#action-file-webhook-properties",
     
     "relUrl": "/howto/hooks/webhooks.html#action-file-webhook-properties"
