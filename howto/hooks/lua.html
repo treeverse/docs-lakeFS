@@ -1029,6 +1029,41 @@ The <code class="language-plaintext highlighter-rouge">table_input</code> is the
   <span class="p">{</span> <span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"column_b"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"BYTE_ARRAY"</span> <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
+<h3 id="formats">
+  
+  
+    <a href="#formats" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">formats</code>
+  
+  
+</h3>
+    
+<h3 id="formatsdelta_clientkey-secret-region">
+  
+  
+    <a href="#formatsdelta_clientkey-secret-region" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">formats/delta_client(key, secret, region)</code>
+  
+  
+</h3>
+    
+
+<p>Creates a new Delta Lake client used to interact with the lakeFS server.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">key</code>: lakeFS access key id</li>
+  <li><code class="language-plaintext highlighter-rouge">secret</code>: lakeFS secret access key</li>
+  <li><code class="language-plaintext highlighter-rouge">region</code>: The region in which your lakeFS server is configured at.</li>
+</ul>
+<h3 id="formatsdelta_clientget_tablerepository_id-reference_id-prefix">
+  
+  
+    <a href="#formatsdelta_clientget_tablerepository_id-reference_id-prefix" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">formats/delta_client.get_table(repository_id, reference_id, prefix)</code>
+  
+  
+</h3>
+    
+
+<p>Returns a representation of a Delta Lake table under the given repository, reference, and prefix.
+The format of the response is a table <code class="language-plaintext highlighter-rouge">{number, {string}}</code> where <code class="language-plaintext highlighter-rouge">number</code> is a version in the Delta Log, and the mapped 
+<code class="language-plaintext highlighter-rouge">{string}</code> table (list) contains JSON strings of the different Delta Lake log operations listed in the mapped version entry.</p>
 <h3 id="gcloud">
   
   
@@ -1141,6 +1176,16 @@ If delimiter is empty, will default to a recursive listing. Otherwise, common pr
     
 
 <p>Returns an object-wise diff of uncommitted changes on <code class="language-plaintext highlighter-rouge">branch_id</code>.</p>
+<h3 id="lakefsstat_objectrepository_id-ref_id-path">
+  
+  
+    <a href="#lakefsstat_objectrepository_id-ref_id-path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/stat_object(repository_id, ref_id, path)</code>
+  
+  
+</h3>
+    
+
+<p>Returns a stat object for the given path under the given reference and repository.</p>
 <h3 id="lakefscatalogexporttable_extractor">
   
   
@@ -1342,6 +1387,71 @@ by default this function will configure table location and schema.</li>
   <li><code class="language-plaintext highlighter-rouge">descriptor(Table)</code>: Object from (i.e _lakefs_tables/my_table.yaml).</li>
   <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: The global action object.</li>
 </ul>
+<h3 id="lakefscatalogexportdelta_exporter">
+  
+  
+    <a href="#lakefscatalogexportdelta_exporter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter</code>
+  
+  
+</h3>
+    
+
+<p>A package used to export Delta Lake tables from lakeFS to an external cloud storage.</p>
+<h3 id="lakefscatalogexportdelta_exporterexport_delta_logaction-table_paths-writer-delta_client">
+  
+  
+    <a href="#lakefscatalogexportdelta_exporterexport_delta_logaction-table_paths-writer-delta_client" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log(action, table_paths, writer, delta_client)</code>
+  
+  
+</h3>
+    
+
+<p>The function used to export Delta Lake tables.
+The return value is a table with mapping of table names to external table location (from which it is possible to query the data).</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">action</code>: The global action object</li>
+  <li><code class="language-plaintext highlighter-rouge">table_paths</code>: Paths list in lakeFS to Delta Tables (e.g. <code class="language-plaintext highlighter-rouge">{"path/to/table1", "path/to/table2"}</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">writer</code>: A writer function with <code class="language-plaintext highlighter-rouge">function(bucket, key, data)</code> signature, used to write the exported Delta Log (e.g. <code class="language-plaintext highlighter-rouge">aws/s3.s3_client.put_object</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">delta_client</code>: A Delta Lake client that implements <code class="language-plaintext highlighter-rouge">get_table: function(repo, ref, prefix)</code></li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">test_delta_exporter</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">post-commit</span><span class="pi">:</span> <span class="no">null</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">delta</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">local aws = require("aws")</span>
+        <span class="s">local formats = require("formats")</span>
+        <span class="s">local delta_exporter = require("lakefs/catalogexport/delta_exporter")</span>
+
+        <span class="s">local sc = aws.s3_client(args.aws.aws_access_key_id, args.aws.aws_secret_access_key, args.aws.aws_region)</span>
+        <span class="s">local delta_client = formats.delta_client(args.lakefs.access_key_id, args.lakefs.secret_access_key, args.aws.aws_region)</span>
+        <span class="s">local delta_table_locations = delta_exporter.export_delta_log(action, args.table_paths, sc.put_object, delta_client)</span>
+        
+        <span class="s">for t, loc in pairs(delta_table_locations) do</span>
+          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. loc .. "\n")</span>
+        <span class="s">end</span>
+      <span class="na">args</span><span class="pi">:</span>
+        <span class="na">aws</span><span class="pi">:</span>
+          <span class="na">aws_access_key_id</span><span class="pi">:</span> <span class="s">&lt;AWS_ACCESS_KEY_ID&gt;</span>
+          <span class="na">aws_secret_access_key</span><span class="pi">:</span> <span class="s">&lt;AWS_SECRET_ACCESS_KEY&gt;</span>
+          <span class="na">aws_region</span><span class="pi">:</span> <span class="s">us-east-1</span>
+        <span class="na">lakefs</span><span class="pi">:</span>
+          <span class="na">access_key_id</span><span class="pi">:</span> <span class="s">&lt;LAKEFS_ACCESS_KEY_ID&gt;</span> 
+          <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">&lt;LAKEFS_SECRET_ACCESS_KEY&gt;</span>
+        <span class="na">table_paths</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">delta</span>
+          <span class="pi">-</span> <span class="s">delta2</span>
+</code></pre></div></div>
 <h3 id="pathparsepath_string">
   
   
