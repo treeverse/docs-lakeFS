@@ -1280,12 +1280,12 @@ _lakefs/
 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">s3_client</code>: Configured client.</li>
-  <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: Path to the table spec YAML file in <code class="language-plaintext highlighter-rouge">_lakefs_tables</code> (i.e _lakefs_tables/my_table.yaml).</li>
+  <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: Path to the table spec YAML file in <code class="language-plaintext highlighter-rouge">_lakefs_tables</code> (e.g. _lakefs_tables/my_table.yaml).</li>
   <li><code class="language-plaintext highlighter-rouge">action_info(table)</code>: The global action object.</li>
   <li><code class="language-plaintext highlighter-rouge">options(table)</code>:
     <ul>
       <li><code class="language-plaintext highlighter-rouge">debug(boolean)</code>: Print extra info.</li>
-      <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the prefix in S3 i.e <code class="language-plaintext highlighter-rouge">s3://other-bucket/path/</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the prefix in S3 e.g. <code class="language-plaintext highlighter-rouge">s3://other-bucket/path/</code>.</li>
       <li><code class="language-plaintext highlighter-rouge">writer(function(bucket, key, data))</code>: If passed then will not use s3 client, helpful for debug.</li>
     </ul>
   </li>
@@ -1327,16 +1327,16 @@ It assumes that there is a symlink location that is already created and only con
 <ul>
   <li><code class="language-plaintext highlighter-rouge">glue</code>: AWS glue client</li>
   <li><code class="language-plaintext highlighter-rouge">db(string)</code>: glue database name</li>
-  <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: path to table spec (i.e _lakefs_tables/my_table.yaml)</li>
+  <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: path to table spec (e.g. _lakefs_tables/my_table.yaml)</li>
   <li><code class="language-plaintext highlighter-rouge">create_table_input(Table)</code>: Input equal mapping to <a href="https://docs.aws.amazon.com/glue/latest/webapi/API_CreateTable.html#API_CreateTable_RequestSyntax">table_input</a> in AWS, the same as we use for <code class="language-plaintext highlighter-rouge">glue.create_table</code>.
-should contain inputs describing the data format (i.e InputFormat, OutputFormat, SerdeInfo) since the exporter is agnostic to this. 
+should contain inputs describing the data format (e.g. InputFormat, OutputFormat, SerdeInfo) since the exporter is agnostic to this. 
 by default this function will configure table location and schema.</li>
   <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: the global action object.</li>
   <li><code class="language-plaintext highlighter-rouge">options(Table)</code>:
     <ul>
       <li><code class="language-plaintext highlighter-rouge">table_name(string)</code>: Override default glue table name</li>
       <li><code class="language-plaintext highlighter-rouge">debug(boolean</code></li>
-      <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the default prefix in S3 for symlink location i.e s3://other-bucket/path/</li>
+      <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the default prefix in S3 for symlink location e.g. s3://other-bucket/path/</li>
     </ul>
   </li>
 </ul>
@@ -1384,7 +1384,7 @@ by default this function will configure table location and schema.</li>
 <p>Parameters:</p>
 
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">descriptor(Table)</code>: Object from (i.e _lakefs_tables/my_table.yaml).</li>
+  <li><code class="language-plaintext highlighter-rouge">descriptor(Table)</code>: Object from (e.g. _lakefs_tables/my_table.yaml).</li>
   <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: The global action object.</li>
 </ul>
 <h3 id="lakefscatalogexportdelta_exporter">
@@ -1397,10 +1397,10 @@ by default this function will configure table location and schema.</li>
     
 
 <p>A package used to export Delta Lake tables from lakeFS to an external cloud storage.</p>
-<h3 id="lakefscatalogexportdelta_exporterexport_delta_logaction-table_paths-writer-delta_client">
+<h3 id="lakefscatalogexportdelta_exporterexport_delta_logaction-table_paths-writer-delta_client-table_descriptors_path">
   
   
-    <a href="#lakefscatalogexportdelta_exporterexport_delta_logaction-table_paths-writer-delta_client" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log(action, table_paths, writer, delta_client)</code>
+    <a href="#lakefscatalogexportdelta_exporterexport_delta_logaction-table_paths-writer-delta_client-table_descriptors_path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log(action, table_paths, writer, delta_client, table_descriptors_path)</code>
   
   
 </h3>
@@ -1416,6 +1416,7 @@ The return value is a table with mapping of table names to external table locati
   <li><code class="language-plaintext highlighter-rouge">table_paths</code>: Paths list in lakeFS to Delta Tables (e.g. <code class="language-plaintext highlighter-rouge">{"path/to/table1", "path/to/table2"}</code>)</li>
   <li><code class="language-plaintext highlighter-rouge">writer</code>: A writer function with <code class="language-plaintext highlighter-rouge">function(bucket, key, data)</code> signature, used to write the exported Delta Log (e.g. <code class="language-plaintext highlighter-rouge">aws/s3.s3_client.put_object</code>)</li>
   <li><code class="language-plaintext highlighter-rouge">delta_client</code>: A Delta Lake client that implements <code class="language-plaintext highlighter-rouge">get_table: function(repo, ref, prefix)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">table_descriptors_path</code>: The path under which the table descriptors of the provided <code class="language-plaintext highlighter-rouge">table_paths</code> reside</li>
 </ul>
 
 <p>Example:</p>
@@ -1433,9 +1434,10 @@ The return value is a table with mapping of table names to external table locati
         <span class="s">local formats = require("formats")</span>
         <span class="s">local delta_exporter = require("lakefs/catalogexport/delta_exporter")</span>
 
+        <span class="s">local table_descriptors_path = "_lakefs_tables"</span>
         <span class="s">local sc = aws.s3_client(args.aws.access_key_id, args.aws.secret_access_key, args.aws.region)</span>
         <span class="s">local delta_client = formats.delta_client(args.lakefs.access_key_id, args.lakefs.secret_access_key, args.aws.region)</span>
-        <span class="s">local delta_table_locations = delta_exporter.export_delta_log(action, args.table_paths, sc.put_object, delta_client)</span>
+        <span class="s">local delta_table_locations = delta_exporter.export_delta_log(action, args.table_paths, sc.put_object, delta_client, table_descriptors_path)</span>
         
         <span class="s">for t, loc in pairs(delta_table_locations) do</span>
           <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. loc .. "\n")</span>
@@ -1449,8 +1451,13 @@ The return value is a table with mapping of table names to external table locati
           <span class="na">access_key_id</span><span class="pi">:</span> <span class="s">&lt;LAKEFS_ACCESS_KEY_ID&gt;</span> 
           <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">&lt;LAKEFS_SECRET_ACCESS_KEY&gt;</span>
         <span class="na">table_paths</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="s">delta</span>
-          <span class="pi">-</span> <span class="s">delta2</span>
+          <span class="pi">-</span> <span class="s">my/delta/table/path</span>
+</code></pre></div></div>
+
+<p>For the table descriptor under the <code class="language-plaintext highlighter-rouge">_lakefs_tables/my/delta/table/path.yaml</code>:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">myTableActualName</span>
+<span class="na">type</span><span class="pi">:</span> <span class="s">delta</span>
 </code></pre></div></div>
 <h3 id="pathparsepath_string">
   
