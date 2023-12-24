@@ -1,0 +1,1606 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/v1.4/assets/css/just-the-docs-default.css">
+  
+  <style type="text/css">
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.external):nth-child(6) > .nav-list > .nav-list-item:nth-child(4) > .nav-list > .nav-list-item:nth-child(5) > .nav-list-link { display: block; font-weight: 600; text-decoration: none; background-image: linear-gradient(-90deg, #ebedf5 0%, rgba(235, 237, 245, 0.8) 80%, rgba(235, 237, 245, 0) 100%); }
+
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(6) > .nav-list-expander svg, .site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(6) > .nav-list > .nav-list-item:not(.passive):nth-child(4) > .nav-list-expander svg { transform: rotate(-90deg); }
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(6) > .nav-list, .site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(6) > .nav-list > .nav-list-item:not(.passive):nth-child(4) > .nav-list { display: block; }
+
+.site-nav > .nav-category-list > .nav-list-item:not(.passive) > .nav-list-expander svg { transform: rotate(-90deg); }
+.site-nav > .nav-category-list > .nav-list-item:not(.passive) > .nav-list { display: block; }
+
+</style>
+
+
+  
+
+  
+    <script src="/v1.4/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/v1.4/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/v1.4/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Role-Based Access Control (RBAC) | lakeFS Documentation</title>
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Role-Based Access Control (RBAC)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This section covers authorization (using RBAC) of your lakeFS server." />
+<meta property="og:description" content="This section covers authorization (using RBAC) of your lakeFS server." />
+<meta property="og:site_name" content="lakeFS Documentation" />
+<meta property="og:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
+<meta property="twitter:title" content="Role-Based Access Control (RBAC)" />
+<meta name="twitter:site" content="@lakeFS" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"This section covers authorization (using RBAC) of your lakeFS server.","headline":"Role-Based Access Control (RBAC)","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v1.4/assets/logo.svg"}},"url":"/v1.4/reference/security/rbac.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <!-- Google Tag Manager Head -->
+<!-- type="text/plain" is intentional for cookie consent support -->
+<script type="text/plain" data-cookiecategory="analytics">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KTZBZW9');</script>
+<!-- End Google Tag Manager Head -->
+<meta property="og:image" content="/v1.4/assets/img/lakefs-logo-with-text.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css" integrity="sha512-giQeaPns4lQTBMRpOOHsYnGw1tGVzbAIHUyHRgn7+6FmiEgGGjaG0T2LZJmAPMzRCl+Cug0ItQ2xDZpTmEc+CQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="/v1.4/assets/css/cookieconsent.css" media="print" onload="this.media = 'all'" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="/v1.4/assets/js/copy-code.js"></script>
+<script>
+    $(function () {
+        $(".tabs").tabs();
+    });
+</script>
+<script src="/v1.4/assets/js/feedback.js"></script>
+<link href="https://data-folks.masto.host/@lakeFS" rel="me">
+<script defer src="/v1.4/assets/js/cookieconsent.js"></script>
+<script defer src="/v1.4/assets/js/cookieconsent-init.js"></script>
+
+</head>
+
+<script src="https://unpkg.com/mermaid@9.3.0/dist/mermaid.min.js"></script>
+<script>
+    $(document).ready(function () {
+        mermaid.initialize({
+            startOnLoad:true,
+            theme: "default",
+        });
+        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+    });
+</script>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTZBZW9"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="svg-link" viewBox="0 0 24 24">
+        <title>Link</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-link">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+    </symbol>
+    <symbol id="svg-search" viewBox="0 0 24 24">
+        <title>Search</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-search">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </symbol>
+    <symbol id="svg-menu" viewBox="0 0 24 24">
+        <title>Menu</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="16px" viewBox="0 0 20 16" version="1.1"
+             class="feather feather-menu">
+            <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="header-/-mobile" transform="translate(-30.000000, -32.000000)" fill="#279890">
+                    <g id="Group" transform="translate(30.000000, 32.000000)">
+                        <path
+                                d="M20,14 L20,16 L0,16 L0,14 L20,14 Z M20,7 L20,9 L0,9 L0,7 L20,7 Z M20,0 L20,2 L0,2 L0,0 L20,0 Z"
+                                id="mobile-menu" />
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </symbol>
+    <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+        <title>Expand</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-chevron-right">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </symbol>
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+        <title>Document</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-file">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+        </svg>
+    </symbol>
+</svg>
+<div class="body-wrapper">
+    <div class="side-bar">
+        <div class="site-header">
+            <a href="https://lakefs.io" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="lakeFS Documentation"></div>
+
+</a>
+            <a href="#" id="menu-button" class="site-button">
+                <svg viewBox="0 0 24 24" class="icon">
+                    <use xlink:href="#svg-menu"></use>
+                </svg>
+            </a>
+        </div>
+        <nav role="navigation" aria-label="Main" id="site-nav" class="site-nav">
+            
+            <div class="search">
+                <div class="search-input-wrap">
+                    <input type="text" id="search-input" class="search-input" tabindex="0"
+                           placeholder="Search lakeFS Documentation" aria-label="Search lakeFS Documentation"
+                           autocomplete="off">
+                    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon">
+                            <use xlink:href="#svg-search"></use>
+                        </svg></label>
+                </div>
+                <div id="search-results" class="search-results"></div>
+            </div>
+            
+
+            <div class="nav-category nav-version">
+                <label for="selectversion">Version:</label>
+                <select id="selectversion" name="version" onchange="javascript:location.href = '/' + encodeURI(this.value);">
+                    <option value="" selected>Latest</option>
+                </select>
+            </div>
+            <script async>
+                window.addEventListener("load",  async () => {
+                    const pathFirstLevel = location.pathname.split('/')[1];
+                    const selectedVersion = pathFirstLevel.startsWith('v') && pathFirstLevel || '';
+                    const selectVersionElmFirst = document.getElementById('selectversion').firstElementChild;
+                    const response = await fetch('/versions.json');
+                    if (!response.ok) {
+                        return
+                    }
+                    const versions = await response.json();
+                    for (let [key, value] of Object.entries(versions)) {
+                        const el = document.createElement("option");
+                        el.value = key;
+                        el.textContent = value;
+                        if (key === selectedVersion) {
+                            el.selected = true;
+                        }
+                        selectVersionElmFirst.after(el);
+                    }
+                });
+            </script>
+
+            <ul class="nav-list"><li
+            class="nav-list-item"><a href="/v1.4/"
+           class="nav-list-link">Welcome to lakeFS</a></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.4/quickstart/"
+           class="nav-list-link">⭐ Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.4/quickstart/launch.html"
+                   class="nav-list-link">1️⃣ Run lakeFS</a></li><li class="nav-list-item "><a href="/v1.4/quickstart/query.html"
+                   class="nav-list-link">2️⃣ Query the data</a></li><li class="nav-list-item "><a href="/v1.4/quickstart/branch.html"
+                   class="nav-list-link">3️⃣ Create a branch</a></li><li class="nav-list-item "><a href="/v1.4/quickstart/commit-and-merge.html"
+                   class="nav-list-link">4️⃣ Commit and Merge</a></li><li class="nav-list-item "><a href="/v1.4/quickstart/rollback.html"
+                   class="nav-list-link">5️⃣ Roll back Changes</a></li><li class="nav-list-item "><a href="/v1.4/quickstart/actions-and-hooks.html"
+                   class="nav-list-link">6️⃣ Using Actions and Hooks in lakeFS</a></li><li class="nav-list-item "><a href="/v1.4/quickstart/learning-more-lakefs.html"
+                   class="nav-list-link">Learn more about lakeFS</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.4/howto/"
+           class="nav-list-link">How-To</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/howto/deploy/"
+                   class="nav-list-link">Install lakeFS</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/howto/deploy/aws.html"
+                           class="nav-list-link">AWS</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/deploy/azure.html"
+                           class="nav-list-link">Azure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/deploy/gcp.html"
+                           class="nav-list-link">GCP</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/deploy/onprem.html"
+                           class="nav-list-link">On-Premises</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/deploy/upgrade.html"
+                           class="nav-list-link">Upgrade lakeFS</a>
+                    </li></ul></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/howto/hooks/"
+                   class="nav-list-link">Actions and Hooks</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/howto/hooks/airflow.html"
+                           class="nav-list-link">Airflow Hooks</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/hooks/lua.html"
+                           class="nav-list-link">Lua Hooks</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/hooks/webhooks.html"
+                           class="nav-list-link">Webhooks</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/howto/copying.html"
+                   class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/v1.4/howto/catalog_exports.html"
+                   class="nav-list-link">Data Catalogs Export</a></li><li class="nav-list-item "><a href="/v1.4/howto/export.html"
+                   class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/howto/garbage-collection/"
+                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/howto/garbage-collection/gc.html"
+                           class="nav-list-link">Garbage Collection</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/howto/garbage-collection/managed-gc.html"
+                           class="nav-list-link">Managed Garbage Collection</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/howto/import.html"
+                   class="nav-list-link">Import Data</a></li><li class="nav-list-item "><a href="/v1.4/howto/migrate-away.html"
+                   class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/v1.4/howto/private-link.html"
+                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/v1.4/howto/protect-branches.html"
+                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/v1.4/howto/sizing-guide.html"
+                   class="nav-list-link">Sizing Guide</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.4/integrations/"
+           class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.4/integrations/aws_cli.html"
+                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/v1.4/integrations/airbyte.html"
+                   class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/v1.4/integrations/athena.html"
+                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/v1.4/integrations/sagemaker.html"
+                   class="nav-list-link">Amazon SageMaker</a></li><li class="nav-list-item "><a href="/v1.4/integrations/airflow.html"
+                   class="nav-list-link">Apache Airflow</a></li><li class="nav-list-item "><a href="/v1.4/integrations/hive.html"
+                   class="nav-list-link">Apache Hive</a></li><li class="nav-list-item "><a href="/v1.4/integrations/iceberg.html"
+                   class="nav-list-link">Apache Iceberg</a></li><li class="nav-list-item "><a href="/v1.4/integrations/kafka.html"
+                   class="nav-list-link">Apache Kafka</a></li><li class="nav-list-item "><a href="/v1.4/integrations/spark.html"
+                   class="nav-list-link">Apache Spark</a></li><li class="nav-list-item "><a href="/v1.4/integrations/cloudera.html"
+                   class="nav-list-link">Cloudera</a></li><li class="nav-list-item "><a href="/v1.4/integrations/delta.html"
+                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/v1.4/integrations/dremio.html"
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v1.4/integrations/duckdb.html"
+                   class="nav-list-link">DuckDB</a></li><li class="nav-list-item "><a href="/v1.4/integrations/glue_hive_metastore.html"
+                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/v1.4/integrations/glue_metastore.html"
+                   class="nav-list-link">Glue Data Catalog</a></li><li class="nav-list-item "><a href="/v1.4/integrations/kubeflow.html"
+                   class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/v1.4/integrations/presto_trino.html"
+                   class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/v1.4/integrations/python.html"
+                   class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/v1.4/integrations/r.html"
+                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/v1.4/integrations/unity_catalog.html"
+                   class="nav-list-link">Unity Catalog</a></li><li class="nav-list-item "><a href="/v1.4/integrations/vertex_ai.html"
+                   class="nav-list-link">Vertex AI</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.4/understand/"
+           class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.4/understand/architecture.html"
+                   class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/v1.4/understand/model.html"
+                   class="nav-list-link">Concepts and  Model</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/understand/data_lifecycle_management/"
+                   class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/understand/data_lifecycle_management/ci.html"
+                           class="nav-list-link">During Deployment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/data_lifecycle_management/production.html"
+                           class="nav-list-link">In Production</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/data_lifecycle_management/data-devenv.html"
+                           class="nav-list-link">In Test</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/understand/faq.html"
+                   class="nav-list-link">FAQ</a></li><li class="nav-list-item "><a href="/v1.4/understand/glossary.html"
+                   class="nav-list-link">Glossary</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/understand/how/"
+                   class="nav-list-link">How lakeFS Works</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/understand/how/kv.html"
+                           class="nav-list-link">Internal database structure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/how/merge.html"
+                           class="nav-list-link">Merge</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/how/versioning-internals.html"
+                           class="nav-list-link">Versioning Internals</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/understand/performance-best-practices.html"
+                   class="nav-list-link">Performance Best Practices</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/understand/use_cases/"
+                   class="nav-list-link">Use Cases</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/understand/use_cases/cicd_for_data.html"
+                           class="nav-list-link">CI/CD for Data Lakes</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/use_cases/etl_testing.html"
+                           class="nav-list-link">ETL Testing Environment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/use_cases/reproducibility.html"
+                           class="nav-list-link">Reproducibility</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/understand/use_cases/rollback.html"
+                           class="nav-list-link">Rollback</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/understand/lakefs-cloud.html"
+                   class="nav-list-link">lakeFS Cloud</a></li><li class="nav-list-item "><a href="/v1.4/understand/lakefs-enterprise.html"
+                   class="nav-list-link">lakeFS Enterprise</a></li></ul></li><li
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.4/reference/"
+           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.4/reference/auditing.html"
+                   class="nav-list-link">Auditing</a></li><li class="nav-list-item "><a href="/v1.4/reference/monitor.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/v1.4/reference/s3.html"
+                   class="nav-list-link">S3 Gateway API</a></li><li class="nav-list-item  active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/reference/security/"
+                   class="nav-list-link">Security</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/reference/security/access-control-lists.html"
+                           class="nav-list-link">Access Control Lists (ACLs)</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/reference/security/authentication.html"
+                           class="nav-list-link">Authentication</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/reference/security/presigned-url.html"
+                           class="nav-list-link">Presigned URL</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/reference/security/remote-authenticator.html"
+                           class="nav-list-link">Remote Authenticator</a>
+                    </li><li class="nav-list-item  active">
+                        <a href="/v1.4/reference/security/rbac.html"
+                           class="nav-list-link active">Role-Based Access Control (RBAC)</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.4/reference/security/sso.html"
+                           class="nav-list-link">Single Sign On (SSO)</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/reference/spark-client.html"
+                   class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/v1.4/reference/api.html"
+                   class="nav-list-link">lakeFS API</a></li><li class="nav-list-item "><a href="/v1.4/reference/configuration.html"
+                   class="nav-list-link">lakeFS Server Configuration</a></li><li class="nav-list-item "><a href="/v1.4/reference/cli.html"
+                   class="nav-list-link">lakectl (lakeFS command-line tool)</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.4/project/"
+           class="nav-list-link">The lakeFS Project</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.4/project/contributing.html"
+                   class="nav-list-link">Contributing to lakeFS</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.4/project/docs/"
+                   class="nav-list-link">Documentation</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.4/project/docs/callouts.html"
+                           class="nav-list-link">Callouts</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.4/project/code-migrate-1.0-sdk.html"
+                   class="nav-list-link">Migrating to 1.0</a></li></ul></li></ul>
+            <div class="mobile-menu">
+                
+<nav aria-label="Auxiliary" class="aux-nav">
+    <ul class="aux-nav-list">
+        
+        
+        <li class="aux-nav-list-item">
+            <a href="https://docs.lakefs.io/" class="site-button" >
+                Docs
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/blog/" class="site-button" >
+                Blog
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/community/" class="site-button" >
+                Community
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                GitHub
+            </a>
+        </li>
+        
+        
+        
+        
+        <li class="aux-nav-list-item button">
+            <a href="https://lakefs.io/slack" class="site-button" >
+                Join us on Slack
+            </a>
+        </li>
+        
+        
+    </ul>
+</nav>
+
+            </div>
+        </nav>
+
+    </div>
+    <div class="main" id="top">
+         <div class="feedback-container">
+            <div id="is-helpful-ty">
+                <div class="text-epsilon">Thank you for your feedback.</div>
+                <div class="mt-2 text-epsilon">
+                    <a href="https://lakefs.io/slack" target="_blank">Join the community</a> to get more help.
+                </div>
+            </div>
+            <div class="feedback-buttons">
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-up" id="page-helpful-yes"></button>
+                    <span class="tooltiptext">
+                        This page is <b>helpful</b>
+                    </span>
+                </span>
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-down" id="page-helpful-no"></button>
+                    <span class="tooltiptext">
+                        This page is <b>not helpful</b>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div id="main-header" class="main-header">
+            
+<nav aria-label="Auxiliary" class="aux-nav">
+    <ul class="aux-nav-list">
+        
+        
+        <li class="aux-nav-list-item">
+            <a href="https://docs.lakefs.io/" class="site-button" >
+                Docs
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/blog/" class="site-button" >
+                Blog
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/community/" class="site-button" >
+                Community
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                GitHub
+            </a>
+        </li>
+        
+        
+        
+        
+        <li class="aux-nav-list-item button">
+            <a href="https://lakefs.io/slack" class="site-button" >
+                Join us on Slack
+            </a>
+        </li>
+        
+        
+    </ul>
+</nav>
+
+        </div>
+        <div id="main-content-wrap" class="main-content-wrap">
+            
+            
+            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb-nav-list">
+                    
+                    <li class="breadcrumb-nav-list-item"><a
+                                href="/v1.4/reference/">Reference</a>
+                    </li>
+                    <li class="breadcrumb-nav-list-item"><a href="/v1.4/reference/security/">Security</a>
+                    </li>
+                    
+                    <li class="breadcrumb-nav-list-item"><span>Role-Based Access Control (RBAC)</span></li>
+                </ol>
+            </nav>
+            
+            
+            <div id="main-content" class="main-content" role="main">
+                
+                    <h1 class="d-inline-block" id="role-based-access-control-rbac">
+  
+  
+    <a href="#role-based-access-control-rbac" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Role-Based Access Control (RBAC)
+  
+  
+</h1>
+    
+<p class="label label-green">lakeFS Cloud</p>
+
+<p class="label label-purple">lakeFS Enterprise</p>
+
+<blockquote class="note">
+  <p>RBAC is available on <a href="/understand/lakefs-cloud.html">lakeFS Cloud</a> and <a href="/understand/lakefs-enterprise.html">lakeFS Enterprise</a>.</p>
+
+  <p>If you’re using the open source version of lakeFS then the <a href="access-control-lists.html">ACL-based authorization mechanism</a> is an alternative to RBAC.</p>
+</blockquote>
+
+<div class="toc-block">
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ol id="markdown-toc">
+  <li><a href="#rbac-model" id="markdown-toc-rbac-model">RBAC Model</a></li>
+  <li><a href="#authorization-process" id="markdown-toc-authorization-process">Authorization process</a></li>
+  <li><a href="#policy-precedence" id="markdown-toc-policy-precedence">Policy Precedence</a></li>
+  <li><a href="#resource-naming---arns" id="markdown-toc-resource-naming---arns">Resource naming - ARNs</a></li>
+  <li><a href="#actions-and-permissions" id="markdown-toc-actions-and-permissions">Actions and Permissions</a></li>
+  <li><a href="#preconfigured-policies" id="markdown-toc-preconfigured-policies">Preconfigured Policies</a></li>
+  <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a></li>
+  <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a></li>
+  <li><a href="#pluggable-authentication-and-authorization" id="markdown-toc-pluggable-authentication-and-authorization">Pluggable Authentication and Authorization</a></li>
+</ol>
+
+</div>
+<h2 id="rbac-model">
+  
+  
+    <a href="#rbac-model" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RBAC Model
+  
+  
+</h2>
+    
+
+<p>Access to resources is managed very much like <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html" target="_blank">AWS IAM</a>.</p>
+
+<p>There are five basic components to the system:</p>
+
+<ol>
+  <li>
+    <p><strong>Users</strong> - Representing entities that access and use the system. A user is given one or more <strong>Access Credentials</strong> for authentication.</p>
+  </li>
+  <li>
+    <p><strong>Actions</strong> - Representing a logical action within the system - reading a file, creating a repository, etc.</p>
+  </li>
+  <li>
+    <p><strong>Resources</strong> - A unique identifier representing a specific resource in the system - a repository, an object, a user, etc.</p>
+  </li>
+  <li>
+    <p><strong>Policies</strong> - Representing a set of <strong>Actions</strong>, a <strong>Resource</strong> and an effect: whether or not these actions are <code class="language-plaintext highlighter-rouge">allowed</code> or <code class="language-plaintext highlighter-rouge">denied</code> for the given resource(s).</p>
+  </li>
+  <li>
+    <p><strong>Groups</strong> - A named collection of users. Users can belong to multiple groups.</p>
+  </li>
+</ol>
+
+<p>Controlling access is done by attaching <strong>Policies</strong>, either directly to <strong>Users</strong>, or to <strong>Groups</strong> they belong to.</p>
+<h2 id="authorization-process">
+  
+  
+    <a href="#authorization-process" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authorization process
+  
+  
+</h2>
+    
+
+<p>Every action in the system - be it an API request, UI interaction, S3 Gateway call, or CLI command - requires a set of actions to be allowed for one or more resources.</p>
+
+<p>When a user makes a request to perform that action, the following process takes place:</p>
+
+<ol>
+  <li>Authentication - the credentials passed in the request are evaluated and the user’s identity is extracted.</li>
+  <li>Action permission resolution - lakeFS then calculates the set of allowed actions and resources that this request requires.</li>
+  <li>Effective policy resolution - the user’s policies (either attached directly or through group memberships) are calculated.</li>
+  <li>Policy/Permission evaluation - lakeFS will compare the given user policies with the request actions and determine whether or not the request is allowed to continue.</li>
+</ol>
+<h2 id="policy-precedence">
+  
+  
+    <a href="#policy-precedence" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Policy Precedence
+  
+  
+</h2>
+    
+
+<p>Each policy attached to a user or a group has an <code class="language-plaintext highlighter-rouge">Effect</code> - either <code class="language-plaintext highlighter-rouge">allow</code> or <code class="language-plaintext highlighter-rouge">deny</code>.
+During evaluation of a request, <code class="language-plaintext highlighter-rouge">deny</code> would take precedence over any other <code class="language-plaintext highlighter-rouge">allow</code> policy.</p>
+
+<p>This helps us compose policies together. For example, we could attach a very permissive policy to a user and use <code class="language-plaintext highlighter-rouge">deny</code> rules to then selectively restrict what that user can do.</p>
+<h2 id="resource-naming---arns">
+  
+  
+    <a href="#resource-naming---arns" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Resource naming - ARNs
+  
+  
+</h2>
+    
+
+<p>lakeFS uses <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns" target="_blank">ARN identifier</a> - very similar in structure to those used by AWS.
+The resource segment of the ARN supports wildcards: use <code class="language-plaintext highlighter-rouge">*</code> to match 0 or more characters, or <code class="language-plaintext highlighter-rouge">?</code> to match exactly one character.</p>
+
+<p>Additionally, the current user’s ID is interpolated in runtime into the ARN using the <code class="language-plaintext highlighter-rouge">${user}</code> placeholder.</p>
+
+<p>Here are a few examples of valid ARNs within lakeFS:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>arn:lakefs:auth:::user/jane.doe
+arn:lakefs:auth:::user/*
+arn:lakefs:fs:::repository/myrepo/*
+arn:lakefs:fs:::repository/myrepo/object/foo/bar/baz
+arn:lakefs:fs:::repository/myrepo/object/*
+arn:lakefs:fs:::repository/*
+arn:lakefs:fs:::*
+</code></pre></div></div>
+
+<p>this allows us to create fine-grained policies affecting only a specific subset of resources.</p>
+
+<p>See below for a full reference of ARNs and actions.</p>
+<h2 id="actions-and-permissions">
+  
+  
+    <a href="#actions-and-permissions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Actions and Permissions
+  
+  
+</h2>
+    
+
+<p>For the full list of actions and their required permissions see the following table:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Action name</th>
+      <th>required action</th>
+      <th>Resource</th>
+      <th>API endpoint</th>
+      <th>S3 gateway operation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>List Repositories</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ListRepositories</code></td>
+      <td><code class="language-plaintext highlighter-rouge">*</code></td>
+      <td>GET /repositories</td>
+      <td>ListBuckets</td>
+    </tr>
+    <tr>
+      <td>Get Repository</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadRepository</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}</td>
+      <td>HeadBucket</td>
+    </tr>
+    <tr>
+      <td>Get Commit</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadCommit</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}/commits/{commitId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create Commit</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:CreateCommit</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>POST /repositories/{repositoryId}/branches/{branchId}/commits</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Commit log</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadBranch</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>GET /repositories/{repositoryId}/branches/{branchId}/commits</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create Repository</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:CreateRepository</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>POST /repositories</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Namespace Attach to Repository</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:AttachStorageNamespace</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::namespace/{storageNamespace}</code></td>
+      <td>POST /repositories</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Import From Source</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ImportFromStorage</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::namespace/{storageNamespace}</code></td>
+      <td>POST /repositories/{repositoryId}/branches/{branchId}/import</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Cancel Import</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ImportCancel</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>DELETE /repositories/{repositoryId}/branches/{branchId}/import</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete Repository</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:DeleteRepository</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>DELETE /repositories/{repositoryId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Branches</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ListBranches</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}/branches</td>
+      <td>ListObjects/ListObjectsV2 (with delimiter = <code class="language-plaintext highlighter-rouge">/</code> and empty prefix)</td>
+    </tr>
+    <tr>
+      <td>Get Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadBranch</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>GET /repositories/{repositoryId}/branches/{branchId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:CreateBranch</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>POST /repositories/{repositoryId}/branches</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:DeleteBranch</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>DELETE /repositories/{repositoryId}/branches/{branchId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Merge branches</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:CreateCommit</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{destinationBranchId}</code></td>
+      <td>POST /repositories/{repositoryId}/refs/{sourceBranchId}/merge/{destinationBranchId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Diff branch uncommitted changes</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ListObjects</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}/branches/{branchId}/diff</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Diff refs</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ListObjects</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}/refs/{leftRef}/diff/{rightRef}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Stat object</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadObject</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/object/{objectKey}</code></td>
+      <td>GET /repositories/{repositoryId}/refs/{ref}/objects/stat</td>
+      <td>HeadObject</td>
+    </tr>
+    <tr>
+      <td>Get Object</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadObject</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/object/{objectKey}</code></td>
+      <td>GET /repositories/{repositoryId}/refs/{ref}/objects</td>
+      <td>GetObject</td>
+    </tr>
+    <tr>
+      <td>List Objects</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ListObjects</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}/refs/{ref}/objects/ls</td>
+      <td>ListObjects, ListObjectsV2 (no delimiter, or “/” + non-empty prefix)</td>
+    </tr>
+    <tr>
+      <td>Upload Object</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:WriteObject</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/object/{objectKey}</code></td>
+      <td>POST /repositories/{repositoryId}/branches/{branchId}/objects</td>
+      <td>PutObject, CreateMultipartUpload, UploadPart, CompleteMultipartUpload</td>
+    </tr>
+    <tr>
+      <td>Delete Object</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:DeleteObject</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/object/{objectKey}</code></td>
+      <td>DELETE /repositories/{repositoryId}/branches/{branchId}/objects</td>
+      <td>DeleteObject, DeleteObjects, AbortMultipartUpload</td>
+    </tr>
+    <tr>
+      <td>Revert Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:RevertBranch</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}/branch/{branchId}</code></td>
+      <td>PUT /repositories/{repositoryId}/branches/{branchId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Branch Protection Rules</td>
+      <td><code class="language-plaintext highlighter-rouge">branches:GetBranchProtectionRules</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repository}/branch_protection</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Set Branch Protection Rules</td>
+      <td><code class="language-plaintext highlighter-rouge">branches:SetBranchProtectionRules</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>POST /repositories/{repository}/branch_protection</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete Branch Protection Rules</td>
+      <td><code class="language-plaintext highlighter-rouge">branches:SetBranchProtectionRules</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>DELETE /repositories/{repository}/branch_protection</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create User</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:CreateUser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>POST /auth/users</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Users</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ListUsers</code></td>
+      <td><code class="language-plaintext highlighter-rouge">*</code></td>
+      <td>GET /auth/users</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get User</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadUser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>GET /auth/users/{userId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete User</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:DeleteUser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>DELETE /auth/users/{userId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Group</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadGroup</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>GET /auth/groups/{groupId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Groups</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ListGroups</code></td>
+      <td><code class="language-plaintext highlighter-rouge">*</code></td>
+      <td>GET /auth/groups</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create Group</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:CreateGroup</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>POST /auth/groups</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete Group</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:DeleteGroup</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>DELETE /auth/groups/{groupId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Policies</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ListPolicies</code></td>
+      <td><code class="language-plaintext highlighter-rouge">*</code></td>
+      <td>GET /auth/policies</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create Policy</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:CreatePolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::policy/{policyId}</code></td>
+      <td>POST /auth/policies</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Update Policy</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:UpdatePolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::policy/{policyId}</code></td>
+      <td>POST /auth/policies</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete Policy</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:DeletePolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::policy/{policyId}</code></td>
+      <td>DELETE /auth/policies/{policyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Policy</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadPolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::policy/{policyId}</code></td>
+      <td>GET /auth/policies/{policyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Group Members</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadGroup</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>GET /auth/groups/{groupId}/members</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Add Group Member</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:AddGroupMember</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>PUT /auth/groups/{groupId}/members/{userId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Remove Group Member</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:RemoveGroupMember</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>DELETE /auth/groups/{groupId}/members/{userId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List User Credentials</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ListCredentials</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>GET /auth/users/{userId}/credentials</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Create User Credentials</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:CreateCredentials</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>POST /auth/users/{userId}/credentials</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Delete User Credentials</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:DeleteCredentials</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>DELETE /auth/users/{userId}/credentials/{accessKeyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get User Credentials</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadCredentials</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>GET /auth/users/{userId}/credentials/{accessKeyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List User Groups</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadUser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>GET /auth/users/{userId}/groups</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List User Policies</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadUser</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>GET /auth/users/{userId}/policies</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Attach Policy To User</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:AttachPolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>PUT /auth/users/{userId}/policies/{policyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Detach Policy From User</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:DetachPolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::user/{userId}</code></td>
+      <td>DELETE /auth/users/{userId}/policies/{policyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Group Policies</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:ReadGroup</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>GET /auth/groups/{groupId}/policies</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Attach Policy To Group</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:AttachPolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>PUT /auth/groups/{groupId}/policies/{policyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Detach Policy From Group</td>
+      <td><code class="language-plaintext highlighter-rouge">auth:DetachPolicy</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:auth:::group/{groupId}</code></td>
+      <td>DELETE /auth/groups/{groupId}/policies/{policyId}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Read Storage Config</td>
+      <td><code class="language-plaintext highlighter-rouge">fs:ReadConfig</code></td>
+      <td><code class="language-plaintext highlighter-rouge">*</code></td>
+      <td>GET /config/storage</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Garbage Collection Rules</td>
+      <td><code class="language-plaintext highlighter-rouge">retention:GetGarbageCollectionRules</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repositoryId}/gc/rules</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Set Garbage Collection Rules</td>
+      <td><code class="language-plaintext highlighter-rouge">retention:SetGarbageCollectionRules</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>POST /repositories/{repositoryId}/gc/rules</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Prepare Garbage Collection Commits</td>
+      <td><code class="language-plaintext highlighter-rouge">retention:PrepareGarbageCollectionCommits</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>POST /repositories/{repositoryId}/gc/prepare_commits</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Repository Action Runs</td>
+      <td><code class="language-plaintext highlighter-rouge">ci:ReadAction</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repository}/actions/runs</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Action Run</td>
+      <td><code class="language-plaintext highlighter-rouge">ci:ReadAction</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repository}/actions/runs/{run_id}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>List Action Run Hooks</td>
+      <td><code class="language-plaintext highlighter-rouge">ci:ReadAction</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repository}/actions/runs/{run_id}/hooks</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Get Action Run Hook Output</td>
+      <td><code class="language-plaintext highlighter-rouge">ci:ReadAction</code></td>
+      <td><code class="language-plaintext highlighter-rouge">arn:lakefs:fs:::repository/{repositoryId}</code></td>
+      <td>GET /repositories/{repository}/actions/runs/{run_id}/hooks/{hook_run_id}/output</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Some APIs may require more than one action.For instance, in order to
+create a repository (<code class="language-plaintext highlighter-rouge">POST /repositories</code>), you need permission to
+<code class="language-plaintext highlighter-rouge">fs:CreateRepository</code> for the <em>name</em> of the repository and also
+<code class="language-plaintext highlighter-rouge">fs:AttachStorageNamespace</code> for the <em>storage namespace</em> used.</p>
+<h2 id="preconfigured-policies">
+  
+  
+    <a href="#preconfigured-policies" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Preconfigured Policies
+  
+  
+</h2>
+    
+
+<p>The following Policies are created during initial setup:</p>
+<h3 id="fsfullaccess">
+  
+  
+    <a href="#fsfullaccess" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FSFullAccess
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"fs:*"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="fsreadall">
+  
+  
+    <a href="#fsreadall" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FSReadAll
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"fs:List*"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fs:Read*"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="fsreadwriteall">
+  
+  
+    <a href="#fsreadwriteall" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FSReadWriteAll
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:Read*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:List*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:WriteObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:RevertBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateTag"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteTag"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateCommit"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateMetaRange"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="authfullaccess">
+  
+  
+    <a href="#authfullaccess" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AuthFullAccess
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"auth:*"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="authmanageowncredentials">
+  
+  
+    <a href="#authmanageowncredentials" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> AuthManageOwnCredentials
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"auth:CreateCredentials"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"auth:DeleteCredentials"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"auth:ListCredentials"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"auth:ReadCredentials"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:auth:::user/${user}"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="repomanagementfullaccess">
+  
+  
+    <a href="#repomanagementfullaccess" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RepoManagementFullAccess
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"ci:*"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"retention:*"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h3 id="repomanagementreadall">
+  
+  
+    <a href="#repomanagementreadall" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> RepoManagementReadAll
+  
+  
+</h3>
+    
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"ci:Read*"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"retention:Get*"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h2 id="additional-policies">
+  
+  
+    <a href="#additional-policies" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Additional Policies
+  
+  
+</h2>
+    
+
+<p>You can create additional policies to further limit user access. Use the web UI or the <a href="/reference/cli.html#lakectl-auth-policies-create">lakectl auth</a> command to create policies. Here is an example to define read/write access for a specific repository:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:ReadRepository"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ReadCommit"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ListBranches"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ListTags"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ListObjects"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:RevertBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ReadBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteBranch"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateCommit"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/branch/*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:ListObjects"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:ReadObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:WriteObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteObject"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/object/*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:ReadTag"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:CreateTag"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"fs:DeleteTag"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/tag/*"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+        	</span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fs:ReadConfig"</span><span class="p">],</span><span class="w">
+        	</span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+        	</span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<h2 id="preconfigured-groups">
+  
+  
+    <a href="#preconfigured-groups" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Preconfigured Groups
+  
+  
+</h2>
+    
+
+<p>lakeFS has four preconfigured groups:</p>
+
+<ul>
+  <li>Admins</li>
+  <li>SuperUsers</li>
+  <li>Developers</li>
+  <li>Viewers</li>
+</ul>
+
+<p>They have the following policies granted to them:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>Policy</th>
+      <th>Admins</th>
+      <th>SuperUsers</th>
+      <th>Developers</th>
+      <th>Viewers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#fsfullaccess"><code class="language-plaintext highlighter-rouge">FSFullAccess</code></a></td>
+      <td>✅</td>
+      <td>✅</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#authfullaccess"><code class="language-plaintext highlighter-rouge">AuthFullAccess</code></a></td>
+      <td>✅</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#repomanagementfullaccess"><code class="language-plaintext highlighter-rouge">RepoManagementFullAccess</code></a></td>
+      <td>✅</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#authmanageowncredentials"><code class="language-plaintext highlighter-rouge">AuthManageOwnCredentials</code></a></td>
+      <td> </td>
+      <td>✅</td>
+      <td>✅</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><a href="#repomanagementreadall"><code class="language-plaintext highlighter-rouge">RepoManagementReadAll</code></a></td>
+      <td> </td>
+      <td>✅</td>
+      <td>✅</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#fsreadwriteall"><code class="language-plaintext highlighter-rouge">FSReadWriteAll</code></a></td>
+      <td> </td>
+      <td> </td>
+      <td>✅</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#fsreadall"><code class="language-plaintext highlighter-rouge">FSReadAll</code></a></td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>✅</td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 id="pluggable-authentication-and-authorization">
+  
+  
+    <a href="#pluggable-authentication-and-authorization" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Pluggable Authentication and Authorization
+  
+  
+</h2>
+    
+
+<p>Authorization and authentication is pluggable in lakeFS. If lakeFS is attached to a <a href="remote-authenticator.html">remote authentication server</a> (or you are using lakeFS Cloud) then the <a href="rbac.html">role-based access control</a> user interface can be used. If you are using RBAC with your self-managed lakeFS then the lakeFS configuration element <code class="language-plaintext highlighter-rouge">auth.ui_config.rbac</code> should be set to <code class="language-plaintext highlighter-rouge">external</code>. An enterprise (paid) solution of lakeFS should set <code class="language-plaintext highlighter-rouge">auth.ui_config.rbac</code> as <code class="language-plaintext highlighter-rouge">internal</code>.</p>
+
+<p>If you are using self-managed lakeFS and do not have a <a href="remote-authenticator.html">remote authentication server</a> then you should set <code class="language-plaintext highlighter-rouge">auth.ui_config.rbac</code> to <code class="language-plaintext highlighter-rouge">simplified</code> and refer to the <a href="access-control-lists.html">access control list</a> documentation instead.</p>
+
+                
+
+                
+                
+
+                
+
+            </div>
+        </div>
+
+        
+        
+
+        <div class="search-overlay"></div>
+        
+    </div>
+</div>
+
+<footer>
+    <div class="footer-sidebar"></div>
+    <div class="footer-main">
+        <div class="row">
+            <div class="left">
+                <ul class="footer-links">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://docs.lakefs.io/" class="site-button" >
+                            Docs
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/blog/" class="site-button" >
+                            Blog
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                            GitHub
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/community/" class="site-button" >
+                            Community
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/cloud-registration/" class="site-button" >
+                            lakeFS Cloud
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/contact-us/" class="site-button" >
+                            Contact
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="right">
+                <ul class="footer-social">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/youtube" class="site-button" >
+                            <img src="/v1.4/assets/icons/youtube.svg" class="no-hover" />
+                            <img src="/v1.4/assets/icons/youtube-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://www.linkedin.com/company/treeverse" class="site-button" >
+                            <img src="/v1.4/assets/icons/linkedin.svg" class="no-hover" />
+                            <img src="/v1.4/assets/icons/linkedin-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                            <img src="/v1.4/assets/icons/github.svg" class="no-hover" />
+                            <img src="/v1.4/assets/icons/github-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://twitter.com/lakeFS" class="site-button" >
+                            <img src="/v1.4/assets/icons/twitter.svg" class="no-hover" />
+                            <img src="/v1.4/assets/icons/twitter-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://data-folks.masto.host/@lakeFS" class="site-button" >
+                            <img src="/v1.4/assets/icons/mastodon.svg" class="no-hover" />
+                            <img src="/v1.4/assets/icons/mastodon-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/slack" class="site-button" >
+                            <img src="/v1.4/assets/icons/slack.svg" class="no-hover" />
+                            <img src="/v1.4/assets/icons/slack-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row top-border">
+            <div class="left">
+                <a href="https://lakefs.io" class="lh-tight" style="margin-bottom: 0px;">
+                    <div class="site-logo"></div>
+                </a>                    
+            </div>
+            <div class="right">
+                <ul class="bottom-footer-links">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/terms-of-use/" class="site-button" >
+                            Terms of use
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/privacy-policy/" class="site-button" >
+                            Privacy Policy
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</body>
+
+</html>
+
