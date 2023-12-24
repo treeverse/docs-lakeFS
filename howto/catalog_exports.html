@@ -294,7 +294,8 @@
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
                    class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/integrations/python.html"
                    class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/r.html"
-                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/integrations/vertex_ai.html"
+                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/integrations/unity_catalog.html"
+                   class="nav-list-link">Unity Catalog</a></li><li class="nav-list-item "><a href="/integrations/vertex_ai.html"
                    class="nav-list-link">Vertex AI</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -652,11 +653,37 @@ Note: the Glue exporter can currently only export tables of <code class="languag
 </h4>
     
 
-<ul>
-  <li>Symlink Exporter: Writes metadata for the table using Hive’s <a href="https://svn.apache.org/repos/infra/websites/production/hive/content/javadocs/r2.1.1/api/org/apache/hadoop/hive/ql/io/SymlinkTextInputFormat.html">SymlinkTextInputFormat</a></li>
-  <li>AWS Glue Catalog (+ Athena) Exporter: Creates a table in Glue using Hive’s format and updates the location to symlink files (reuses Symlink Exporter).</li>
-  <li>See a step by step guide on how to integrate with <a href="/integrations/glue_metastore.html">Glue Exporter</a></li>
-</ul>
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Exporter</th>
+      <th style="text-align: left">Description</th>
+      <th style="text-align: left">Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Symlink exporter</strong></td>
+      <td style="text-align: left">Writes metadata for the table using Hive’s <a href="https://svn.apache.org/repos/infra/websites/production/hive/content/javadocs/r2.1.1/api/org/apache/hadoop/hive/ql/io/SymlinkTextInputFormat.html">SymlinkTextInputFormat</a></td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>AWS Glue Catalog (+ Athena) exporter</strong></td>
+      <td style="text-align: left">Creates a table in Glue using Hive’s format and updates the location to symlink files (reuses Symlink Exporter).</td>
+      <td style="text-align: left">See a step-by-step guide on how to integrate with <a href="/integrations/glue_metastore.html">Glue Exporter</a></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Delta Lake table exporter</strong></td>
+      <td style="text-align: left">Export Delta Lake tables from lakeFS to an external storage</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Unity Catalog exporter</strong></td>
+      <td style="text-align: left">The Unity Catalog exporter serves the purpose of registering a Delta Lake table in Unity Catalog. It operates in conjunction with the Delta Lake exporter. In this workflow, the Delta Lake exporter is utilized to export a Delta Lake table from lakeFS. Subsequently, the obtained result is passed to the Unity Catalog exporter to facilitate its registration within Unity Catalog.</td>
+      <td style="text-align: left">See a step-by-step guide on how to integrate with <a href="/integrations/unity_catalog.html">Unity Catalog Exporter</a>&lt;/br&gt;Currently, only AWS S3 storage is supported</td>
+    </tr>
+  </tbody>
+</table></div>
 <h4 id="running-an-exporter">
   
   

@@ -294,7 +294,8 @@
                    class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/integrations/presto_trino.html"
                    class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/integrations/python.html"
                    class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/integrations/r.html"
-                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/integrations/vertex_ai.html"
+                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/integrations/unity_catalog.html"
+                   class="nav-list-link">Unity Catalog</a></li><li class="nav-list-item "><a href="/integrations/vertex_ai.html"
                    class="nav-list-link">Vertex AI</a></li></ul></li><li
             class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
                 <use xlink:href="#svg-arrow-right"></use>
@@ -913,6 +914,79 @@ The <code class="language-plaintext highlighter-rouge">table_input</code> is the
     
 
 <p>Returns the SHA256 digest (string) of the given data</p>
+<h3 id="databricksclientdatabricks_host-databricks_service_principal_token">
+  
+  
+    <a href="#databricksclientdatabricks_host-databricks_service_principal_token" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">databricks/client(databricks_host, databricks_service_principal_token)</code>
+  
+  
+</h3>
+    
+
+<p>Returns a table representing a Databricks client with the <code class="language-plaintext highlighter-rouge">register_external_table</code> and <code class="language-plaintext highlighter-rouge">create_or_get_schema</code> methods.</p>
+<h3 id="databricksclientcreate_schemaschema_name-catalog_name-get_if_exists">
+  
+  
+    <a href="#databricksclientcreate_schemaschema_name-catalog_name-get_if_exists" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">databricks/client.create_schema(schema_name, catalog_name, get_if_exists)</code>
+  
+  
+</h3>
+    
+
+<p>Creates a schema, or retrieves it if exists, in the configured Databricks host’s Unity catalog.
+If a schema doesn’t exist, a new schema with the given <code class="language-plaintext highlighter-rouge">schema_name</code> will be created under the given <code class="language-plaintext highlighter-rouge">catalog_name</code>.
+Returns the created/fetched schema name.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">schema_name(string)</code>: The required schema name</li>
+  <li><code class="language-plaintext highlighter-rouge">catalog_name(string)</code>: The catalog name under which the schema will be created (or from which it will be fetched)</li>
+  <li><code class="language-plaintext highlighter-rouge">get_if_exists(boolean)</code>: In case of failure due to an existing schema with the given <code class="language-plaintext highlighter-rouge">schema_name</code> in the given
+<code class="language-plaintext highlighter-rouge">catalog_name</code>, return the schema.</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">databricks</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"databricks"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">client</span> <span class="o">=</span> <span class="n">databricks</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"https://my-host.cloud.databricks.com"</span><span class="p">,</span> <span class="s2">"my-service-principal-token"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">schema_name</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">create_schema</span><span class="p">(</span><span class="s2">"main"</span><span class="p">,</span> <span class="s2">"mycatalog"</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+</code></pre></div></div>
+<h3 id="databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name">
+  
+  
+    <a href="#databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">databricks/client.register_external_table(table_name, physical_path, warehouse_id, catalog_name, schema_name)</code>
+  
+  
+</h3>
+    
+
+<p>Registers an external table under the provided warehouse ID, catalog name, and schema name.
+In order for this method call to succeed, an external location should be configured in the catalog, with the 
+<code class="language-plaintext highlighter-rouge">physical_path</code>’s root storage URI (for example: <code class="language-plaintext highlighter-rouge">s3://mybucket</code>).
+Returns the table’s creation status.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">table_name(string)</code>: Table name.</li>
+  <li><code class="language-plaintext highlighter-rouge">physical_path(string)</code>: A location to which the external table will refer, e.g. <code class="language-plaintext highlighter-rouge">s3://mybucket/the/path/to/mytable</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">warehouse_id(string)</code>: The SQL warehouse ID used in Databricks to run the <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> query (fetched from the SQL warehouse
+<code class="language-plaintext highlighter-rouge">Connection Details</code>, or by running <code class="language-plaintext highlighter-rouge">databricks warehouses get</code>, choosing your SQL warehouse and fetching its ID).</li>
+  <li><code class="language-plaintext highlighter-rouge">catalog_name(string)</code>: The name of the catalog under which a schema will be created (or fetched from).</li>
+  <li><code class="language-plaintext highlighter-rouge">schema_name(string)</code>: The name of the schema under which the table will be created.</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">databricks</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"databricks"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">client</span> <span class="o">=</span> <span class="n">databricks</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"https://my-host.cloud.databricks.com"</span><span class="p">,</span> <span class="s2">"my-service-principal-token"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">status</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">register_external_table</span><span class="p">(</span><span class="s2">"mytable"</span><span class="p">,</span> <span class="s2">"s3://mybucket/the/path/to/mytable"</span><span class="p">,</span> <span class="s2">"examwarehouseple"</span><span class="p">,</span> <span class="s2">"my-catalog-name"</span><span class="p">,</span> <span class="s2">"myschema"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>For the Databricks permissions needed to run this method, check out the <a href="/integrations/unity_catalog.html">Unity Catalog Exporter</a> docs.</li>
+</ul>
 <h3 id="encodingbase64encodedata">
   
   
@@ -1186,6 +1260,96 @@ If delimiter is empty, will default to a recursive listing. Otherwise, common pr
     
 
 <p>Returns a stat object for the given path under the given reference and repository.</p>
+<h3 id="lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info">
+  
+  
+    <a href="#lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/glue_exporter.get_full_table_name(descriptor, action_info)</code>
+  
+  
+</h3>
+    
+
+<p>Generate glue table name.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">descriptor(Table)</code>: Object from (e.g. _lakefs_tables/my_table.yaml).</li>
+  <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: The global action object.</li>
+</ul>
+<h3 id="lakefscatalogexportdelta_exporter">
+  
+  
+    <a href="#lakefscatalogexportdelta_exporter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter</code>
+  
+  
+</h3>
+    
+
+<p>A package used to export Delta Lake tables from lakeFS to an external cloud storage.</p>
+<h3 id="lakefscatalogexportdelta_exporterexport_delta_logaction-table_names-writer-delta_client-table_descriptors_path">
+  
+  
+    <a href="#lakefscatalogexportdelta_exporterexport_delta_logaction-table_names-writer-delta_client-table_descriptors_path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log(action, table_names, writer, delta_client, table_descriptors_path)</code>
+  
+  
+</h3>
+    
+
+<p>The function used to export Delta Lake tables.
+The return value is a table with mapping of table names to external table location (from which it is possible to query the data).</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">action</code>: The global action object</li>
+  <li><code class="language-plaintext highlighter-rouge">table_names</code>: Delta tables name list (e.g. <code class="language-plaintext highlighter-rouge">{"table1", "table2"}</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">writer</code>: A writer function with <code class="language-plaintext highlighter-rouge">function(bucket, key, data)</code> signature, used to write the exported Delta Log (e.g. <code class="language-plaintext highlighter-rouge">aws/s3.s3_client.put_object</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">delta_client</code>: A Delta Lake client that implements <code class="language-plaintext highlighter-rouge">get_table: function(repo, ref, prefix)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">table_descriptors_path</code>: The path under which the table descriptors of the provided <code class="language-plaintext highlighter-rouge">table_names</code> reside</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">delta_exporter</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">post-commit</span><span class="pi">:</span> <span class="no">null</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">delta_export</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">lua</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">script</span><span class="pi">:</span> <span class="pi">|</span>
+        <span class="s">local aws = require("aws")</span>
+        <span class="s">local formats = require("formats")</span>
+        <span class="s">local delta_exporter = require("lakefs/catalogexport/delta_exporter")</span>
+
+        <span class="s">local table_descriptors_path = "_lakefs_tables"</span>
+        <span class="s">local sc = aws.s3_client(args.aws.access_key_id, args.aws.secret_access_key, args.aws.region)</span>
+        <span class="s">local delta_client = formats.delta_client(args.lakefs.access_key_id, args.lakefs.secret_access_key, args.aws.region)</span>
+        <span class="s">local delta_table_locations = delta_exporter.export_delta_log(action, args.table_names, sc.put_object, delta_client, table_descriptors_path)</span>
+        
+        <span class="s">for t, loc in pairs(delta_table_locations) do</span>
+          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. loc .. "\n")</span>
+        <span class="s">end</span>
+      <span class="na">args</span><span class="pi">:</span>
+        <span class="na">aws</span><span class="pi">:</span>
+          <span class="na">access_key_id</span><span class="pi">:</span> <span class="s">&lt;AWS_ACCESS_KEY_ID&gt;</span>
+          <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">&lt;AWS_SECRET_ACCESS_KEY&gt;</span>
+          <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
+        <span class="na">lakefs</span><span class="pi">:</span>
+          <span class="na">access_key_id</span><span class="pi">:</span> <span class="s">&lt;LAKEFS_ACCESS_KEY_ID&gt;</span> 
+          <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s">&lt;LAKEFS_SECRET_ACCESS_KEY&gt;</span>
+        <span class="na">table_names</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">mytable</span>
+</code></pre></div></div>
+
+<p>For the table descriptor under the <code class="language-plaintext highlighter-rouge">_lakefs_tables/mytable.yaml</code>:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">myTableActualName</span>
+<span class="na">type</span><span class="pi">:</span> <span class="s">delta</span>
+<span class="na">path</span><span class="pi">:</span> <span class="s">a/path/to/my/delta/table</span>
+</code></pre></div></div>
 <h3 id="lakefscatalogexporttable_extractor">
   
   
@@ -1370,10 +1534,10 @@ by default this function will configure table location and schema.</li>
 <span class="p">}</span>
 <span class="n">exporter</span><span class="p">.</span><span class="n">export_glue</span><span class="p">(</span><span class="n">glue</span><span class="p">,</span> <span class="s2">"my-db"</span><span class="p">,</span> <span class="s2">"_lakefs_tables/animals.yaml"</span><span class="p">,</span> <span class="n">table_input</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="p">{</span><span class="n">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">})</span>
 </code></pre></div></div>
-<h3 id="lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info">
+<h3 id="lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info-1">
   
   
-    <a href="#lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/glue_exporter.get_full_table_name(descriptor, action_info)</code>
+    <a href="#lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/glue_exporter.get_full_table_name(descriptor, action_info)</code>
   
   
 </h3>
@@ -1387,10 +1551,10 @@ by default this function will configure table location and schema.</li>
   <li><code class="language-plaintext highlighter-rouge">descriptor(Table)</code>: Object from (e.g. _lakefs_tables/my_table.yaml).</li>
   <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: The global action object.</li>
 </ul>
-<h3 id="lakefscatalogexportdelta_exporter">
+<h3 id="lakefscatalogexportdelta_exporter-1">
   
   
-    <a href="#lakefscatalogexportdelta_exporter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter</code>
+    <a href="#lakefscatalogexportdelta_exporter-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter</code>
   
   
 </h3>
@@ -1422,7 +1586,7 @@ The return value is a table with mapping of table names to external table locati
 <p>Example:</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
-<span class="na">name</span><span class="pi">:</span> <span class="s">test_delta_exporter</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">delta_exporter</span>
 <span class="na">on</span><span class="pi">:</span>
   <span class="na">post-commit</span><span class="pi">:</span> <span class="no">null</span>
 <span class="na">hooks</span><span class="pi">:</span>
@@ -1453,12 +1617,73 @@ The return value is a table with mapping of table names to external table locati
         <span class="na">table_paths</span><span class="pi">:</span>
           <span class="pi">-</span> <span class="s">my/delta/table/path</span>
 </code></pre></div></div>
+<h3 id="lakefscatalogexportunity_exporter">
+  
+  
+    <a href="#lakefscatalogexportunity_exporter" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/unity_exporter</code>
+  
+  
+</h3>
+    
 
-<p>For the table descriptor under the <code class="language-plaintext highlighter-rouge">_lakefs_tables/my/delta/table/path.yaml</code>:</p>
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
-<span class="na">name</span><span class="pi">:</span> <span class="s">myTableActualName</span>
-<span class="na">type</span><span class="pi">:</span> <span class="s">delta</span>
+<p>A package used to register exported Delta Lake tables to Databricks’ Unity catalog.</p>
+<h3 id="lakefscatalogexportunity_exporterregister_tablesaction-table_descriptors_path-delta_table_paths-databricks_client-warehouse_id">
+  
+  
+    <a href="#lakefscatalogexportunity_exporterregister_tablesaction-table_descriptors_path-delta_table_paths-databricks_client-warehouse_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/unity_exporter.register_tables(action, table_descriptors_path, delta_table_paths, databricks_client, warehouse_id)</code>
+  
+  
+</h3>
+    
+
+<p>The function used to register exported Delta Lake tables in Databricks’ Unity Catalog.
+The registration will use the following paths to register the table:
+<code class="language-plaintext highlighter-rouge">&lt;catalog&gt;.&lt;branch name&gt;.&lt;table_name&gt;</code> where the branch name will be used as the schema name.
+The return value is a table with mapping of table names to registration request status.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">action(table)</code>: The global action table</li>
+  <li><code class="language-plaintext highlighter-rouge">table_descriptors_path(string)</code>: The path under which the table descriptors of the provided <code class="language-plaintext highlighter-rouge">table_paths</code> reside.</li>
+  <li><code class="language-plaintext highlighter-rouge">delta_table_paths(table)</code>: Table names to physical paths mapping (e.g. <code class="language-plaintext highlighter-rouge">{ table1 = "s3://mybucket/mytable1", table2 = "s3://mybucket/mytable2" }</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">databricks_client(table)</code>: A Databricks client that implements <code class="language-plaintext highlighter-rouge">create_or_get_schema: function(id, catalog_name)</code> and <code class="language-plaintext highlighter-rouge">register_external_table: function(table_name, physical_path, warehouse_id, catalog_name, schema_name)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">warehouse_id(string)</code>: Databricks warehouse ID.</li>
+</ul>
+
+<p>Example:
+The following registers an exported Delta Lake table to Unity Catalog.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">databricks</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"databricks"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">unity_export</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs/catalogexport/unity_exporter"</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">delta_table_locations</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">[</span><span class="s2">"table1"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"s3://mybucket/mytable1"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="c1">-- Register the exported table in Unity Catalog:</span>
+<span class="kd">local</span> <span class="n">action_details</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="n">repository_id</span> <span class="o">=</span> <span class="s2">"my-repo"</span><span class="p">,</span>
+  <span class="n">commit_id</span> <span class="o">=</span> <span class="s2">"commit_id"</span><span class="p">,</span>
+  <span class="n">branch_id</span> <span class="o">=</span> <span class="s2">"main"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="kd">local</span> <span class="n">databricks_client</span> <span class="o">=</span> <span class="n">databricks</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"&lt;DATABRICKS_HOST&gt;"</span><span class="p">,</span> <span class="s2">"&lt;DATABRICKS_TOKEN&gt;"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">registration_statuses</span> <span class="o">=</span> <span class="n">unity_export</span><span class="p">.</span><span class="n">register_tables</span><span class="p">(</span><span class="n">action_details</span><span class="p">,</span> <span class="s2">"_lakefs_tables"</span><span class="p">,</span> <span class="n">delta_table_locations</span><span class="p">,</span> <span class="n">databricks_client</span><span class="p">,</span> <span class="s2">"&lt;WAREHOUSE_ID&gt;"</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">status</span> <span class="k">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">registration_statuses</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">"Unity catalog registration for table \"" .. t .. "</span><span class="err">\</span><span class="s2">" completed with status: "</span> <span class="o">..</span> <span class="n">status</span> <span class="o">..</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">end</span>
 </code></pre></div></div>
+
+<p>For the table descriptor under the <code class="language-plaintext highlighter-rouge">_lakefs_tables/delta-table-descriptor.yaml</code>:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">my_table_name</span>
+<span class="na">type</span><span class="pi">:</span> <span class="s">delta</span>
+<span class="na">path</span><span class="pi">:</span> <span class="s">path/to/delta/table/data</span>
+<span class="na">catalog</span><span class="pi">:</span> <span class="s">my-catalog</span>
+</code></pre></div></div>
+
+<p>For detailed step-by-step guide on how to use <code class="language-plaintext highlighter-rouge">unity_exporter.register_tables</code> as a part of a lakeFS action refer to
+the <a href="/integrations/unity_catalog.html">Unity Catalog docs</a>.</p>
 <h3 id="pathparsepath_string">
   
   
