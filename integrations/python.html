@@ -552,6 +552,8 @@
       <li><a href="#upload" id="markdown-toc-upload">Upload</a></li>
       <li><a href="#uncommitted-changes" id="markdown-toc-uncommitted-changes">Uncommitted changes</a></li>
       <li><a href="#read-data-from-main-branch" id="markdown-toc-read-data-from-main-branch">Read data from main branch</a></li>
+      <li><a href="#importing-data-into-lakefs" id="markdown-toc-importing-data-into-lakefs">Importing data into lakeFS</a></li>
+      <li><a href="#transactions" id="markdown-toc-transactions">Transactions</a></li>
       <li><a href="#python-sdk-documentation-and-api-reference" id="markdown-toc-python-sdk-documentation-and-api-reference">Python SDK documentation and API reference</a></li>
     </ol>
   </li>
@@ -1006,6 +1008,98 @@ filesystem. This is extremely useful when working with data transformation packa
 ['1', 'Alice', 'alice@example.com']
 ['2', 'Bob', 'bob@example.com']
 ['3', 'Carol', 'carol@example.com']
+</code></pre></div></div>
+<h3 id="importing-data-into-lakefs">
+  
+  
+    <a href="#importing-data-into-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Importing data into lakeFS
+  
+  
+</h3>
+    
+
+<p>The new SDK makes it much easier to import existing data from the object store into lakeFS, using the new ImportManager</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
+
+<span class="n">branch</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">"example-repo"</span><span class="p">).</span><span class="n">repo</span><span class="p">.</span><span class="n">branch</span><span class="p">(</span><span class="s">"experiment3"</span><span class="p">)</span>
+
+<span class="c1"># We can import data from multiple sources in a single import process
+# The following example initializes a new ImportManager and adds 2 source types; A prefix and an object.
+</span><span class="n">importer</span> <span class="o">=</span> <span class="n">branch</span><span class="p">.</span><span class="n">import_data</span><span class="p">(</span><span class="n">commit_message</span><span class="o">=</span><span class="s">"added public S3 data"</span><span class="p">)</span> \ 
+    <span class="p">.</span><span class="n">prefix</span><span class="p">(</span><span class="s">"s3://example-bucket1/path1/"</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="s">"datasets/path1/"</span><span class="p">)</span> \
+    <span class="p">.</span><span class="nb">object</span><span class="p">(</span><span class="s">"s3://example-bucket1/path2/imported_obj"</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="s">"datasets/path2/imported_obj"</span><span class="p">)</span>
+
+<span class="c1"># run() is a convenience method that blocks until the import is reported as done, raising an exception if it fails.
+</span><span class="n">importer</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<p>Alternatively we can call <code class="language-plaintext highlighter-rouge">start()</code> and <code class="language-plaintext highlighter-rouge">status()</code> ourselves for an async version of the above</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># Async version
+</span><span class="n">importer</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">importer</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">while</span> <span class="ow">not</span> <span class="n">status</span><span class="p">.</span><span class="n">completed</span> <span class="ow">or</span> <span class="n">status</span><span class="p">.</span><span class="n">error</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># or whatever interval you choose
+</span>        <span class="n">status</span> <span class="o">=</span> <span class="n">importer</span><span class="p">.</span><span class="n">status</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">status</span><span class="p">.</span><span class="n">error</span><span class="p">:</span>
+    <span class="c1"># handle!
+</span>    
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"imported a total of </span><span class="si">{</span><span class="n">status</span><span class="p">.</span><span class="n">ingested_objects</span><span class="si">}</span><span class="s"> objects!"</span><span class="p">)</span>
+
+</code></pre></div></div>
+<h4 id="output-14">
+  
+  
+    <a href="#output-14" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>imported a total of 25478 objects!
+</code></pre></div></div>
+<h3 id="transactions">
+  
+  
+    <a href="#transactions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Transactions
+  
+  
+</h3>
+    
+
+<p>Transactions is a new feature in the High Level SDK. It allows performing a sequence of operations on a branch as an atomic unit, similarly to how database transactions work.
+Under the hood, the transaction creates an ephemeral branch from the source branch, performs all the operation on that branch, and merges it back to the source branch once the transaction is completed.
+Transactions are currently supported as a context manager only.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
+
+<span class="n">branch</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">"example-repo"</span><span class="p">).</span><span class="n">repo</span><span class="p">.</span><span class="n">branch</span><span class="p">(</span><span class="s">"experiment3"</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">branch</span><span class="p">.</span><span class="n">transact</span><span class="p">(</span><span class="n">commit_message</span><span class="o">=</span><span class="s">"my transaction"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">tx</span><span class="p">.</span><span class="n">objects</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"prefix_to_delete/"</span><span class="p">):</span>  <span class="c1"># Delete some objects
+</span>        <span class="n">obj</span><span class="p">.</span><span class="n">delete</span><span class="p">()</span>
+
+    <span class="c1"># Create new object
+</span>    <span class="n">tx</span><span class="p">.</span><span class="nb">object</span><span class="p">(</span><span class="s">"new_object"</span><span class="p">).</span><span class="n">upload</span><span class="p">(</span><span class="s">"new object data"</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">branch</span><span class="p">.</span><span class="n">objects</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">"prefix_to_delete/"</span><span class="p">))))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">branch</span><span class="p">.</span><span class="nb">object</span><span class="p">(</span><span class="s">"new_object"</span><span class="p">).</span><span class="n">exists</span><span class="p">())</span>
+</code></pre></div></div>
+<h4 id="output-15">
+  
+  
+    <a href="#output-15" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Output
+  
+  
+</h4>
+    
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0
+True
 </code></pre></div></div>
 <h3 id="python-sdk-documentation-and-api-reference">
   
