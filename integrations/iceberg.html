@@ -661,7 +661,7 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 
 <p>To create a table on your main branch, use the following syntax:</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span> <span class="p">(</span><span class="n">id</span> <span class="nb">int</span><span class="p">,</span> <span class="k">data</span> <span class="n">string</span><span class="p">);</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="p">(</span><span class="n">id</span> <span class="nb">int</span><span class="p">,</span> <span class="k">data</span> <span class="n">string</span><span class="p">);</span>
 </code></pre></div></div>
 <h3 id="insert-data-into-the-table">
   
@@ -672,8 +672,8 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 </h3>
     
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'data1'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'data2'</span><span class="p">);</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'data1'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'data2'</span><span class="p">);</span>
 </code></pre></div></div>
 <h3 id="create-a-branch">
   
@@ -704,7 +704,7 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 
 <p>We can now make changes on the branch:</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'data3'</span><span class="p">);</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'data3'</span><span class="p">);</span>
 </code></pre></div></div>
 <h3 id="query-the-table">
   
@@ -717,7 +717,7 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 
 <p>If we query the table on the branch, we will see the data we inserted:</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
 </code></pre></div></div>
 
 <p>Results in:</p>
@@ -732,7 +732,7 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 
 <p>However, if we query the table on the main branch, we will not see the new changes:</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
 </code></pre></div></div>
 
 <p>Results in:</p>
