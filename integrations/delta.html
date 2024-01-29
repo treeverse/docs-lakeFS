@@ -553,7 +553,6 @@
 <ol id="markdown-toc">
   <li><a href="#using-delta-lake-with-lakefs-from-apache-spark" id="markdown-toc-using-delta-lake-with-lakefs-from-apache-spark">Using Delta Lake with lakeFS from Apache Spark</a></li>
   <li><a href="#using-delta-lake-with-lakefs-from-python" id="markdown-toc-using-delta-lake-with-lakefs-from-python">Using Delta Lake with lakeFS from Python</a></li>
-  <li><a href="#viewing-delta-lake-table-changes-in-lakefs-beta" id="markdown-toc-viewing-delta-lake-table-changes-in-lakefs-beta">Viewing Delta Lake table changes in lakeFS <sup>BETA</sup></a></li>
   <li><a href="#best-practices" id="markdown-toc-best-practices">Best Practices</a></li>
   <li><a href="#further-reading" id="markdown-toc-further-reading">Further Reading</a></li>
 </ol>
@@ -607,46 +606,6 @@
 </code></pre></div></div>
 
 <p>To see the integration in action see <a href="https://github.com/treeverse/lakeFS-samples/blob/main/00_notebooks/delta-lake-python.ipynb">this notebook</a> in the <a href="https://github.com/treeverse/lakeFS-samples/">lakeFS Samples Repository</a>.</p>
-<h2 id="viewing-delta-lake-table-changes-in-lakefs-beta">
-  
-  
-    <a href="#viewing-delta-lake-table-changes-in-lakefs-beta" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Viewing Delta Lake table changes in lakeFS <sup>BETA</sup>
-  
-  
-</h2>
-    
-
-<p>Using lakeFS you can</p>
-<ul>
-  <li>Compare different versions of Delta Lake tables</li>
-  <li>Get a detailed view of all Delta Lake table operations performed since the tables diverged.</li>
-</ul>
-
-<p>For example, comparing branches <code class="language-plaintext highlighter-rouge">dev</code> and <code class="language-plaintext highlighter-rouge">main</code>, we can see that the <em>movies</em> table has changed on <code class="language-plaintext highlighter-rouge">dev</code> since the branches diverged.
-Expanding the delete operation, we learn that all movies with a rating &lt; 4 were deleted from the table on the <code class="language-plaintext highlighter-rouge">dev</code> branch.</p>
-
-<p><img src="/assets/img/delta-diff-table-icon.png" alt="movies_table_changed.png" />
-<img src="/assets/img/delta-diff-operations.png" alt="movies_table_operations.png" /></p>
-
-<p class="note"><strong>Note:</strong>
-The diff is available as long as the table history in Delta is retained (<a href="https://docs.databricks.com/delta/history.html#configure-data-retention-for-time-travel">30 days by default</a>). A delta lake table history is derived from the delta log JSON files.</p>
-<h3 id="installing-the-delta-lake-diff-plugin">
-  
-  
-    <a href="#installing-the-delta-lake-diff-plugin" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installing the Delta Lake diff plugin
-  
-  
-</h3>
-    
-
-<p>To enable the Delta Lake diff feature, you need to install a plugin on the lakeFS server. You will find the plugin binary in the
-<a href="https://github.com/treeverse/lakeFS/releases/latest">release</a> tarball (versions &gt;= 0.97.3).
-Rename the <code class="language-plaintext highlighter-rouge">delta_diff</code> binary to <code class="language-plaintext highlighter-rouge">delta</code> and put it under <code class="language-plaintext highlighter-rouge">~/.lakefs/plugins/diff</code> on the machine where lakeFS is running.</p>
-
-<p>You can customize the location of the Delta Lake diff plugin by changing the <code class="language-plaintext highlighter-rouge">diff.delta.plugin</code> and 
-<code class="language-plaintext highlighter-rouge">plugin.properties.&lt;plugin name&gt;.path</code> configurations in the <a href="/reference/configuration.html#plugins"><code class="language-plaintext highlighter-rouge">.lakefs.yaml</code></a> file.</p>
-
-<p><strong>Notice</strong>: If you’re using the lakeFS <a href="/howto/deploy/onprem.html#docker">docker image</a>, the plugin is installed by default.</p>
 <h2 id="best-practices">
   
   
