@@ -538,9 +538,11 @@
   <p>Auditing is only available for <a href="/understand/lakefs-cloud.html">lakeFS Cloud</a>.</p>
 </blockquote>
 
-<p>The lakeFS audit log allows you to view all relevant user action information in a clear and organized table, including when the action was performed, by whom, and what it was they did.</p>
+<blockquote class="warning">
+  <p>Please note, as of Jan 2024, the queryable interface within the lakeFS Cloud UI has been removed in favor of direct access to lakeFS audit logs. This document now describes how to set up and query this information using <a href="https://aws.amazon.com/glue/">AWS Glue</a> as a reference.</p>
+</blockquote>
 
-<p><img src="/assets/img/audit-log.png" alt="audit log" /></p>
+<p>The lakeFS audit log allows you to view all relevant user action information in a clear and organized table, including when the action was performed, by whom, and what it was they did.</p>
 
 <p>This can be useful for several purposes, including:</p>
 
@@ -552,51 +554,331 @@
     <p>Troubleshooting - If something changes on your underlying object store that you weren’t expecting, such as a big file suddenly breaking into thousands of smaller files, you can use the audit log to find out what action led to this change.</p>
   </li>
 </ol>
-<h2 id="audit-fields">
+<h2 id="setting-up-access-to-audit-logs-on-aws-s3">
   
   
-    <a href="#audit-fields" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Audit Fields
+    <a href="#setting-up-access-to-audit-logs-on-aws-s3" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setting up access to Audit Logs on AWS S3
   
   
 </h2>
     
 
-<p>The audit log includes the following fields:</p>
+<p>The access to the Audit Logs is done via <a href="https://aws.amazon.com/s3/features/access-points/">AWS S3 Access Point</a>.</p>
 
-<ul>
-  <li>Time - Time of action</li>
-  <li>User - Name of the user who performed the action</li>
-  <li>Region - Region of the lakeFS installation where the action was performed</li>
-  <li>Status - Status code returned for the action
-    <ul>
-      <li>2xx - Successful</li>
-      <li>3xx - Redirection</li>
-      <li>4xx - Client error</li>
-      <li>5xx - Server error</li>
-    </ul>
+<p>There are different ways to interact with an access point (see <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html">Using access points in AWS</a>).</p>
+
+<p>The initial setup:</p>
+
+<ol>
+  <li>Take note of the IAM Role ARN that will be used to access the data. This should be the user or role used by e.g. Athena.</li>
+  <li><a href="mailto:support@treeverse.io?subject=ARN to use for audit logs">Reach out to customer success</a> and provide this ARN. Once receiving the ARN role, an access point will be created and you should get in response the following details:
+    <ol>
+      <li>S3 Bucket (e.g. <code class="language-plaintext highlighter-rouge">arn:aws:s3:::lakefs-audit-logs-us-east-1-production</code>)</li>
+      <li>S3 URI to an access point (e.g. <code class="language-plaintext highlighter-rouge">s3://arn:aws:s3:us-east-1:&lt;treeverse-id&gt;:accesspoint/lakefs-logs-&lt;organization&gt;</code>)</li>
+      <li>Access Point alias. You can use this alias instead of the bucket name or Access Point ARN to access data through the Access Point. (e.g. <code class="language-plaintext highlighter-rouge">lakefs-logs-&lt;generated&gt;-s3alias</code>)</li>
+    </ol>
   </li>
-  <li>Action - Specific lakeFS action (such as <em>Login</em>, <em>Commit</em>, <em>ListRepositories</em>, <em>CreateUser</em>, etc…)</li>
-  <li>Resource - Full URL of the command (e.g for a commit on branch <code class="language-plaintext highlighter-rouge">main</code> we would see the action <em>Commit</em> and the resource <code class="language-plaintext highlighter-rouge">/api/v1/repositories/e2e-monitoring/branches/main/commits</code>)</li>
-</ul>
-<h2 id="filtering">
+  <li>Update your IAM Role policy and trust policy if required</li>
+</ol>
+
+<p>A minimal example for IAM policy with 2 lakeFS installations in 2 regions (<code class="language-plaintext highlighter-rouge">us-east-1</code>, <code class="language-plaintext highlighter-rouge">us-west-2</code>):</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"s3:ListBucket"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-audit-logs-us-east-1-production"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-audit-logs-us-east-1-production/*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-logs-&lt;generated&gt;-s3alias/*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:us-east-1:&lt;treeverse-id&gt;:accesspoint/lakefs-logs-&lt;organization&gt;"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:us-east-1:&lt;treeverse-id&gt;:accesspoint/lakefs-logs-&lt;organization&gt;/*"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"StringLike"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"s3:prefix"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                        </span><span class="s2">"etl/v1/data/region=&lt;region_a&gt;/organization=org-&lt;organization&gt;/*"</span><span class="p">,</span><span class="w">
+                        </span><span class="s2">"etl/v1/data/region=&lt;region_b&gt;/organization=org-&lt;organization&gt;/*"</span><span class="w">
+                    </span><span class="p">]</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"s3:GetObjectVersion"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-audit-logs-us-east-1-production"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-audit-logs-us-east-1-production/etl/v1/data/region=&lt;region_a&gt;/organization=org-&lt;organization&gt;/*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-audit-logs-us-east-1-production/etl/v1/data/region=&lt;region_b&gt;/organization=org-&lt;organization&gt;/*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:::lakefs-logs-&lt;generated&gt;-s3alias/*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:us-east-1:&lt;treeverse-id&gt;:accesspoint/lakefs-logs-&lt;organization&gt;/object/etl/v1/data/region=&lt;region_a&gt;/organization=org-&lt;organization&gt;/*"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"arn:aws:s3:us-east-1:&lt;treeverse-id&gt;:accesspoint/lakefs-logs-&lt;organization&gt;/object/etl/v1/data/region=&lt;region_b&gt;/organization=org-&lt;organization&gt;/*"</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"kms:Decrypt"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"arn:aws:kms:us-east-1:&lt;treeverse-id&gt;:key/&lt;encryption-key-id&gt;"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Trust Policy example that allows anyone in your account to assume the role above:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:iam::&lt;YOUR_ACCOUNT_ID&gt;:root"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sts:AssumeRole"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Authentication is done by assuming an IAM Role:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Assume role use AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN:</span>
+aws sts assume-role <span class="nt">--role-arn</span> arn:aws:iam::&lt;your-aws-account&gt;:role/&lt;reader-role&gt; <span class="nt">--role-session-name</span> &lt;name&gt; 
+
+<span class="c"># verify role assumed</span>
+aws sts get-caller-identity 
+
+<span class="c"># list objects (can be used with --recursive) with access point ARN</span>
+aws s3 <span class="nb">ls </span>arn:aws:s3:us-east-1:&lt;treeverse-id&gt;:accesspoint/lakefs-logs-&lt;organization&gt;/etl/v1/data/region<span class="o">=</span>&lt;region&gt;/organization<span class="o">=</span>org-&lt;organization&gt;/
+
+<span class="c"># get object locally via s3 access point alias </span>
+aws s3api get-object <span class="nt">--bucket</span> lakefs-logs-&lt;generated&gt;-s3alias <span class="nt">--key</span> lakefs-audit-logs-us-east-1-production/etl/v1/data/region<span class="o">=</span>&lt;region&gt;/organization<span class="o">=</span>org-&lt;organization&gt;/year<span class="o">=</span>&lt;YY&gt;/month<span class="o">=</span>&lt;MM&gt;/day<span class="o">=</span>&lt;DD&gt;/hour<span class="o">=</span>&lt;HH&gt;/&lt;file&gt;-snappy.parquet sample.parquet 
+</code></pre></div></div>
+<h2 id="data-layout">
   
   
-    <a href="#filtering" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Filtering
+    <a href="#data-layout" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Data layout
   
   
 </h2>
     
 
-<p>Filtering is available using the filter bar. The filter bar works with a simple query language.</p>
+<blockquote class="note">
+  <p>The bucket name is important when creating the IAM policy but, the Access Point ARN and Alias will be the ones that are used to access the data (i.e AWS CLI, Spark etc).</p>
+</blockquote>
 
-<p>The table fields can be filtered by the following operators</p>
+<p><strong>Bucket Name:</strong> <code class="language-plaintext highlighter-rouge">lakefs-audit-logs-us-east-1-production</code></p>
+
+<p><strong>Root prefix:</strong> <code class="language-plaintext highlighter-rouge">etl/v1/data/region=&lt;region&gt;/organization=org-&lt;organization-name&gt;/</code></p>
+
+<p><strong>Files Path pattern:</strong> All the audit logs files are in parquet format and their pattern is: <code class="language-plaintext highlighter-rouge">etl/v1/data/region=&lt;region&gt;/organization=org-&lt;organization-name&gt;/year=&lt;YY&gt;/month=&lt;MM&gt;/day=&lt;DD&gt;/hour=&lt;HH&gt;/*-snappy.parquet</code></p>
+<h3 id="path-values">
+  
+  
+    <a href="#path-values" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Path Values
+  
+  
+</h3>
+    
+
+<p><strong>region:</strong> lakeFS installation region (e.g the region in lakeFS URL: https://<organization-name>.<region>.lakefscloud.io/)</region></organization-name></p>
+
+<p><strong>organization:</strong> Found in the lakeFS URL <code class="language-plaintext highlighter-rouge">https://&lt;organization-name&gt;.&lt;region&gt;.lakefscloud.io/</code>. The value in the S3 path must be prefixed with <code class="language-plaintext highlighter-rouge">org-&lt;organization-name&gt;</code></p>
+<h3 id="partitions">
+  
+  
+    <a href="#partitions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Partitions
+  
+  
+</h3>
+    
+
 <ul>
-  <li>User  - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
-  <li>Region - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
-  <li>Status(Number) - <code class="language-plaintext highlighter-rouge">&lt;</code>,<code class="language-plaintext highlighter-rouge">&gt;</code>,<code class="language-plaintext highlighter-rouge">&lt;=</code>,<code class="language-plaintext highlighter-rouge">&gt;=</code>,<code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
-  <li>Action - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
-  <li>Resource - <code class="language-plaintext highlighter-rouge">=</code>,<code class="language-plaintext highlighter-rouge">!=</code></li>
+  <li>year</li>
+  <li>month</li>
+  <li>day</li>
+  <li>hour</li>
 </ul>
+<h3 id="example">
+  
+  
+    <a href="#example" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example
+  
+  
+</h3>
+    
+
+<p>As an example paths for “Acme” organization with 2 lakeFS installations:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code># ACME in us-east-1 
+etl/v1/data/region=us-east-1/organization=org-acme/year=2024/month=02/day=12/hour=13/log_abc-snappy.parquet
+
+# ACME in us-west-2 
+etl/v1/data/region=us-west-2/organization=org-acme/year=2024/month=02/day=12/hour=13/log_xyz-snappy.parquet
+</code></pre></div></div>
+<h2 id="schema">
+  
+  
+    <a href="#schema" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Schema
+  
+  
+</h2>
+    
+
+<p>The files are in parquet format and can be accessed directly from Spark or any client that can read parquet files.
+Using Spark’s <a href="https://spark.apache.org/docs/3.1.1/api/python/reference/api/pyspark.sql.DataFrame.printSchema.html"><code class="language-plaintext highlighter-rouge">printSchema()</code></a> we can inspect the values, that’s the latest schema with comments on important columns:</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>column</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_user</code></td>
+      <td>string</td>
+      <td>the internal user ID for the user making the request. if using an external IdP (i.e SSO, Microsoft Entra, etc) it will be the UID represented by the IdP. (see below an  example how to extract the info of external IDs in python)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_repository</code></td>
+      <td>string</td>
+      <td>the repository ID relevant for this request. Currently only returned for s3_gateway requests</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_ref</code></td>
+      <td>string</td>
+      <td>the reference ID (tag, branch, …) relevant for this request. Currently only returned for s3_gateway requests</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_status_code</code></td>
+      <td>int</td>
+      <td>HTTP status code returned for this request</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_service_name</code></td>
+      <td>string</td>
+      <td>Service name for the request. Could be either “rest_api” or “s3_gateway”</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_request_id</code></td>
+      <td>string</td>
+      <td>Unique ID representing this request</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_path</code></td>
+      <td>string</td>
+      <td>HTTP path used for this request</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_operation_id</code></td>
+      <td>string</td>
+      <td>Logical operation ID for this request. E.g. <code class="language-plaintext highlighter-rouge">list_objects</code>, <code class="language-plaintext highlighter-rouge">delete_repository</code>, …</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_method</code></td>
+      <td>string</td>
+      <td>HTTP method for the request</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">data_time</code></td>
+      <td>string</td>
+      <td>datetime representing the start time of this request, in <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> format</td>
+    </tr>
+  </tbody>
+</table></div>
+<h2 id="idp-users-map-user-ids-from-audit-logs-to-an-email-in-lakefs">
+  
+  
+    <a href="#idp-users-map-user-ids-from-audit-logs-to-an-email-in-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> IdP users: map user IDs from audit logs to an email in lakeFS
+  
+  
+</h2>
+    
+
+<p>The <code class="language-plaintext highlighter-rouge">data_user</code> column in each log represents the user id that performed it.</p>
+
+<ul>
+  <li>It might be empty in cases where authentication is not required (e.g login attempt).</li>
+  <li>If the user is an API user created internally in lakeFS that id is also the name it was given.</li>
+  <li><code class="language-plaintext highlighter-rouge">data_user</code> might contain an ID to an external IdP (i.e. SSO system), usually it is not human friendly, we can correlate the ID to a lakeFS email used, see an example using the <a href="/integrations/python.html#using-the-lakefs-sdk">Python lakefs-sdk</a>.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+
+<span class="c1"># Configure HTTP basic authorization: basic_auth
+</span><span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_sdk</span><span class="p">.</span><span class="n">Configuration</span><span class="p">(</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="s">"https://&lt;org&gt;.&lt;region&gt;.lakefscloud.io/api/v1"</span><span class="p">,</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="s">'AKIA...'</span><span class="p">,</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="s">'...'</span>
+<span class="p">)</span>
+
+<span class="c1"># Print all user email and uid in lakeFS 
+# the uid is equal to the user id in the audit logs.
+</span><span class="k">with</span> <span class="n">lakefs_sdk</span><span class="p">.</span><span class="n">ApiClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span> <span class="k">as</span> <span class="n">api_client</span><span class="p">:</span>
+    <span class="n">auth_api</span> <span class="o">=</span> <span class="n">lakefs_sdk</span><span class="p">.</span><span class="n">AuthApi</span><span class="p">(</span><span class="n">api_client</span><span class="p">)</span>
+    <span class="n">has_more</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">next_offset</span> <span class="o">=</span> <span class="s">''</span>
+    <span class="n">page_size</span> <span class="o">=</span> <span class="mi">100</span> 
+    <span class="k">while</span> <span class="n">has_more</span><span class="p">:</span> 
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">auth_api</span><span class="p">.</span><span class="n">list_users</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s">''</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">next_offset</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="n">page_size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">u</span><span class="p">.</span><span class="n">email</span>
+            <span class="n">uid</span> <span class="o">=</span> <span class="n">u</span><span class="p">.</span><span class="nb">id</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'Email: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s">, UID: </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+
+        <span class="n">has_more</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="n">pagination</span><span class="p">.</span><span class="n">has_more</span> 
+        <span class="n">next_offset</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="n">pagination</span><span class="p">.</span><span class="n">next_offset</span>
+</code></pre></div></div>
+<h2 id="example-glue-notebook-with-spark">
+  
+  
+    <a href="#example-glue-notebook-with-spark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example: Glue Notebook with Spark
+  
+  
+</h2>
+    
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">awsglue.transforms</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyspark.context</span> <span class="kn">import</span> <span class="n">SparkContext</span>
+<span class="kn">from</span> <span class="nn">awsglue.context</span> <span class="kn">import</span> <span class="n">GlueContext</span>
+<span class="kn">from</span> <span class="nn">awsglue.job</span> <span class="kn">import</span> <span class="n">Job</span>
+
+<span class="n">sc</span> <span class="o">=</span> <span class="n">SparkContext</span><span class="p">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="n">glueContext</span> <span class="o">=</span> <span class="n">GlueContext</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">glueContext</span><span class="p">.</span><span class="n">spark_session</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">glueContext</span><span class="p">)</span>
+
+<span class="c1"># connect to s3 access point 
+</span><span class="n">alias</span> <span class="o">=</span> <span class="s">'s3://&lt;bucket-alias-name&gt;'</span>
+<span class="n">s3_dyf</span> <span class="o">=</span> <span class="n">glueContext</span><span class="p">.</span><span class="n">create_dynamic_frame</span><span class="p">.</span><span class="n">from_options</span><span class="p">(</span>
+    <span class="n">format_options</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">connection_type</span><span class="o">=</span><span class="s">"s3"</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s">"parquet"</span><span class="p">,</span>
+    <span class="n">connection_options</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">"paths"</span><span class="p">:</span> <span class="p">[</span><span class="n">alias</span> <span class="o">+</span> <span class="s">"/etl/v1/data/region=&lt;region&gt;/organization=org-&lt;org&gt;/year=&lt;YY&gt;/month=&lt;MM&gt;/day=&lt;DD&gt;/hour=&lt;HH&gt;/"</span><span class="p">],</span>
+        <span class="s">"recurse"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">transformation_ctx</span><span class="o">=</span><span class="s">"sample-ctx"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">s3_dyf</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">s3_dyf</span><span class="p">.</span><span class="n">printSchema</span><span class="p">()</span>
+</code></pre></div></div>
 
                 
 
