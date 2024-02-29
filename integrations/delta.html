@@ -536,10 +536,10 @@
 
 <p><a href="https://delta.io/">Delta Lake</a> Delta Lake is an open-source storage framework designed to improve performance and provide transactional guarantees to data lake tables.</p>
 
-<p>Because lakeFS is format-agnostic, you can save data in Delta format within a lakeFS repository and benefit from the advantages of both technologies.  Specifically:</p>
+<p>Because lakeFS is format-agnostic, you can save data in Delta format within a lakeFS repository and benefit from the advantages of both technologies. Specifically:</p>
 
 <ol>
-  <li>ACID operations can span across many Delta tables.</li>
+  <li>ACID operations can span across multiple Delta tables.</li>
   <li><a href="/understand/use_cases/cicd_for_data.html#using-hooks-as-data-quality-gates">CI/CD hooks</a> can validate Delta table contents, schema, or even referential integrity.</li>
   <li>lakeFS supports zero-copy branching for quick experimentation with full isolation.</li>
 </ol>
@@ -555,13 +555,39 @@
     
 
 <ol id="markdown-toc">
+  <li><a href="#delta-lake-tables-from-the-lakefs-perspective" id="markdown-toc-delta-lake-tables-from-the-lakefs-perspective">Delta Lake Tables from the lakeFS Perspective</a></li>
   <li><a href="#using-delta-lake-with-lakefs-from-apache-spark" id="markdown-toc-using-delta-lake-with-lakefs-from-apache-spark">Using Delta Lake with lakeFS from Apache Spark</a></li>
   <li><a href="#using-delta-lake-with-lakefs-from-python" id="markdown-toc-using-delta-lake-with-lakefs-from-python">Using Delta Lake with lakeFS from Python</a></li>
+  <li><a href="#exporting-delta-lake-tables-from-lakefs-into-unity-catalog" id="markdown-toc-exporting-delta-lake-tables-from-lakefs-into-unity-catalog">Exporting Delta Lake tables from lakeFS into Unity Catalog</a></li>
+  <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
   <li><a href="#best-practices" id="markdown-toc-best-practices">Best Practices</a></li>
   <li><a href="#further-reading" id="markdown-toc-further-reading">Further Reading</a></li>
 </ol>
 
 </div>
+<h2 id="delta-lake-tables-from-the-lakefs-perspective">
+  
+  
+    <a href="#delta-lake-tables-from-the-lakefs-perspective" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Delta Lake Tables from the lakeFS Perspective
+  
+  
+</h2>
+    
+
+<p>lakeFS is a data versioning tool, functioning at the <strong>object</strong> level. This implies that, by default, lakeFS remains agnostic 
+to whether the objects within a Delta table location represent a table, table metadata, or data. As per the Delta Lake <a href="https://github.com/delta-io/delta/blob/master/PROTOCOL.md">protocol</a>, 
+any modification to a table—whether it involves adding data or altering table metadata—results in the creation of a new object 
+in the table’s <a href="https://www.databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">transaction log</a>. 
+Typically, residing under the <code class="language-plaintext highlighter-rouge">_delta_log</code> path, relative to the root of the table’s directory. This new object has an incremented version compared to its predecessor.</p>
+
+<p>Consequently, when making changes to a Delta table within the lakeFS environment, these changes are reflected as changes 
+to objects within the table location. For instance, inserting a record into a table named “my-table,” which is partitioned 
+by ‘category’ and ‘country,’ is represented in lakeFS as added objects within the table prefix (i.e., the table data) and the table transaction log.
+<img src="/assets/img/delta-record-addition.png" alt="Record addition" /></p>
+
+<p>Similarly, when performing a metadata operation such as renaming a table column, new objects are appended to the table transaction log, 
+indicating the schema change.
+<img src="/assets/img/delta-schema-change.png" alt="Record addition" /></p>
 <h2 id="using-delta-lake-with-lakefs-from-apache-spark">
   
   
@@ -610,6 +636,52 @@
 </code></pre></div></div>
 
 <p>To see the integration in action see <a href="https://github.com/treeverse/lakeFS-samples/blob/main/00_notebooks/delta-lake-python.ipynb">this notebook</a> in the <a href="https://github.com/treeverse/lakeFS-samples/">lakeFS Samples Repository</a>.</p>
+<h2 id="exporting-delta-lake-tables-from-lakefs-into-unity-catalog">
+  
+  
+    <a href="#exporting-delta-lake-tables-from-lakefs-into-unity-catalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Exporting Delta Lake tables from lakeFS into Unity Catalog
+  
+  
+</h2>
+    
+
+<p>This option is for users who are managing Delta Lake tables with lakeFS and access them through Databricks <a href="https://www.databricks.com/product/unity-catalog">Unity Catalog</a>. lakeFS offers 
+a <a href="/howto/catalog_exports.html">Data Catalog Export</a> functionality that provides read-only access to your Delta tables from within Unity catalog. Using the data catalog exporters,<br />
+you can work on Delta tables in isolation and easily explore them within the Unity Catalog.</p>
+
+<p>Once exported, you can query the versioned table data with:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">my_catalog</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">my_delta_table</span>
+</code></pre></div></div>
+<p>Here, ‘main’ is the name of the lakeFS branch from which the delta table was exported.</p>
+
+<p>To enable Delta table exports to Unity catalog use the Unity <a href="/integrations/unity-catalog.html">catalog integration guide</a>.</p>
+<h2 id="limitations">
+  
+  
+    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+  
+  
+</h2>
+    
+<h3 class="no_toc" id="multi-writer-support-in-lakefs-for-delta-lake-tables">
+  
+  
+    <a href="#multi-writer-support-in-lakefs-for-delta-lake-tables" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Multi-Writer Support in lakeFS for Delta Lake Tables
+  
+  
+</h3>
+    
+
+<p>lakeFS currently supports a single writer for Delta Lake tables. Attempting to utilize multiple writers for writing to a Delta table may result in two types of issues:</p>
+<ol>
+  <li>Merge Conflicts: These conflicts arise when multiple writers modify a Delta table on different branches, and an attempt is made to merge these branches.
+<img src="/assets/img/delta-lake/merge-conflict.png" alt="Merge conflicts" /></li>
+  <li>Concurrent File Overwrite: This issue occurs when multiple writers concurrently modify a Delta table on the same branch.
+<img src="/assets/img/delta-lake/concurrent-file-overwrite.png" alt="Concurrent file overwrite" /></li>
+</ol>
+
+<p class="note">Note: lakeFS currently lacks its own implementation for a LogStore, and the default Log store used does not control concurrency.</p>
+<p>To address these limitations, consider following <a href="#use-lakefs-branches-and-merges-to-support-multi-writers">best practices for implementing multi-writer support</a>.</p>
 <h2 id="best-practices">
   
   
@@ -618,8 +690,45 @@
   
 </h2>
     
+<h3 id="implementing-multi-writer-support-through-lakefs-branches-and-merges">
+  
+  
+    <a href="#implementing-multi-writer-support-through-lakefs-branches-and-merges" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Implementing Multi-Writer Support through lakeFS Branches and Merges
+  
+  
+</h3>
+    
 
-<p>Production workflows should ideally write to a single lakeFS branch that could then be safely merged into <code class="language-plaintext highlighter-rouge">main</code>. This is because the <a href="https://databricks.com/blog/2019/08/21/diving-into-delta-lake-unpacking-the-transaction-log.html">Delta log</a> is an auto-generated sequence of text files used to keep track of transactions on a Delta table sequentially. Writing to one Delta table from multiple lakeFS branches is possible, but note that it would result in conflicts if later attempting to merge one branch into the other.</p>
+<p>To achieve safe multi-writes to a Delta Lake table on lakeFS, we recommend following these best practices:</p>
+<ol>
+  <li><strong>Isolate Changes:</strong> Make modifications to your table in isolation. Each set of changes should be associated with a dedicated lakeFS branch, branching off from the main branch.</li>
+  <li><strong>Merge Atomically:</strong> After making changes in isolation, try to merge them back into the main branch. This approach guarantees that the integration of changes is cohesive.</li>
+</ol>
+
+<p>The workflow involves:</p>
+<ul>
+  <li>Creating a new lakeFS branch from the main branch for any table change.</li>
+  <li>Making modifications in isolation.</li>
+  <li>Attempting to merge the changes back into the main branch.</li>
+  <li>Iterating the process in case of a merge failure due to conflicts.</li>
+</ul>
+
+<p>The diagram below provides a visual representation of how branches and merges can be utilized to manage concurrency effectively:
+<img src="/assets/img/delta-lake/multi-writers-with-lakefs-branches-merges.png" alt="Multi writers workaround" /></p>
+<h3 id="follow-vacuum-by-garbage-collection">
+  
+  
+    <a href="#follow-vacuum-by-garbage-collection" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Follow Vacuum by Garbage Collection
+  
+  
+</h3>
+    
+
+<p>To delete unused files from a table directory while working with Delta Lake over lakeFS you need to first use Delta lake
+<a href="https://docs.databricks.com/en/sql/language-manual/delta-vacuum.html">Vacuum</a> to soft-delete the files, and then use
+<a href="../howto/garbage-collection">lakeFS Garbage Collection</a> to hard-delete them from the storage.</p>
+
+<p class="note"><strong>Note:</strong> lakeFS enables you to recover from undesired vacuum runs by reverting the changes done by a vacuum run before running Garbage Collection.</p>
 <h3 id="when-running-lakefs-inside-your-vpc-on-aws">
   
   
