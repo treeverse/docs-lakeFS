@@ -1225,8 +1225,37 @@ Returns the table’s creation status.</p>
     
 
 <p>Returns a representation of a Delta Lake table under the given repository, reference, and prefix.
-The format of the response is a table <code class="language-plaintext highlighter-rouge">{number, {string}}</code> where <code class="language-plaintext highlighter-rouge">number</code> is a version in the Delta Log, and the mapped 
-<code class="language-plaintext highlighter-rouge">{string}</code> table (list) contains JSON strings of the different Delta Lake log operations listed in the mapped version entry.</p>
+The format of the response is two tables:</p>
+<ol>
+  <li>the first is a table of the format <code class="language-plaintext highlighter-rouge">{number, {string}}</code> where <code class="language-plaintext highlighter-rouge">number</code> is a version in the Delta Log, and the mapped <code class="language-plaintext highlighter-rouge">{string}</code> 
+array contains JSON strings of the different Delta Lake log operations listed in the mapped version entry. e.g.:
+    <div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+  <span class="mi">0</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s2">"{\"</span><span class="n">commitInfo</span><span class="err">\</span><span class="s2">":...}"</span><span class="p">,</span>
+ <span class="s2">"{\"</span><span class="n">add</span><span class="err">\</span><span class="s2">": ...}"</span><span class="p">,</span>
+ <span class="s2">"{\"</span><span class="n">remove</span><span class="err">\</span><span class="s2">": ...}"</span>
+  <span class="p">},</span>
+  <span class="mi">1</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s2">"{\"</span><span class="n">commitInfo</span><span class="err">\</span><span class="s2">":...}"</span><span class="p">,</span>
+ <span class="s2">"{\"</span><span class="n">add</span><span class="err">\</span><span class="s2">": ...}"</span><span class="p">,</span>
+ <span class="s2">"{\"</span><span class="n">remove</span><span class="err">\</span><span class="s2">": ...}"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>the second is a table of the metadata of the current table snapshot. The metadata table can be used to initialize the Delta Lake table in an external Catalog.<br />
+It consists of the following fields:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">id</code>: The table’s ID</li>
+      <li><code class="language-plaintext highlighter-rouge">name</code>: The table’s name</li>
+      <li><code class="language-plaintext highlighter-rouge">description</code>: The table’s description</li>
+      <li><code class="language-plaintext highlighter-rouge">schema_string</code>: The table’s schema string</li>
+      <li><code class="language-plaintext highlighter-rouge">partition_columns</code>: The table’s partition columns</li>
+      <li><code class="language-plaintext highlighter-rouge">configuration</code>: The table’s configuration</li>
+      <li><code class="language-plaintext highlighter-rouge">created_time</code>: The table’s creation time</li>
+    </ul>
+  </li>
+</ol>
 <h3 id="gcloud">
   
   
