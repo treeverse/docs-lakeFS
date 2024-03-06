@@ -1415,7 +1415,9 @@ If delimiter is empty, will default to a recursive listing. Otherwise, common pr
     
 
 <p>The function used to export Delta Lake tables.
-The return value is a table with mapping of table names to external table location (from which it is possible to query the data).</p>
+The return value is a table with mapping of table names to external table location (from which it is possible to query the data) and latest Delta table version’s metadata.<br />
+The response is of the form: 
+<code class="language-plaintext highlighter-rouge">{&lt;table_name&gt; = {path = "s3://mybucket/mypath/mytable", metadata = {id = "table_id", name = "table_name", ...}}}</code>.</p>
 
 <p>Parameters:</p>
 
@@ -1441,14 +1443,23 @@ The return value is a table with mapping of table names to external table locati
         <span class="s">local aws = require("aws")</span>
         <span class="s">local formats = require("formats")</span>
         <span class="s">local delta_exporter = require("lakefs/catalogexport/delta_exporter")</span>
+        <span class="s">local json = require("encoding/json")</span>
 
         <span class="s">local table_descriptors_path = "_lakefs_tables"</span>
         <span class="s">local sc = aws.s3_client(args.aws.access_key_id, args.aws.secret_access_key, args.aws.region)</span>
         <span class="s">local delta_client = formats.delta_client(args.lakefs.access_key_id, args.lakefs.secret_access_key, args.aws.region)</span>
-        <span class="s">local delta_table_locations = delta_exporter.export_delta_log(action, args.table_defs, sc.put_object, delta_client, table_descriptors_path)</span>
+        <span class="s">local delta_table_details = delta_export.export_delta_log(action, args.table_defs, sc.put_object, delta_client, table_descriptors_path)</span>
         
-        <span class="s">for t, loc in pairs(delta_table_locations) do</span>
-          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. loc .. "\n")</span>
+        <span class="s">for t, details in pairs(delta_table_details) do</span>
+          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. details["path"] .. "\n")</span>
+          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s metadata:\n")</span>
+          <span class="s">for k, v in pairs(details["metadata"]) do</span>
+            <span class="s">if type(v) == "table" then</span>
+              <span class="s">print("\t" .. k .. " = " .. json.marshal(v) .. "\n")</span>
+            <span class="s">else</span>
+              <span class="s">print("\t" .. k .. " = " .. v .. "\n")</span>
+            <span class="s">end</span>
+          <span class="s">end</span>
         <span class="s">end</span>
       <span class="na">args</span><span class="pi">:</span>
         <span class="na">aws</span><span class="pi">:</span>
@@ -1490,10 +1501,18 @@ The return value is a table with mapping of table names to external table locati
           <span class="s">return sc.put_object(key,buf)</span>
         <span class="s">end</span>
         <span class="s">local delta_client = formats.delta_client(args.lakefs.access_key_id, args.lakefs.secret_access_key)</span>
-        <span class="s">local delta_table_locations = delta_exporter.export_delta_log(action, args.table_names, write_object, delta_client, table_descriptors_path)</span>
-
-        <span class="s">for t, loc in pairs(delta_table_locations) do</span>
-          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. loc .. "\n")</span>
+        <span class="s">local delta_table_details = delta_export.export_delta_log(action, args.table_defs, sc.put_object, delta_client, table_descriptors_path)</span>
+        
+        <span class="s">for t, details in pairs(delta_table_details) do</span>
+          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s location: " .. details["path"] .. "\n")</span>
+          <span class="s">print("Delta Lake exported table \"" .. t .. "\"'s metadata:\n")</span>
+          <span class="s">for k, v in pairs(details["metadata"]) do</span>
+            <span class="s">if type(v) == "table" then</span>
+              <span class="s">print("\t" .. k .. " = " .. json.marshal(v) .. "\n")</span>
+            <span class="s">else</span>
+              <span class="s">print("\t" .. k .. " = " .. v .. "\n")</span>
+            <span class="s">end</span>
+          <span class="s">end</span>
         <span class="s">end</span>
       <span class="na">args</span><span class="pi">:</span>
         <span class="na">azure</span><span class="pi">:</span>
