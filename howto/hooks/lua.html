@@ -1041,10 +1041,10 @@ Returns the created/fetched schema name.</p>
 <span class="kd">local</span> <span class="n">client</span> <span class="o">=</span> <span class="n">databricks</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"https://my-host.cloud.databricks.com"</span><span class="p">,</span> <span class="s2">"my-service-principal-token"</span><span class="p">)</span>
 <span class="kd">local</span> <span class="n">schema_name</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">create_schema</span><span class="p">(</span><span class="s2">"main"</span><span class="p">,</span> <span class="s2">"mycatalog"</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
 </code></pre></div></div>
-<h3 id="databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name">
+<h3 id="databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name-metadata">
   
   
-    <a href="#databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">databricks/client.register_external_table(table_name, physical_path, warehouse_id, catalog_name, schema_name)</code>
+    <a href="#databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name-metadata" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">databricks/client.register_external_table(table_name, physical_path, warehouse_id, catalog_name, schema_name, metadata)</code>
   
   
 </h3>
@@ -1064,6 +1064,8 @@ Returns the table’s creation status.</p>
 <code class="language-plaintext highlighter-rouge">Connection Details</code>, or by running <code class="language-plaintext highlighter-rouge">databricks warehouses get</code>, choosing your SQL warehouse and fetching its ID).</li>
   <li><code class="language-plaintext highlighter-rouge">catalog_name(string)</code>: The name of the catalog under which a schema will be created (or fetched from).</li>
   <li><code class="language-plaintext highlighter-rouge">schema_name(string)</code>: The name of the schema under which the table will be created.</li>
+  <li><code class="language-plaintext highlighter-rouge">metadata(table)</code>: A table of metadata to be added to the table’s registration. The metadata table should be of the form:
+<code class="language-plaintext highlighter-rouge">{key1 = "value1", key2 = "value2", ...}</code>.</li>
 </ul>
 
 <p>Example:</p>
@@ -1736,10 +1738,10 @@ by default this function will configure table location and schema.</li>
     
 
 <p>A package used to register exported Delta Lake tables to Databricks’ Unity catalog.</p>
-<h3 id="lakefscatalogexportunity_exporterregister_tablesaction-table_descriptors_path-delta_table_paths-databricks_client-warehouse_id">
+<h3 id="lakefscatalogexportunity_exporterregister_tablesaction-table_descriptors_path-delta_table_details-databricks_client-warehouse_id">
   
   
-    <a href="#lakefscatalogexportunity_exporterregister_tablesaction-table_descriptors_path-delta_table_paths-databricks_client-warehouse_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/unity_exporter.register_tables(action, table_descriptors_path, delta_table_paths, databricks_client, warehouse_id)</code>
+    <a href="#lakefscatalogexportunity_exporterregister_tablesaction-table_descriptors_path-delta_table_details-databricks_client-warehouse_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/unity_exporter.register_tables(action, table_descriptors_path, delta_table_details, databricks_client, warehouse_id)</code>
   
   
 </h3>
@@ -1755,7 +1757,7 @@ The return value is a table with mapping of table names to registration request 
 <ul>
   <li><code class="language-plaintext highlighter-rouge">action(table)</code>: The global action table</li>
   <li><code class="language-plaintext highlighter-rouge">table_descriptors_path(string)</code>: The path under which the table descriptors of the provided <code class="language-plaintext highlighter-rouge">table_paths</code> reside.</li>
-  <li><code class="language-plaintext highlighter-rouge">delta_table_paths(table)</code>: Table names to physical paths mapping (e.g. <code class="language-plaintext highlighter-rouge">{ table1 = "s3://mybucket/mytable1", table2 = "s3://mybucket/mytable2" }</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">delta_table_details(table)</code>: Table names to physical paths mapping and table metadata (e.g. <code class="language-plaintext highlighter-rouge">{table1 = {path = "s3://mybucket/mytable1", metadata = {id = "table_1_id", name = "table1", ...}}, table2 = {path = "s3://mybucket/mytable2", metadata = {id = "table_2_id", name = "table2", ...}}}</code>.)</li>
   <li><code class="language-plaintext highlighter-rouge">databricks_client(table)</code>: A Databricks client that implements <code class="language-plaintext highlighter-rouge">create_or_get_schema: function(id, catalog_name)</code> and <code class="language-plaintext highlighter-rouge">register_external_table: function(table_name, physical_path, warehouse_id, catalog_name, schema_name)</code></li>
   <li><code class="language-plaintext highlighter-rouge">warehouse_id(string)</code>: Databricks warehouse ID.</li>
 </ul>
