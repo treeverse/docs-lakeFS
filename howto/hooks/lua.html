@@ -935,6 +935,17 @@ The <code class="language-plaintext highlighter-rouge">table_input</code> is the
 
 <p>Deletes the object at the given key<br />
 <code class="language-plaintext highlighter-rouge">path_uri</code> - A valid Azure blob storage uri in the form of <code class="language-plaintext highlighter-rouge">https://myaccount.blob.core.windows.net/mycontainer/myblob</code></p>
+<h3 id="azureabfss_transform_pathpath">
+  
+  
+    <a href="#azureabfss_transform_pathpath" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">azure/abfss_transform_path(path)</code>
+  
+  
+</h3>
+    
+
+<p>Transform an HTTPS Azure URL to a ABFSS scheme. Used by the delta_exporter function to support Azure Unity catalog use cases  <br />
+<code class="language-plaintext highlighter-rouge">path</code> - A valid Azure blob storage URL in the form of <code class="language-plaintext highlighter-rouge">https://myaccount.blob.core.windows.net/mycontainer/myblob</code></p>
 <h3 id="crypto">
   
   
@@ -1407,10 +1418,10 @@ If delimiter is empty, will default to a recursive listing. Otherwise, common pr
     
 
 <p>A package used to export Delta Lake tables from lakeFS to an external cloud storage.</p>
-<h3 id="lakefscatalogexportdelta_exporterexport_delta_logaction-table_def_names-write_object-delta_client-table_descriptors_path">
+<h3 id="lakefscatalogexportdelta_exporterexport_delta_logaction-table_def_names-write_object-delta_client-table_descriptors_path-path_transformer">
   
   
-    <a href="#lakefscatalogexportdelta_exporterexport_delta_logaction-table_def_names-write_object-delta_client-table_descriptors_path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log(action, table_def_names, write_object, delta_client, table_descriptors_path)</code>
+    <a href="#lakefscatalogexportdelta_exporterexport_delta_logaction-table_def_names-write_object-delta_client-table_descriptors_path-path_transformer" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log(action, table_def_names, write_object, delta_client, table_descriptors_path, path_transformer)</code>
   
   
 </h3>
@@ -1429,6 +1440,7 @@ The response is of the form:
   <li><code class="language-plaintext highlighter-rouge">write_object</code>: A writer function with <code class="language-plaintext highlighter-rouge">function(bucket, key, data)</code> signature, used to write the exported Delta Log (e.g. <code class="language-plaintext highlighter-rouge">aws/s3_client.put_object</code> or <code class="language-plaintext highlighter-rouge">azure/blob_client.put_object</code>)</li>
   <li><code class="language-plaintext highlighter-rouge">delta_client</code>: A Delta Lake client that implements <code class="language-plaintext highlighter-rouge">get_table: function(repo, ref, prefix)</code></li>
   <li><code class="language-plaintext highlighter-rouge">table_descriptors_path</code>: The path under which the table descriptors of the provided <code class="language-plaintext highlighter-rouge">table_def_names</code> reside</li>
+  <li><code class="language-plaintext highlighter-rouge">path_transformer</code>: (Optional) A function(path) used for transforming the path of the saved delta logs path fields as well as the saved table physical path (used to support Azure Unity catalog use cases)</li>
 </ul>
 
 <p>Delta export example for AWS S3:</p>
@@ -1751,6 +1763,10 @@ by default this function will configure table location and schema.</li>
 The registration will use the following paths to register the table:
 <code class="language-plaintext highlighter-rouge">&lt;catalog&gt;.&lt;branch name&gt;.&lt;table_name&gt;</code> where the branch name will be used as the schema name.
 The return value is a table with mapping of table names to registration request status.</p>
+
+<p><strong>Note: (Azure users)</strong> Databricks catalog external locations is supported only for ADLS Gen2 storage accounts.<br />
+When exporting Delta tables using the <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.export_delta_log</code> function, the <code class="language-plaintext highlighter-rouge">path_transformer</code> must be<br />
+used to convert the paths scheme to <code class="language-plaintext highlighter-rouge">abfss</code>. The built-in <code class="language-plaintext highlighter-rouge">azure</code> lua library provides this functionality with <code class="language-plaintext highlighter-rouge">transformPathToAbfss</code>.</p>
 
 <p>Parameters:</p>
 
