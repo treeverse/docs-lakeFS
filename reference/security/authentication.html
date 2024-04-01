@@ -677,11 +677,23 @@ Essentially, once configured, this enables you the benefit of OpenID connect, su
     <span class="na">callback_base_url</span><span class="pi">:</span> <span class="s">https://lakefs.example.com</span>       <span class="c1"># The scheme, domain (and port) of your lakeFS installation</span>
     <span class="na">url</span><span class="pi">:</span> <span class="s">https://my-account.oidc-provider-example.com</span>
     <span class="na">default_initial_groups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">Developers"</span><span class="pi">]</span>
-    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">name</span>                      <span class="c1">#  Optional: use the value from this claim as the user's display name </span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">name</span>                      <span class="c1">#  Optional: use the value from this claim as the user's display name</span>
+    <span class="na">persist_friendly_name</span><span class="pi">:</span> <span class="no">true</span>                         <span class="c1">#  Optional: persist friendly name to KV store so it can be displayed in the user list</span>
 </code></pre></div></div>
 
 <p>Your login page will now include a link to sign in using the 
 OIDC provider. When a user first logs in through the provider, a corresponding user is created in lakeFS.</p>
+<h4 id="friendly-name-persistence">
+  
+  
+    <a href="#friendly-name-persistence" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Friendly Name Persistence
+  
+  
+</h4>
+    
+
+<p>When the <code class="language-plaintext highlighter-rouge">persist_friendly_name</code> configuration property is set to <code class="language-plaintext highlighter-rouge">true</code> <strong>and</strong> <code class="language-plaintext highlighter-rouge">friendly_name_claim_name</code> is set to a valid claim name, which exists in the incoming <code class="language-plaintext highlighter-rouge">id_token</code>, the friendly name will be persisted to the KV store. This will allow users with access to the lakeFS administration section to see friendly names in the users list, when listing group members, and when adding/removing group members.<br />
+The friendly name stored in KV is updated with each successful login, if the incoming value is different than the stored value. This means it will be kept up-to-date with changes to the user’s profile or if <code class="language-plaintext highlighter-rouge">friendly_name_claim_name</code> is re-configured.</p>
 <h4 class="no_toc" id="notes">
   
   
