@@ -636,6 +636,18 @@ In case no authentication parameters exist, it is also possible to explicitly cr
 <span class="p">)</span>
 </code></pre></div></div>
 
+<p>You can use TLS with a CA that is not trusted on the host by configuring the
+client with a CA cert bundle file.  It should contain concatenated CA
+certificates in PEM format:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s">"http://localhost:8000"</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
+    <span class="c1"># Customize the CA certificates used to verify the peer.
+</span>    <span class="n">ssl_ca_cert</span><span class="o">=</span><span class="s">"path/to/concatenated_CA_certificates.PEM"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
 <p>For testing SSL endpoints you may wish to use a self-signed certificate.  If you do this and receive an <code class="language-plaintext highlighter-rouge">SSL: CERTIFICATE_VERIFY_FAILED</code> error message you might add the following configuration to your client:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
@@ -650,14 +662,14 @@ In case no authentication parameters exist, it is also possible to explicitly cr
 impersonation, and credential stealing attacks.  Never use this in any
 production setting.</p>
 
-<p>Optionally, to enable communication via proxies, simply set the proxy configuration:</p>
+<p>Optionally, to enable communication via proxies, add a proxy configuration:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="s">"http://localhost:8000"</span><span class="p">,</span>
     <span class="n">username</span><span class="o">=</span><span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
     <span class="n">password</span><span class="o">=</span><span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
-    <span class="n">ssl_ca_cert</span><span class="o">=</span><span class="s">"&lt;path to a file of concatenated CA certificates in PEM format&gt;"</span><span class="p">,</span>  <span class="c1"># Set this to customize the certificate file to verify the peer
-</span>    <span class="n">proxy</span><span class="o">=</span><span class="s">"&lt;proxy server URL&gt;"</span><span class="p">,</span>
+    <span class="n">ssl_ca_cert</span><span class="o">=</span><span class="s">"(if needed)"</span><span class="p">,</span>
+    <span class="n">proxy</span><span class="o">=</span><span class="s">"&lt;proxy server URL&gt;"</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div></div>
 <h3 id="usage-examples">
