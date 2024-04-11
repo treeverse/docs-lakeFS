@@ -999,6 +999,36 @@ spark.hadoop.fs.s3a.bucket.example-repo.path.style.access true
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">delta</span><span class="p">.</span><span class="nv">`s3a://example-repo/main/datasets/delta-table/`</span> <span class="k">LIMIT</span> <span class="mi">100</span>
 </code></pre></div></div>
+<h3 id="️-experimental-pre-signed-mode-for-s3a">
+  
+  
+    <a href="#️-experimental-pre-signed-mode-for-s3a" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ⚠️ Experimental: Pre-signed mode for S3A
+  
+  
+</h3>
+    
+
+<p>In Hadoop 3.1.4 version and above (as tested using our lakeFS Hadoop FS), it is possible to use pre-signed URLs as return values from the lakeFS S3 Gateway.</p>
+
+<p>This has the immediate benefit of reducing the amount of traffic that has to go through the lakeFS server thus improving IO performance. 
+To read more about pre-signed URLs, see <a href="../reference/security/presigned-url.html">this guide</a>.</p>
+
+<p>Here’s an example Spark configuration to enable this support:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.s3a.impl shaded.databricks.org.apache.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.s3a.bucket.example-repo.access.key AKIAIOSFODNN7EXAMPLE // The access key to your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.secret.key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY // The secret key to your lakeFS server
+spark.hadoop.fs.s3a.path.style.access true
+spark.hadoop.fs.s3a.bucket.example-repo.signing-algorithm QueryStringSignerType
+spark.hadoop.fs.s3a.bucket.example-repo.user.agent.prefix s3RedirectionSupport
+</code></pre></div></div>
+
+<p class="note"><code class="language-plaintext highlighter-rouge">user.agent.prefix</code> should <strong>contain</strong> the string <code class="language-plaintext highlighter-rouge">s3RedirectionSupport</code> but does not have to match the string exactly.</p>
+
+<p>Once configured, requests will include the string <code class="language-plaintext highlighter-rouge">s3RedirectionSupport</code> in the <code class="language-plaintext highlighter-rouge">User-Agent</code> HTTP header sent with GetObject requests, resulting in lakeFS responding with a pre-signed URL.
+Setting the <code class="language-plaintext highlighter-rouge">signing-algorithm</code> to <code class="language-plaintext highlighter-rouge">QueryStringSignerType</code> is required to stop S3A from signing a pre-signed URL, since the existence of more than one signature method will return an error from S3.</p>
+
+<p class="note">ℹ This feature requires a lakeFS server of version <code class="language-plaintext highlighter-rouge">&gt;1.18.0</code></p>
 <h2 id="lakefs-hadoop-filesystem">
   
   
