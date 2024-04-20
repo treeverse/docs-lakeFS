@@ -1756,439 +1756,439 @@
     
     "relUrl": "/howto/import.html"
   },"251": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks in lakeFS",
-    "content": " ",
-    "url": "/howto/hooks/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/howto/hooks/#actions-and-hooks-in-lakefs"
-  },"252": {
-    "doc": "Actions and Hooks",
-    "title": "Table of contents",
-    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
-    "url": "/howto/hooks/#table-of-contents",
-    
-    "relUrl": "/howto/hooks/#table-of-contents"
-  },"253": {
-    "doc": "Actions and Hooks",
-    "title": "Overview",
-    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
-    "url": "/howto/hooks/#overview",
-    
-    "relUrl": "/howto/hooks/#overview"
-  },"254": {
-    "doc": "Actions and Hooks",
-    "title": "Configuration",
-    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
-    "url": "/howto/hooks/#configuration",
-    
-    "relUrl": "/howto/hooks/#configuration"
-  },"255": {
-    "doc": "Actions and Hooks",
-    "title": "Supported Events",
-    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
-    "url": "/howto/hooks/#supported-events",
-    
-    "relUrl": "/howto/hooks/#supported-events"
-  },"256": {
-    "doc": "Actions and Hooks",
-    "title": "Runs API &amp; CLI",
-    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
-    "url": "/howto/hooks/#runs-api--cli",
-    
-    "relUrl": "/howto/hooks/#runs-api--cli"
-  },"257": {
-    "doc": "Actions and Hooks",
-    "title": "Result Files",
-    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
-    "url": "/howto/hooks/#result-files",
-    
-    "relUrl": "/howto/hooks/#result-files"
-  },"258": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks",
-    "content": " ",
-    "url": "/howto/hooks/",
-    
-    "relUrl": "/howto/hooks/"
-  },"259": {
-    "doc": "Install lakeFS",
-    "title": "Deploy and Setup lakeFS",
-    "content": "The instructions given here are for a self-managed deployment of lakeFS. For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . This section will guide you through deploying lakeFS on top of an object store. You will require a database, and can optionally configure authentication using providers specific to your deployment platform. Which options are available depends on your deployment platform. For example, the object store available on Azure differs from that on AWS. ",
-    "url": "/howto/deploy/#deploy-and-setup-lakefs",
-    
-    "relUrl": "/howto/deploy/#deploy-and-setup-lakefs"
-  },"260": {
-    "doc": "Install lakeFS",
-    "title": "Deployment and Setup Details",
-    "content": "lakeFS releases include binaries for common operating systems, a containerized option or a Helm chart. Check out our guides below for full deployment details: . | AWS | Azure | GCP | On-premises and other cloud providers | . ",
-    "url": "/howto/deploy/#deployment-and-setup-details",
-    
-    "relUrl": "/howto/deploy/#deployment-and-setup-details"
-  },"261": {
-    "doc": "Install lakeFS",
-    "title": "Install lakeFS",
-    "content": " ",
-    "url": "/howto/deploy/",
-    
-    "relUrl": "/howto/deploy/"
-  },"262": {
-    "doc": "Garbage Collection",
-    "title": "Garbage Collection",
-    "content": "lakeFS Cloud users enjoy a managed garbage collection service, and do not need to run this Spark program. ",
-    "url": "/howto/garbage-collection/",
-    
-    "relUrl": "/howto/garbage-collection/"
-  },"263": {
-    "doc": "How-To",
-    "title": "lakeFS - How To",
-    "content": ". ",
-    "url": "/howto/#lakefs---how-to",
-    
-    "relUrl": "/howto/#lakefs---how-to"
-  },"264": {
-    "doc": "How-To",
-    "title": "Installation and upgrades",
-    "content": ". | Step-by-step instructions for deploying and configuring lakeFS on AWS, GCP, Azure, and on-premises. | Details on how to upgrade lakeFS . | . ",
-    "url": "/howto/#installation-and-upgrades",
-    
-    "relUrl": "/howto/#installation-and-upgrades"
-  },"265": {
-    "doc": "How-To",
-    "title": "Getting data in and out of lakeFS",
-    "content": ". | Import and Export Data from lakeFS | Copy data to/from lakeFS | Using external Data Catalogs with data stored on lakeFS | Migrating away from lakeFS | Working with lakeFS data locally | . ",
-    "url": "/howto/#getting-data-in-and-out-of-lakefs",
-    
-    "relUrl": "/howto/#getting-data-in-and-out-of-lakefs"
-  },"266": {
-    "doc": "How-To",
-    "title": "Actions and Hooks in lakeFS",
-    "content": ". | Use Actions and Hooks as part of your workflow to validate data, enforce constraints, and do more when events occur. | . ",
-    "url": "/howto/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/howto/#actions-and-hooks-in-lakefs"
-  },"267": {
-    "doc": "How-To",
-    "title": "Branch Protection",
-    "content": ". | Branch Protection prevents commits directly to a branch. This is a good way to enforce good practice and make sure that changes to important branches are only done by a merge. | . ",
-    "url": "/howto/#branch-protection",
-    
-    "relUrl": "/howto/#branch-protection"
-  },"268": {
-    "doc": "How-To",
-    "title": "lakeFS Sizing Guide",
-    "content": ". | This comprehensive guide details all you need to know to correctly size and test your lakeFS deployment for production use at scale, including: . | System Requirements | Scaling factors | Benchmarks | Important metrics | Reference architectures | . | . ",
-    "url": "/howto/#lakefs-sizing-guide",
-    
-    "relUrl": "/howto/#lakefs-sizing-guide"
-  },"269": {
-    "doc": "How-To",
-    "title": "Garbage Collection",
-    "content": ". | lakeFS will keep all of your objects forever, unless you tell it otherwise. Use Garbage Collection (GC) to remove objects from the underlying storage. If you want GC to happen automagically then you can use Managed Garbage Collection which is available as part of lakeFS Cloud. | . ",
-    "url": "/howto/#garbage-collection",
-    
-    "relUrl": "/howto/#garbage-collection"
-  },"270": {
-    "doc": "How-To",
-    "title": "Private Link",
-    "content": ". | Private Link enables lakeFS Cloud to interact with your infrastructure using private networking. | . ",
-    "url": "/howto/#private-link",
-    
-    "relUrl": "/howto/#private-link"
-  },"271": {
-    "doc": "How-To",
-    "title": "Unity Delta Sharing",
-    "content": ". | lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. | . ",
-    "url": "/howto/#unity-delta-sharing",
-    
-    "relUrl": "/howto/#unity-delta-sharing"
-  },"272": {
-    "doc": "How-To",
-    "title": "How-To",
-    "content": " ",
-    "url": "/howto/",
-    
-    "relUrl": "/howto/"
-  },"273": {
-    "doc": "How lakeFS Works",
-    "title": "How lakeFS Works",
-    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
-    "url": "/understand/how/",
-    
-    "relUrl": "/understand/how/"
-  },"274": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management in lakeFS",
-    "content": "lakeFS provides full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs",
-    
-    "relUrl": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs"
-  },"275": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management",
-    "content": " ",
-    "url": "/understand/data_lifecycle_management/",
-    
-    "relUrl": "/understand/data_lifecycle_management/"
-  },"276": {
-    "doc": "Use Cases",
-    "title": "lakeFS Use Cases",
-    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/understand/use_cases/#lakefs-use-cases",
-    
-    "relUrl": "/understand/use_cases/#lakefs-use-cases"
-  },"277": {
-    "doc": "Use Cases",
-    "title": "Use Cases",
-    "content": " ",
-    "url": "/understand/use_cases/",
-    
-    "relUrl": "/understand/use_cases/"
-  },"278": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": ". ",
-    "url": "/understand/",
-    
-    "relUrl": "/understand/"
-  },"279": {
-    "doc": "Understanding lakeFS",
-    "title": "Architecture and Internals",
-    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
-    "url": "/understand/#architecture-and-internals",
-    
-    "relUrl": "/understand/#architecture-and-internals"
-  },"280": {
-    "doc": "Understanding lakeFS",
-    "title": "lakeFS Use Cases",
-    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/understand/#lakefs-use-cases",
-    
-    "relUrl": "/understand/#lakefs-use-cases"
-  },"281": {
-    "doc": "Understanding lakeFS",
-    "title": "lakeFS Concepts and Model",
-    "content": "lakeFS adopts many of the terms and concepts from git. This page goes into details on the similarities and differences, and provides a good background to the concepts used in lakeFS. ",
-    "url": "/understand/#lakefs-concepts-and-model",
-    
-    "relUrl": "/understand/#lakefs-concepts-and-model"
-  },"282": {
-    "doc": "Understanding lakeFS",
-    "title": "Performance",
-    "content": "Check out the Performance best practices guide for useful hints and tips on ensuring high performance from lakeFS. ",
-    "url": "/understand/#performance",
-    
-    "relUrl": "/understand/#performance"
-  },"283": {
-    "doc": "Understanding lakeFS",
-    "title": "FAQ and Glossary",
-    "content": "The FAQ covers many common questions around lakeFS, and the glossary provides a useful reference for the terms used in lakeFS. ",
-    "url": "/understand/#faq-and-glossary",
-    
-    "relUrl": "/understand/#faq-and-glossary"
-  },"284": {
-    "doc": "Understanding lakeFS",
-    "title": "Products",
-    "content": "lakeFS is an Apache 2.0 licensed open-source project. Treeverse also provides two commercial products: . | lakeFS Cloud | lakeFS Enterprise | . Find out more on the pricing page, or contact us for details. ",
-    "url": "/understand/#products",
-    
-    "relUrl": "/understand/#products"
-  },"285": {
-    "doc": "Security",
-    "title": "lakeFS Security Reference",
-    "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | Short Lived Token (STS like) | Login to lakeFS with AWS IAM | . ",
-    "url": "/reference/security/#lakefs-security-reference",
-    
-    "relUrl": "/reference/security/#lakefs-security-reference"
-  },"286": {
-    "doc": "Security",
-    "title": "Security",
-    "content": " ",
-    "url": "/reference/security/",
-    
-    "relUrl": "/reference/security/"
-  },"287": {
-    "doc": "Reference",
-    "title": "lakeFS Reference",
-    "content": ". ",
-    "url": "/reference/#lakefs-reference",
-    
-    "relUrl": "/reference/#lakefs-reference"
-  },"288": {
-    "doc": "Reference",
-    "title": "API",
-    "content": ". | lakeFS API | S3 Gateway API | . ",
-    "url": "/reference/#api",
-    
-    "relUrl": "/reference/#api"
-  },"289": {
-    "doc": "Reference",
-    "title": "Components",
-    "content": ". | Server Configuration | lakeFS command-line tool lakectl | . ",
-    "url": "/reference/#components",
-    
-    "relUrl": "/reference/#components"
-  },"290": {
-    "doc": "Reference",
-    "title": "Clients",
-    "content": ". | Spark Metadata Client | lakeFS Hadoop FileSystem | Python Client | . ",
-    "url": "/reference/#clients",
-    
-    "relUrl": "/reference/#clients"
-  },"291": {
-    "doc": "Reference",
-    "title": "Security",
-    "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | Login to lakeFS with AWS IAM | . ",
-    "url": "/reference/#security",
-    
-    "relUrl": "/reference/#security"
-  },"292": {
-    "doc": "Reference",
-    "title": "Other Reference Documentation",
-    "content": ". | Monitoring using Prometheus | Auditing | . ",
-    "url": "/reference/#other-reference-documentation",
-    
-    "relUrl": "/reference/#other-reference-documentation"
-  },"293": {
-    "doc": "Reference",
-    "title": "Reference",
-    "content": " ",
-    "url": "/reference/",
-    
-    "relUrl": "/reference/"
-  },"294": {
-    "doc": "Integrations",
-    "title": "Integrations with lakeFS",
-    "content": "You can use lakeFS with a wide range of tools and frameworks. lakeFS provides several clients directly, as well as an S3-compatible gateway. This gateway means that if you want to use something with lakeFS, so long as that technology can interface with S3, it can interface with lakeFS. See below for detailed instructions for using different technologies with lakeFS. | Airbyte | Amazon Athena | Amazon SageMaker | Apache Airflow | . | Apache Hive | Apache Iceberg | Apache Kafka | Apache Spark | . | AWS CLI | Cloudera | Delta Lake | Git | . | Dremio | DuckDB | Glue / Hive metastore | Kubeflow | . | Presto / Trino | Python | R | Vertex AI | . | HuggingFace Datasets | | | | . If there is a technology not listed here that you would like to use with lakeFS, please drop by our Slack and we’ll help you get started with it. ",
-    "url": "/integrations/#integrations-with-lakefs",
-    
-    "relUrl": "/integrations/#integrations-with-lakefs"
-  },"295": {
-    "doc": "Integrations",
-    "title": "Integrations",
-    "content": " ",
-    "url": "/integrations/",
-    
-    "relUrl": "/integrations/"
-  },"296": {
     "doc": "Slack",
     "title": "Slack",
     "content": " ",
     "url": "/slack/",
     
     "relUrl": "/slack/"
-  },"297": {
+  },"252": {
     "doc": "Documentation",
     "title": "lakeFS Documentation",
     "content": "Any contribution to the docs, whether it is in conjunction with a code contribution or as a standalone, is appreciated. Please see the contributing guide for details on contributing to lakeFS in general. ",
     "url": "/project/docs/#lakefs-documentation",
     
     "relUrl": "/project/docs/#lakefs-documentation"
-  },"298": {
+  },"253": {
     "doc": "Documentation",
     "title": "Table of contents",
     "content": ". | lakeFS Documentation Philosophy | lakeFS Style Guide: | Headings and Table of Contents | Callouts 💬 | Links 🔗 | Test your changes locally | Link Checking locally | . 📝 Notice! lakeFS documentation is written using Markdown. Make sure to familiarize yourself with the Markdown Guide. Customizing the lakeFS docs site should follow the following guidelines: Just The Docs Customization and style-guide. ",
     "url": "/project/docs/#table-of-contents",
     
     "relUrl": "/project/docs/#table-of-contents"
-  },"299": {
+  },"254": {
     "doc": "Documentation",
     "title": "lakeFS Documentation Philosophy",
     "content": "We are heavily inspired by the Diátaxis approach to documentation. At a very high-level, it defines documentation as falling into one of four categories: . | How To | Tutorial | Reference | Explanation | . There is a lot more to it than this, and you are encouraged to read the Diátaxis website for more details. Its application to lakeFS was discussed in #6197 . ",
     "url": "/project/docs/#lakefs-documentation-philosophy",
     
     "relUrl": "/project/docs/#lakefs-documentation-philosophy"
-  },"300": {
+  },"255": {
     "doc": "Documentation",
     "title": "lakeFS Style Guide:",
     "content": ". | Don’t use unnecessary tech jargon or vague/wordy constructions - keep it friendly, not condescending. | Be inclusive and welcoming - use gender-neutral words and pronouns when talking about abstract people like users and developers. | Replace complex expressions with simpler ones. | Keep it short - 25-30 words max per sentence. Otherwise, your readers might get lost on the way. | Use active voice instead of passive. For example: This feature can be used to do task X. vs. You can use this feature to do task X. The second one reads much better, right? | You can explain things better by including examples. Show, not tell. Use illustrations, images, gifs, code snippets, etc. | Establish a visual hierarchy to help people quickly find the information they need. Use text formatting to create levels of title and subtitle (such as # to ###### markdown headings). The title of every page should use the topmost heading #; all other headings on the page should use lower headers ## to ######. | . ",
     "url": "/project/docs/#lakefs-style-guide",
     
     "relUrl": "/project/docs/#lakefs-style-guide"
-  },"301": {
+  },"256": {
     "doc": "Documentation",
     "title": "Headings and Table of Contents",
     "content": "The title of the page should be H1 (# in markdown). Use headings in descending order and do not skip any. Pages should generally have a table of contents to help the user navigate it. Use the following snippet to add it to your page: . &lt;div class=\"toc-block\"&gt; ## {: .no_toc .text-delta } 1. TOC {:toc} {::options toc_levels=\"2\" /} &lt;/div&gt; . By default the page’s Table of Contents will include only H2 headings. If you want to include H2 and H3 then use this snippet instead: . &lt;div class=\"toc-block\"&gt; ## {: .no_toc .text-delta } 1. TOC {:toc} {::options toc_levels=\"2..3\" /} &lt;/div&gt; . Both of these snippets invoke {:toc} which is used by Kramdown (the Markdown processor that Jekyll uses) to insert a table of contents from the headings present in the markdown. ",
     "url": "/project/docs/#headings-and-table-of-contents",
     
     "relUrl": "/project/docs/#headings-and-table-of-contents"
-  },"302": {
+  },"257": {
     "doc": "Documentation",
     "title": "Callouts 💬",
     "content": "Multiple callout types are available. Please review this page for details. ",
     "url": "/project/docs/#callouts-",
     
     "relUrl": "/project/docs/#callouts-"
-  },"303": {
+  },"258": {
     "doc": "Documentation",
     "title": "Links 🔗",
     "content": "Links should use absolute paths in conjunction with {% link %}, e.g. {% link foo/example.md %}. Adding a link with an anchor is a bit trickier. Create a reference [link text][link-reference] and then define the anchor at the end of the document: . [link-reference]: {% link foo.example.md %}#anchor . This is so that references work within the versioned documentation that is deployed. Relative links, unless within the local folder, are discouraged as it can cause additional work when moving pages at a later date. ",
     "url": "/project/docs/#links-",
     
     "relUrl": "/project/docs/#links-"
-  },"304": {
+  },"259": {
     "doc": "Documentation",
     "title": "Test your changes locally",
     "content": "If you have the necessary dependencies installed, you can run Jekyll to build and serve the documentation from your machine using the provided Makefile target: . make docs-serve . The alternative is to use Docker which has the benefit of handling all the dependencies for you. Docker . | Launch the Docker container: . docker run --rm \\ --name lakefs_docs \\ -e TZ=\"Etc/UTC\" \\ --publish 4000:4000 --publish 35729:35729 \\ --volume=\"$PWD/docs:/srv/jekyll:Z\" \\ --volume=\"$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z\" \\ --interactive --tty \\ jekyll/jekyll:3.8 \\ jekyll serve --livereload . If you have make installed, you can also run make docs-serve-docker instead. | The first time you run the container it will need to download dependencies and will take several minutes to be ready. Once you see the following output, the docs server is ready to open in your web browser: . Server running... press ctrl-c to stop. | When you make a change to a page’s source the server will automatically rebuild the page which will be shown in the server log by this entry: . Regenerating: 1 file(s) changed at 2023-01-26 08:34:47 contributing.md Remote Theme: Using theme pmarsceill/just-the-docs . This can take a short while—you’ll see something like this in the server’s output when it’s done...done in 34.714073460 seconds. Your page will automatically reload to show the changes. | . If you are doing lots of work on the docs you may want to leave the Docker container in place (so that you don’t have to wait for the dependencies to load each time you re-create it). To do this replace the --rm with --detach in the docker run command, and use docker logs -f lakefs_docs to view the server log. ",
     "url": "/project/docs/#test-your-changes-locally",
     
     "relUrl": "/project/docs/#test-your-changes-locally"
-  },"305": {
+  },"260": {
     "doc": "Documentation",
     "title": "Link Checking locally",
     "content": "When making a pull request to lakeFS that involves a docs/* file, a GitHub action will automagically check the links. You can also run this link checker manually on your local machine: . | Build the site: . docker run --rm \\ --name lakefs_docs \\ -e TZ=\"Etc/UTC\" \\ --volume=\"$PWD/docs:/srv/jekyll:Z\" \\ --volume=\"$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z\" \\ --interactive --tty \\ jekyll/jekyll:3.8 \\ jekyll build --config _config.yml -d _site --watch . | Check the links: . docker run --rm \\ --name lakefs_docs_lychee \\ --volume \"$PWD:/data\"\\ --volume \"/tmp:/output\"\\ --tty \\ lycheeverse/lychee:master \\ --exclude-file /data/docs/.lycheeignore \\ --output /output/lychee_report.md \\ --format markdown \\ /data/docs/_site . | Review the lychee_report.md in your local /tmp folder . | . ",
     "url": "/project/docs/#link-checking-locally",
     
     "relUrl": "/project/docs/#link-checking-locally"
-  },"306": {
+  },"261": {
     "doc": "Documentation",
     "title": "Documentation",
     "content": " ",
     "url": "/project/docs/",
     
     "relUrl": "/project/docs/"
-  },"307": {
+  },"262": {
     "doc": "The lakeFS Project",
     "title": "The lakeFS Project",
     "content": "lakeFS provides version control over the data lake and lakehouse, and uses Git-like semantics to create and access those versions. If you know git, you’ll be right at home with lakeFS. lakeFS is an open-source project under the Apache 2.0 license. The project was created and is supported by Treeverse, a commercial company founded by engineers passionate about providing solutions to the evolving world of data engineering. ",
     "url": "/project/",
     
     "relUrl": "/project/"
-  },"308": {
+  },"263": {
     "doc": "The lakeFS Project",
     "title": "Table of contents",
     "content": ". | Our commitment to open source | Roadmap | . ",
     "url": "/project/#table-of-contents",
     
     "relUrl": "/project/#table-of-contents"
-  },"309": {
+  },"264": {
     "doc": "The lakeFS Project",
     "title": "Our commitment to open source",
     "content": "lakeFS is an open-source project under the Apache 2.0 license. The project was created and is supported by Treeverse, a commercial company founded by engineers passionate about providing solutions to the evolving world of data engineering. Why did we choose to open the source of our core capabilities? . We believe in the bottom-up adoption of technologies. We believe collaborative communities have the power to bring the best solutions to the community. We believe that every engineer should be able to use, contribute to, and influence cutting edge technologies, so they can innovate in their domain. What is our commitment to open source? . We created lakeFS, our open-source project, to provide a Git-like interface on top of object stores - so that you can fully take advantage of with any data application at any scale. For that reason, we commit that the following capabilities are and will remain open-source as part of lakeFS: . | All versioning capabilities, | Git-Like interface for the versioning operations, | Support for public object store APIs, | Integrations with publicly available applications accessing an object store, | CLI, API, and GUI interfaces. | . We also commit to keeping lakeFS scalable in throughput and performance. We are deeply committed to our community of engineers who use and contribute to the project. We are and will continue to be highly responsive and shape lakeFS together to provide the data versioning capabilities we are all looking for. What is lakeFS Cloud? . Treeverse offers lakeFS Cloud, which provides all the same benefits of the Git-like interface on top of object stores as a fully-managed service. The vision behind lakeFS Cloud is to provide a managed data versioning and management solution for data practitioners. lakeFS Cloud will leverage the lakeFS open-source technology, integrate capabilities and unique features, and lead its users to implement best practices. As part of our commitment to the open source values of transparency and interoperability, we believe everyone should be able to enjoy these benefits, regardless of whether or not they choose to use the managed offering. Because of that, we will not intentionally make it harder to build these features independently on top of the open source solution. ",
     "url": "/project/#our-commitment-to-open-source",
     
     "relUrl": "/project/#our-commitment-to-open-source"
-  },"310": {
+  },"265": {
     "doc": "The lakeFS Project",
     "title": "Roadmap",
     "content": "This is the lakeFS public roadmap. As the project evolves and the community grows, this roadmap might change. Please share your feedback on the #dev on Slack or by starting a GitHub Discussion! . ",
     "url": "/project/#roadmap",
     
     "relUrl": "/project/#roadmap"
-  },"311": {
+  },"266": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks in lakeFS",
+    "content": " ",
+    "url": "/howto/hooks/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/howto/hooks/#actions-and-hooks-in-lakefs"
+  },"267": {
+    "doc": "Actions and Hooks",
+    "title": "Table of contents",
+    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
+    "url": "/howto/hooks/#table-of-contents",
+    
+    "relUrl": "/howto/hooks/#table-of-contents"
+  },"268": {
+    "doc": "Actions and Hooks",
+    "title": "Overview",
+    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
+    "url": "/howto/hooks/#overview",
+    
+    "relUrl": "/howto/hooks/#overview"
+  },"269": {
+    "doc": "Actions and Hooks",
+    "title": "Configuration",
+    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
+    "url": "/howto/hooks/#configuration",
+    
+    "relUrl": "/howto/hooks/#configuration"
+  },"270": {
+    "doc": "Actions and Hooks",
+    "title": "Supported Events",
+    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
+    "url": "/howto/hooks/#supported-events",
+    
+    "relUrl": "/howto/hooks/#supported-events"
+  },"271": {
+    "doc": "Actions and Hooks",
+    "title": "Runs API &amp; CLI",
+    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
+    "url": "/howto/hooks/#runs-api--cli",
+    
+    "relUrl": "/howto/hooks/#runs-api--cli"
+  },"272": {
+    "doc": "Actions and Hooks",
+    "title": "Result Files",
+    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
+    "url": "/howto/hooks/#result-files",
+    
+    "relUrl": "/howto/hooks/#result-files"
+  },"273": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks",
+    "content": " ",
+    "url": "/howto/hooks/",
+    
+    "relUrl": "/howto/hooks/"
+  },"274": {
+    "doc": "Install lakeFS",
+    "title": "Deploy and Setup lakeFS",
+    "content": "The instructions given here are for a self-managed deployment of lakeFS. For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . This section will guide you through deploying lakeFS on top of an object store. You will require a database, and can optionally configure authentication using providers specific to your deployment platform. Which options are available depends on your deployment platform. For example, the object store available on Azure differs from that on AWS. ",
+    "url": "/howto/deploy/#deploy-and-setup-lakefs",
+    
+    "relUrl": "/howto/deploy/#deploy-and-setup-lakefs"
+  },"275": {
+    "doc": "Install lakeFS",
+    "title": "Deployment and Setup Details",
+    "content": "lakeFS releases include binaries for common operating systems, a containerized option or a Helm chart. Check out our guides below for full deployment details: . | AWS | Azure | GCP | On-premises and other cloud providers | . ",
+    "url": "/howto/deploy/#deployment-and-setup-details",
+    
+    "relUrl": "/howto/deploy/#deployment-and-setup-details"
+  },"276": {
+    "doc": "Install lakeFS",
+    "title": "Install lakeFS",
+    "content": " ",
+    "url": "/howto/deploy/",
+    
+    "relUrl": "/howto/deploy/"
+  },"277": {
+    "doc": "Garbage Collection",
+    "title": "Garbage Collection",
+    "content": "lakeFS Cloud users enjoy a managed garbage collection service, and do not need to run this Spark program. ",
+    "url": "/howto/garbage-collection/",
+    
+    "relUrl": "/howto/garbage-collection/"
+  },"278": {
+    "doc": "How-To",
+    "title": "lakeFS - How To",
+    "content": ". ",
+    "url": "/howto/#lakefs---how-to",
+    
+    "relUrl": "/howto/#lakefs---how-to"
+  },"279": {
+    "doc": "How-To",
+    "title": "Installation and upgrades",
+    "content": ". | Step-by-step instructions for deploying and configuring lakeFS on AWS, GCP, Azure, and on-premises. | Details on how to upgrade lakeFS . | . ",
+    "url": "/howto/#installation-and-upgrades",
+    
+    "relUrl": "/howto/#installation-and-upgrades"
+  },"280": {
+    "doc": "How-To",
+    "title": "Getting data in and out of lakeFS",
+    "content": ". | Import and Export Data from lakeFS | Copy data to/from lakeFS | Using external Data Catalogs with data stored on lakeFS | Migrating away from lakeFS | Working with lakeFS data locally | . ",
+    "url": "/howto/#getting-data-in-and-out-of-lakefs",
+    
+    "relUrl": "/howto/#getting-data-in-and-out-of-lakefs"
+  },"281": {
+    "doc": "How-To",
+    "title": "Actions and Hooks in lakeFS",
+    "content": ". | Use Actions and Hooks as part of your workflow to validate data, enforce constraints, and do more when events occur. | . ",
+    "url": "/howto/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/howto/#actions-and-hooks-in-lakefs"
+  },"282": {
+    "doc": "How-To",
+    "title": "Branch Protection",
+    "content": ". | Branch Protection prevents commits directly to a branch. This is a good way to enforce good practice and make sure that changes to important branches are only done by a merge. | . ",
+    "url": "/howto/#branch-protection",
+    
+    "relUrl": "/howto/#branch-protection"
+  },"283": {
+    "doc": "How-To",
+    "title": "lakeFS Sizing Guide",
+    "content": ". | This comprehensive guide details all you need to know to correctly size and test your lakeFS deployment for production use at scale, including: . | System Requirements | Scaling factors | Benchmarks | Important metrics | Reference architectures | . | . ",
+    "url": "/howto/#lakefs-sizing-guide",
+    
+    "relUrl": "/howto/#lakefs-sizing-guide"
+  },"284": {
+    "doc": "How-To",
+    "title": "Garbage Collection",
+    "content": ". | lakeFS will keep all of your objects forever, unless you tell it otherwise. Use Garbage Collection (GC) to remove objects from the underlying storage. If you want GC to happen automagically then you can use Managed Garbage Collection which is available as part of lakeFS Cloud. | . ",
+    "url": "/howto/#garbage-collection",
+    
+    "relUrl": "/howto/#garbage-collection"
+  },"285": {
+    "doc": "How-To",
+    "title": "Private Link",
+    "content": ". | Private Link enables lakeFS Cloud to interact with your infrastructure using private networking. | . ",
+    "url": "/howto/#private-link",
+    
+    "relUrl": "/howto/#private-link"
+  },"286": {
+    "doc": "How-To",
+    "title": "Unity Delta Sharing",
+    "content": ". | lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. | . ",
+    "url": "/howto/#unity-delta-sharing",
+    
+    "relUrl": "/howto/#unity-delta-sharing"
+  },"287": {
+    "doc": "How-To",
+    "title": "How-To",
+    "content": " ",
+    "url": "/howto/",
+    
+    "relUrl": "/howto/"
+  },"288": {
     "doc": "⭐ Quickstart",
     "title": "lakeFS Quickstart",
     "content": "Welcome to lakeFS! . lakeFS provides a “Git for data” platform enabling you to implement best practices from software engineering on your data lake, including branching and merging, CI/CD, and production-like dev/test environments. This quickstart will introduce you to some of the core ideas in lakeFS and show what you can do by illustrating the concept of branching, merging, and rolling back changes to data. It’s laid out in five short sections: . Launch . Spin up the quickstart environment locally under Docker . Query . Query the pre-populated data on the main branch . Branch . Make changes to the data on a new branch . Merge . Merge the changed data back to the main branch . Rollback . Change our mind and revert the changes . Actions . Use Actions to trigger code when an event occurs . Work Locally . Experiment with lakeFS data on a local environment . You can use the 30-day free trial of lakeFS Cloud if you want to try out lakeFS without installing anything. ",
     "url": "/quickstart/#lakefs-quickstart",
     
     "relUrl": "/quickstart/#lakefs-quickstart"
-  },"312": {
+  },"289": {
     "doc": "⭐ Quickstart",
     "title": "⭐ Quickstart",
     "content": " ",
     "url": "/quickstart/",
     
     "relUrl": "/quickstart/"
+  },"290": {
+    "doc": "Integrations",
+    "title": "Integrations with lakeFS",
+    "content": "You can use lakeFS with a wide range of tools and frameworks. lakeFS provides several clients directly, as well as an S3-compatible gateway. This gateway means that if you want to use something with lakeFS, so long as that technology can interface with S3, it can interface with lakeFS. See below for detailed instructions for using different technologies with lakeFS. | Airbyte | Amazon Athena | Amazon SageMaker | Apache Airflow | . | Apache Hive | Apache Iceberg | Apache Kafka | Apache Spark | . | AWS CLI | Cloudera | Delta Lake | Git | . | Dremio | DuckDB | Glue / Hive metastore | Kubeflow | . | Presto / Trino | Python | R | Vertex AI | . | HuggingFace Datasets | | | | . If there is a technology not listed here that you would like to use with lakeFS, please drop by our Slack and we’ll help you get started with it. ",
+    "url": "/integrations/#integrations-with-lakefs",
+    
+    "relUrl": "/integrations/#integrations-with-lakefs"
+  },"291": {
+    "doc": "Integrations",
+    "title": "Integrations",
+    "content": " ",
+    "url": "/integrations/",
+    
+    "relUrl": "/integrations/"
+  },"292": {
+    "doc": "How lakeFS Works",
+    "title": "How lakeFS Works",
+    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
+    "url": "/understand/how/",
+    
+    "relUrl": "/understand/how/"
+  },"293": {
+    "doc": "Use Cases",
+    "title": "lakeFS Use Cases",
+    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/understand/use_cases/#lakefs-use-cases",
+    
+    "relUrl": "/understand/use_cases/#lakefs-use-cases"
+  },"294": {
+    "doc": "Use Cases",
+    "title": "Use Cases",
+    "content": " ",
+    "url": "/understand/use_cases/",
+    
+    "relUrl": "/understand/use_cases/"
+  },"295": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management in lakeFS",
+    "content": "lakeFS provides full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs",
+    
+    "relUrl": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs"
+  },"296": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management",
+    "content": " ",
+    "url": "/understand/data_lifecycle_management/",
+    
+    "relUrl": "/understand/data_lifecycle_management/"
+  },"297": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": ". ",
+    "url": "/understand/",
+    
+    "relUrl": "/understand/"
+  },"298": {
+    "doc": "Understanding lakeFS",
+    "title": "Architecture and Internals",
+    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
+    "url": "/understand/#architecture-and-internals",
+    
+    "relUrl": "/understand/#architecture-and-internals"
+  },"299": {
+    "doc": "Understanding lakeFS",
+    "title": "lakeFS Use Cases",
+    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/understand/#lakefs-use-cases",
+    
+    "relUrl": "/understand/#lakefs-use-cases"
+  },"300": {
+    "doc": "Understanding lakeFS",
+    "title": "lakeFS Concepts and Model",
+    "content": "lakeFS adopts many of the terms and concepts from git. This page goes into details on the similarities and differences, and provides a good background to the concepts used in lakeFS. ",
+    "url": "/understand/#lakefs-concepts-and-model",
+    
+    "relUrl": "/understand/#lakefs-concepts-and-model"
+  },"301": {
+    "doc": "Understanding lakeFS",
+    "title": "Performance",
+    "content": "Check out the Performance best practices guide for useful hints and tips on ensuring high performance from lakeFS. ",
+    "url": "/understand/#performance",
+    
+    "relUrl": "/understand/#performance"
+  },"302": {
+    "doc": "Understanding lakeFS",
+    "title": "FAQ and Glossary",
+    "content": "The FAQ covers many common questions around lakeFS, and the glossary provides a useful reference for the terms used in lakeFS. ",
+    "url": "/understand/#faq-and-glossary",
+    
+    "relUrl": "/understand/#faq-and-glossary"
+  },"303": {
+    "doc": "Understanding lakeFS",
+    "title": "Products",
+    "content": "lakeFS is an Apache 2.0 licensed open-source project. Treeverse also provides two commercial products: . | lakeFS Cloud | lakeFS Enterprise | . Find out more on the pricing page, or contact us for details. ",
+    "url": "/understand/#products",
+    
+    "relUrl": "/understand/#products"
+  },"304": {
+    "doc": "Security",
+    "title": "lakeFS Security Reference",
+    "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | Short Lived Token (STS like) | Login to lakeFS with AWS IAM | . ",
+    "url": "/reference/security/#lakefs-security-reference",
+    
+    "relUrl": "/reference/security/#lakefs-security-reference"
+  },"305": {
+    "doc": "Security",
+    "title": "Security",
+    "content": " ",
+    "url": "/reference/security/",
+    
+    "relUrl": "/reference/security/"
+  },"306": {
+    "doc": "Reference",
+    "title": "lakeFS Reference",
+    "content": ". ",
+    "url": "/reference/#lakefs-reference",
+    
+    "relUrl": "/reference/#lakefs-reference"
+  },"307": {
+    "doc": "Reference",
+    "title": "API",
+    "content": ". | lakeFS API | S3 Gateway API | . ",
+    "url": "/reference/#api",
+    
+    "relUrl": "/reference/#api"
+  },"308": {
+    "doc": "Reference",
+    "title": "Components",
+    "content": ". | Server Configuration | lakeFS command-line tool lakectl | . ",
+    "url": "/reference/#components",
+    
+    "relUrl": "/reference/#components"
+  },"309": {
+    "doc": "Reference",
+    "title": "Clients",
+    "content": ". | Spark Metadata Client | lakeFS Hadoop FileSystem | Python Client | . ",
+    "url": "/reference/#clients",
+    
+    "relUrl": "/reference/#clients"
+  },"310": {
+    "doc": "Reference",
+    "title": "Security",
+    "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | Login to lakeFS with AWS IAM | . ",
+    "url": "/reference/#security",
+    
+    "relUrl": "/reference/#security"
+  },"311": {
+    "doc": "Reference",
+    "title": "Other Reference Documentation",
+    "content": ". | Monitoring using Prometheus | Auditing | . ",
+    "url": "/reference/#other-reference-documentation",
+    
+    "relUrl": "/reference/#other-reference-documentation"
+  },"312": {
+    "doc": "Reference",
+    "title": "Reference",
+    "content": " ",
+    "url": "/reference/",
+    
+    "relUrl": "/reference/"
   },"313": {
     "doc": "Welcome to lakeFS",
     "title": "Welcome to the Lake!",
@@ -3219,54 +3219,54 @@
     
     "relUrl": "/understand/use_cases/reproducibility.html"
   },"460": {
-    "doc": "Rollback",
-    "title": "Rollbacks",
-    "content": " ",
-    "url": "/understand/use_cases/rollback.html#rollbacks",
-    
-    "relUrl": "/understand/use_cases/rollback.html#rollbacks"
-  },"461": {
-    "doc": "Rollback",
-    "title": "What Is a Rollback?",
-    "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a significant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
-    "url": "/understand/use_cases/rollback.html#what-is-a-rollback",
-    
-    "relUrl": "/understand/use_cases/rollback.html#what-is-a-rollback"
-  },"462": {
-    "doc": "Rollback",
-    "title": "Why Rollbacks Are Useful",
-    "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
-    "url": "/understand/use_cases/rollback.html#why-rollbacks-are-useful",
-    
-    "relUrl": "/understand/use_cases/rollback.html#why-rollbacks-are-useful"
-  },"463": {
-    "doc": "Rollback",
-    "title": "Performing Rollbacks with lakeFS",
-    "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
-    "url": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs",
-    
-    "relUrl": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs"
-  },"464": {
-    "doc": "Rollback",
-    "title": "Rollback",
-    "content": " ",
-    "url": "/understand/use_cases/rollback.html",
-    
-    "relUrl": "/understand/use_cases/rollback.html"
-  },"465": {
     "doc": "5️⃣ Roll back Changes",
     "title": "Rolling back Changes in lakeFS",
     "content": "Our intrepid user (you) merged a change back into the main branch and realised that they had made a mistake 🤦🏻. The good news for them (you) is that lakeFS can revert changes made, similar to how you would in Git 😅. From your terminal window run lakectl with the revert command: . docker exec -it lakefs \\ lakectl branch revert \\ lakefs://quickstart/main \\ main --parent-number 1 --yes . You should see a confirmation of a successful rollback: . Branch: lakefs://quickstart/main commit main successfully reverted . Back in the object page and the DuckDB query we can see that the original file is now back to how it was: . ",
     "url": "/quickstart/rollback.html#rolling-back-changes-in-lakefs",
     
     "relUrl": "/quickstart/rollback.html#rolling-back-changes-in-lakefs"
-  },"466": {
+  },"461": {
     "doc": "5️⃣ Roll back Changes",
     "title": "5️⃣ Roll back Changes",
     "content": " ",
     "url": "/quickstart/rollback.html",
     
     "relUrl": "/quickstart/rollback.html"
+  },"462": {
+    "doc": "Rollback",
+    "title": "Rollbacks",
+    "content": " ",
+    "url": "/understand/use_cases/rollback.html#rollbacks",
+    
+    "relUrl": "/understand/use_cases/rollback.html#rollbacks"
+  },"463": {
+    "doc": "Rollback",
+    "title": "What Is a Rollback?",
+    "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a significant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
+    "url": "/understand/use_cases/rollback.html#what-is-a-rollback",
+    
+    "relUrl": "/understand/use_cases/rollback.html#what-is-a-rollback"
+  },"464": {
+    "doc": "Rollback",
+    "title": "Why Rollbacks Are Useful",
+    "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
+    "url": "/understand/use_cases/rollback.html#why-rollbacks-are-useful",
+    
+    "relUrl": "/understand/use_cases/rollback.html#why-rollbacks-are-useful"
+  },"465": {
+    "doc": "Rollback",
+    "title": "Performing Rollbacks with lakeFS",
+    "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
+    "url": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs",
+    
+    "relUrl": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs"
+  },"466": {
+    "doc": "Rollback",
+    "title": "Rollback",
+    "content": " ",
+    "url": "/understand/use_cases/rollback.html",
+    
+    "relUrl": "/understand/use_cases/rollback.html"
   },"467": {
     "doc": "S3 Gateway API",
     "title": "S3-Supported API",
@@ -3820,12 +3820,5 @@
     "url": "/quickstart/work-with-data-locally.html",
     
     "relUrl": "/quickstart/work-with-data-locally.html"
-  },"546": {
-    "doc": "lakeFS SemVer + TDD",
-    "title": "lakeFS SemVer + TDD",
-    "content": "# lakeFS SemVer + TDD ## Background Since day 1, Treeverse Labs has been focused on quality and standardization. We aim to keep lakeFS -- both OSS, and Cloud, and Enterprise -- constantly at the highest level of quality. Our team employs state-of-the-art techniques, and we constantly introduce new techniques. As a user of lakeFS, you expect to be able to understand what changes are being introduced. As a team we started using Semantic Versioning with version 1.0.0, and we now label versions according to [Semantic Versioning 2.0.0][semver-2.0.0]. Our recent 1.0 release used the semantic versioning terminology to [describe][lakeFS-SDK-in-1.0] our forwards- and backwards-compatibility guarantees. This has aided our users, but we have also seen and heard confusion among both users and developers over when exactly to increment each part of the versioning system. Meanwhile, our relentless quest to improve our [Agile development lifecycle][agile-manifesto] has been shifting our development process styles towards a more Test-Driven Development (\"[TDD][TDD]\") style. Martin Fowler has written a [great introduction to TDD][TDD-martin-fowler]; however we shall be following the [London \"mockist\" school][TDD-martin-fowler-london-style]. In brief, the starting point for all TDD is a failing test: add a test that checks that the desired feature is present. The way to fix this test is to implement the desired feature. This automatically guarantees that all code is tested, while being an integral component of Agile methodologies. ## What is being announced Today we are bringing strict SemVer and strict TDD together system architecture to lakeFS developers, users, and of course customers. These new policies provide unparalleled advantages to quality and to system architecture. Effective immediately, we are transitioning to a strictly Agile / SemVer / TDD methodology. All code will be written tests-first, with code being written only to fix the bugs introduced by these tests. In parallel, we are doubling down on strict Semantic Versioning. ## How this will affect you ### Simpler version numbers SemVer strictly specifies: > Bug fixes not affecting the API increment the patch version Accordingly, effective immediately, the major and minor versions of all lakeFS features will not change. The next version of lakeFS will be 1.15.1, followed by 1.15.3, 1.15.4, and proceeding as we add more failing tests. The \"1.15\" prefix is our new mark of quality, and We shall never have to release 1.16.0. ### Quality increase by definition Obviously, the transition to TDD causes a [10x reduction in user issues][measuring-tdd-effectiveness] (\"bugs\"), leading to a 10x increase in quality. ### Best-practices terminology SemVer and TDD are both widely known standards: searching Google for [\"semver\" quality][google-semver-quality] yields 337,000 hits, searching Google for [\"TDD\" quality][google-tdd-quality] yields another 15,700,000. Together these are over 16 million quality reasons. Combining these standards clearly increases management alignment with lakeFS product introduction objectives. ## Learn more! | If you would like to come work with us on these but also _other_ cutting-edge features, [we're hiring][lakefs-jobs]! [agile-manifesto]: https://agilemanifesto.org/ [lakeFS-SDK-in-1.0]: https://docs.lakefs.io/understand/towards-1.0-sdk.html [TDD]: https://testdriven.io/test-driven-development/ [TDD-martin-fowler]: https://martinfowler.com/bliki/TestDrivenDevelopment.html [TDD-martin-fowler-london-style]: https://martinfowler.com/articles/mocksArentStubs.html#ClassicalAndMockistTesting [semver-2.0.0]: https://semver.org/spec/v2.0.0.html [lakefs-jobs]: https://lakefs.io/careers/ [measuring-tdd-effectiveness]: https://markheath.net/post/measuring-tdd-effectiveness [google-semver-quality]: https://www.google.com/search?q=%22semver%22+quality [google-tdd-quality]: https://www.google.com/search?q=%22tdd%22+quality ",
-    "url": "/posts/tdd-semver.html",
-    
-    "relUrl": "/posts/tdd-semver.html"
   }
 }
