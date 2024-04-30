@@ -564,17 +564,31 @@
 
 <p class="note">Please note that Spark 2 is no longer supported with the lakeFS metadata client.</p>
 
-<p>Start Spark Shell / PySpark with the <code class="language-plaintext highlighter-rouge">--packages</code> flag:</p>
+<p>The Spark metadata client is compiled for Spark 3.1.2 with Hadoop 3.2.1, but
+can work for other Spark versions and higher Hadoop versions.</p>
 
-<p>This client is compiled for Spark 3.1.2 with Hadoop 3.2.1, but can work for other Spark
-versions and higher Hadoop versions.</p>
+<div class="tabs">
+  <ul>
+    <li><a href="#spark-shell">PySpark, spark-shell, spark-submit, spark-sql</a></li>
+	<li><a href="#databricks">DataBricks</a></li>
+  </ul>
+  <div id="spark-shell">
+    <p>Start Spark Shell / PySpark with the <code class="language-plaintext highlighter-rouge">--packages</code> flag, for instance:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--packages</span> io.lakefs:lakefs-spark-client_2.12:0.11.0
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--packages</span> io.lakefs:lakefs-spark-client_2.12:0.13.0
+</code></pre></div>    </div>
 
-<p>Alternatively an assembled jar is available on S3, at
-<code class="language-plaintext highlighter-rouge">s3://treeverse-clients-us-east/lakefs-spark-client/0.11.0/lakefs-spark-client-assembly-0.11.0.jar</code>
-&lt;/div&gt;</p>
+    <p>Alternatively use the assembled jar (an “Überjar”) on S3, from
+<code class="language-plaintext highlighter-rouge">s3://treeverse-clients-us-east/lakefs-spark-client/0.13.0/lakefs-spark-client-assembly-0.13.0.jar</code>
+by passing its path to <code class="language-plaintext highlighter-rouge">--jars</code>.
+The assembled jar is larger but shades several common libraries.  Use it if Spark
+complains about bad classes or missing methods.</p>
+  </div>
+  <div id="databricks">
+    <p>Include this assembled jar (an “Überjar”) from S3, from
+<code class="language-plaintext highlighter-rouge">s3://treeverse-clients-us-east/lakefs-spark-client/0.13.0/lakefs-spark-client-assembly-0.13.0.jar</code>.</p>
+  </div>
+</div>
 <h2 id="configuration">
   
   
