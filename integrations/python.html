@@ -572,6 +572,14 @@
       <li><a href="#python-sdk-documentation-and-api-reference" id="markdown-toc-python-sdk-documentation-and-api-reference">Python SDK documentation and API reference</a></li>
     </ol>
   </li>
+  <li><a href="#using-lakefs-spec-for-higher-level-file-operations" id="markdown-toc-using-lakefs-spec-for-higher-level-file-operations">Using lakefs-spec for higher-level file operations</a>    <ol>
+      <li><a href="#installation" id="markdown-toc-installation">Installation</a></li>
+      <li><a href="#interacting-with-lakefs-through-a-file-system" id="markdown-toc-interacting-with-lakefs-through-a-file-system">Interacting with lakeFS through a file system</a></li>
+      <li><a href="#integrations-with-popular-data-science-packages" id="markdown-toc-integrations-with-popular-data-science-packages">Integrations with popular data science packages</a></li>
+      <li><a href="#using-transactions-for-atomic-versioning-operations" id="markdown-toc-using-transactions-for-atomic-versioning-operations">Using transactions for atomic versioning operations</a></li>
+      <li><a href="#further-information" id="markdown-toc-further-information">Further information</a></li>
+    </ol>
+  </li>
   <li><a href="#using-boto" id="markdown-toc-using-boto">Using Boto</a>    <ol>
       <li><a href="#initializing-1" id="markdown-toc-initializing-1">Initializing</a></li>
       <li><a href="#usage-examples-1" id="markdown-toc-usage-examples-1">Usage Examples</a></li>
@@ -581,19 +589,21 @@
 
 </div>
 
-<p class="note"><strong>High Level Python SDK</strong>  <span class="badge mr-1">New</span><br />
+<p class="note"><strong>High Level Python SDK</strong>  <span class="badge mr-1">New</span>
 We’ve just released a new High Level Python SDK library, and we’re super excited to tell you about it! Continue reading to get the
-full story!<br />
-Though our previous SDK client is still supported and maintained, we highly recommend using the new High Level SDK.<br />
-<strong>For previous Python SDKs follow these links:</strong><br />
-<a href="https://pydocs-sdk.lakefs.io">lakefs-sdk</a><br />
+full story!
+Though our previous SDK client is still supported and maintained, we highly recommend using the new High Level SDK.
+<strong>For previous Python SDKs follow these links:</strong>
+<a href="https://pydocs-sdk.lakefs.io">lakefs-sdk</a>
 <a href="https://pydocs.lakefs.io">legacy-sdk</a> (Depracated)</p>
 
-<p>There are two primary ways to work with lakeFS from Python:</p>
+<p>There are three primary ways to work with lakeFS from Python:</p>
 
 <ul>
   <li><a href="#using-boto">Use Boto</a> to perform <strong>object operations</strong> through the <strong>lakeFS S3 gateway</strong>.</li>
   <li><a href="#using-the-lakefs-sdk">Use the High Level lakeFS SDK</a> to perform <strong>object operations</strong>, <strong>versioning</strong> and other <strong>lakeFS-specific operations</strong>.</li>
+  <li><a href="#using-lakefs-spec-for-higher-level-file-operations">Using lakefs-spec</a> to
+perform high-level file operations through a file-system-like API.</li>
 </ul>
 <h2 id="using-the-lakefs-sdk">
   
@@ -816,7 +826,7 @@ main
 </h2>
     
 
-<p>Great, now lets see some IO operations in action!<br />
+<p>Great, now lets see some IO operations in action!
 The new High Level SDK provide IO semantics which allow to work with lakeFS objects as if they were files in your
 filesystem. This is extremely useful when working with data transformation packages that accept file descriptors and streams.</p>
 <h3 id="upload">
@@ -1063,7 +1073,7 @@ filesystem. This is extremely useful when working with data transformation packa
 
 <span class="c1"># We can import data from multiple sources in a single import process
 # The following example initializes a new ImportManager and adds 2 source types; A prefix and an object.
-</span><span class="n">importer</span> <span class="o">=</span> <span class="n">branch</span><span class="p">.</span><span class="n">import_data</span><span class="p">(</span><span class="n">commit_message</span><span class="o">=</span><span class="s">"added public S3 data"</span><span class="p">)</span> \ 
+</span><span class="n">importer</span> <span class="o">=</span> <span class="n">branch</span><span class="p">.</span><span class="n">import_data</span><span class="p">(</span><span class="n">commit_message</span><span class="o">=</span><span class="s">"added public S3 data"</span><span class="p">)</span> \
     <span class="p">.</span><span class="n">prefix</span><span class="p">(</span><span class="s">"s3://example-bucket1/path1/"</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="s">"datasets/path1/"</span><span class="p">)</span> \
     <span class="p">.</span><span class="nb">object</span><span class="p">(</span><span class="s">"s3://example-bucket1/path2/imported_obj"</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="s">"datasets/path2/imported_obj"</span><span class="p">)</span>
 
@@ -1086,7 +1096,7 @@ filesystem. This is extremely useful when working with data transformation packa
 
 <span class="k">if</span> <span class="n">status</span><span class="p">.</span><span class="n">error</span><span class="p">:</span>
     <span class="c1"># handle!
-</span>    
+</span>
 <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"imported a total of </span><span class="si">{</span><span class="n">status</span><span class="p">.</span><span class="n">ingested_objects</span><span class="si">}</span><span class="s"> objects!"</span><span class="p">)</span>
 
 </code></pre></div></div>
@@ -1148,6 +1158,127 @@ True
     
 
 <p>For the documentation of lakeFS’s Python package and full api reference, see <a href="https://pydocs-lakefs.lakefs.io">https://pydocs-lakefs.lakefs.io</a></p>
+<h2 id="using-lakefs-spec-for-higher-level-file-operations">
+  
+  
+    <a href="#using-lakefs-spec-for-higher-level-file-operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakefs-spec for higher-level file operations
+  
+  
+</h2>
+    
+
+<p>The <a href="https://lakefs-spec.org/latest/">lakefs-spec</a> project
+provides higher-level file operations on lakeFS objects with a filesystem API,
+built on the <a href="https://github.com/fsspec/filesystem_spec">fsspec</a> project.</p>
+
+<p class="note"><strong>Note</strong> This library is a third-party package and not maintained by the lakeFS developers; please file issues and bug reports directly
+in the <a href="https://github.com/aai-institute/lakefs-spec">lakefs-spec</a> repository.</p>
+<h3 id="installation">
+  
+  
+    <a href="#installation" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installation
+  
+  
+</h3>
+    
+
+<p>Install <code class="language-plaintext highlighter-rouge">lakefs-spec</code> directly with <code class="language-plaintext highlighter-rouge">pip</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python -m pip install --upgrade lakefs-spec
+</code></pre></div></div>
+<h3 id="interacting-with-lakefs-through-a-file-system">
+  
+  
+    <a href="#interacting-with-lakefs-through-a-file-system" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Interacting with lakeFS through a file system
+  
+  
+</h3>
+    
+
+<p>To write a file directly to a branch in a lakeFS repository, consider the following example:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+
+<span class="n">REPO</span><span class="p">,</span> <span class="n">BRANCH</span> <span class="o">=</span> <span class="s">"example-repo"</span><span class="p">,</span> <span class="s">"main"</span>
+
+<span class="c1"># Prepare a local example file.
+</span><span class="n">lpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s">"demo.txt"</span><span class="p">)</span>
+<span class="n">lpath</span><span class="p">.</span><span class="n">write_text</span><span class="p">(</span><span class="s">"Hello, lakeFS!"</span><span class="p">)</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>  <span class="c1"># will auto-discover credentials from ~/.lakectl.yaml
+</span><span class="n">rpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">REPO</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">BRANCH</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">lpath</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">"</span>
+<span class="n">fs</span><span class="p">.</span><span class="n">put</span><span class="p">(</span><span class="n">lpath</span><span class="p">,</span> <span class="n">rpath</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Reading it again from remote is as easy as the following:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span> <span class="o">=</span> <span class="n">fs</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="n">rpath</span><span class="p">,</span> <span class="s">"rt"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">readline</span><span class="p">())</span>  <span class="c1"># prints "Hello, lakeFS!"
+</span></code></pre></div></div>
+
+<p>Many more operations like retrieving an object’s metadata or checking an
+object’s existence on the lakeFS server are also supported. For a full list,
+see the <a href="https://lakefs-spec.org/latest/reference/lakefs_spec/">API reference</a>.</p>
+<h3 id="integrations-with-popular-data-science-packages">
+  
+  
+    <a href="#integrations-with-popular-data-science-packages" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Integrations with popular data science packages
+  
+  
+</h3>
+    
+
+<p>A number of Python data science projects support fsspec, with <a href="https://pandas.pydata.org/">pandas</a> being a prominent example. Reading a Parquet file from a lakeFS repository into a Pandas data frame for analysis is very easy, demonstrated on the quickstart repository sample data:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="c1"># Read into pandas directly by supplying the lakeFS URI...
+</span><span class="n">lakes</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s">"lakefs://quickstart/main/lakes.parquet"</span><span class="p">)</span>
+<span class="n">german_lakes</span> <span class="o">=</span> <span class="n">lakes</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="s">'Country == "Germany"'</span><span class="p">)</span>
+<span class="c1"># ... and store directly, again with a raw lakeFS URI.
+</span><span class="n">german_lakes</span><span class="p">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s">"lakefs://quickstart/main/german_lakes.csv"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>A list of integrations with popular data science libraries can be found in the <a href="https://lakefs-spec.org/latest/guides/integrations/">lakefs-spec documentation</a>.</p>
+<h3 id="using-transactions-for-atomic-versioning-operations">
+  
+  
+    <a href="#using-transactions-for-atomic-versioning-operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using transactions for atomic versioning operations
+  
+  
+</h3>
+    
+
+<p>As with the high-level SDK (see above), lakefs-spec also supports transactions
+for conducting versioning operations on newly modified files. The following is an example of creating a commit on the repository’s main branch directly after a file upload:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+
+<span class="c1"># assumes you have a local train-test split as two text files:
+# train-data.txt, and test-data.txt.
+</span><span class="k">with</span> <span class="n">fs</span><span class="p">.</span><span class="n">transaction</span><span class="p">(</span><span class="s">"example-repo"</span><span class="p">,</span> <span class="s">"main"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+    <span class="n">fs</span><span class="p">.</span><span class="n">put_file</span><span class="p">(</span><span class="s">"train-data.txt"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"example-repo/</span><span class="si">{</span><span class="n">tx</span><span class="p">.</span><span class="n">branch</span><span class="p">.</span><span class="nb">id</span><span class="si">}</span><span class="s">/train-data.txt"</span><span class="p">)</span>
+    <span class="n">tx</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">"Add training data"</span><span class="p">)</span>
+    <span class="n">fs</span><span class="p">.</span><span class="n">put_file</span><span class="p">(</span><span class="s">"test-data.txt"</span><span class="p">,</span> <span class="sa">f</span><span class="s">"example-repo/</span><span class="si">{</span><span class="n">tx</span><span class="p">.</span><span class="n">branch</span><span class="p">.</span><span class="nb">id</span><span class="si">}</span><span class="s">/test-data.txt"</span><span class="p">)</span>
+    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">"Add test data"</span><span class="p">)</span>
+    <span class="n">tx</span><span class="p">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sha</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"My train-test split"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Transactions are atomic - if an exception happens at any point of the transaction, the repository remains unchanged.</p>
+<h3 id="further-information">
+  
+  
+    <a href="#further-information" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Further information
+  
+  
+</h3>
+    
+
+<p>For more user guides, tutorials on integrations with data science tools like pandas, and more, check out the <a href="https://lakefs-spec.org/latest/">lakefs-spec documentation</a>.</p>
 <h2 id="using-boto">
   
   
