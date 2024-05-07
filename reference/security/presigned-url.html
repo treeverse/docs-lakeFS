@@ -571,7 +571,7 @@
 
 <p>With lakeFS, you can access data directly from the storage and not through lakeFS using a presigned URL.
 Based on the user’s access to an object in the object store, the presigned URL will get read or write access.
-The presign support is enabled for block adapter that supports it (S3, GCP, Azure), and can be disabled by the <a href="/reference/configuration.html">configuration</a> (<code class="language-plaintext highlighter-rouge">blockstore.blockstore-name.disable_pre_signed</code>). Note that the UI support is disabled by default.</p>
+The presign support is enabled for block adapter that supports it (S3, GCP, Azure), and can be disabled by the <a href="/reference/configuration.html">configuration</a> (<code class="language-plaintext highlighter-rouge">blockstore.&lt;blockstore_type&gt;.disable_pre_signed</code>). Note that the UI support is disabled by default.</p>
 <h2 id="using-presigned-urls-in-the-ui">
   
   
@@ -582,9 +582,9 @@ The presign support is enabled for block adapter that supports it (S3, GCP, Azur
     
 <p>For using presigned URLs in the UI:</p>
 <ol>
-  <li>Enable the presigned URL support UI in the lakeFS <a href="/reference/configuration.html">configuration</a> (<code class="language-plaintext highlighter-rouge">blockstore.blockstore-name.disable_pre_signed_ui</code>).</li>
+  <li>Enable the presigned URL support UI in the lakeFS <a href="/reference/configuration.html">configuration</a> (<code class="language-plaintext highlighter-rouge">blockstore.&lt;blockstore_type&gt;.disable_pre_signed_ui</code>   ).</li>
   <li>Add CORS (Cross-Origin Resource Sharing) permissions to the bucket for the UI to fetch objects using a presigned URL (instead of through lakeFS).</li>
-  <li>The <code class="language-plaintext highlighter-rouge">disable_pre_signed</code> needs to be enabled to enable it in the UI.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">blockstore.&lt;blockstore_type&gt;.disable_pre_signed</code> must be false to enable it in the UI.</li>
 </ol>
 
 <p><strong>⚠️ Note</strong> Currently DuckDB fetching data from lakeFS does not support fetching data using presigned URL.</p>
@@ -604,7 +604,8 @@ The presign support is enabled for block adapter that supports it (S3, GCP, Azur
         </span><span class="p">],</span><span class="w">
         </span><span class="nl">"AllowedMethods"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
             </span><span class="s2">"GET"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"PUT"</span><span class="w">
+            </span><span class="s2">"PUT"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"HEAD"</span><span class="w">
         </span><span class="p">],</span><span class="w">
         </span><span class="nl">"AllowedOrigins"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
             </span><span class="s2">"lakefs.endpoint"</span><span class="w">
@@ -628,7 +629,7 @@ The presign support is enabled for block adapter that supports it (S3, GCP, Azur
     </span><span class="p">{</span><span class="w">
         </span><span class="nl">"origin"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"lakefs.endpoint"</span><span class="p">],</span><span class="w">
         </span><span class="nl">"responseHeader"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ETag"</span><span class="p">],</span><span class="w">
-        </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"PUT"</span><span class="p">,</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"PUT"</span><span class="p">,</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w"> </span><span class="s2">"HEAD"</span><span class="p">],</span><span class="w">
         </span><span class="nl">"maxAgeSeconds"</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="w">
     </span><span class="p">}</span><span class="w">
    </span><span class="p">]</span><span class="w">
@@ -645,7 +646,7 @@ The presign support is enabled for block adapter that supports it (S3, GCP, Azur
 <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nt">&lt;Cors&gt;</span>
       <span class="nt">&lt;CorsRule&gt;</span>  
           <span class="nt">&lt;AllowedOrigins&gt;</span>lakefs.endpoint<span class="nt">&lt;/AllowedOrigins&gt;</span>  
-          <span class="nt">&lt;AllowedMethods&gt;</span>PUT,GET<span class="nt">&lt;/AllowedMethods&gt;</span>  
+          <span class="nt">&lt;AllowedMethods&gt;</span>PUT,GET,HEAD<span class="nt">&lt;/AllowedMethods&gt;</span>  
           <span class="nt">&lt;AllowedHeaders&gt;</span>*<span class="nt">&lt;/AllowedHeaders&gt;</span>  
           <span class="nt">&lt;ExposedHeaders&gt;</span>ETag,x-ms-*<span class="nt">&lt;/ExposedHeaders&gt;</span>  
           <span class="nt">&lt;MaxAgeInSeconds&gt;</span>3600<span class="nt">&lt;/MaxAgeInSeconds&gt;</span>  
