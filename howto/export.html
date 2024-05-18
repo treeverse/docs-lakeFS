@@ -672,34 +672,52 @@ spark.hadoop.lakefs.api.connection.timeout_seconds=TIMEOUT_IN_SECONDS</code>
   
 </h3>
     
+
 <p>Set up lakeFS Spark metadata client with the endpoint and credentials as instructed in the previous <a href="/reference/spark-client.html">page</a>.</p>
 
 <p>The client exposes the <code class="language-plaintext highlighter-rouge">Exporter</code> object with three export options:</p>
 
-<ol>
-  <li>Export <em>all</em> the objects at the HEAD of a given branch. Does not include
-files that were added to that branch but were not committed.</li>
-</ol>
+<ol><li>
+Export *all* the objects at the HEAD of a given branch. Does not include
+files that were added to that branch but were not committed.
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportAllFromBranch</span><span class="o">(</span><span class="n">branch</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-</code></pre></div></div>
+<div class="tabs">
+  <ul>
+  <li><a href="#export-head-scala">Scala</a></li>
+  </ul>
+  <div id="export-head-scala">
+        <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportAllFromBranch</span><span class="o">(</span><span class="n">branch</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+</code></pre></div>        </div>
+      </div>
+</div>
+</li>
+<li>Export ALL objects from a commit:
 
-<ol>
-  <li>Export ALL objects from a commit:</li>
-</ol>
+<div class="tabs">
+  <ul>
+  <li><a href="#export-commit-scala">Scala</a></li>
+  </ul>
+  <div id="export-commit-scala">
+        <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportAllFromCommit</span><span class="o">(</span><span class="n">commitID</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+</code></pre></div>        </div>
+      </div>
+</div>
+</li>
+<li>Export just the diff between a commit and the HEAD of a branch.
 
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportAllFromCommit</span><span class="o">(</span><span class="n">commitID</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-</code></pre></div></div>
+   This is an ideal option for continuous exports of a branch since it will change only the files
+   that have been changed since the previous commit.
 
-<ol>
-  <li>
-    <p>Export just the diff between a commit and the HEAD of a branch.
-This is an ideal option for continuous exports of a branch since it will change only the files
-that have been changed since the previous commit.</p>
-
-    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportFrom</span><span class="o">(</span><span class="n">branch</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">prevCommitID</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
+<div class="tabs">
+  <ul>
+  <li><a href="#export-diffs-scala">Scala</a></li>
+  </ul>
+  <div id="export-diffs-scala">
+        <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">exportFrom</span><span class="o">(</span><span class="n">branch</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">prevCommitID</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+</code></pre></div>        </div>
+      </div>
+</div>
+</li>
 </ol>
 <h2 id="successfailure-indications">
   
@@ -740,11 +758,14 @@ You may override the default behavior by passing a custom <code class="language-
 </h2>
     
 
-<ol>
-  <li>
-    <p>First configure the <code class="language-plaintext highlighter-rouge">Exporter</code> instance:</p>
+<ol><li>First configure the `Exporter` instance:
 
-    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.treeverse.clients.</span><span class="o">{</span><span class="nc">ApiClient</span><span class="o">,</span> <span class="nc">Exporter</span><span class="o">}</span>
+<div class="tabs">
+  <ul>
+    <li><a href="#export-custom-setup-scala">Scala</a></li>
+  </ul>
+  <div id="export-custom-setup-scala">
+        <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.treeverse.clients.</span><span class="o">{</span><span class="nc">ApiClient</span><span class="o">,</span> <span class="nc">Exporter</span><span class="o">}</span>
 <span class="k">import</span> <span class="nn">org.apache.spark.sql.SparkSession</span>
 
 <span class="k">val</span> <span class="nv">endpoint</span> <span class="k">=</span> <span class="s">"http://&lt;LAKEFS_ENDPOINT&gt;/api/v1"</span>
@@ -764,25 +785,35 @@ You may override the default behavior by passing a custom <code class="language-
 
 <span class="k">val</span> <span class="nv">apiClient</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ApiClient</span><span class="o">(</span><span class="n">endpoint</span><span class="o">,</span> <span class="n">accessKey</span><span class="o">,</span> <span class="n">secretKey</span><span class="o">)</span>
 <span class="k">val</span> <span class="nv">exporter</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Exporter</span><span class="o">(</span><span class="n">spark</span><span class="o">,</span> <span class="n">apiClient</span><span class="o">,</span> <span class="n">repo</span><span class="o">,</span> <span class="n">rootLocation</span><span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Now you can export all objects from <code class="language-plaintext highlighter-rouge">main</code> branch to <code class="language-plaintext highlighter-rouge">s3://company-bucket/example/latest</code>:</p>
+</code></pre></div>        </div>
+      </div>
+</div></li>
+<li>Now you can export all objects from `main` branch to `s3://company-bucket/example/latest`:
 
-    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">branch</span> <span class="k">=</span> <span class="s">"main"</span>
+<div class="tabs">
+  <ul>
+  <li><a href="#export-custom-branch-scala">Scala</a></li>
+  </ul>
+  <div id="export-custom-branch-scala">
+        <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">branch</span> <span class="k">=</span> <span class="s">"main"</span>
 <span class="nv">exporter</span><span class="o">.</span><span class="py">exportAllFromBranch</span><span class="o">(</span><span class="n">branch</span><span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Assuming a previous successful export on commit <code class="language-plaintext highlighter-rouge">f3c450d8cd0e84ac67e7bc1c5dcde9bef82d8ba7</code>,
-you can alternatively export just the difference between <code class="language-plaintext highlighter-rouge">main</code> branch and the commit:</p>
+</code></pre></div>        </div>
+      </div>
+</div></li>
+<li>Assuming a previous successful export on commit `f3c450d8cd0e84ac67e7bc1c5dcde9bef82d8ba7`,
+you can alternatively export just the difference between `main` branch and the commit:
 
-    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">branch</span> <span class="k">=</span> <span class="s">"main"</span>
+<div class="tabs">
+  <ul>
+    <li><a href="#export-custom-diffs-scala">Scala</a></li>
+  </ul>
+  <div id="export-custom-diffs-scala">
+        <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">branch</span> <span class="k">=</span> <span class="s">"main"</span>
 <span class="k">val</span> <span class="nv">commit</span> <span class="k">=</span> <span class="s">"f3c450d8cd0e84ac67e7bc1c5dcde9bef82d8ba7"</span>
 <span class="nv">exporter</span><span class="o">.</span><span class="py">exportFrom</span><span class="o">(</span><span class="n">branch</span><span class="o">,</span> <span class="n">commit</span><span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
-</ol>
+</code></pre></div>        </div>
+      </div>
+</div></li></ol>
 <h2 id="exporting-data-with-docker">
   
   
