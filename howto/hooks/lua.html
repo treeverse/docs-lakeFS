@@ -1335,6 +1335,33 @@ to the mounted location instead. <code class="language-plaintext highlighter-rou
 <span class="n">gs</span><span class="p">.</span><span class="n">write_fuse_symlink</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">mount_info</span><span class="p">)</span>
 <span class="c1">-- Symlink: "/home/user/gcs-mount/exported/path/to/object" -&gt; "/home/user/gcs-mount/lakefs/data/abc/def"</span>
 </code></pre></div></div>
+<h3 id="hook">
+  
+  
+    <a href="#hook" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">hook</code>
+  
+  
+</h3>
+    
+
+<p>A set of utilities to aide in writing user friendly hooks.</p>
+<h3 id="hookfailmessage">
+  
+  
+    <a href="#hookfailmessage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">hook/fail(message)</code>
+  
+  
+</h3>
+    
+
+<p>Will abort the current hook’s execution with the given message. This is similar to using <code class="language-plaintext highlighter-rouge">error()</code>, but is typically used to separate
+generic runtime errors (an API call that returned an unexpected response) and explict failure of the calling hook.</p>
+
+<p>When called, errors will appear without a stacktrace, and the error message will be directly the one given as <code class="language-plaintext highlighter-rouge">message</code>.</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">hook</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"hook"</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="n">hook</span><span class="p">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"this hook shall not pass because of: "</span> <span class="o">..</span> <span class="n">reason</span><span class="p">)</span>
+</code></pre></div></div>
 <h3 id="lakefs">
   
   
@@ -1862,8 +1889,8 @@ the <a href="/integrations/unity-catalog.html">Unity Catalog docs</a>.</p>
 
 <p>Receives a variable number of strings and returns a joined string that represents a path:</p>
 
-<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
-<span class="o">&gt;</span> <span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"path/"</span><span class="p">,</span> <span class="s2">"to"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="s2">"file.data"</span><span class="p">)</span>
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">path</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="s2">"path/"</span><span class="p">,</span> <span class="s2">"to"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="s2">"file.data"</span><span class="p">)</span>
 <span class="n">path</span><span class="o">/</span><span class="n">o</span><span class="o">/</span><span class="n">a</span><span class="o">/</span><span class="n">file</span><span class="p">.</span><span class="n">data</span>
 </code></pre></div></div>
 <h3 id="pathis_hiddenpath_string--seperator-prefix">
