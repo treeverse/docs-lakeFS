@@ -572,6 +572,7 @@ This functionality is currently in limited support and is a Read-Only file syste
 
 <ol id="markdown-toc">
   <li><a href="#requirements" id="markdown-toc-requirements">Requirements</a></li>
+  <li><a href="#authentication-with-lakefs" id="markdown-toc-authentication-with-lakefs">Authentication with lakeFS</a></li>
   <li><a href="#command-line-interface" id="markdown-toc-command-line-interface">Command Line Interface</a></li>
   <li><a href="#examples" id="markdown-toc-examples">Examples</a></li>
 </ol>
@@ -587,22 +588,7 @@ This functionality is currently in limited support and is a Read-Only file syste
     
 
 <ul>
-  <li>lakeFS Version <code class="language-plaintext highlighter-rouge">1.25.0</code> or higher.</li>
-</ul>
-<h3 id="authentication-with-lakefs">
-  
-  
-    <a href="#authentication-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication with lakeFS
-  
-  
-</h3>
-    
-<p>The authentication with the target lakeFS server is equal to <a href="/reference/cli.html">lakectl CLI</a>.
-Searching for lakeFS credentials and server endpoint in the following order:</p>
-<ul>
-  <li>Command line flags <code class="language-plaintext highlighter-rouge">--lakectl-access-key-id</code>, <code class="language-plaintext highlighter-rouge">--lakectl-secret-access-key</code> and <code class="language-plaintext highlighter-rouge">--lakectl-server-url</code></li>
-  <li><code class="language-plaintext highlighter-rouge">LAKECTL_*</code> Environment variables</li>
-  <li><code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code> Configuration file or via <code class="language-plaintext highlighter-rouge">--lakectl-config</code> flag</li>
+  <li>For enterprise installations: lakeFS Version <code class="language-plaintext highlighter-rouge">1.25.0</code> or higher.</li>
 </ul>
 <h3 id="os-and-protocol-support">
   
@@ -617,6 +603,22 @@ Searching for lakeFS credentials and server endpoint in the following order:</p>
 <ul>
   <li>NFS V3 (Network File System) is supported on macOS.</li>
   <li>FUSE is supported on Linux (no root required).</li>
+</ul>
+<h2 id="authentication-with-lakefs">
+  
+  
+    <a href="#authentication-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication with lakeFS
+  
+  
+</h2>
+    
+
+<p>The authentication with the target lakeFS server is equal to <a href="/reference/cli.html">lakectl CLI</a>.
+Searching for lakeFS credentials and server endpoint in the following order:</p>
+<ul>
+  <li>Command line flags <code class="language-plaintext highlighter-rouge">--lakectl-access-key-id</code>, <code class="language-plaintext highlighter-rouge">--lakectl-secret-access-key</code> and <code class="language-plaintext highlighter-rouge">--lakectl-server-url</code></li>
+  <li><code class="language-plaintext highlighter-rouge">LAKECTL_*</code> Environment variables</li>
+  <li><code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code> Configuration file or via <code class="language-plaintext highlighter-rouge">--lakectl-config</code> flag</li>
 </ul>
 <h2 id="command-line-interface">
   
@@ -640,8 +642,21 @@ Searching for lakeFS credentials and server endpoint in the following order:</p>
   <li>Step 1: Starting a server that listens on a local address and serves the data from the remote lakeFS repository.</li>
   <li>Step 2:  Running the required mount command on the OS level to connect the server to the local directory.</li>
 </ul>
+<h4 id="tips">
+  
+  
+    <a href="#tips" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Tips:
+  
+  
+</h4>
+    
 
-<p class="note"><strong>Tips:</strong> Since the server runs in the background set <code class="language-plaintext highlighter-rouge">--log-output /some/file</code> to view the logs in a file. Regarding cache, the best <code class="language-plaintext highlighter-rouge">--cache-size</code> value is the size of the data you are going to read.</p>
+<ul>
+  <li>Since the server runs in the background set <code class="language-plaintext highlighter-rouge">--log-output /some/file</code> to view the logs in a file.</li>
+  <li>Cache: Everest uses a local cache to store the data and metadata of the lakeFS repository. The optimal cache size is the size of the data you are going to read.</li>
+  <li>Reusing Cache: between restarts of the same mount endpoint, set <code class="language-plaintext highlighter-rouge">--cache-dir</code> to make sure the cache is reused.</li>
+  <li>Mounted data consistency: When providing lakeFS URI mount endpoint <code class="language-plaintext highlighter-rouge">lakefs://&lt;repo&gt;/&lt;ref&gt;/&lt;path&gt;</code> the <code class="language-plaintext highlighter-rouge">&lt;ref&gt;</code> should be a specific commit ID. If a branch/tag is provided, Everest will use the HEAD commit instead.</li>
+</ul>
 <h4 id="usage">
   
   
@@ -685,6 +700,9 @@ Flags
 </h3>
     
 
+<p class="note"><strong>Note</strong>
+⚠️ The <code class="language-plaintext highlighter-rouge">mount-server</code> command is for advanced use cases and will only spin the server without calling OS mount command.</p>
+
 <p>The mount-server command starts a mount server manually. Generally, users would use the mount command which handles server operations automatically.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>everest mount-server &lt;remote_mount_uri&gt;
@@ -709,6 +727,9 @@ Flags
   
 </h2>
     
+
+<p class="note"><strong>Note</strong>
+⚠️ For simplicity, the examples show <code class="language-plaintext highlighter-rouge">main</code> as the ref, Everest will always mount a specific commit ID, given a ref it will use the HEAD (e.g most recent commit).</p>
 <h4 id="data-exploration">
   
   
