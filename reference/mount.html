@@ -549,6 +549,8 @@
 
 <p class="label label-purple">lakeFS Enterprise</p>
 
+<p class="label label-yellow">Private preview</p>
+
 <p>Everest is a complementary binary to lakeFS that allows users to virtually mount a remote lakeFS repository onto a local directory.
 Once mounted, users can access the data as if it resides on their local filesystem, using any tool, library, or framework that reads from a local filesystem.
 This functionality is currently in limited support and is a Read-Only file system and is pointing to a commit in lakeFS.</p>
@@ -567,13 +569,29 @@ This functionality is currently in limited support and is a Read-Only file syste
     
 
 <ol id="markdown-toc">
+  <li><a href="#use-cases" id="markdown-toc-use-cases">Use Cases</a></li>
   <li><a href="#requirements" id="markdown-toc-requirements">Requirements</a></li>
   <li><a href="#authentication-with-lakefs" id="markdown-toc-authentication-with-lakefs">Authentication with lakeFS</a></li>
   <li><a href="#command-line-interface" id="markdown-toc-command-line-interface">Command Line Interface</a></li>
   <li><a href="#examples" id="markdown-toc-examples">Examples</a></li>
+  <li><a href="#faqs" id="markdown-toc-faqs">FAQs</a></li>
 </ol>
 
 </div>
+<h2 id="use-cases">
+  
+  
+    <a href="#use-cases" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use Cases
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>Simplified Data Loading</strong>: With lakeFS Mount, there’s no need to write custom data loaders or use special SDKs. You can use your existing tools to read files directly from the filesystem.</li>
+  <li><strong>Handle Large-scale Data Without changing Work Habits</strong>: Seamlessly scale from a few local files to millions without changing your tools or workflow. Use the same code from early experimentation all the way to production.</li>
+  <li><strong>Enhanced Data Loading Efficiency</strong>: lakeFS Mount supports billions of files and offers fast data fetching, making it ideal for optimizing GPU utilization and other performance-sensitive tasks.</li>
+</ul>
 <h2 id="requirements">
   
   
@@ -757,6 +775,154 @@ pytorch_train.py <span class="nt">--input</span> <span class="s2">"./pets"</span
 duckdb <span class="s2">"SELECT * FROM read_parquet('pets/labels.parquet')"</span>
 everest umount <span class="s2">"./pets"</span>
 </code></pre></div></div>
+<h2 id="faqs">
+  
+  
+    <a href="#faqs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> FAQs
+  
+  
+</h2>
+    
+
+<!-- START EXCLUDE FROM TOC -->
+<h3 id="how-do-i-get-started-with-lakefs-mount-everest">
+  
+  
+    <a href="#how-do-i-get-started-with-lakefs-mount-everest" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How do I get started with lakeFS Mount (Everest)?
+  
+  
+</h3>
+    
+
+<p>lakeFS Mount is avaialble for lakeFS Cloud and lakeFS Enterprise customers. Once your setup is complete, <a href="support@treeverse.io">contact us</a> to access the lakeFS Mounts (beta) binary and follow the provided docs.</p>
+
+<ul>
+  <li>Want to try lakeFS Cloud? <a href="https://lakefs.cloud/register">Signup</a> for a 30-day free trial.</li>
+  <li>Interested in lakeFS Enterprise? <a href="https://lakefs.io/contact-sales/">Contact sales</a> for a 30-day free license.</li>
+</ul>
+<h3 id="can-i-write-to-lakefs-using-lakefs-mount">
+  
+  
+    <a href="#can-i-write-to-lakefs-using-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Can I write to lakeFS using lakeFS Mount?
+  
+  
+</h3>
+    
+
+<p>Currently, lakeFS Mount supports read-only file system operations. Write support is on our roadmap and will be added in the future.</p>
+<h3 id="what-operating-systems-are-supported-by-lakefs-mount">
+  
+  
+    <a href="#what-operating-systems-are-supported-by-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What operating systems are supported by lakeFS Mount?
+  
+  
+</h3>
+    
+
+<p>lakeFS Mount supports Linux and MacOS. Windows support is on the roadmap.</p>
+<h3 id="how-can-i-control-access-to-my-data-when-using-lakefs-mount">
+  
+  
+    <a href="#how-can-i-control-access-to-my-data-when-using-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How can I control access to my data when using lakeFS Mount?
+  
+  
+</h3>
+    
+
+<p>You can use lakeFS’s existing <a href="/reference/security/rbac.html">Role-Based Access Control mechanism</a>, which includes repository and path-level policies. lakeFS Mount translates filesystem operations into lakeFS API operations and authorizes them based on these policies.</p>
+<h3 id="does-data-pass-through-the-lakefs-server-when-using-lakefs-mount">
+  
+  
+    <a href="#does-data-pass-through-the-lakefs-server-when-using-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Does data pass through the lakeFS server when using lakeFS Mount?
+  
+  
+</h3>
+    
+
+<p>lakeFS Mount leverages  pre-signed URLs to read data directly from the underlying object store, meaning data doesn’t  pass through the lakeFS server. By default, presign is disabled. To enable it, use:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>everest mount &lt;lakefs_uri&gt; &lt;mount_directory&gt; <span class="nt">--presign</span>
+</code></pre></div></div>
+<h3 id="what-happens-if-a-lakefs-branch-is-updated-after-i-mount-it">
+  
+  
+    <a href="#what-happens-if-a-lakefs-branch-is-updated-after-i-mount-it" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What happens if a lakeFS branch is updated after I mount it?
+  
+  
+</h3>
+    
+
+<p>lakeFS Mount points to the commit that was the HEAD commit of the branch at the time of mounting. This means the local directory reflects the branch state at the time of mounting and does not update with subsequent branch changes.</p>
+<h3 id="when-are-files-downloaded-to-my-local-environment">
+  
+  
+    <a href="#when-are-files-downloaded-to-my-local-environment" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> When are files downloaded to my local environment?
+  
+  
+</h3>
+    
+<p>lakeFS Mount uses a lazy prefetch strategy. Files are not downloaded at mount time or during operations that only inspect file metadata (e.g., <code class="language-plaintext highlighter-rouge">ls</code>). Files are downloaded only when commands that require file access (e.g., <code class="language-plaintext highlighter-rouge">cat</code>) are used.</p>
+<h3 id="what-are-the-scale-limitations-of-lakefs-mount-and-what-are-the-recommended-configurations-for-dealing-with-large-datasets">
+  
+  
+    <a href="#what-are-the-scale-limitations-of-lakefs-mount-and-what-are-the-recommended-configurations-for-dealing-with-large-datasets" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What are the scale limitations of lakeFS Mount, and what are the recommended configurations for dealing with large datasets?
+  
+  
+</h3>
+    
+
+<p>When using lakeFS Mount, the volume of data accessed by the local machine influences the scale limitations more than the total size of the dataset under the mounted prefix. This is because lakeFS Mount uses a lazy downloading approach, meaning it only downloads the accessed files. lakeFS Mount listing capability is limited to performing efficiently for prefixes containing fewer than 8000 objects, but we are working to increase this limit.</p>
+<h5 id="recommended-configuration">
+  
+  
+    <a href="#recommended-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Recommended Configuration
+  
+  
+</h5>
+    
+
+<p>Ensure your <strong>cache size</strong> is large enough to accommodate the volume of files being accessed.</p>
+<h3 id="im-already-using-lakectl-local-for-working-with-lakefs-data-locally-why-should-i-use-lakefs-mount">
+  
+  
+    <a href="#im-already-using-lakectl-local-for-working-with-lakefs-data-locally-why-should-i-use-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> I’m already using lakectl local for working with lakeFS data locally, why should I use lakeFS Mount?
+  
+  
+</h3>
+    
+
+<p>While both lakectl local and lakeFS Mount enable working with lakeFS data locally, they serve different purposes:</p>
+<h5 id="use-lakectl-local">
+  
+  
+    <a href="#use-lakectl-local" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use lakectl local
+  
+  
+</h5>
+    
+
+<ul>
+  <li>For enabling lakeFS writes with <a href="https://docs.lakefs.io/reference/cli.html#lakectl-local-commit">lakectl local commit</a>.</li>
+  <li>To integrate seamlessly with <a href="https://docs.lakefs.io/integrations/git.html">Git</a>.</li>
+</ul>
+<h5 id="use-lakefs-mount">
+  
+  
+    <a href="#use-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use lakeFS Mount
+  
+  
+</h5>
+    
+
+<p>For read-only local data access. lakeFS Mount offers several benefits over lakectl local:</p>
+<ul>
+  <li><strong>Optimized selective data access</strong>: The lazy prefetch strategy saves storage space and reduces latency by only fetching the required data.</li>
+  <li><strong>Reduced initial latency</strong>: Start working on your data immediately without waiting for downloads.</li>
+</ul>
+
+<p class="note"><strong>Note</strong>
+Note: Write support for lakeFS Mount is on our roadmap.</p>
+
+<!-- END EXCLUDE FROM TOC -->
 
                 
 
