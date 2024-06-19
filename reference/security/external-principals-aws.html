@@ -576,6 +576,7 @@
   <li><a href="#server-configuration" id="markdown-toc-server-configuration">Server Configuration</a></li>
   <li><a href="#administration-of-iam-roles-in-lakefs" id="markdown-toc-administration-of-iam-roles-in-lakefs">Administration of IAM Roles in lakeFS</a></li>
   <li><a href="#get-lakefs-api-token" id="markdown-toc-get-lakefs-api-token">Get lakeFS API Token</a></li>
+  <li><a href="#login-with-python" id="markdown-toc-login-with-python">Login with python</a></li>
 </ol>
 
 </div>
@@ -733,8 +734,48 @@ Currently this is done through the lakeFS <a href="/reference/cli.html#external"
     
 
 <p>The login to lakeFS is done by calling the <a href="/reference/api.html#auth/externalPrincipalLogin">login API</a> with the <code class="language-plaintext highlighter-rouge">GetCallerIdentity</code> request signed by the client.
-Currently, the login operation is supported out of the box in <a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a> version 0.2.4, see <a href="/integrations/spark.html#usage-with-temporaryawscredentialslakefstokenprovider">Spark usage</a>.
-Other clients (i.e HTTP, Python etc) can use the login endpoint to authenticate to lakeFS but, you will have to build the request input.</p>
+Currently, the login operation is supported out of the box in:</p>
+<ul>
+  <li><a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a> version 0.2.4, see <a href="/integrations/spark.html#usage-with-temporaryawscredentialslakefstokenprovider">Spark usage</a></li>
+  <li><a href="#login-with-python">python</a></li>
+</ul>
+
+<p>For other use cases authenticate to lakeFS via login endpoint, this will require building the request input.</p>
+<h2 id="login-with-python">
+  
+  
+    <a href="#login-with-python" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Login with python
+  
+  
+</h2>
+    
+<h3 id="prerequisites">
+  
+  
+    <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> prerequisites
+  
+  
+</h3>
+    
+
+<p>lakeFS requires additional python packages to be installed in order to generate a lakeFS client with the assumed role.
+To install the required packages, run the following command:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>lakefs[aws-iam]
+</code></pre></div></div>
+
+<p>In order to generate a lakeFS client with the assumed role, initiate a boto3 session with the desired role and call the <code class="language-plaintext highlighter-rouge">get_caller_identity</code> method to get the caller identity:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
+<span class="kn">import</span> <span class="nn">boto3</span>    
+<span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">myclient</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">from_aws_role</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">ttl_seconds</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">"&lt;lakefs-host&gt;"</span><span class="p">)</span>
+
+<span class="c1"># list repositories
+</span><span class="n">repos</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repositories</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">myclient</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</code></pre></div></div>
 
                 
 
