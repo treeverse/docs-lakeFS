@@ -737,6 +737,29 @@ configurations:</p>
  */</span>
 </code></pre></div>    </div>
   </li>
+  <li>
+    <p>Search by user metadata:</p>
+
+    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nn">io.treeverse.clients.LakeFSContext</span>
+
+<span class="k">val</span> <span class="nv">namespace</span> <span class="k">=</span> <span class="s">"s3://bucket/repo/path/"</span>
+<span class="k">val</span> <span class="nv">df</span> <span class="k">=</span> <span class="nv">LakeFSContext</span><span class="o">.</span><span class="py">newDF</span><span class="o">(</span><span class="n">spark</span><span class="o">,</span> <span class="n">namespace</span><span class="o">)</span>
+
+<span class="k">val</span> <span class="nv">key</span> <span class="k">=</span> <span class="s">"SomeKey"</span>
+<span class="k">val</span> <span class="nv">searchedValue</span> <span class="k">=</span> <span class="s">"val3"</span>
+<span class="nv">df</span><span class="o">.</span><span class="py">select</span><span class="o">(</span><span class="s">"key"</span><span class="o">,</span> <span class="s">"user_metadata"</span><span class="o">)</span>
+	<span class="o">.</span><span class="py">filter</span><span class="o">(</span><span class="nv">_</span><span class="o">.</span><span class="py">getMap</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">](</span><span class="mi">1</span><span class="o">).</span><span class="py">toMap</span><span class="o">.</span><span class="py">get</span><span class="o">(</span><span class="n">s</span><span class="s">"X-Amz-Meta-${key}"</span><span class="o">).</span><span class="py">getOrElse</span><span class="o">(</span><span class="s">""</span><span class="o">)</span> <span class="o">==</span> <span class="n">searchedValue</span><span class="o">)</span>
+	<span class="o">.</span><span class="py">show</span><span class="o">()</span>
+<span class="cm">/* output example:
+   +---------+-----------------------------------------------------+
+   |key      |user_metadata                                        |
+   +---------+-----------------------------------------------------+
+   |file1.txt|{X-Amz-Meta-SomeKey -&gt; val3, X-Amz-Meta-Tag -&gt; blue} |
+   |file8.txt|{X-Amz-Meta-SomeKey -&gt; val3, X-Amz-Meta-Tag -&gt; green}|
+   +---------+-----------------------------------------------------+
+ */</span>
+</code></pre></div>    </div>
+  </li>
 </ol>
 
                 
