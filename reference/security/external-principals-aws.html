@@ -758,13 +758,16 @@ Currently, the login operation is supported out of the box in:</p>
 </h3>
     
 
-<p>lakeFS requires additional python packages to be installed in order to generate a lakeFS client with the assumed role.
-To install the required packages, run the following command:</p>
+<ol>
+  <li>lakeFS should be <a href="#server-configuration">configured</a> to allow external principals to authenticate and the used IAM role should be <a href="#administration-of-iam-roles-in-lakefs">attached</a> to the relevant lakeFS user</li>
+  <li>The Python SDK requires additional packages to be installed in order to generate a lakeFS client with the assumed role.
+To install the required packages, run the following command:</li>
+</ol>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>lakefs[aws-iam]
 </code></pre></div></div>
 
-<p>In order to generate a lakeFS client with the assumed role, initiate a boto3 session with the desired role and call the <code class="language-plaintext highlighter-rouge">get_caller_identity</code> method to get the caller identity:</p>
+<p>In order to generate a lakeFS client with the assumed role, initiate a boto3 session with the desired role and call <code class="language-plaintext highlighter-rouge">lakefs.client.frow_aws_role</code>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
 <span class="kn">import</span> <span class="nn">boto3</span>    
