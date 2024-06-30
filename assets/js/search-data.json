@@ -3933,76 +3933,111 @@
     
     "relUrl": "/integrations/vertex_ai.html"
   },"562": {
+    "doc": "S3 Virtual-host addressing (advanced)",
+    "title": "Configuring lakeFS to use S3 Virtual-Host addressing",
+    "content": " ",
+    "url": "/howto/virtual-host-addressing.html#configuring-lakefs-to-use-s3-virtual-host-addressing",
+    
+    "relUrl": "/howto/virtual-host-addressing.html#configuring-lakefs-to-use-s3-virtual-host-addressing"
+  },"563": {
+    "doc": "S3 Virtual-host addressing (advanced)",
+    "title": "Understanding virtual-host addressing",
+    "content": "Some systems require S3 endpoints (such as lakeFS’s S3 Gateway) to support virtual-host style addressing. lakeFS supports this, but requires some configuration in order to extract the bucket name (used as the lakeFS repository ID) from the host address. For example: . GET http://foo.example.com/some/location . There are two ways to interpret the URL above: . | as a virtual-host URL where the endpoint URL is example.com, the bucket name is foo, and the path is /some/location | as a path-based URL where the endpoint is foo.example.com, the bucket name is some and the path is location | . By default, lakeFS reads URLs as path-based. To read the URL as a virtual-host request, lakeFS requires additional configuration which includes defining an explicit set of DNS records for the lakeFS S3 gateway. ",
+    "url": "/howto/virtual-host-addressing.html#understanding-virtual-host-addressing",
+    
+    "relUrl": "/howto/virtual-host-addressing.html#understanding-virtual-host-addressing"
+  },"564": {
+    "doc": "S3 Virtual-host addressing (advanced)",
+    "title": "Adding an explicit S3 domain name to the S3 Gateway configuration",
+    "content": "The first step would be to tell the lakeFS installation which hostnames are used for the S3 Gateway. This should be a different DNS record from the one used for e.g. the UI or API. Typically, if the lakeFS installation is served under lakefs.example.com, a good choice would be s3.lakefs.example.com. This could be done using either an environment variable: . LAKEFS_GATEWAYS_S3_DOMAIN_NAME=\"s3.lakefs.example.com\" . Or by adding the gateways.s3.domain_name setting to the lakeFS config.yaml file: . --- database: connection_string: \"...\" ... # This section defines an explict S3 gateway address that supports virtual-host addressing gateways: s3: domain_name: s3.lakefs.example.com . For more information on how to configure lakeFS, check out the configuration reference . ",
+    "url": "/howto/virtual-host-addressing.html#adding-an-explicit-s3-domain-name-to-the-s3-gateway-configuration",
+    
+    "relUrl": "/howto/virtual-host-addressing.html#adding-an-explicit-s3-domain-name-to-the-s3-gateway-configuration"
+  },"565": {
+    "doc": "S3 Virtual-host addressing (advanced)",
+    "title": "Setting up the appropriate DNS records",
+    "content": "Once our lakeFS installation is configured with an explicit S3 gateway endpoint address, we need to define 2 DNS records and have them point at our lakeFS installation. This requires 2 CNAME records: . | s3.lakefs.example.com - CNAME to lakefs.example.com. This would be used as the S3 endpoint when configuring clients and will serve as our bare domain. | *.s3.lakefs.example.com - Also a CNAME to lakefs.example.com. This will resolve virtual-host requests such as example-repo.s3.lakefs.example.com that lakeFS would now know how to parse. | . For more information on how to configure these, see the official documentation of your DNS provider. On AWS, This could also be done using ALIAS records for a load balancer. ",
+    "url": "/howto/virtual-host-addressing.html#setting-up-the-appropriate-dns-records",
+    
+    "relUrl": "/howto/virtual-host-addressing.html#setting-up-the-appropriate-dns-records"
+  },"566": {
+    "doc": "S3 Virtual-host addressing (advanced)",
+    "title": "S3 Virtual-host addressing (advanced)",
+    "content": " ",
+    "url": "/howto/virtual-host-addressing.html",
+    
+    "relUrl": "/howto/virtual-host-addressing.html"
+  },"567": {
     "doc": "Webhooks",
     "title": "Webhooks",
     "content": " ",
     "url": "/howto/hooks/webhooks.html",
     
     "relUrl": "/howto/hooks/webhooks.html"
-  },"563": {
+  },"568": {
     "doc": "Webhooks",
     "title": "Table of contents",
     "content": ". | Action File Webhook properties | Request body schema | . A Webhook is a Hook type that sends an HTTP POST request to the configured URL. Any non 2XX response by the responding endpoint will fail the Hook, cancel the execution of the following Hooks under the same Action. For pre-* hooks, the triggering operation will also be aborted. Warning: You should not use pre-* webhooks for long-running tasks, since they block the performed operation. Moreover, the branch is locked during the execution of pre-* hooks, so the webhook server cannot perform any write operations on the branch (like uploading or commits). ",
     "url": "/howto/hooks/webhooks.html#table-of-contents",
     
     "relUrl": "/howto/hooks/webhooks.html#table-of-contents"
-  },"564": {
+  },"569": {
     "doc": "Webhooks",
     "title": "Action File Webhook properties",
     "content": "See the Action configuration for overall configuration schema and details. | Property | Description | Data Type | Required | Default Value | Env Vars Support | . | url | The URL address of the request | String | true |   | no | . | timeout | Time to wait for response before failing the hook | String (golang’s Duration representation) | false | 1 minute | no | . | query_params | List of query params that will be added to the request | Dictionary(String:String or String:List(String) | false |   | yes | . | headers | Headers to add to the request | Dictionary(String:String) | false |   | yes | . Secrets &amp; Environment Variables lakeFS Actions supports secrets by using environment variables. The format {{ ENV.SOME_ENV_VAR }} will be replaced with the value of $SOME_ENV_VAR during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail. All environment variables need to begin with “LAKEFSACTIONS_”. Otherwise, they will be blocked. Additionally, the actions.env.enabled configuration parameter can be set to false to block access to all environment variables. Example: ... hooks: - id: prevent_user_columns type: webhook description: Ensure no user_* columns under public/ properties: url: \"http://&lt;host:port&gt;/webhooks/schema\" timeout: 1m30s query_params: disallow: [\"user_\", \"private_\"] prefix: public/ headers: secret_header: \"{{ ENV.MY_SECRET }}\" ... ",
     "url": "/howto/hooks/webhooks.html#action-file-webhook-properties",
     
     "relUrl": "/howto/hooks/webhooks.html#action-file-webhook-properties"
-  },"565": {
+  },"570": {
     "doc": "Webhooks",
     "title": "Request body schema",
     "content": "Upon execution, a webhook will send a request containing a JSON object with the following fields: . | Field | Description | Type | . | event_type | Type of the event that triggered the Action | string | . | event_time | Time of the event that triggered the Action (RFC3339 formatted) | string | . | action_name | Containing Hook Action’s Name | string | . | hook_id | ID of the Hook | string | . | repository_id | ID of the Repository | string | . | branch_id1 | ID of the Branch | string | . | source_ref | Reference to the source on which the event was triggered | string | . | commit_message2 | The message for the commit (or merge) that is taking place | string | . | committer2 | Name of the committer | string | . | commit_metadata2 | The metadata for the commit that is taking place | string | . | commit_id[^2,^4] | The ID of the commit that is being created | string | . | tag_id3 | The ID of the created/deleted tag | string | . Example: . { \"event_type\": \"pre-merge\", \"event_time\": \"2021-02-28T14:03:31Z\", \"action_name\": \"test action\", \"hook_id\": \"prevent_user_columns\", \"repository_id\": \"repo1\", \"branch_id\": \"feature-1\", \"source_ref\": \"feature-1\", \"commit_message\": \"merge commit message\", \"commit_id\": \"5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03\", \"committer\": \"committer\", \"commit_metadata\": { \"key\": \"value\" } } . | N\\A for Tag events &#8617; . | N\\A for Tag and Create/Delete Branch events &#8617; &#8617;2 &#8617;3 . | Applicable only for Tag events &#8617; . | . ",
     "url": "/howto/hooks/webhooks.html#request-body-schema",
     
     "relUrl": "/howto/hooks/webhooks.html#request-body-schema"
-  },"566": {
+  },"571": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Work with lakeFS Data Locally",
     "content": "When working with lakeFS, there are scenarios where we need to access and manipulate data locally. An example use case for working locally is machine learning model development. Machine learning model development is dynamic and iterative. To optimize this process, experiments need to be conducted with speed, tracking ease, and reproducibility. Localizing model data during development accelerates the process by enabling interactive and offline development and reducing data access latency. We’re going to use lakectl local to bring a subset of our lakeFS data to a local directory within the lakeFS container and edit an image dataset used for ML model development. ",
     "url": "/quickstart/work-with-data-locally.html#work-with-lakefs-data-locally",
     
     "relUrl": "/quickstart/work-with-data-locally.html#work-with-lakefs-data-locally"
-  },"567": {
+  },"572": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Cloning a Subset of lakeFS Data into a Local Directory",
     "content": ". | In lakeFS create a new branch called my-experiment. You can do this through the UI or with lakectl: . docker exec lakefs \\ lakectl branch create \\ lakefs://quickstart/my-experiment \\ --source lakefs://quickstart/main . | Clone images from your quickstart repository into a local directory named my_local_dir within your container: . docker exec lakefs \\ lakectl local clone lakefs://quickstart/my-experiment/images my_local_dir . | Verify that my_local_dir is linked to the correct path in your lakeFS remote: . docker exec lakefs \\ lakectl local list . You should see confirmation that my_local_dir is tracking the desired lakeFS path.: . my_local_dir lakefs://quickstart/my-experiment/images/ 8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53 . | Verify that your local environment is up-to-date with its remote path: . docker exec lakefs \\ lakectl local status my_local_dir . You should get a confirmation message like this showing that there is no difference between your local environment and the lakeFS remote: . diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'... diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'... No diff found. | . ",
     "url": "/quickstart/work-with-data-locally.html#cloning-a-subset-of-lakefs-data-into-a-local-directory",
     
     "relUrl": "/quickstart/work-with-data-locally.html#cloning-a-subset-of-lakefs-data-into-a-local-directory"
-  },"568": {
+  },"573": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Making Changes to Data Locally",
     "content": ". | Download a new image of an Axolotl and add it to the dataset cloned into my_local_dir: . curl -L https://go.lakefs.io/43ENDyS &gt; axolotl.png docker cp axolotl.png lakefs:/home/lakefs/my_local_dir . | Clean the dataset by removing images larger than 225 KB: docker exec lakefs \\ find my_local_dir -type f -size +225k -delete . | Check the status of your local changes compared to the lakeFS remote path: docker exec lakefs \\ lakectl local status my_local_dir . You should get a confirmation message like this, showing the modifications you made locally: . diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'... diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'... ╔════════╦══════════╦═════════════════════╗ ║ SOURCE ║ CHANGE ║ PATH ║ ╠════════╬══════════╬═════════════════════╣ ║ local ║ modified ║ axolotl.png ║ ║ local ║ removed ║ duckdb-main-02.png ║ ║ local ║ removed ║ empty-repo-list.png ║ ║ local ║ removed ║ repo-contents.png ║ ╚════════╩══════════╩═════════════════════╝ . | . ",
     "url": "/quickstart/work-with-data-locally.html#making-changes-to-data-locally",
     
     "relUrl": "/quickstart/work-with-data-locally.html#making-changes-to-data-locally"
-  },"569": {
+  },"574": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Pushing Local Changes to lakeFS",
     "content": "Once we are done with editing the image dataset in our local environment, we will push our changes to the lakeFS remote so that the improved dataset is shared and versioned. | Commit your local changes to lakeFS: . docker exec lakefs \\ lakectl local commit \\ -m 'Deleted images larger than 225KB in size and changed the Axolotl image' my_local_dir . In your branch, you should see the commit including your local changes: . | Compare my-experiment branch to the main branch to visualize your changes: . | . ",
     "url": "/quickstart/work-with-data-locally.html#pushing-local-changes-to-lakefs",
     
     "relUrl": "/quickstart/work-with-data-locally.html#pushing-local-changes-to-lakefs"
-  },"570": {
+  },"575": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Bonus Challenge",
     "content": "And so with that, this quickstart for lakeFS draws to a close. If you’re simply having too much fun to stop then here’s an exercise for you. Implement the requirement from the beginning of this quickstart correctly, such that you write denmark-lakes.parquet in the respective branch and successfully merge it back into main. Look up how to list the contents of the main branch and verify that it looks like this: . object 2023-03-21 17:33:51 +0000 UTC 20.9 kB denmark-lakes.parquet object 2023-03-21 14:45:38 +0000 UTC 916.4 kB lakes.parquet . ",
     "url": "/quickstart/work-with-data-locally.html#bonus-challenge",
     
     "relUrl": "/quickstart/work-with-data-locally.html#bonus-challenge"
-  },"571": {
+  },"576": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Finishing Up",
     "content": "Once you’ve finished the quickstart, shut down your local environment with the following command: . docker stop lakefs . ",
     "url": "/quickstart/work-with-data-locally.html#finishing-up",
     
     "relUrl": "/quickstart/work-with-data-locally.html#finishing-up"
-  },"572": {
+  },"577": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "7️⃣ Work with lakeFS data locally",
     "content": " ",
