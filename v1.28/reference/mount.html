@@ -266,7 +266,8 @@
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/v1.28/howto/mirroring.html"
                    class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/v1.28/howto/private-link.html"
                    class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/v1.28/howto/protect-branches.html"
-                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/v1.28/howto/sizing-guide.html"
+                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/v1.28/howto/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li><li class="nav-list-item "><a href="/v1.28/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/v1.28/howto/scim.html"
                    class="nav-list-link">System for Cross-domain Identity Management (SCIM)</a></li><li class="nav-list-item "><a href="/v1.28/howto/local-checkouts.html"
                    class="nav-list-link">Work with lakeFS data locally</a></li></ul></li><li
@@ -839,8 +840,8 @@ everest umount <span class="s2">"./pets"</span>
 </h3>
     
 
-<p>lakeFS Mount leverages  pre-signed URLs to read data directly from the underlying object store, meaning data doesn’t  pass through the lakeFS server. By default, presign is disabled. To enable it, use:</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>everest mount &lt;lakefs_uri&gt; &lt;mount_directory&gt; <span class="nt">--presign</span>
+<p>lakeFS Mount leverages  pre-signed URLs to read data directly from the underlying object store, meaning data doesn’t  pass through the lakeFS server. By default, presign is enabled. To disable it, use:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>everest mount &lt;lakefs_uri&gt; &lt;mount_directory&gt; <span class="nt">--presign</span><span class="o">=</span><span class="nb">false</span>
 </code></pre></div></div>
 <h3 id="what-happens-if-a-lakefs-branch-is-updated-after-i-mount-it">
   
@@ -881,6 +882,20 @@ everest umount <span class="s2">"./pets"</span>
     
 
 <p>Ensure your <strong>cache size</strong> is large enough to accommodate the volume of files being accessed.</p>
+<h3 id="how-does-lakefs-mount-integrate-with-a-git-repository">
+  
+  
+    <a href="#how-does-lakefs-mount-integrate-with-a-git-repository" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How does lakeFS Mount integrate with a Git repository?
+  
+  
+</h3>
+    
+
+<p>It is perfectly safe to mount a lakeFS path within a Git repository.
+lakeFS Mount prevents git from adding mounted objects to the git repository (i.e when running <code class="language-plaintext highlighter-rouge">git add -A</code>) by adding a virtual <code class="language-plaintext highlighter-rouge">.gitignore</code> file to the mounted directory.</p>
+
+<p>The .gitignore file will also instruct Git to ignore all files except <code class="language-plaintext highlighter-rouge">.everest/source</code> and in its absence, it will try to find a <code class="language-plaintext highlighter-rouge">.everest/source</code> file in the destination folder, and read the lakeFS URI from there. 
+Since <code class="language-plaintext highlighter-rouge">.everest/source</code> is in source control, it will mount the same lakeFS commit every time!</p>
 <h3 id="im-already-using-lakectl-local-for-working-with-lakefs-data-locally-why-should-i-use-lakefs-mount">
   
   

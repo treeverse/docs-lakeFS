@@ -275,7 +275,8 @@
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/v1.28/howto/mirroring.html"
                    class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/v1.28/howto/private-link.html"
                    class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/v1.28/howto/protect-branches.html"
-                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/v1.28/howto/sizing-guide.html"
+                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/v1.28/howto/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li><li class="nav-list-item "><a href="/v1.28/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/v1.28/howto/scim.html"
                    class="nav-list-link">System for Cross-domain Identity Management (SCIM)</a></li><li class="nav-list-item "><a href="/v1.28/howto/local-checkouts.html"
                    class="nav-list-link">Work with lakeFS data locally</a></li></ul></li><li
@@ -571,6 +572,7 @@
       <li><a href="#writing-data" id="markdown-toc-writing-data">Writing Data</a></li>
     </ol>
   </li>
+  <li><a href="#using-duckdb-in-python-with-lakefs-spec" id="markdown-toc-using-duckdb-in-python-with-lakefs-spec">Using DuckDB in Python with lakefs-spec</a></li>
   <li><a href="#using-duckdb-in-the-lakefs-web-ui" id="markdown-toc-using-duckdb-in-the-lakefs-web-ui">Using DuckDB in the lakeFS web UI</a></li>
 </ol>
 
@@ -654,6 +656,30 @@ a write operation would look like any DuckDB write:</p>
 <span class="k">USING</span> <span class="n">SAMPLE</span> <span class="n">reservoir</span><span class="p">(</span><span class="mi">50000</span> <span class="k">ROWS</span><span class="p">)</span> <span class="k">REPEATABLE</span> <span class="p">(</span><span class="mi">100</span><span class="p">);</span>
 
 <span class="k">COPY</span> <span class="n">sampled_population</span> <span class="k">TO</span> <span class="s1">'s3://example-repo/main/data/population/sample.parquet'</span><span class="p">;</span> <span class="c1">-- actual write happens here</span>
+</code></pre></div></div>
+<h2 id="using-duckdb-in-python-with-lakefs-spec">
+  
+  
+    <a href="#using-duckdb-in-python-with-lakefs-spec" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using DuckDB in Python with lakefs-spec
+  
+  
+</h2>
+    
+
+<p>Python users can use DuckDB by leveraging the <a href="https://lakefs-spec.org/latest/">lakefs-spec</a> package.</p>
+
+<p class="note"><strong>Note</strong> This library is a third-party package and not maintained by the lakeFS developers; please file issues and bug reports directly
+in the <a href="https://github.com/aai-institute/lakefs-spec">lakefs-spec</a> repository.</p>
+
+<p>Using lakefs-spec, querying lakeFS could be done using <a href="../reference/security/presigned-url.html">pre-signed URLs</a>, allowing for efficient and secure I/O, where the data files are read directly from the underlying object store.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kn">import</span> <span class="nn">duckdb</span>
+<span class="kn">from</span> <span class="nn">fsspec</span> <span class="kn">import</span> <span class="n">filesystem</span>
+
+<span class="n">duckdb</span><span class="p">.</span><span class="n">register_filesystem</span><span class="p">(</span><span class="n">filesystem</span><span class="p">(</span><span class="s">'lakefs'</span><span class="p">))</span>
+
+<span class="n">duckdb</span><span class="p">.</span><span class="n">sql</span><span class="p">(</span><span class="s">"SELECT * FROM 'lakefs://example-repo/main/data/population/sample.parquet'"</span><span class="p">)</span>
 </code></pre></div></div>
 <h2 id="using-duckdb-in-the-lakefs-web-ui">
   
