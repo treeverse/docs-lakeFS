@@ -574,36 +574,30 @@ container and edit an image dataset used for ML model development.</p>
   <li>
     <p>In lakeFS create a new branch called <code class="language-plaintext highlighter-rouge">my-experiment</code>. You can do this through the UI or with <code class="language-plaintext highlighter-rouge">lakectl</code>:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     lakectl branch create <span class="se">\</span>
-         lakefs://quickstart/my-experiment <span class="se">\</span>
-         <span class="nt">--source</span> lakefs://quickstart/main
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs lakectl branch create lakefs://quickstart/my-experiment <span class="nt">--source</span> lakefs://quickstart/main
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Clone images from your quickstart repository into a local directory named <code class="language-plaintext highlighter-rouge">my_local_dir</code> within your container:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     lakectl <span class="nb">local </span>clone lakefs://quickstart/my-experiment/images my_local_dir
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs lakectl <span class="nb">local </span>clone lakefs://quickstart/my-experiment/images my_local_dir
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Verify that <code class="language-plaintext highlighter-rouge">my_local_dir</code> is linked to the correct path in your lakeFS remote:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     lakectl <span class="nb">local </span>list
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs lakectl <span class="nb">local </span>list
 </code></pre></div>    </div>
 
     <p>You should see confirmation that my_local_dir is tracking the desired lakeFS path.:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    my_local_dir	lakefs://quickstart/my-experiment/images/	8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    my_local_dir	lakefs://quickstart/my-experiment/images/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Verify that your local environment is up-to-date with its remote path:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     lakectl <span class="nb">local </span>status my_local_dir
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs lakectl <span class="nb">local </span>status my_local_dir
 </code></pre></div>    </div>
     <p>You should get a confirmation message like this showing that there is no difference between your local environment and the lakeFS remote:</p>
 
@@ -633,13 +627,11 @@ No diff found.
 </code></pre></div>    </div>
   </li>
   <li>Clean the dataset by removing images larger than 225 KB:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     find my_local_dir <span class="nt">-type</span> f <span class="nt">-size</span> +225k <span class="nt">-delete</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs find my_local_dir <span class="nt">-type</span> f <span class="nt">-size</span> +225k <span class="nt">-delete</span>
 </code></pre></div>    </div>
   </li>
   <li>Check the status of your local changes compared to the lakeFS remote path:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     lakectl <span class="nb">local </span>status my_local_dir
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs lakectl <span class="nb">local </span>status my_local_dir
 </code></pre></div>    </div>
 
     <p>You should get a confirmation message like this, showing the modifications you made locally:</p>
@@ -673,9 +665,7 @@ the improved dataset is shared and versioned.</p>
   <li>
     <p>Commit your local changes to lakeFS:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
-     lakectl <span class="nb">local </span>commit <span class="se">\</span>
-         <span class="nt">-m</span> <span class="s1">'Deleted images larger than 225KB in size and changed the Axolotl image'</span> my_local_dir
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs lakectl <span class="nb">local </span>commit <span class="nt">-m</span> <span class="s1">'Deleted images larger than 225KB in size and changed the Axolotl image'</span> my_local_dir
 </code></pre></div>    </div>
 
     <p>In your branch, you should see the commit including your local changes:</p>
