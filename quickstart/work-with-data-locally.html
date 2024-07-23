@@ -571,15 +571,112 @@ locally is machine learning model development. Machine learning model developmen
 process, experiments need to be conducted with speed, tracking ease, and reproducibility. Localizing model data during development 
 accelerates the process by enabling interactive and offline development and reducing data access latency.</p>
 
-<p>We’re going to use <a href="/howto/local-checkouts.html">lakectl local</a> to bring a subset of our lakeFS data to a local directory within the lakeFS
-container and edit an image dataset used for ML model development.</p>
-<h2 id="cloning-a-subset-of-lakefs-data-into-a-local-directory">
+<p>lakeFS provides 2 ways to expose versioned data locally</p>
+
+<div class="toc-block">
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ol id="markdown-toc">
+  <li><a href="#lakefs-mount" id="markdown-toc-lakefs-mount">lakeFS Mount</a></li>
+  <li><a href="#lakectl-local" id="markdown-toc-lakectl-local">lakectl local</a></li>
+</ol>
+
+</div>
+<h2 id="lakefs-mount">
+  
+  
+    <a href="#lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Mount
+  
+  
+</h2>
+    
+
+<p class="note">lakeFS Mount is available (in preview) for <a href="../enterprise/index.html">lakeFS Enterprise</a> and <a href="../cloud/index.html">lakeFS Cloud</a> customers. <br /> 
+You can try it out by <a href="https://info.lakefs.io/thanks-lakefs-mounts">signing up for the preview</a></p>
+<h3 id="getting-started-with-lakefs-mount">
+  
+  
+    <a href="#getting-started-with-lakefs-mount" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting started with lakeFS Mount
+  
+  
+</h3>
+    
+
+<p>Prerequisites:</p>
+
+<ul>
+  <li>A working lakeFS Server running either lakeFS Enterprise or lakeFS Cloud</li>
+  <li>You’ve installed the lakectl command line utility: this is the official lakeFS command line interface, on top of which lakeFS Mount is built.</li>
+  <li>lakectl is configured properly to access your lakeFS server as detailed in the configuration instructions</li>
+</ul>
+<h3 id="mounting-a-path-to-a-local-directory">
+  
+  
+    <a href="#mounting-a-path-to-a-local-directory" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Mounting a path to a local directory:
+  
+  
+</h3>
+    
+
+<ol>
+  <li>
+    <p>In lakeFS create a new branch called <code class="language-plaintext highlighter-rouge">my-experiment</code>. You can do this through the UI or with <code class="language-plaintext highlighter-rouge">lakectl</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>lakefs <span class="se">\</span>
+     lakectl branch create <span class="se">\</span>
+         lakefs://quickstart/my-experiment <span class="se">\</span>
+         <span class="nt">--source</span> lakefs://quickstart/main
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Mount images from your quickstart repository into a local directory named <code class="language-plaintext highlighter-rouge">my_local_dir</code></p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>everest mount lakefs://quickstart/my-experiment/images my_local_dir
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Once complete, <code class="language-plaintext highlighter-rouge">my_local_dir</code> should be mounted with the specified path.</p>
+
+<ol>
+  <li>Verify that <code class="language-plaintext highlighter-rouge">my_local_dir</code> is linked to the correct path in your lakeFS remote:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-l</span> my_local_dir
+</code></pre></div></div>
+
+<ol>
+  <li>To unmount the directory, simply run:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>everest umount ./my_local_dir
+</code></pre></div></div>
+
+<p>Which will unmount the path and terminate the local mount-server.</p>
+<h2 id="lakectl-local">
+  
+  
+    <a href="#lakectl-local" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakectl local
+  
+  
+</h2>
+    
+
+<p>Alternatively, we can use <a href="/howto/local-checkouts.html#sync-a-local-directory-with-lakefs">lakectl local</a> to bring a subset of our lakeFS data to a local directory within the lakeFS
+container and edit an image dataset used for ML model development. Unlike lakeFS Mount, using <code class="language-plaintext highlighter-rouge">lakectl local</code> requires copying data to/from lakeFS and your local machine.</p>
+<h3 class="no_toc" id="cloning-a-subset-of-lakefs-data-into-a-local-directory">
   
   
     <a href="#cloning-a-subset-of-lakefs-data-into-a-local-directory" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Cloning a Subset of lakeFS Data into a Local Directory
   
   
-</h2>
+</h3>
     
 
 <ol>
@@ -620,13 +717,13 @@ No diff found.
 </code></pre></div>    </div>
   </li>
 </ol>
-<h2 id="making-changes-to-data-locally">
+<h3 class="no_toc" id="making-changes-to-data-locally">
   
   
     <a href="#making-changes-to-data-locally" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Making Changes to Data Locally
   
   
-</h2>
+</h3>
     
 
 <ol>
@@ -661,13 +758,13 @@ No diff found.
 </code></pre></div>    </div>
   </li>
 </ol>
-<h2 id="pushing-local-changes-to-lakefs">
+<h3 class="no_toc" id="pushing-local-changes-to-lakefs">
   
   
     <a href="#pushing-local-changes-to-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Pushing Local Changes to lakeFS
   
   
-</h2>
+</h3>
     
 
 <p>Once we are done with editing the image dataset in our local environment, we will push our changes to the lakeFS remote so that 
@@ -690,7 +787,7 @@ the improved dataset is shared and versioned.</p>
     <p><img width="75%" src="/assets/img/quickstart/lakectl-local-02.png" alt="A comparison between a branch that includes local changes to the main branch" class="quickstart" /></p>
   </li>
 </ol>
-<h2 id="bonus-challenge">
+<h2 class="no_toc" id="bonus-challenge">
   
   
     <a href="#bonus-challenge" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Bonus Challenge
@@ -706,7 +803,7 @@ the improved dataset is shared and versioned.</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>object          2023-03-21 17:33:51 +0000 UTC    20.9 kB         denmark-lakes.parquet
 object          2023-03-21 14:45:38 +0000 UTC    916.4 kB        lakes.parquet
 </code></pre></div></div>
-<h1 id="finishing-up">
+<h1 class="no_toc" id="finishing-up">
   
   
     <a href="#finishing-up" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Finishing Up
