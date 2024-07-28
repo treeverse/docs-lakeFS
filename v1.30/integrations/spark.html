@@ -1,0 +1,1577 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/v1.30/assets/css/just-the-docs-default.css">
+  
+  <style type="text/css">
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.external):nth-child(4) > .nav-list > .nav-list-item:nth-child(9) > .nav-list-link { display: block; font-weight: 600; text-decoration: none; background-image: linear-gradient(-90deg, #ebedf5 0%, rgba(235, 237, 245, 0.8) 80%, rgba(235, 237, 245, 0) 100%); }
+
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(4) > .nav-list-expander svg, .site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(4) > .nav-list > .nav-list-item:not(.passive):nth-child(9) > .nav-list-expander svg { transform: rotate(-90deg); }
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(4) > .nav-list, .site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(4) > .nav-list > .nav-list-item:not(.passive):nth-child(9) > .nav-list { display: block; }
+
+.site-nav > .nav-category-list > .nav-list-item:not(.passive) > .nav-list-expander svg { transform: rotate(-90deg); }
+.site-nav > .nav-category-list > .nav-list-item:not(.passive) > .nav-list { display: block; }
+
+</style>
+
+
+  
+
+  
+    <script src="/v1.30/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/v1.30/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/v1.30/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Apache Spark | lakeFS Documentation</title>
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Apache Spark" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Accessing data in lakeFS from Apache Spark works the same as accessing S3 data from Apache Spark." />
+<meta property="og:description" content="Accessing data in lakeFS from Apache Spark works the same as accessing S3 data from Apache Spark." />
+<meta property="og:site_name" content="lakeFS Documentation" />
+<meta property="og:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
+<meta property="twitter:title" content="Apache Spark" />
+<meta name="twitter:site" content="@lakeFS" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Accessing data in lakeFS from Apache Spark works the same as accessing S3 data from Apache Spark.","headline":"Apache Spark","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v1.30/assets/logo.svg"}},"url":"/v1.30/integrations/spark.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <!-- Google Tag Manager Head -->
+<!-- type="text/plain" is intentional for cookie consent support -->
+<script type="text/plain" data-category="analytics">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KTZBZW9');</script>
+<!-- End Google Tag Manager Head -->
+<meta property="og:image" content="/v1.30/assets/img/lakefs-logo-with-text.png">
+<link rel="preload" href="/assets/fonts/Rene Bieder - Galano Grotesque.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="/assets/fonts/Rene Bieder - Galano Grotesque Medium.otf" as="font" type="font/otf" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css" integrity="sha512-giQeaPns4lQTBMRpOOHsYnGw1tGVzbAIHUyHRgn7+6FmiEgGGjaG0T2LZJmAPMzRCl+Cug0ItQ2xDZpTmEc+CQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v3.0.0/dist/cookieconsent.css">
+<link rel="stylesheet" href="/v1.30/assets/css/cookieconsent.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script type="module" src="/v1.30/assets/js/cookieconsent-init.js"></script>
+<script src="/v1.30/assets/js/copy-code.js"></script>
+<script>
+    $(function () {
+        $(".tabs").tabs();
+    });
+</script>
+<script src="/v1.30/assets/js/feedback.js"></script>
+<link href="https://data-folks.masto.host/@lakeFS" rel="me">
+
+</head>
+
+<script src="https://unpkg.com/mermaid@9.3.0/dist/mermaid.min.js"></script>
+<script>
+    $(document).ready(function () {
+        mermaid.initialize({
+            startOnLoad:true,
+            theme: "default",
+        });
+        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+    });
+</script>
+<body>
+<img src="/assets/img/cookies.png" style="display: none;">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTZBZW9"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="svg-link" viewBox="0 0 24 24">
+        <title>Link</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-link">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+    </symbol>
+    <symbol id="svg-search" viewBox="0 0 24 24">
+        <title>Search</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-search">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </symbol>
+    <symbol id="svg-menu" viewBox="0 0 24 24">
+        <title>Menu</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="16px" viewBox="0 0 20 16" version="1.1"
+             class="feather feather-menu">
+            <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="header-/-mobile" transform="translate(-30.000000, -32.000000)" fill="#279890">
+                    <g id="Group" transform="translate(30.000000, 32.000000)">
+                        <path
+                                d="M20,14 L20,16 L0,16 L0,14 L20,14 Z M20,7 L20,9 L0,9 L0,7 L20,7 Z M20,0 L20,2 L0,2 L0,0 L20,0 Z"
+                                id="mobile-menu" />
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </symbol>
+    <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+        <title>Expand</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-chevron-right">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </symbol>
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+        <title>Document</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-file">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+        </svg>
+    </symbol>
+</svg>
+<div class="body-wrapper">
+    <div class="side-bar">
+        <div class="site-header">
+            <a href="https://lakefs.io" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="lakeFS Documentation"></div>
+
+</a>
+            <a href="#" id="menu-button" class="site-button">
+                <svg viewBox="0 0 24 24" class="icon">
+                    <use xlink:href="#svg-menu"></use>
+                </svg>
+            </a>
+        </div>
+        <nav role="navigation" aria-label="Main" id="site-nav" class="site-nav">
+            
+            <div class="search">
+                <div class="search-input-wrap">
+                    <input type="text" id="search-input" class="search-input" tabindex="0"
+                           placeholder="Search lakeFS Documentation" aria-label="Search lakeFS Documentation"
+                           autocomplete="off">
+                    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon">
+                            <use xlink:href="#svg-search"></use>
+                        </svg></label>
+                </div>
+                <div id="search-results" class="search-results"></div>
+            </div>
+            
+
+            <div class="nav-category nav-version">
+                <label for="selectversion">Version:</label>
+                <select id="selectversion" name="version" onchange="javascript:location.href = '/' + encodeURI(this.value);">
+                    <option value="" selected>Latest</option>
+                </select>
+            </div>
+            <script async>
+                window.addEventListener("load",  async () => {
+                    const pathFirstLevel = location.pathname.split('/')[1];
+                    const selectedVersion = pathFirstLevel.startsWith('v') && pathFirstLevel || '';
+                    const selectVersionElmFirst = document.getElementById('selectversion').firstElementChild;
+                    const response = await fetch('/versions.json');
+                    if (!response.ok) {
+                        return
+                    }
+                    const versions = await response.json();
+                    for (let [key, value] of Object.entries(versions)) {
+                        const el = document.createElement("option");
+                        el.value = key;
+                        el.textContent = value;
+                        if (key === selectedVersion) {
+                            el.selected = true;
+                        }
+                        selectVersionElmFirst.after(el);
+                    }
+                });
+            </script>
+
+            <ul class="nav-list"><li
+            class="nav-list-item"><a href="/v1.30/"
+           class="nav-list-link">Welcome to lakeFS</a></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/quickstart/"
+           class="nav-list-link">⭐ Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.30/quickstart/launch.html"
+                   class="nav-list-link">1️⃣ Run lakeFS</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/query.html"
+                   class="nav-list-link">2️⃣ Query the data</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/branch.html"
+                   class="nav-list-link">3️⃣ Create a branch</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/commit-and-merge.html"
+                   class="nav-list-link">4️⃣ Commit and Merge</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/rollback.html"
+                   class="nav-list-link">5️⃣ Roll back Changes</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/actions-and-hooks.html"
+                   class="nav-list-link">6️⃣ Using Actions and Hooks in lakeFS</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/work-with-data-locally.html"
+                   class="nav-list-link">7️⃣ Work with lakeFS data locally</a></li><li class="nav-list-item "><a href="/v1.30/quickstart/learning-more-lakefs.html"
+                   class="nav-list-link">Learn more about lakeFS</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/howto/"
+           class="nav-list-link">How-To</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/howto/deploy/"
+                   class="nav-list-link">Install lakeFS</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/howto/deploy/aws.html"
+                           class="nav-list-link">AWS</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/deploy/azure.html"
+                           class="nav-list-link">Azure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/deploy/gcp.html"
+                           class="nav-list-link">GCP</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/deploy/onprem.html"
+                           class="nav-list-link">On-Premises</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/deploy/upgrade.html"
+                           class="nav-list-link">Upgrade lakeFS</a>
+                    </li></ul></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/howto/hooks/"
+                   class="nav-list-link">Actions and Hooks</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/howto/hooks/airflow.html"
+                           class="nav-list-link">Airflow Hooks</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/hooks/lua.html"
+                           class="nav-list-link">Lua Hooks</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/hooks/webhooks.html"
+                           class="nav-list-link">Webhooks</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/howto/copying.html"
+                   class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/v1.30/howto/catalog_exports.html"
+                   class="nav-list-link">Data Catalogs Export</a></li><li class="nav-list-item "><a href="/v1.30/howto/export.html"
+                   class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/howto/garbage-collection/"
+                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/howto/garbage-collection/gc.html"
+                           class="nav-list-link">Garbage Collection</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/howto/garbage-collection/managed-gc.html"
+                           class="nav-list-link">Managed Garbage Collection</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/howto/import.html"
+                   class="nav-list-link">Import Data</a></li><li class="nav-list-item "><a href="/v1.30/howto/migrate-away.html"
+                   class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/v1.30/howto/mirroring.html"
+                   class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/v1.30/howto/private-link.html"
+                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/v1.30/howto/protect-branches.html"
+                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/v1.30/howto/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li><li class="nav-list-item "><a href="/v1.30/howto/sizing-guide.html"
+                   class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/v1.30/howto/scim.html"
+                   class="nav-list-link">System for Cross-domain Identity Management (SCIM)</a></li><li class="nav-list-item "><a href="/v1.30/howto/local-checkouts.html"
+                   class="nav-list-link">Work with lakeFS data locally</a></li></ul></li><li
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/integrations/"
+           class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.30/integrations/aws_cli.html"
+                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/v1.30/integrations/airbyte.html"
+                   class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/v1.30/integrations/athena.html"
+                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/v1.30/integrations/sagemaker.html"
+                   class="nav-list-link">Amazon SageMaker</a></li><li class="nav-list-item "><a href="/v1.30/integrations/airflow.html"
+                   class="nav-list-link">Apache Airflow</a></li><li class="nav-list-item "><a href="/v1.30/integrations/hive.html"
+                   class="nav-list-link">Apache Hive</a></li><li class="nav-list-item "><a href="/v1.30/integrations/iceberg.html"
+                   class="nav-list-link">Apache Iceberg</a></li><li class="nav-list-item "><a href="/v1.30/integrations/kafka.html"
+                   class="nav-list-link">Apache Kafka</a></li><li class="nav-list-item  active"><a href="/v1.30/integrations/spark.html"
+                   class="nav-list-link active">Apache Spark</a></li><li class="nav-list-item "><a href="/v1.30/integrations/cloudera.html"
+                   class="nav-list-link">Cloudera</a></li><li class="nav-list-item "><a href="/v1.30/integrations/delta.html"
+                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/v1.30/integrations/dremio.html"
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v1.30/integrations/duckdb.html"
+                   class="nav-list-link">DuckDB</a></li><li class="nav-list-item "><a href="/v1.30/integrations/git.html"
+                   class="nav-list-link">Git</a></li><li class="nav-list-item "><a href="/v1.30/integrations/glue_hive_metastore.html"
+                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/v1.30/integrations/glue_metastore.html"
+                   class="nav-list-link">Glue Data Catalog</a></li><li class="nav-list-item "><a href="/v1.30/integrations/huggingface_datasets.html"
+                   class="nav-list-link">HuggingFace Datasets</a></li><li class="nav-list-item "><a href="/v1.30/integrations/kubeflow.html"
+                   class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/v1.30/integrations/presto_trino.html"
+                   class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/v1.30/integrations/python.html"
+                   class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/v1.30/integrations/r.html"
+                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/v1.30/integrations/unity-catalog.html"
+                   class="nav-list-link">Unity Catalog</a></li><li class="nav-list-item "><a href="/v1.30/integrations/vertex_ai.html"
+                   class="nav-list-link">Vertex AI</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/understand/"
+           class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.30/understand/architecture.html"
+                   class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/v1.30/understand/model.html"
+                   class="nav-list-link">Concepts and  Model</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/understand/data_lifecycle_management/"
+                   class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/understand/data_lifecycle_management/ci.html"
+                           class="nav-list-link">During Deployment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/data_lifecycle_management/production.html"
+                           class="nav-list-link">In Production</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/data_lifecycle_management/data-devenv.html"
+                           class="nav-list-link">In Test</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/understand/faq.html"
+                   class="nav-list-link">FAQ</a></li><li class="nav-list-item "><a href="/v1.30/understand/glossary.html"
+                   class="nav-list-link">Glossary</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/understand/how/"
+                   class="nav-list-link">How lakeFS Works</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/understand/how/kv.html"
+                           class="nav-list-link">Internal database structure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/how/merge.html"
+                           class="nav-list-link">Merge</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/how/versioning-internals.html"
+                           class="nav-list-link">Versioning Internals</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/understand/performance-best-practices.html"
+                   class="nav-list-link">Performance Best Practices</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/understand/use_cases/"
+                   class="nav-list-link">Use Cases</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/understand/use_cases/cicd_for_data.html"
+                           class="nav-list-link">CI/CD for Data Lakes</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/use_cases/etl_testing.html"
+                           class="nav-list-link">ETL Testing Environment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/use_cases/reproducibility.html"
+                           class="nav-list-link">Reproducibility</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/understand/use_cases/rollback.html"
+                           class="nav-list-link">Rollback</a>
+                    </li></ul></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/reference/"
+           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.30/reference/auditing.html"
+                   class="nav-list-link">Auditing</a></li><li class="nav-list-item "><a href="/v1.30/reference/monitor.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/v1.30/reference/s3.html"
+                   class="nav-list-link">S3 Gateway API</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/reference/security/"
+                   class="nav-list-link">Security</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/access-control-lists.html"
+                           class="nav-list-link">Access Control Lists (ACLs)</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/authentication.html"
+                           class="nav-list-link">Authentication</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/external-principals-aws.html"
+                           class="nav-list-link">Login to lakeFS with AWS IAM Roles</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/presigned-url.html"
+                           class="nav-list-link">Presigned URL</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/remote-authenticator.html"
+                           class="nav-list-link">Remote Authenticator</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/rbac.html"
+                           class="nav-list-link">Role-Based Access Control (RBAC)</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/sts-login.html"
+                           class="nav-list-link">Short-lived token (STS like) Authentication for lakeFS</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/reference/security/sso.html"
+                           class="nav-list-link">Single Sign On (SSO)</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/reference/spark-client.html"
+                   class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/v1.30/reference/api.html"
+                   class="nav-list-link">lakeFS API</a></li><li class="nav-list-item "><a href="/v1.30/reference/configuration.html"
+                   class="nav-list-link">lakeFS Server Configuration</a></li><li class="nav-list-item "><a href="/v1.30/reference/cli.html"
+                   class="nav-list-link">lakectl (lakeFS command-line tool)</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/project/"
+           class="nav-list-link">The lakeFS Project</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.30/project/contributing.html"
+                   class="nav-list-link">Contributing to lakeFS</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/project/docs/"
+                   class="nav-list-link">Documentation</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/project/docs/callouts.html"
+                           class="nav-list-link">Callouts</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/project/code-migrate-1.0-sdk.html"
+                   class="nav-list-link">Migrating to 1.0</a></li></ul></li><li
+            class="nav-list-item"><a href="/v1.30/cloud/"
+           class="nav-list-link">lakeFS Cloud</a></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.30/enterprise/"
+           class="nav-list-link">lakeFS Enterprise</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.30/enterprise/getstarted/"
+                   class="nav-list-link">Get Started</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.30/enterprise/getstarted/quickstart.html"
+                           class="nav-list-link">Quickstart</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/enterprise/getstarted/install.html"
+                           class="nav-list-link">Install</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.30/enterprise/getstarted/migrate-from-oss.html"
+                           class="nav-list-link">Migrate from lakeFS OSS</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.30/enterprise/upgrade.html"
+                   class="nav-list-link">Upgrade</a></li><li class="nav-list-item "><a href="/v1.30/enterprise/troubleshooting.html"
+                   class="nav-list-link">Troubleshooting lakeFS Enterprise</a></li><li class="nav-list-item "><a href="/v1.30/enterprise/configuration.html"
+                   class="nav-list-link">Configuration Reference</a></li><li class="nav-list-item "><a href="/v1.30/enterprise/architecture.html"
+                   class="nav-list-link">Architecture</a></li></ul></li></ul>
+            <div class="mobile-menu">
+                
+<nav aria-label="Auxiliary" class="aux-nav">
+    <ul class="aux-nav-list">
+        
+        
+        <li class="aux-nav-list-item">
+            <a href="https://docs.lakefs.io/" class="site-button" >
+                Docs
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/blog/" class="site-button" >
+                Blog
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/community/" class="site-button" >
+                Community
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                GitHub
+            </a>
+        </li>
+        
+        
+        
+        
+        <li class="aux-nav-list-item button">
+            <a href="https://lakefs.io/slack" class="site-button" >
+                Join us on Slack
+            </a>
+        </li>
+        
+        
+    </ul>
+</nav>
+
+            </div>
+        </nav>
+
+    </div>
+    <div class="main" id="top">
+         <div class="feedback-container">
+            <div id="is-helpful-ty">
+                <div class="text-epsilon">Thank you for your feedback.</div>
+                <div class="mt-2 text-epsilon">
+                    <a href="https://lakefs.io/slack" target="_blank">Join the community</a> to get more help.
+                </div>
+            </div>
+            <div class="feedback-buttons">
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-up" id="page-helpful-yes"></button>
+                    <span class="tooltiptext">
+                        This page is <b>helpful</b>
+                    </span>
+                </span>
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-down" id="page-helpful-no"></button>
+                    <span class="tooltiptext">
+                        This page is <b>not helpful</b>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div id="main-header" class="main-header">
+            
+<nav aria-label="Auxiliary" class="aux-nav">
+    <ul class="aux-nav-list">
+        
+        
+        <li class="aux-nav-list-item">
+            <a href="https://docs.lakefs.io/" class="site-button" >
+                Docs
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/blog/" class="site-button" >
+                Blog
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/community/" class="site-button" >
+                Community
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                GitHub
+            </a>
+        </li>
+        
+        
+        
+        
+        <li class="aux-nav-list-item button">
+            <a href="https://lakefs.io/slack" class="site-button" >
+                Join us on Slack
+            </a>
+        </li>
+        
+        
+    </ul>
+</nav>
+
+        </div>
+        <div id="main-content-wrap" class="main-content-wrap">
+            
+            
+            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb-nav-list">
+                    
+                    <li class="breadcrumb-nav-list-item"><a href="/v1.30/integrations/">Integrations</a>
+                    </li>
+                    
+                    <li class="breadcrumb-nav-list-item"><span>Apache Spark</span></li>
+                </ol>
+            </nav>
+            
+            
+            <div id="main-content" class="main-content" role="main">
+                
+                    <h1 id="using-lakefs-with-apache-spark">
+  
+  
+    <a href="#using-lakefs-with-apache-spark" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using lakeFS with Apache Spark
+  
+  
+</h1>
+    
+
+<p>There are several ways to use lakeFS with Spark:</p>
+
+<ul>
+  <li><a href="#s3-compatible-api">The S3-compatible API</a>: Scalable and best to get started. <span class="badge">All Storage Vendors</span></li>
+  <li><a href="#lakefs-hadoop-filesystem">The lakeFS FileSystem</a>: Direct data flow from client to storage, highly scalable. <span class="badge">AWS S3</span>
+    <ul>
+      <li><a href="#hadoop-filesystem-in-presigned-mode">lakeFS FileSystem in Presigned mode</a>: Best of both worlds. <span class="badge mr-1">AWS S3</span><span class="badge">Azure Blob</span></li>
+    </ul>
+  </li>
+</ul>
+
+<p class="note">See how SimilarWeb is using lakeFS with Spark to <a href="https://grdoron.medium.com/a-smarter-way-to-manage-algorithm-changes-in-data-pipelines-with-lakefs-a4e284f8c756">manage algorithm changes in data pipelines</a>.</p>
+
+<div class="toc-block">
+<h2 class="no_toc text-delta" id="table-of-contents">
+  
+  
+    <a href="#table-of-contents" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table of contents
+  
+  
+</h2>
+    
+
+<ol id="markdown-toc">
+  <li><a href="#s3-compatible-api" id="markdown-toc-s3-compatible-api">S3-compatible API</a></li>
+  <li><a href="#lakefs-hadoop-filesystem" id="markdown-toc-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a></li>
+  <li><a href="#hadoop-filesystem-in-presigned-mode" id="markdown-toc-hadoop-filesystem-in-presigned-mode">Hadoop FileSystem in Presigned mode</a></li>
+</ol>
+
+</div>
+<h2 id="s3-compatible-api">
+  
+  
+    <a href="#s3-compatible-api" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> S3-compatible API
+  
+  
+</h2>
+    
+
+<p>lakeFS has an S3-compatible endpoint which you can point Spark at to get started quickly.</p>
+
+<p>You will access your data using S3-style URIs, e.g. <code class="language-plaintext highlighter-rouge">s3a://example-repo/example-branch/example-table</code>.</p>
+
+<p>You can use the S3-compatible API regardless of where your data is hosted.</p>
+<h3 id="configuration">
+  
+  
+    <a href="#configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
+  
+  
+</h3>
+    
+
+<p>To configure Spark to work with lakeFS, we set S3A Hadoop configuration to the lakeFS endpoint and credentials:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.access.key</code>: lakeFS access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code>: lakeFS secret key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.endpoint</code>: lakeFS S3-compatible API endpoint (e.g. https://example-org.us-east-1.lakefscloud.io)</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.path.style.access</code>: <code class="language-plaintext highlighter-rouge">true</code></li>
+</ul>
+
+<p>Here is how to do it:</p>
+<div class="tabs">
+  <ul>
+    <li><a href="#s3-config-tabs-cli">CLI</a></li>
+    <li><a href="#s3-config-tabs-code">Scala</a></li>
+    <li><a href="#s3-config-tabs-xml">XML Configuration</a></li>
+    <li><a href="#s3-config-tabs-emr">EMR</a></li>
+  </ul>
+  <div id="s3-config-tabs-cli">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span><span class="s1">'AKIAlakefs12345EXAMPLE'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span><span class="s1">'abc/lakefs/1234567bPxRfiCYEXAMPLEKEY'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s1">'https://example-org.us-east-1.lakefscloud.io'</span> ...
+</code></pre></div>    </div>
+  </div>
+  <div id="s3-config-tabs-code">
+    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">)</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="s3-config-tabs-xml">
+    <p>Add these into a configuration file, e.g. <code class="language-plaintext highlighter-rouge">$SPARK_HOME/conf/hdfs-site.xml</code>:</p>
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.access.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>AKIAlakefs12345EXAMPLE<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+            <span class="nt">&lt;name&gt;</span>fs.s3a.secret.key<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;value&gt;</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.endpoint<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.path.style.access<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="s3-config-tabs-emr">
+    <p>Use the below configuration when creating the cluster. You may delete any app configuration that is not suitable for your use case:</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spark-defaults"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"spark.sql.catalogImplementation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"core-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"emrfs-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"presto-connector-hive"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"hive.s3.aws-access-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.aws-secret-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.path-style-access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3-file-system-type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PRESTO"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hdfs-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mapred-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>    </div>
+
+    <p>Alternatively, you can pass these configuration values when adding a step.</p>
+
+    <p>For example:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws emr add-steps <span class="nt">--cluster-id</span> j-197B3AEGQ9XE4 <span class="se">\</span>
+  <span class="nt">--steps</span><span class="o">=</span><span class="s2">"Type=Spark,Name=SparkApplication,ActionOnFailure=CONTINUE, </span><span class="se">\</span><span class="s2">
+  Args=[--conf,spark.hadoop.fs.s3a.access.key=AKIAIOSFODNN7EXAMPLE, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.secret.key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.endpoint=https://example-org.us-east-1.lakefscloud.io, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.path.style.access=true, </span><span class="se">\</span><span class="s2">
+  s3a://&lt;lakefs-repo&gt;/&lt;lakefs-branch&gt;/path/to/jar]"</span>
+</code></pre></div>    </div>
+
+  </div>
+</div>
+<h4 id="per-bucket-configuration">
+  
+  
+    <a href="#per-bucket-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Per-bucket configuration
+  
+  
+</h4>
+    
+
+<p>The above configuration will use lakeFS as the sole S3 endpoint. To use lakeFS in parallel with S3, you can configure Spark to use lakeFS only for specific bucket names.
+For example, to configure only <code class="language-plaintext highlighter-rouge">example-repo</code> to use lakeFS, set the following configurations:</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#s3-bucket-config-tabs-cli">CLI</a></li>
+    <li><a href="#s3-bucket-config-tabs-code">Scala</a></li>
+    <li><a href="#s3-bucket-config-tabs-xml">XML Configuration</a></li>
+    <li><a href="#s3-bucket-config-tabs-emr">EMR</a></li>
+  </ul>
+  <div id="s3-bucket-config-tabs-cli">
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.access.key<span class="o">=</span><span class="s1">'AKIAlakefs12345EXAMPLE'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.secret.key<span class="o">=</span><span class="s1">'abc/lakefs/1234567bPxRfiCYEXAMPLEKEY'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.bucket.example-repo.endpoint<span class="o">=</span><span class="s1">'https://example-org.us-east-1.lakefscloud.io'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="nb">true</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="s3-bucket-config-tabs-code">
+    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.bucket.example-repo.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.path.style.access"</span><span class="o">,</span> <span class="s">"true"</span><span class="o">)</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="s3-bucket-config-tabs-xml">
+    <p>Add these into a configuration file, e.g. <code class="language-plaintext highlighter-rouge">$SPARK_HOME/conf/hdfs-site.xml</code>:</p>
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.bucket.example-repo.access.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>AKIAlakefs12345EXAMPLE<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.bucket.example-repo.secret.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.bucket.example-repo.endpoint<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.path.style.access<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="s3-bucket-config-tabs-emr">
+    <p>Use the below configuration when creating the cluster. You may delete any app configuration that is not suitable for your use case:</p>
+
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spark-defaults"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"spark.sql.catalogImplementation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"core-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"emrfs-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"presto-connector-hive"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"hive.s3.aws-access-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.aws-secret-key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3.path-style-access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"hive.s3-file-system-type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PRESTO"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hive-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hdfs-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"Classification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mapred-site"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.access.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.secret.key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.endpoint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fs.s3a.bucket.example-repo.path.style.access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>    </div>
+
+    <p>Alternatively, you can pass these configuration values when adding a step.</p>
+
+    <p>For example:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws emr add-steps <span class="nt">--cluster-id</span> j-197B3AEGQ9XE4 <span class="se">\</span>
+  <span class="nt">--steps</span><span class="o">=</span><span class="s2">"Type=Spark,Name=SparkApplication,ActionOnFailure=CONTINUE, </span><span class="se">\</span><span class="s2">
+  Args=[--conf,spark.hadoop.fs.s3a.bucket.example-repo.access.key=AKIAIOSFODNN7EXAMPLE, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.bucket.example-repo.secret.key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.bucket.example-repo.endpoint=https://example-org.us-east-1.lakefscloud.io, </span><span class="se">\</span><span class="s2">
+  --conf,spark.hadoop.fs.s3a.path.style.access=true, </span><span class="se">\</span><span class="s2">
+  s3a://&lt;lakefs-repo&gt;/&lt;lakefs-branch&gt;/path/to/jar]"</span>
+</code></pre></div>    </div>
+
+  </div>
+</div>
+
+<p>With this configuration set, you read S3A paths with <code class="language-plaintext highlighter-rouge">example-repo</code> as the bucket will use lakeFS, while all other buckets will use AWS S3.</p>
+<h3 id="usage">
+  
+  
+    <a href="#usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
+  
+  
+</h3>
+    
+
+<p>Here’s an example for reading a Parquet file from lakeFS to a Spark DataFrame:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">repo</span> <span class="k">=</span> <span class="s">"example-repo"</span>
+<span class="k">val</span> <span class="nv">branch</span> <span class="k">=</span> <span class="s">"main"</span>
+<span class="k">val</span> <span class="nv">df</span> <span class="k">=</span> <span class="nv">spark</span><span class="o">.</span><span class="py">read</span><span class="o">.</span><span class="py">parquet</span><span class="o">(</span><span class="n">s</span><span class="s">"s3a://${repo}/${branch}/example-path/example-file.parquet"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Here’s how to write some results back to a lakeFS path:</p>
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">df</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">partitionBy</span><span class="o">(</span><span class="s">"example-column"</span><span class="o">).</span><span class="py">parquet</span><span class="o">(</span><span class="n">s</span><span class="s">"s3a://${repo}/${branch}/output-path/"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes or revert them.</p>
+<h3 id="configuring-azure-databricks-with-the-s3-compatible-api">
+  
+  
+    <a href="#configuring-azure-databricks-with-the-s3-compatible-api" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring Azure Databricks with the S3-compatible API
+  
+  
+</h3>
+    
+
+<p>If you use Azure Databricks, you can take advantage of the lakeFS S3-compatible API with your Azure account and the S3A FileSystem. 
+This will require installing the <code class="language-plaintext highlighter-rouge">hadoop-aws</code> package (with the same version as your <code class="language-plaintext highlighter-rouge">hadoop-azure</code> package) to your Databricks cluster.</p>
+
+<p>Define your FileSystem configurations in the following way:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.lakefs.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.lakefs.access.key=‘AKIAlakefs12345EXAMPLE’                   // The access key to your lakeFS server
+spark.hadoop.fs.lakefs.secret.key=‘abc/lakefs/1234567bPxRfiCYEXAMPLEKEY’     // The secret key to your lakeFS server
+spark.hadoop.fs.lakefs.path.style.access=true
+spark.hadoop.fs.lakefs.endpoint=‘https://example-org.us-east-1.lakefscloud.io’                 // The endpoint of your lakeFS server
+</code></pre></div></div>
+
+<p>For more details about <a href="https://docs.databricks.com/dbfs/mounts.html">Mounting cloud object storage on Databricks</a>.</p>
+<h3 id="configuring-databricks-sql-warehouse-with-the-s3-compatible-api">
+  
+  
+    <a href="#configuring-databricks-sql-warehouse-with-the-s3-compatible-api" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring Databricks SQL Warehouse with the S3-compatible API
+  
+  
+</h3>
+    
+
+<p>A SQL warehouse is a compute resource that lets you run SQL commands on data 
+objects within Databricks SQL.</p>
+
+<p>If you use Databricks SQL warehouse, you can take advantage of the lakeFS 
+S3-compatible API with the S3A FileSystem.</p>
+
+<p>Define your SQL Warehouse configurations in the following way:</p>
+
+<ol>
+  <li>
+    <p>In the top right, select <code class="language-plaintext highlighter-rouge">Admin Settings</code> and then <code class="language-plaintext highlighter-rouge">SQL warehouse settings</code>.</p>
+  </li>
+  <li>
+    <p>Under <code class="language-plaintext highlighter-rouge">Data Access Configuration</code> add the following key-value pairs for 
+each lakeFS repository you want to access:</p>
+  </li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.s3a.impl shaded.databricks.org.apache.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.s3a.bucket.example-repo.access.key AKIAIOSFODNN7EXAMPLE // The access key to your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.secret.key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY // The secret key to your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.endpoint https://example-org.us-east-1.lakefscloud.io // The endpoint of your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.path.style.access true               
+</code></pre></div></div>
+
+<ol>
+  <li>Changes are applied automatically after the SQL Warehouse restarts.</li>
+  <li>You can now use the lakeFS S3-compatible API with your SQL Warehouse, e.g.:</li>
+</ol>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">delta</span><span class="p">.</span><span class="nv">`s3a://example-repo/main/datasets/delta-table/`</span> <span class="k">LIMIT</span> <span class="mi">100</span>
+</code></pre></div></div>
+<h3 id="️-experimental-pre-signed-mode-for-s3a">
+  
+  
+    <a href="#️-experimental-pre-signed-mode-for-s3a" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ⚠️ Experimental: Pre-signed mode for S3A
+  
+  
+</h3>
+    
+
+<p>In Hadoop 3.1.4 version and above (as tested using our lakeFS Hadoop FS), it is possible to use pre-signed URLs as return values from the lakeFS S3 Gateway.</p>
+
+<p>This has the immediate benefit of reducing the amount of traffic that has to go through the lakeFS server thus improving IO performance. 
+To read more about pre-signed URLs, see <a href="../reference/security/presigned-url.html">this guide</a>.</p>
+
+<p>Here’s an example Spark configuration to enable this support:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.s3a.impl shaded.databricks.org.apache.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.s3a.bucket.example-repo.access.key AKIAIOSFODNN7EXAMPLE // The access key to your lakeFS server
+spark.hadoop.fs.s3a.bucket.example-repo.secret.key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY // The secret key to your lakeFS server
+spark.hadoop.fs.s3a.path.style.access true
+spark.hadoop.fs.s3a.bucket.example-repo.signing-algorithm QueryStringSignerType
+spark.hadoop.fs.s3a.bucket.example-repo.user.agent.prefix s3RedirectionSupport
+</code></pre></div></div>
+
+<p class="note"><code class="language-plaintext highlighter-rouge">user.agent.prefix</code> should <strong>contain</strong> the string <code class="language-plaintext highlighter-rouge">s3RedirectionSupport</code> but does not have to match the string exactly.</p>
+
+<p>Once configured, requests will include the string <code class="language-plaintext highlighter-rouge">s3RedirectionSupport</code> in the <code class="language-plaintext highlighter-rouge">User-Agent</code> HTTP header sent with GetObject requests, resulting in lakeFS responding with a pre-signed URL.
+Setting the <code class="language-plaintext highlighter-rouge">signing-algorithm</code> to <code class="language-plaintext highlighter-rouge">QueryStringSignerType</code> is required to stop S3A from signing a pre-signed URL, since the existence of more than one signature method will return an error from S3.</p>
+
+<p class="note">ℹ This feature requires a lakeFS server of version <code class="language-plaintext highlighter-rouge">&gt;1.18.0</code></p>
+<h2 id="lakefs-hadoop-filesystem">
+  
+  
+    <a href="#lakefs-hadoop-filesystem" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Hadoop FileSystem
+  
+  
+</h2>
+    
+
+<p>If you’re using lakeFS on top of S3, this mode will enhance your application’s performance.
+In this mode, Spark will read and write objects directly from S3, reducing the load on the lakeFS server.
+It will still access the lakeFS server for metadata operations.</p>
+
+<p>After configuring the lakeFS Hadoop FileSystem below, use URIs of the form <code class="language-plaintext highlighter-rouge">lakefs://example-repo/ref/path/to/data</code> to
+interact with your data on lakeFS.</p>
+<h3 id="installation">
+  
+  
+    <a href="#installation" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Installation
+  
+  
+</h3>
+    
+
+<div class="tabs">
+  <ul>
+    <li><a href="#install-standalone">Spark Standalone</a></li>
+    <li><a href="#install-databricks">Databricks</a></li>
+    <li><a href="#install-cloudera-spark">Cloudera Spark</a></li>
+  </ul>
+  <div id="install-standalone">
+
+    <p>Add the package to your <code class="language-plaintext highlighter-rouge">spark-submit</code> command:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --packages io.lakefs:hadoop-lakefs-assembly:0.2.4
+</code></pre></div>    </div>
+
+  </div>
+  <div id="install-databricks">
+    <p>In  your cluster settings, under the <em>Libraries</em> tab, add the following Maven package:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>io.lakefs:hadoop-lakefs-assembly:0.2.4
+</code></pre></div>    </div>
+
+    <p>Once installed, it should look something like this:</p>
+
+    <p><img src="/v1.30/assets/img/databricks-install-package.png" alt="Databricks - Adding the lakeFS client Jar" /></p>
+
+  </div>
+  <div id="install-cloudera-spark">
+
+    <p>Add the package to your <code class="language-plaintext highlighter-rouge">pyspark</code> or <code class="language-plaintext highlighter-rouge">spark-submit</code> command:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --packages io.lakefs:hadoop-lakefs-assembly:0.2.4
+</code></pre></div>    </div>
+
+    <p>Add the configuration to access the S3 bucket used by lakeFS to your <code class="language-plaintext highlighter-rouge">pyspark</code> or <code class="language-plaintext highlighter-rouge">spark-submit</code> command or add this configuration at the Cloudera cluster level (see below):</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --conf spark.yarn.access.hadoopFileSystems=s3a://bucket-name
+</code></pre></div>    </div>
+
+    <p>Add the configuration to access the S3 bucket used by lakeFS at the Cloudera cluster level:</p>
+    <ol>
+      <li>Log in to the CDP (Cloudera Data Platform) web interface.</li>
+      <li>From the CDP home screen, click the <code class="language-plaintext highlighter-rouge">Management Console</code> icon.</li>
+      <li>In the Management Console, select <code class="language-plaintext highlighter-rouge">Data Hub Clusters</code> from the navigation pane.</li>
+      <li>Select the cluster you want to configure. Click on <code class="language-plaintext highlighter-rouge">CM-UI</code> link under Services:
+  <img src="/v1.30/assets/img/cloudera/ManagementConsole.png" alt="Cloudera - Management Console" /></li>
+      <li>In Cloudera Manager web interface, click on <code class="language-plaintext highlighter-rouge">Clusters</code> from the navigation pane and click on <code class="language-plaintext highlighter-rouge">spark_on_yarn</code> option:
+  <img src="/v1.30/assets/img/cloudera/ClouderaManager.png" alt="Cloudera - Cloudera Manager" /></li>
+      <li>Click on <code class="language-plaintext highlighter-rouge">Configuration</code> tab and search for <code class="language-plaintext highlighter-rouge">spark.yarn.access.hadoopFileSystems</code> in the search box:
+  <img src="/v1.30/assets/img/cloudera/spark_on_yarn.png" alt="Cloudera - spark_on_yarn" /></li>
+      <li>Add S3 bucket used by lakeFS <code class="language-plaintext highlighter-rouge">s3a://bucket-name</code> in the <code class="language-plaintext highlighter-rouge">spark.yarn.access.hadoopFileSystems</code> list:
+  <img src="/v1.30/assets/img/cloudera/hadoopFileSystems.png" alt="Cloudera - hadoopFileSystems" /></li>
+    </ol>
+  </div>
+</div>
+<h3 id="configuration-1">
+  
+  
+    <a href="#configuration-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
+  
+  
+</h3>
+    
+
+<p>Set the <code class="language-plaintext highlighter-rouge">fs.lakefs.*</code> Hadoop configurations to point to your lakeFS installation:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.impl</code>: <code class="language-plaintext highlighter-rouge">io.lakefs.LakeFSFileSystem</code></li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.access.key</code>: lakeFS access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.secret.key</code>: lakeFS secret key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.endpoint</code>: lakeFS API URL (e.g. <code class="language-plaintext highlighter-rouge">https://example-org.us-east-1.lakefscloud.io/api/v1</code>)</li>
+</ul>
+
+<p>Configure the lakeFS client to use a temporary token instead of static credentials:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.auth.provider</code>: The default is <code class="language-plaintext highlighter-rouge">basic_auth</code> with <code class="language-plaintext highlighter-rouge">fs.lakefs.access.key</code> and <code class="language-plaintext highlighter-rouge">fs.lakefs.secret.key</code> for basic authentication.
+Can be set to <code class="language-plaintext highlighter-rouge">io.lakefs.auth.TemporaryAWSCredentialsLakeFSTokenProvider</code> for using temporary AWS credentials, you can read more about it <a href="/reference/security/external-principals-aws.html">here</a>.</li>
+</ul>
+
+<p>When using <code class="language-plaintext highlighter-rouge">io.lakefs.auth.TemporaryAWSCredentialsLakeFSTokenProvider</code> as the auth provider the following configuration are relevant:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.aws.access.key</code>: AWS assumed role access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.aws.secret.key</code>: AWS assumed role secret key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.aws.session.token</code>: AWS assumed role temporary session token</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.aws.sts.endpoint</code>: AWS STS regional endpoint for generated the presigned-url (i.e <code class="language-plaintext highlighter-rouge">https://sts.us-west-2.amazonaws.com</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.aws.sts.duration_seconds</code>: Optional, the duration in seconds for the initial identity token (default is 60)</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.duration_seconds</code>: Optional, the duration in seconds for the lakeFS token (default is set in the lakeFS configuration <a href="/reference/configuration.html">auth.login_duration</a>)</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.lakefs.token.sts.additional_headers</code>: Optional, comma separated list of <code class="language-plaintext highlighter-rouge">header:value</code> to attach when generating presigned sts request. Default is <code class="language-plaintext highlighter-rouge">X-Lakefs-Server-ID:fs.lakefs.endpoint</code>.</li>
+</ul>
+
+<p>Configure the S3A FileSystem to access your S3 storage, for example using the <code class="language-plaintext highlighter-rouge">fs.s3a.*</code> configurations (these are <strong>not</strong> your lakeFS credentials):</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.access.key</code>: AWS S3 access key</li>
+  <li><code class="language-plaintext highlighter-rouge">fs.s3a.secret.key</code>: AWS S3 secret key</li>
+</ul>
+
+<p>Here are some configuration examples:</p>
+<div class="tabs">
+  <ul>
+    <li><a href="#config-cli">CLI</a></li>
+    <li><a href="#config-scala">Scala</a></li>
+    <li><a href="#config-pyspark">PySpark</a></li>
+    <li><a href="#config-xml">XML Configuration</a></li>
+    <li><a href="#config-databricks">Databricks</a></li>
+  </ul>
+  <div id="config-cli">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.hadoop.fs.s3a.access.key<span class="o">=</span><span class="s1">'AKIAIOSFODNN7EXAMPLE'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.secret.key<span class="o">=</span><span class="s1">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s1">'https://s3.eu-central-1.amazonaws.com'</span> <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.impl<span class="o">=</span>io.lakefs.LakeFSFileSystem <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.access.key<span class="o">=</span>AKIAlakefs12345EXAMPLE <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.secret.key<span class="o">=</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.endpoint<span class="o">=</span>https://example-org.us-east-1.lakefscloud.io/api/v1 <span class="se">\</span>
+              <span class="nt">--packages</span> io.lakefs:hadoop-lakefs-assembly:0.2.4 <span class="se">\</span>
+              io.example.ExampleClass
+</code></pre></div>    </div>
+  </div>
+  <div id="config-scala">
+
+    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.access.key"</span><span class="o">,</span> <span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.secret.key"</span><span class="o">,</span> <span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.s3a.endpoint"</span><span class="o">,</span> <span class="s">"https://s3.eu-central-1.amazonaws.com"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.impl"</span><span class="o">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io/api/v1"</span><span class="o">)</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="config-pyspark">
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.s3a.access.key"</span><span class="p">,</span> <span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.s3a.secret.key"</span><span class="p">,</span> <span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.s3a.endpoint"</span><span class="p">,</span> <span class="s">"https://s3.eu-central-1.amazonaws.com"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.impl"</span><span class="p">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.access.key"</span><span class="p">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.secret.key"</span><span class="p">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="p">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io/api/v1"</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="config-xml">
+
+    <p>Make sure that you load the lakeFS FileSystem into Spark by running it with <code class="language-plaintext highlighter-rouge">--packages</code> or <code class="language-plaintext highlighter-rouge">--jars</code>,
+and then add these into a configuration file, e.g., <code class="language-plaintext highlighter-rouge">$SPARK_HOME/conf/hdfs-site.xml</code>:</p>
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.access.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>AKIAIOSFODNN7EXAMPLE<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+            <span class="nt">&lt;name&gt;</span>fs.s3a.secret.key<span class="nt">&lt;/name&gt;</span>
+            <span class="nt">&lt;value&gt;</span>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.s3a.endpoint<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://s3.eu-central-1.amazonaws.com<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.impl<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>io.lakefs.LakeFSFileSystem<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.access.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>AKIAlakefs12345EXAMPLE<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.secret.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.endpoint<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io/api/v1<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="config-databricks">
+
+    <p>Add the following the cluster’s configuration under <code class="language-plaintext highlighter-rouge">Configuration ➡️ Advanced options</code>:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.lakefs.impl io.lakefs.LakeFSFileSystem
+spark.hadoop.fs.lakefs.access.key AKIAlakefs12345EXAMPLE
+spark.hadoop.fs.lakefs.secret.key abc/lakefs/1234567bPxRfiCYEXAMPLEKEY
+spark.hadoop.fs.s3a.access.key AKIAIOSFODNN7EXAMPLE
+spark.hadoop.fs.s3a.secret.key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+spark.hadoop.fs.s3a.impl shaded.databricks.org.apache.hadoop.fs.s3a.S3AFileSystem
+spark.hadoop.fs.lakefs.endpoint https://example-org.us-east-1.lakefscloud.io/api/v1
+</code></pre></div>    </div>
+
+    <p>Alternatively, follow this <a href="https://lakefs.io/blog/databricks-lakefs-integration-tutorial/">step by step Databricks integration tutorial, including lakeFS Hadoop File System, Python client and lakeFS SPARK client</a>.</p>
+  </div>
+</div>
+
+<p class="note">⚠️ If your bucket is on a region other than us-east-1, you may also need to configure <code class="language-plaintext highlighter-rouge">fs.s3a.endpoint</code> with the correct region.
+Amazon provides <a href="https://docs.aws.amazon.com/general/latest/gr/s3.html">S3 endpoints</a> you can use.</p>
+<h3 id="usage-with-temporaryawscredentialslakefstokenprovider">
+  
+  
+    <a href="#usage-with-temporaryawscredentialslakefstokenprovider" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage with TemporaryAWSCredentialsLakeFSTokenProvider
+  
+  
+</h3>
+    
+
+<p>An initial setup is required - you must have <a href="/reference/security/external-principals-aws.html">AWS Auth configured</a> with lakeFS.
+The <code class="language-plaintext highlighter-rouge">TemporaryAWSCredentialsLakeFSTokenProvider</code> depends on the caller to provide AWS credentials (e.g Assumed Role Key,Secret and Token) as input to the lakeFS client.</p>
+
+<p class="note">⚠️ Configure <code class="language-plaintext highlighter-rouge">sts.endpoint</code> with a valid <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html">sts regional service endpoint</a> and it must be be equal to the region that is used for authentication first place. The only exception is <code class="language-plaintext highlighter-rouge">us-east-1</code> which is the default region for STS.</p>
+
+<p class="note">⚠️ Using the current provider the lakeFS token will not renew upon expiry and the user will need to re-authenticate.</p>
+
+<p>PySpark example using <code class="language-plaintext highlighter-rouge">TemporaryAWSCredentialsLakeFSTokenProvider</code> with boto3 and AWS session credentials:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span> 
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">session</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
+
+<span class="c1"># AWS credentials used s3a to access lakeFS bucket
+</span><span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.s3a.access.key"</span><span class="p">,</span> <span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.s3a.secret.key"</span><span class="p">,</span> <span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.s3a.endpoint"</span><span class="p">,</span> <span class="s">"https://s3.us-west-2.amazonaws.com"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.impl"</span><span class="p">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="p">,</span> <span class="s">"https://example-org.us-west-2.lakefscloud.io/api/v1"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.auth.provider"</span><span class="p">,</span> <span class="s">"io.lakefs.auth.TemporaryAWSCredentialsLakeFSTokenProvider"</span><span class="p">)</span>
+<span class="c1"># AWS tempporary session credentials to use with lakeFS
+</span><span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.token.aws.access.key"</span><span class="p">,</span> <span class="n">session</span><span class="p">.</span><span class="n">get_credentials</span><span class="p">().</span><span class="n">access_key</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.token.aws.secret.key"</span><span class="p">,</span> <span class="n">session</span><span class="p">.</span><span class="n">get_credentials</span><span class="p">().</span><span class="n">secret_key</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.token.aws.session.token"</span><span class="p">,</span> <span class="n">session</span><span class="p">.</span><span class="n">get_credentials</span><span class="p">().</span><span class="n">token</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.token.aws.sts.endpoint"</span><span class="p">,</span> <span class="s">"https://sts.us-west-2.amazonaws.com"</span><span class="p">)</span>
+</code></pre></div></div>
+<h3 id="usage-1">
+  
+  
+    <a href="#usage-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage
+  
+  
+</h3>
+    
+
+<p>Hadoop FileSystem paths use the <code class="language-plaintext highlighter-rouge">lakefs://</code> protocol, with paths taking the form <code class="language-plaintext highlighter-rouge">lakefs://&lt;repository&gt;/&lt;ref&gt;/path/to/object</code>.
+<code class="language-plaintext highlighter-rouge">&lt;ref&gt;</code> can be a branch, tag, or commit ID in lakeFS.
+Here’s an example for reading a Parquet file from lakeFS to a Spark DataFrame:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">repo</span> <span class="k">=</span> <span class="s">"example-repo"</span>
+<span class="k">val</span> <span class="nv">branch</span> <span class="k">=</span> <span class="s">"main"</span>
+<span class="k">val</span> <span class="nv">df</span> <span class="k">=</span> <span class="nv">spark</span><span class="o">.</span><span class="py">read</span><span class="o">.</span><span class="py">parquet</span><span class="o">(</span><span class="n">s</span><span class="s">"lakefs://${repo}/${branch}/example-path/example-file.parquet"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Here’s how to write some results back to a lakeFS path:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">df</span><span class="o">.</span><span class="py">write</span><span class="o">.</span><span class="py">partitionBy</span><span class="o">(</span><span class="s">"example-column"</span><span class="o">).</span><span class="py">parquet</span><span class="o">(</span><span class="n">s</span><span class="s">"lakefs://${repo}/${branch}/output-path/"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>The data is now created in lakeFS as new changes in your branch. You can now commit these changes or revert them.</p>
+<h2 id="hadoop-filesystem-in-presigned-mode">
+  
+  
+    <a href="#hadoop-filesystem-in-presigned-mode" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Hadoop FileSystem in Presigned mode
+  
+  
+</h2>
+    
+
+<p><em>Available starting version 0.1.13 of the FileSystem</em></p>
+
+<p>In this mode, the lakeFS server is responsible for authenticating with your storage.
+The client will still perform data operations directly on the storage.
+To do so, it will use pre-signed storage URLs provided by the lakeFS server.</p>
+
+<p>When using this mode, you don’t need to configure the client with access to your storage:</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#config-cli">CLI</a></li>
+    <li><a href="#config-scala">Scala</a></li>
+    <li><a href="#config-pyspark">PySpark</a></li>
+    <li><a href="#config-xml">XML Configuration</a></li>
+    <li><a href="#config-databricks">Databricks</a></li>
+  </ul>
+  <div id="config-cli">
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell <span class="nt">--conf</span> spark.hadoop.fs.lakefs.access.mode<span class="o">=</span>presigned <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.impl<span class="o">=</span>io.lakefs.LakeFSFileSystem <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.access.key<span class="o">=</span>AKIAlakefs12345EXAMPLE <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.secret.key<span class="o">=</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY <span class="se">\</span>
+              <span class="nt">--conf</span> spark.hadoop.fs.lakefs.endpoint<span class="o">=</span>https://example-org.us-east-1.lakefscloud.io/api/v1 <span class="se">\</span>
+              <span class="nt">--packages</span> io.lakefs:hadoop-lakefs-assembly:0.2.4
+</code></pre></div>    </div>
+  </div>
+  <div id="config-scala">
+
+    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.access.mode"</span><span class="o">,</span> <span class="s">"presigned"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.impl"</span><span class="o">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.access.key"</span><span class="o">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.secret.key"</span><span class="o">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sparkContext</span><span class="o">.</span><span class="py">hadoopConfiguration</span><span class="o">.</span><span class="py">set</span><span class="o">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="o">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io/api/v1"</span><span class="o">)</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="config-pyspark">
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.access.mode"</span><span class="p">,</span> <span class="s">"presigned"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.impl"</span><span class="p">,</span> <span class="s">"io.lakefs.LakeFSFileSystem"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.access.key"</span><span class="p">,</span> <span class="s">"AKIAlakefs12345EXAMPLE"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.secret.key"</span><span class="p">,</span> <span class="s">"abc/lakefs/1234567bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span>
+<span class="n">sc</span><span class="p">.</span><span class="n">_jsc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">().</span><span class="nb">set</span><span class="p">(</span><span class="s">"fs.lakefs.endpoint"</span><span class="p">,</span> <span class="s">"https://example-org.us-east-1.lakefscloud.io/api/v1"</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="config-xml">
+
+    <p>Make sure that you load the lakeFS FileSystem into Spark by running it with <code class="language-plaintext highlighter-rouge">--packages</code> or <code class="language-plaintext highlighter-rouge">--jars</code>,
+and then add these into a configuration file, e.g., <code class="language-plaintext highlighter-rouge">$SPARK_HOME/conf/hdfs-site.xml</code>:</p>
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.access.mode<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>presigned<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.impl<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>io.lakefs.LakeFSFileSystem<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.access.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>AKIAlakefs12345EXAMPLE<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.secret.key<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>abc/lakefs/1234567bPxRfiCYEXAMPLEKEY<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+    <span class="nt">&lt;property&gt;</span>
+        <span class="nt">&lt;name&gt;</span>fs.lakefs.endpoint<span class="nt">&lt;/name&gt;</span>
+        <span class="nt">&lt;value&gt;</span>https://example-org.us-east-1.lakefscloud.io/api/v1<span class="nt">&lt;/value&gt;</span>
+    <span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="config-databricks">
+
+    <p>Add the following the cluster’s configuration under <code class="language-plaintext highlighter-rouge">Configuration ➡️ Advanced options</code>:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark.hadoop.fs.lakefs.access.mode presigned
+spark.hadoop.fs.lakefs.impl io.lakefs.LakeFSFileSystem
+spark.hadoop.fs.lakefs.access.key AKIAlakefs12345EXAMPLE
+spark.hadoop.fs.lakefs.secret.key abc/lakefs/1234567bPxRfiCYEXAMPLEKEY
+spark.hadoop.fs.lakefs.endpoint https://example-org.us-east-1.lakefscloud.io/api/v1
+</code></pre></div>    </div>
+  </div>
+</div>
+
+                
+
+                
+                
+
+                
+
+            </div>
+        </div>
+
+        
+        
+
+        <div class="search-overlay"></div>
+        
+    </div>
+</div>
+
+<footer>
+    <div class="footer-sidebar"></div>
+    <div class="footer-main">
+        <div class="row">
+            <div class="left">
+                <ul class="footer-links">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://docs.lakefs.io/" class="site-button" >
+                            Docs
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/blog/" class="site-button" >
+                            Blog
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                            GitHub
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/community/" class="site-button" >
+                            Community
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/cloud-registration/" class="site-button" >
+                            lakeFS Cloud
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/contact-us/" class="site-button" >
+                            Contact
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="right">
+                <ul class="footer-social">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/youtube" class="site-button" >
+                            <img src="/v1.30/assets/icons/youtube.svg" class="no-hover" />
+                            <img src="/v1.30/assets/icons/youtube-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://www.linkedin.com/company/treeverse" class="site-button" >
+                            <img src="/v1.30/assets/icons/linkedin.svg" class="no-hover" />
+                            <img src="/v1.30/assets/icons/linkedin-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                            <img src="/v1.30/assets/icons/github.svg" class="no-hover" />
+                            <img src="/v1.30/assets/icons/github-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://twitter.com/lakeFS" class="site-button" >
+                            <img src="/v1.30/assets/icons/twitter.svg" class="no-hover" />
+                            <img src="/v1.30/assets/icons/twitter-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://data-folks.masto.host/@lakeFS" class="site-button" >
+                            <img src="/v1.30/assets/icons/mastodon.svg" class="no-hover" />
+                            <img src="/v1.30/assets/icons/mastodon-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/slack" class="site-button" >
+                            <img src="/v1.30/assets/icons/slack.svg" class="no-hover" />
+                            <img src="/v1.30/assets/icons/slack-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row top-border">
+            <div class="left">
+                <a href="https://lakefs.io" class="lh-tight" style="margin-bottom: 0px;">
+                    <div class="site-logo"></div>
+                </a>                    
+            </div>
+            <div class="right">
+                <ul class="bottom-footer-links">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/terms-of-use/" class="site-button" >
+                            Terms of use
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/privacy-policy/" class="site-button" >
+                            Privacy Policy
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</body>
+
+</html>
+
