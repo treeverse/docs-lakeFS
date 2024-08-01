@@ -578,7 +578,7 @@
 </blockquote>
 
 <p>Secure Token Service (STS) authentication in lakeFS enables users to authenticate to lakeFS using temporary credentials obtained from an Identity Provider (IdP) via the OpenID Connect (OIDC) Authentication workflow.
-This document outlines the process, from setting up the STS authentication flow to using temporary credentials to interact with lakeFS through the <a href="/integrations/python.html">high-level Python SDK</a>.</p>
+This document outlines the process of setting up the STS authentication flow and using the temporary credentials to interact with lakeFS through the <a href="/integrations/python.html">high-level Python SDK</a>.</p>
 <h2 id="login">
   
   
@@ -588,10 +588,11 @@ This document outlines the process, from setting up the STS authentication flow 
 </h2>
     
 
-<p>From the Python SDK call <code class="language-plaintext highlighter-rouge">from_web_identity</code> to initiate a client session with temporary credentials:</p>
+<p>Initiate a client session with temporary credentials using the <a href="/integrations/python.html">high-level Python SDK</a>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
-<span class="n">myclient</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">from_web_identity</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s">'&lt;CODE_FROM_IDP&gt;'</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="s">'&lt;STATE_FROM_IDP&gt;'</span> <span class="p">,</span> <span class="n">redirect_uri</span> <span class="o">=</span> <span class="s">'&lt;URI_USED_FOR_REDIRECT_FROM_IDP&gt;'</span><span class="p">,</span> <span class="n">ttl_seconds</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">)</span>
+
+<span class="n">my_client</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">from_web_identity</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s">'&lt;CODE_FROM_IDP&gt;'</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="s">'&lt;STATE_FROM_IDP&gt;'</span> <span class="p">,</span> <span class="n">redirect_uri</span> <span class="o">=</span> <span class="s">'&lt;URI_USED_FOR_REDIRECT_FROM_IDP&gt;'</span><span class="p">,</span> <span class="n">ttl_seconds</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">)</span>
 </code></pre></div></div>
 <h2 id="setup">
   
@@ -609,8 +610,8 @@ This document outlines the process, from setting up the STS authentication flow 
   
 </h3>
     
-<p>Asure you have a way to generate the code, redirect_uri and state values that are required to initiate a new client session using the STS login feature.
-For a reference implementation, see the <a href="#sample-implementation-to-generate-the-code-redirect_uri-and-state">Sample implementation</a> section.</p>
+<p>Ensure you have a way to generate the code, redirect_uri, and state values that are required to initiate a new client session using the STS login feature.
+For a reference implementation, see the <a href="#sample-implementation-to-generate-the-code-redirect_uri-and-state">sample implementation</a> section.</p>
 <h3 id="configuration">
   
   
@@ -630,35 +631,36 @@ For a reference implementation, see the <a href="#sample-implementation-to-gener
 
 </code></pre></div></div>
 
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">auth.authentication_api.endpoint</code> <code class="language-plaintext highlighter-rouge">(string: https://external.authentication-service/api/v1)</code> - URL to external Authentication Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authentication.yml">authentication.yml</a></li>
-</ul>
-
-<p>Ensure you replace <url-to-remote-authenticator-endpoint> with the actual URL of your Authentication Service.</url-to-remote-authenticator-endpoint></p>
+<p>The endpoint value should point to the external Authentication Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authentication.yml">authentication.yml</a>.  <br />
+Make sure to replace <url-to-remote-authenticator-endpoint> with the actual URL of your Authentication Service.</url-to-remote-authenticator-endpoint></p>
 <h3 id="sample-implementation-to-generate-the-code-redirect_uri-and-state">
   
   
-    <a href="#sample-implementation-to-generate-the-code-redirect_uri-and-state" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sample implementation to generate the code, redirect_uri and state
+    <a href="#sample-implementation-to-generate-the-code-redirect_uri-and-state" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Sample implementation to generate the code, redirect_uri, and state
   
   
 </h3>
     
+<p>The following code snippet demonstrates how to generate the values that are required to initiate a new client session using the STS login feature.</p>
 
-<p>The following code snippet demonstrates how to generate the code, redirect_uri and state values that are required to initiate a new client session using the STS login feature.
-replace <code class="language-plaintext highlighter-rouge">&lt;Your-auth-client-id&gt;</code> with your auth client id and <code class="language-plaintext highlighter-rouge">&lt;path-to-your-idp-authorize&gt;</code> with the path to your IdP authorize endpoint.
-e.g in case of Auth0, the authorize endpoint is <code class="language-plaintext highlighter-rouge">https://&lt;your-auth0-domain&gt;/authorize</code> in case of entra the authorize endpoint is <code class="language-plaintext highlighter-rouge">https://&lt;your-entra-domain&gt;/oauth2/v2.0/authorize</code></p>
+<blockquote class="note">
+  <p>Replace <code class="language-plaintext highlighter-rouge">&lt;your-authorize-endpoint&gt;</code> with the path to your IdP authorize endpoint.<br />
+<em>Examples:</em><br />
+Auth0: The authorize endpoint will be <code class="language-plaintext highlighter-rouge">https://&lt;your-auth0-domain&gt;/authorize</code><br />
+Entra ID: The authorize endpoint will be <code class="language-plaintext highlighter-rouge">https://&lt;your-entra-domain&gt;/oauth2/v2.0/authorize</code></p>
+</blockquote>
+
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">crypto</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">crypto</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="k">import</span> <span class="nx">express</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">;</span>
 <span class="k">import</span> <span class="nx">axios</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">axios</span><span class="dl">'</span><span class="p">;</span>
 <span class="k">import</span> <span class="nx">url</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">url</span><span class="dl">'</span><span class="p">;</span>
 <span class="k">import</span> <span class="nx">jsonwebtoken</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">jsonwebtoken</span><span class="dl">'</span><span class="p">;</span>
+
 <span class="kd">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
-
-
-<span class="kd">const</span> <span class="nx">authClientId</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">&lt;Your-auth-client-id&gt;</span><span class="dl">'</span>
 <span class="c1">// the local script will will spin up the server and the IdP provider will return to this endpoint the response.</span>
 <span class="kd">const</span> <span class="nx">callback</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">http://localhost:8080/oidc/callback</span><span class="dl">"</span>
+<span class="kd">const</span> <span class="nx">authorizeEndpoint</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">&lt;your-authorize-endpoint&gt;</span><span class="dl">"</span>
 
 <span class="c1">// step 1 </span>
 <span class="c1">// Create a code_verifier, which is a cryptographically-random, Base64-encoded key that will eventually be sent to Auth0 to request tokens.</span>
@@ -681,7 +683,7 @@ e.g in case of Auth0, the authorize endpoint is <code class="language-plaintext 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`challenge: </span><span class="p">${</span><span class="nx">challenge</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
 
 
-<span class="kd">const</span> <span class="nx">authorizeURL</span> <span class="o">=</span> <span class="s2">`https://&lt;path-to-your-idp-authorize&gt;?response_type=code&amp;code_challenge=</span><span class="p">${</span><span class="nx">challenge</span><span class="p">}</span><span class="s2">&amp;code_challenge_method=S256&amp;client_id=</span><span class="p">${</span><span class="nx">auth0ClientId</span><span class="p">}</span><span class="s2">&amp;redirect_uri=</span><span class="p">${</span><span class="nx">callback</span><span class="p">}</span><span class="s2">&amp;scope=openid&amp;state=</span><span class="p">${</span><span class="nx">verifier</span><span class="p">}</span><span class="s2">`</span>
+<span class="kd">const</span> <span class="nx">authorizeURL</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">authorizeEndpoint</span><span class="p">}</span><span class="s2">?response_type=code&amp;code_challenge=</span><span class="p">${</span><span class="nx">challenge</span><span class="p">}</span><span class="s2">&amp;code_challenge_method=S256&amp;client_id=</span><span class="p">${</span><span class="nx">auth0ClientId</span><span class="p">}</span><span class="s2">&amp;redirect_uri=</span><span class="p">${</span><span class="nx">callback</span><span class="p">}</span><span class="s2">&amp;scope=openid&amp;state=</span><span class="p">${</span><span class="nx">verifier</span><span class="p">}</span><span class="s2">`</span>
 
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`authorizeURL: </span><span class="p">${</span><span class="nx">authorizeURL</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
 
@@ -715,10 +717,6 @@ e.g in case of Auth0, the authorize endpoint is <code class="language-plaintext 
   
 </h2>
     
-
-<blockquote class="note">
-  <p>The architecture documentation begins at the stage <a href="#prerequisites">after the generation of the code by the Idp</a>.</p>
-</blockquote>
 
 <p>The STS authentication flow involves several components that facilitate secure communication between the lakeFS client, lakeFS server, the remote authenticator, and the IdP.</p>
 
