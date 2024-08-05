@@ -258,7 +258,8 @@
                     </li><li class="nav-list-item ">
                         <a href="/howto/hooks/webhooks.html"
                            class="nav-list-link">Webhooks</a>
-                    </li></ul></li><li class="nav-list-item "><a href="/howto/copying.html"
+                    </li></ul></li><li class="nav-list-item "><a href="/howto/protect-branches.html"
+                   class="nav-list-link">Branch Protection</a></li><li class="nav-list-item "><a href="/howto/copying.html"
                    class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/catalog_exports.html"
                    class="nav-list-link">Data Catalogs Export</a></li><li class="nav-list-item "><a href="/howto/export.html"
                    class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
@@ -274,8 +275,7 @@
                    class="nav-list-link">Import Data</a></li><li class="nav-list-item "><a href="/howto/migrate-away.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/mirroring.html"
                    class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/howto/private-link.html"
-                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/howto/protect-branches.html"
-                   class="nav-list-link">Protect Branches</a></li><li class="nav-list-item "><a href="/howto/virtual-host-addressing.html"
+                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/howto/virtual-host-addressing.html"
                    class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
                    class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/howto/scim.html"
                    class="nav-list-link">System for Cross-domain Identity Management (SCIM)</a></li><li class="nav-list-item "><a href="/howto/local-checkouts.html"
@@ -366,7 +366,7 @@
                     </svg></a><a href="/reference/security/"
                    class="nav-list-link active">Security</a><ul class="nav-list"><li class="nav-list-item ">
                         <a href="/reference/security/access-control-lists.html"
-                           class="nav-list-link">Access Control Lists (ACLs)</a>
+                           class="nav-list-link">Access Control Lists (ACLs) -Deprecated-</a>
                     </li><li class="nav-list-item ">
                         <a href="/reference/security/authentication.html"
                            class="nav-list-link">Authentication</a>
@@ -567,17 +567,54 @@
     
 
 <p><img src="/assets/img/docs_logo.png" alt="lakeFS Docs" width="200" style="float: right; margin: 0 0 10px 10px;" /></p>
+<h3 id="understanding-your-data-security">
+  
+  
+    <a href="#understanding-your-data-security" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Understanding Your Data Security
+  
+  
+</h3>
+    
+
+<p>At lakeFS, we understand the critical nature of data security. Thousands of organizations worldwide rely on lakeFS to manage their data with confidence. Here’s a few concepts we follow to ensure your data remains secure:</p>
+
+<p><strong>Data Stays in Place</strong>: The data you version control remains within your existing object storage. lakeFS creates metadata for your data without moving it. New data is stored in the bucket you designate within your object storage.</p>
+
+<p><strong>lakeFS Servers Stores only Metadata</strong>: The lakeFS Server (also in the case of lakeFS Cloud) only stores the metadata used for version control operations (i.e. diff, merge). It does not store any of your actual data.</p>
+
+<p><strong>Minimal Permissions</strong>: lakeFS requires minimal permissions to manage your data. We can even <a href="https://lakefs.io/blog/pre-signed-urls/">version data we cannot directly access</a> by utilizing presigned URLs.</p>
+
+<p>Learn more about some of the featured that help keep lakeFS Secure:</p>
 
 <ul>
-  <li><a href="/reference/security/authentication.html">Authentication</a></li>
-  <li><a href="/reference/security/remote-authenticator.html">Remote Authenticator</a></li>
-  <li><a href="/reference/security/rbac.html">Role-Based Access Control (RBAC)</a></li>
-  <li><a href="/reference/security/presigned-url.html">Presigned URL</a></li>
-  <li><a href="/reference/security/access-control-lists.html">Access Control Lists (ACLs)</a></li>
-  <li><a href="/reference/security/sso.html">Single Sign On (SSO)</a></li>
-  <li><a href="/reference/security/sts-login.html">Short Lived Token (STS like)</a></li>
-  <li><a href="/reference/security/external-principals-aws.html">Login to lakeFS with AWS IAM</a></li>
+  <li><a href="/reference/security/authentication.html">Authentication</a> - An overview of the authentication and authorization mechanisms available in lakeFS, including built-in and external services, API and S3 Gateway authentication, and user permissions management.</li>
+  <li><a href="/reference/security/remote-authenticator.html">Remote Authenticator</a> - This feature allows organizations to leverage their existing identity infrastructure while using lakeFS, providing a flexible and secure authentication mechanism.</li>
+  <li><a href="/reference/security/rbac.html">Role-Based Access Control (RBAC)</a> - RBAC with lakeFS provides a flexible and granular approach to managing access and permissions, similar to other cloud-based systems like AWS IAM.</li>
+  <li><a href="/reference/security/presigned-url.html">Presigned URL</a> - This feature allows for more flexible and direct data access in lakeFS, particularly useful for scenarios where bypassing the lakeFS server for data retrieval or storage is beneficial.</li>
+  <li><a href="/reference/security/sso.html">Single Sign On (SSO)</a> - lakeFS provides administrators with the necessary information to set up SSO for both lakeFS Cloud and Enterprise editions, covering various authentication protocols and identity providers.</li>
+  <li><a href="/reference/security/sts-login.html">Short Lived Token (STS like)</a> - This feature allows lakeFS to leverage temporary credentials for secure and flexible authentication, integrating seamlessly with existing identity providers.</li>
+  <li><a href="/reference/security/external-principals-aws.html">Login to lakeFS with AWS IAM</a> - This feature enhances the integration between lakeFS and AWS by supporting authenticating users programmatically using AWS IAM roles instead of using static lakeFS access and secret keys.</li>
 </ul>
+<h3 id="soc2-compliance">
+  
+  
+    <a href="#soc2-compliance" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SOC2 Compliance
+  
+  
+</h3>
+    
+<p>lakeFS Cloud is SOC2 compliant, demonstrating our commitment to stringent security standards.</p>
+<h3 id="more-questions-contact-us">
+  
+  
+    <a href="#more-questions-contact-us" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> More questions? Contact us
+  
+  
+</h3>
+    
+<p>For details on supported versions, security updates, and vulnerability reporting, please refer to our <a href="https://github.com/treeverse/lakeFS/security/policy">security policy on GitHub</a>.</p>
+
+<p>If you have additional questions regarding lakeFS Security, <a href="https://meetings.hubspot.com/iddo-avneri/lakefs-security-questions">talk to an expert</a>.</p>
 
                 
 
