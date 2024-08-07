@@ -838,6 +838,59 @@
 <span class="c1">-- pass valid AWS credentials</span>
 <span class="kd">local</span> <span class="n">glue</span> <span class="o">=</span> <span class="n">aws</span><span class="p">.</span><span class="n">glue_client</span><span class="p">(</span><span class="s2">"ACCESS_KEY_ID"</span><span class="p">,</span> <span class="s2">"SECRET_ACCESS_KEY"</span><span class="p">,</span> <span class="s2">"REGION"</span><span class="p">)</span>
 </code></pre></div></div>
+<h3 id="awsgluecreate_databasedatabase-options">
+  
+  
+    <a href="#awsgluecreate_databasedatabase-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue.create_database(database, options)</code>
+  
+  
+</h3>
+    
+
+<p>Create a new Database in Glue Catalog.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">database(string)</code>: Glue Database name.</li>
+  <li><code class="language-plaintext highlighter-rouge">options(table)</code> (optional):
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">error_on_already_exists(boolean)</code>: Whether the call fail with an error if a DB with this name already exists</li>
+      <li><code class="language-plaintext highlighter-rouge">create_db_input(Table)</code>: a Table that is passed “as is” to AWS and is parallel to the AWS SDK <a href="https://docs.aws.amazon.com/glue/latest/webapi/API_CreateDatabase.html#API_CreateDatabase_RequestSyntax">CreateDatabaseInput</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">error_on_already_exists</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="n">create_db_input</span> <span class="o">=</span> <span class="p">{</span><span class="n">DatabaseInput</span> <span class="o">=</span> <span class="p">{</span><span class="n">Description</span> <span class="o">=</span> <span class="s2">"Created via LakeFS Action"</span><span class="p">},</span> <span class="n">Tags</span> <span class="o">=</span> <span class="p">{</span><span class="n">Owner</span> <span class="o">=</span> <span class="s2">"Joe"</span><span class="p">}}</span>
+<span class="p">}</span>
+<span class="n">glue</span><span class="p">.</span><span class="n">create_database</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+</code></pre></div></div>
+<h3 id="awsgluedelete_databasedatabase-catalog_id">
+  
+  
+    <a href="#awsgluedelete_databasedatabase-catalog_id" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">aws/glue.delete_database(database, catalog_id)</code>
+  
+  
+</h3>
+    
+
+<p>Delete an existing Database in Glue Catalog.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">database(string)</code>: Glue Database name.</li>
+  <li><code class="language-plaintext highlighter-rouge">catalog_id(string)</code> (optional): Glue Catalog ID</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">glue</span><span class="p">.</span><span class="n">delete_database</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s2">"461129977393"</span><span class="p">)</span>
+</code></pre></div></div>
 <h3 id="awsglueget_tabledatabase-table--catalog_id">
   
   
@@ -847,7 +900,7 @@
 </h3>
     
 
-<p>Describe a table from the Glue catalog.</p>
+<p>Describe a table from the Glue Catalog.</p>
 
 <p>Example:</p>
 
@@ -1727,15 +1780,16 @@ It assumes that there is a symlink location that is already created and only con
   <li><code class="language-plaintext highlighter-rouge">glue</code>: AWS glue client</li>
   <li><code class="language-plaintext highlighter-rouge">db(string)</code>: glue database name</li>
   <li><code class="language-plaintext highlighter-rouge">table_src_path(string)</code>: path to table spec (e.g. _lakefs_tables/my_table.yaml)</li>
-  <li><code class="language-plaintext highlighter-rouge">create_table_input(Table)</code>: Input equal mapping to <a href="https://docs.aws.amazon.com/glue/latest/webapi/API_CreateTable.html#API_CreateTable_RequestSyntax">table_input</a> in AWS, the same as we use for <code class="language-plaintext highlighter-rouge">glue.create_table</code>.
+  <li><code class="language-plaintext highlighter-rouge">create_table_input(table)</code>: Input equal mapping to <a href="https://docs.aws.amazon.com/glue/latest/webapi/API_CreateTable.html#API_CreateTable_RequestSyntax">table_input</a> in AWS, the same as we use for <code class="language-plaintext highlighter-rouge">glue.create_table</code>.
 should contain inputs describing the data format (e.g. InputFormat, OutputFormat, SerdeInfo) since the exporter is agnostic to this. 
 by default this function will configure table location and schema.</li>
-  <li><code class="language-plaintext highlighter-rouge">action_info(Table)</code>: the global action object.</li>
-  <li><code class="language-plaintext highlighter-rouge">options(Table)</code>:
+  <li><code class="language-plaintext highlighter-rouge">action_info(table)</code>: the global action object.</li>
+  <li><code class="language-plaintext highlighter-rouge">options(table)</code>:
     <ul>
       <li><code class="language-plaintext highlighter-rouge">table_name(string)</code>: Override default glue table name</li>
       <li><code class="language-plaintext highlighter-rouge">debug(boolean</code></li>
       <li><code class="language-plaintext highlighter-rouge">export_base_uri(string)</code>: Override the default prefix in S3 for symlink location e.g. s3://other-bucket/path/</li>
+      <li><code class="language-plaintext highlighter-rouge">create_db_input(table)</code>: if this is specified, then it indicates we want to create a new database for the table export. The parameter expects a table that is converted to JSON and passed “as is” to AWS and is parallel to the AWS SDK <a href="https://docs.aws.amazon.com/glue/latest/webapi/API_CreateDatabase.html#API_CreateDatabase_RequestSyntax">CreateDatabaseInput</a></li>
     </ul>
   </li>
 </ul>
@@ -1767,7 +1821,7 @@ by default this function will configure table location and schema.</li>
     <span class="n">EXTERNAL</span><span class="p">:</span> <span class="s2">"TRUE"</span>
     <span class="s2">"parquet.compression"</span><span class="p">:</span> <span class="s2">"SNAPPY"</span>
 <span class="p">}</span>
-<span class="n">exporter</span><span class="p">.</span><span class="n">export_glue</span><span class="p">(</span><span class="n">glue</span><span class="p">,</span> <span class="s2">"my-db"</span><span class="p">,</span> <span class="s2">"_lakefs_tables/animals.yaml"</span><span class="p">,</span> <span class="n">table_input</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="p">{</span><span class="n">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">})</span>
+<span class="n">exporter</span><span class="p">.</span><span class="n">export_glue</span><span class="p">(</span><span class="n">glue</span><span class="p">,</span> <span class="s2">"my-db"</span><span class="p">,</span> <span class="s2">"_lakefs_tables/animals.yaml"</span><span class="p">,</span> <span class="n">table_input</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="p">{</span><span class="n">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span> <span class="n">create_db_input</span> <span class="o">=</span> <span class="p">{</span><span class="n">DatabaseInput</span> <span class="o">=</span> <span class="p">{</span><span class="n">Description</span><span class="o">=</span><span class="s2">"DB exported from LakeFS"</span><span class="p">},</span> <span class="n">Tags</span> <span class="o">=</span> <span class="p">{</span><span class="n">Owner</span> <span class="o">=</span> <span class="s2">"Joe"</span><span class="p">}}})</span>
 </code></pre></div></div>
 <h3 id="lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info-1">
   
