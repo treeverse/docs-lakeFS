@@ -554,9 +554,10 @@
     
 
 <blockquote class="note warning">
-  <p>ACLS are <a href="https://lakefs.io/blog/why-moving-acls-out-of-core-lakefs/">moving out of core lakeFS</a>.</p>
+  <p>ACLs were <a href="https://lakefs.io/blog/why-moving-acls-out-of-core-lakefs/">removed from core lakeFS</a>.</p>
 
-  <p>For a more robust authorization solution, please see <a href="./rbac.html">Role-Based Access Control</a>, available in <a href="/cloud/">lakeFS Cloud</a> and <a href="/enterprise/">lakeFS Enterprise</a>.</p>
+  <p>For a more robust authorization solution, please see <a href="./rbac.html">Role-Based Access Control</a>, available in <a href="/cloud/">lakeFS Cloud</a> and <a href="/enterprise/">lakeFS Enterprise</a>.<br />
+The following documentation is aimed for users with existing installations who wish to continue working with ACLs.</p>
 </blockquote>
 
 <div class="toc-block">
@@ -570,12 +571,24 @@
     
 
 <ol id="markdown-toc">
+  <li><a href="#basic-auth-functionality" id="markdown-toc-basic-auth-functionality">Basic Auth Functionality</a></li>
   <li><a href="#acls" id="markdown-toc-acls">ACLs</a></li>
-  <li><a href="#pluggable-authentication-and-authorization" id="markdown-toc-pluggable-authentication-and-authorization">Pluggable Authentication and Authorization</a></li>
-  <li><a href="#previous-versions-of-acl-in-lakefs" id="markdown-toc-previous-versions-of-acl-in-lakefs">Previous versions of ACL in lakeFS</a></li>
 </ol>
 
 </div>
+<h2 id="basic-auth-functionality">
+  
+  
+    <a href="#basic-auth-functionality" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Basic Auth Functionality
+  
+  
+</h2>
+    
+
+<p>New lakeFS versions will provide basic auth functionality featuring a single Admin user with a single set of credentials.
+Existing lakeFS installations that have a single user and a single set of credentials will migrate seamlessly to the new version.<br />
+Installations that have more than one user / credentials will require to run a command and choose which set of user + credentials to migrate 
+(more details <a href="#migration-of-existing-user">here</a>)</p>
 <h2 id="acls">
   
   
@@ -585,131 +598,69 @@
 </h2>
     
 
-<p>You can attach Permissions and scope them to groups in the Groups page.
-There are 4 default groups, named after the 4 permissions. Each group is global (applies for all repositories).</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Group ID</th>
-      <th>Allows</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Read</strong></td>
-      <td>Read operations, creating access keys</td>
-    </tr>
-    <tr>
-      <td><strong>Write</strong></td>
-      <td>Allows all data read and write operations.</td>
-    </tr>
-    <tr>
-      <td><strong>Super</strong></td>
-      <td>Allows all operations except auth.</td>
-    </tr>
-    <tr>
-      <td><strong>Admin</strong></td>
-      <td>Allows all operations.</td>
-    </tr>
-  </tbody>
-</table></div>
-<h2 id="pluggable-authentication-and-authorization">
+<p>ACL server was moved out of core lakeFS and into a new package under <code class="language-plaintext highlighter-rouge">contrib/auth/acl</code>.
+Though we <a href="https://lakefs.io/blog/why-moving-acls-out-of-core-lakefs/">decided</a> to move ACLs out, we are committed to making sure existing users who still need the use of ACLs can continue using
+this feature.
+In order to do that, users will need to run the separate ACL server as part of their lakeFS deployment environment and configure lakeFS to work with it.</p>
+<h3 id="acl-server-configuration">
   
   
-    <a href="#pluggable-authentication-and-authorization" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Pluggable Authentication and Authorization
-  
-  
-</h2>
-    
-
-<p>Authorization and authentication is pluggable in lakeFS. If lakeFS is attached to a <a href="remote-authenticator.html">remote authentication server</a> (or you are using lakeFS Cloud) then the <a href="rbac.html">role-based access control</a> user interface can be used.</p>
-
-<p>If you are using ACL then the lakeFS configuration element <code class="language-plaintext highlighter-rouge">auth.ui_config.RBAC</code> should be set to <code class="language-plaintext highlighter-rouge">simplified</code>.</p>
-<h2 id="previous-versions-of-acl-in-lakefs">
-  
-  
-    <a href="#previous-versions-of-acl-in-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Previous versions of ACL in lakeFS
-  
-  
-</h2>
-    
-
-<p>Here’s a comparison of the current ACL model against the behavior prior to <a href="/posts/security_update.html#whats-changing">the changes introduced</a> in v0.98.</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>Permission</th>
-      <th>Allows</th>
-      <th>Previous Group Name</th>
-      <th>Previous Policy Names and Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Read</strong></td>
-      <td>Read operations, creating access keys.</td>
-      <td>Viewers</td>
-      <td>FSReadAll [fs:List<em>, fs:Read</em>]</td>
-    </tr>
-    <tr>
-      <td><strong>Write</strong></td>
-      <td>Allows all data read and write operations.</td>
-      <td>Developers</td>
-      <td>FSReadWriteAll [fs:ListRepositories, fs:ReadRepository, fs:ReadCommit, fs:ListBranches, fs:ListTags, fs:ListObjects, fs:ReadObject, fs:WriteObject, fs:DeleteObject, fs:RevertBranch, fs:ReadBranch, fs:ReadTag, fs:CreateBranch, fs:CreateTag, fs:DeleteBranch, fs:DeleteTag, fs:CreateCommit] RepoManagementReadAll [ci:Read<em>, retention:Get</em>, branches:Get*, fs:ReadConfig]</td>
-    </tr>
-    <tr>
-      <td><strong>Super</strong></td>
-      <td>Allows all operations except auth.</td>
-      <td>SuperUsers (with changes)</td>
-      <td>FSFullAccess  [fs:<em>] RepoManagementReadAll [ci:Read</em>, retention:Get<em>, branches:Get</em>, fs:ReadConfig]</td>
-    </tr>
-    <tr>
-      <td><strong>Admin</strong></td>
-      <td>Allows all operations.</td>
-      <td>Admins</td>
-      <td>AuthFullAccess [auth:<em>]  FSFullAccess [fs:</em>]  RepoManagementFullAccess [ci:<em>, retention:</em>, branches:*, fs:ReadConfig]</td>
-    </tr>
-  </tbody>
-</table></div>
-<h3 id="migrating-from-the-previous-version-of-acls">
-  
-  
-    <a href="#migrating-from-the-previous-version-of-acls" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migrating from the previous version of ACLs
+    <a href="#acl-server-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ACL server Configuration
   
   
 </h3>
     
 
-<p>Upgrading the lakeFS version will require migrating to the new ACL authorization model.</p>
+<p>Under the <code class="language-plaintext highlighter-rouge">contrib/auth/acl</code> you will be able to find an ACL server reference.</p>
 
-<p>In order to run the migration run:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs migrate up
+<blockquote class="note warning">
+  <p>This implementation is a reference and is not fit for production use.</p>
+
+  <p>For a more robust authorization solution, please see <a href="./rbac.html">Role-Based Access Control</a>, available in <a href="/cloud/">lakeFS Cloud</a> and <a href="/enterprise/">lakeFS Enterprise</a>.</p>
+</blockquote>
+
+<p>The configuration of the ACL server is similar to lakeFS configuration, here’s an example of an <code class="language-plaintext highlighter-rouge">.aclserver.yaml</code> config file:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="s">---</span>
+   <span class="s">listen_address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[ACL_SERVER_LISTEN_ADDRESS]"</span>
+   <span class="na">database</span><span class="pi">:</span>
+     <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">postgres"</span>
+     <span class="na">postgres</span><span class="pi">:</span>
+       <span class="na">connection_string</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[DATABASE_CONNECTION_STRING]"</span>
+  
+   <span class="na">encrypt</span><span class="pi">:</span>
+     <span class="c1"># This should be the same encryption key as in lakeFS</span>
+     <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">[ENCRYPTION_SECRET_KEY]"</span>
+</code></pre></div></div>
+<p>It is possible to use environment variables to configure the server as in lakeFS. Use the <code class="language-plaintext highlighter-rouge">ACLSERVER_</code> prefix to do so.<br />
+For full configuration reference see: <a href="https://github.com/treeverse/lakeFS/blob/7b2a0ac2f1afedd2059284c32e7dacb945b2ae90/contrib/auth/acl/config.go#L26">this</a></p>
+<h3 id="lakefs-configuration">
+  
+  
+    <a href="#lakefs-configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Configuration
+  
+  
+</h3>
+    
+
+<p>For the ACL server to work, configure the following values in lakeFS:<br />
+<code class="language-plaintext highlighter-rouge">auth.ui_config.rbac</code>: <code class="language-plaintext highlighter-rouge">simplified</code><br />
+<code class="language-plaintext highlighter-rouge">auth.api.endpoint</code>: <code class="language-plaintext highlighter-rouge">[ACL_SERVER_LISTEN_ADDRESS]</code></p>
+<h3 id="migration-of-existing-user">
+  
+  
+    <a href="#migration-of-existing-user" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migration of existing user
+  
+  
+</h3>
+    
+
+<p>For installation with multiple users / credentials, upgrading to the new lakeFS version requires choosing which user + credentials will be used for the single user mode.
+This is done via the <code class="language-plaintext highlighter-rouge">lakefs superuser</code> command.
+For example, if you have a user with username <code class="language-plaintext highlighter-rouge">&lt;my-username&gt;</code> and credential key <code class="language-plaintext highlighter-rouge">&lt;my-access-key-id&gt;</code> use the following command to migrate that user:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs superuser <span class="nt">--user-name</span> &lt;my-username&gt; <span class="nt">--access-key-id</span> &lt;my-access-key-id&gt;
 </code></pre></div></div>
 
-<p>The command will run the migration to ACL. The migration process might adjust the current authorization policies to fit ACL, in that case the command will not make any changes, only print warnings.<br />
-In case of warnings to apply the migration, re-run with the  <code class="language-plaintext highlighter-rouge">--force</code>  flag</p>
-
-<p>The upgrade will ensure that the 4 default groups exist, and modify existing groups to fit into the new ACLs model:</p>
-<ul>
-  <li>When creating the 4 default global groups: if another group exists and has the desired name, upgrading will rename it by appending “.orig”. So after upgrading the 4 default global groups exist, with these known names.</li>
-  <li>For any group, upgrading configured policies follows these rules, possibly increasing access:
-    <ol>
-      <li>Any “Deny” rules are stripped, and a warning printed.</li>
-      <li>“Manage own credentials” is added.</li>
-      <li>If any actions outside of “fs:” and manage own credentials are allowed, the group becomes an Admin group, a warning is printed, and no further changes apply.</li>
-      <li>The upgrade script unifies repositories: If a resource applies to a set of repositories, permissions are unified to all repositories.</li>
-      <li>The upgrade script unifies actions: it selects the least permission of Read, Write, Super that contains all of the allowed actions.</li>
-    </ol>
-  </li>
-</ul>
-
-<p>The upgrade will detach every directly attached policy from users</p>
-
-<p>Note that moving to ACL from RBAC may only be performed once and <strong>will</strong> lose some configuration.  The upgrade script will detail the changes made by the transition.</p>
-
-<p>For any question or concern during the upgrade, don’t hesitate to get in touch with us through <a href="https://lakefs.io/slack">Slack</a> or <a href="mailto:support@treeverse.io">email</a>.</p>
+<p>After running the command you will be able to access the installation using the user’s access key id and its respective secret access key.</p>
 
                 
 
