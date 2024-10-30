@@ -789,10 +789,10 @@ If not, contact us at <a href="mailto:support@treeverse.io">support@treeverse.io
   </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
       </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="s2">"fs:ReadConfig"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"fs:ReadRepository"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"retention:PrepareGarbageCollectionCommits"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"retention:PrepareGarbageCollectionUncommitted"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fs:ReadConfig"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fs:ReadRepository"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"fs:ListObjects"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"fs:ReadConfig"</span><span class="w">
       </span><span class="p">],</span><span class="w">
@@ -977,8 +977,8 @@ For example <code class="language-plaintext highlighter-rouge">logging.level</co
 
 <p>Flags:</p>
 <ul>
-  <li><code class="language-plaintext highlighter-rouge">--cache-dir</code>: directory to cache read files and metadataDir (default is $HOME/.lakefs-sgc/data/)</li>
-  <li><code class="language-plaintext highlighter-rouge">--parallelism</code>: number of parallel downloads for metadataDir (default 10)</li>
+  <li><code class="language-plaintext highlighter-rouge">--cache-dir</code>: directory to cache read files (default is <code class="language-plaintext highlighter-rouge">$HOME/.lakefs-sgc/data/</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">--parallelism</code>: number of parallel downloads for metadata files (default 10)</li>
   <li><code class="language-plaintext highlighter-rouge">--presign</code>: use pre-signed URLs when downloading/uploading data (recommended) (default true)</li>
 </ul>
 <h3 id="how-to-run-standalone-gc">
@@ -1018,7 +1018,7 @@ treeverse/lakefs-sgc:&lt;tag&gt; run &lt;repository&gt;
 </h4>
     
 
-<p>When working with S3-compatible clients, it’s often more convenient to mount the ~/.aws` file and pass in the desired profile.</p>
+<p>When working with S3-compatible clients, it’s often more convenient to mount the <code class="language-plaintext highlighter-rouge">~/.aws</code> directory and pass in the desired profile.</p>
 
 <p>First, change the permissions for <code class="language-plaintext highlighter-rouge">~/.aws/*</code> to allow the docker container to read this directory:</p>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>644 ~/.aws/<span class="k">*</span>
@@ -1092,8 +1092,8 @@ treeverse/lakefs-sgc:&lt;tag&gt; run &lt;repository&gt;
 <span class="c"># Download the CSV file</span>
 aws s3 <span class="nb">cp</span> <span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/_lakefs/retention/gc/reports/</span><span class="nv">$run_id</span><span class="s2">/deleted.csv"</span> <span class="s2">"./run_id-</span><span class="nv">$run_id</span><span class="s2">.csv"</span>
 
-<span class="c"># Move all addresses to the output bucket under the run_id prefix</span>
-<span class="nb">cat </span>run_id-<span class="nv">$run_id</span>.csv | <span class="nb">tail</span> <span class="nt">-n</span> +2 | <span class="nb">head</span> <span class="nt">-n</span> 10 | xargs <span class="nt">-I</span> <span class="o">{}</span> aws s3 <span class="nb">mv</span> <span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/{}"</span> <span class="s2">"</span><span class="nv">$output_bucket</span><span class="s2">/run_id=</span><span class="nv">$run_id</span><span class="s2">/"</span>
+<span class="c"># Move all addresses to the output bucket under the "run_id=$run_id" prefix</span>
+<span class="nb">cat </span>run_id-<span class="nv">$run_id</span>.csv | <span class="nb">tail</span> <span class="nt">-n</span> +2 | xargs <span class="nt">-I</span> <span class="o">{}</span> aws s3 <span class="nb">mv</span> <span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/{}"</span> <span class="s2">"</span><span class="nv">$output_bucket</span><span class="s2">/run_id=</span><span class="nv">$run_id</span><span class="s2">/"</span>
 </code></pre></div></div>
 
                 
