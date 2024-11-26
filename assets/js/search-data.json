@@ -4117,403 +4117,410 @@
   },"588": {
     "doc": "Single Sign On (SSO)",
     "title": "LDAP",
-    "content": "In order for Fluffy to work, the following values must be configured. Update (or override) the following attributes in the chart’s values.yaml file. | Replace lakefsConfig.auth.remote_authenticator.endpoint with the lakeFS server URL combined with the api/v1/ldap/login suffix (e.g http://lakefs.company.com/api/v1/ldap/login) | Repalce fluffyConfig.auth.ldap.remote_authenticator.server_endpoint with your LDAP server endpoint (e.g ldaps://ldap.ldap-address.com:636) | Replace fluffyConfig.auth.ldap.remote_authenticator.bind_dn with the LDAP bind user/permissions to query your LDAP server. | Replace fluffyConfig.auth.ldap.remote_authenticator.user_base_dn with the user base to search users in. | . lakeFS Server Configuration (Update in helm’s values.yaml file): . # Important: make sure to include the rest of your lakeFS Configuration here! auth: remote_authenticator: enabled: true endpoint: http://&lt;Fluffy URL&gt;:&lt;Fluffy http port&gt;/api/v1/ldap/login default_user_group: \"Developers\" # Value needs to correspond with an existing group in lakeFS ui_config: logout_url: /logout login_cookie_names: - internal_auth_session . Fluffy Configuration (Update in helm’s values.yaml file): . logging: format: \"json\" level: \"INFO\" audit_log_level: \"INFO\" output: \"=\" installation: fixed_id: fluffy-authenticator auth: post_login_redirect_url: / ldap: server_endpoint: 'ldaps://ldap.company.com:636' bind_dn: uid=&lt;bind-user-name&gt;,ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com bind_password: '&lt;ldap pwd&gt;' username_attribute: uid user_base_dn: ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com user_filter: (objectClass=inetOrgPerson) connection_timeout_seconds: 15 request_timeout_seconds: 7 . Helm . In order to use lakeFS Enterprise and Fluffy, we provided out of the box setup, see lakeFS Helm chart configuration. Notes: . | Check the examples on GitHub we provide for each authentication method (oidc/adfs/ldap + rbac). | The examples are provisioned with a Postgres pod for quick-start, make sure to replace that to a stable database once ready. | The encrypt secret key secrets.authEncryptSecretKey is shared between fluffy and lakeFS for authentication. | The lakeFS image.tag must be &gt;= 1.0.0 | The fluffy image.tag must be &gt;= 0.2.7 | Change the ingress.hosts[0] from lakefs.company.com to a real host (usually same as lakeFS), also update additional references in the file (note: URL path after host if provided should stay unchanged). | Update the ingress configuration with other optional fields if used | Fluffy docker image: replace the fluffy.image.privateRegistry.secretToken with real token to dockerhub for the fluffy docker image. | . ",
+    "content": "Fluffy is incharge of providing LDAP authentication for lakeFS Enterprise. The authentication works by querying the LDAP server for user information and authenticating the user based on the provided credentials. Important: An administrative bind user must be configured. It should have search permissions for the LDAP server that will be used to query the LDAP server for user information. For Helm: set the following attributes in the Helm chart values, for lakeFS lakefsConfig.* and fluffyConfig.* for fluffy. No Helm: If not using Helm use the YAML below to directly update the configuration file for each service. lakeFS Configuration: . | Replace auth.remote_authenticator.enabled with true | Replace auth.remote_authenticator.endpoint with the fluffy authentication server URL combined with the api/v1/ldap/login suffix (e.g http://lakefs.company.com/api/v1/ldap/login) | . fluffy Configuration: . See Fluffy configuration reference. | Repalce auth.ldap.remote_authenticator.server_endpoint with your LDAP server endpoint (e.g ldaps://ldap.ldap-address.com:636) | Replace auth.ldap.remote_authenticator.bind_dn with the LDAP bind user/permissions to query your LDAP server. | Replace auth.ldap.remote_authenticator.user_base_dn with the user base to search users in. | . lakeFS Server Configuration file: . $lakefs run -c ./lakefs.yaml . # Important: make sure to include the rest of your lakeFS Configuration here! auth: remote_authenticator: enabled: true endpoint: http://&lt;Fluffy URL&gt;:&lt;Fluffy http port&gt;/api/v1/ldap/login default_user_group: \"Developers\" # Value needs to correspond with an existing group in lakeFS ui_config: logout_url: /logout login_cookie_names: - internal_auth_session . Fluffy Configuration file: . $fluffy run -c ./fluffy.yaml . logging: format: \"json\" level: \"INFO\" audit_log_level: \"INFO\" output: \"=\" installation: fixed_id: fluffy-authenticator auth: post_login_redirect_url: / ldap: server_endpoint: 'ldaps://ldap.company.com:636' bind_dn: uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com bind_password: '&lt;ldap pwd&gt;' username_attribute: uid user_base_dn: ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com user_filter: (objectClass=inetOrgPerson) connection_timeout_seconds: 15 request_timeout_seconds: 7 . ",
     "url": "/security/sso.html#ldap",
     
     "relUrl": "/security/sso.html#ldap"
   },"589": {
+    "doc": "Single Sign On (SSO)",
+    "title": "Troubleshooting LDAP issues",
+    "content": "Inspecting Logs . If you encounter LDAP connection errors, you should inspect the fluffy container logs to get more information. Authentication issues . Auth issues (e.g. user not found, invalid credentials) can be debugged with the ldapwhoami CLI tool. The Examples are based on the fluffy config above: . To verify that the main bind user can connect: . ldapwhoami -H ldap://ldap.company.com:636 -D \"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com\" -x -W . To verify that a specific lakeFS user dev-user can connect: . ldapwhoami -H ldap://ldap.company.com:636 -D \"uid=dev-user,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com\" -x -W . User not found issue . Upon a login request in fluffy, the bind user will search for the user in the LDAP server. If the user is not found it will be presented in the logs. We can search the user using ldapsearch CLI tool. Search ALL users in the base DN (no filters): . Note: -b is the user_base_dn, -D is bind_dn and -w is bind_password from the fluffy configuration. ldapsearch -H ldap://ldap.company.com:636 -x -b \"ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com\" -D \"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com\" -w '&lt;bind_user_pwd&gt;' . If the user is found, we should now use filters for the specific user the same way fluffy does it and expect to see the user. For example, to repdocue the same search as fluffy does: . | user dev-user set from uid attribute in LDAP | Fluffy configuration values: user_filter: (objectClass=inetOrgPerson) and username_attribute: uid | . ldapsearch -H ldap://ldap.company.com:636 -x -b \"ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com\" -D \"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com\" -w '&lt;bind_user_pwd&gt;' \"(&amp;(uid=dev-user)(objectClass=inetOrgPerson))\" . Helm . In order to use lakeFS Enterprise and Fluffy, we provided out of the box setup, see lakeFS Helm chart configuration. Notes: . | Check the examples on GitHub we provide for each authentication method (oidc/adfs/ldap + rbac). | The examples are provisioned with a Postgres pod for quick-start, make sure to replace that to a stable database once ready. | The encrypt secret key secrets.authEncryptSecretKey is shared between fluffy and lakeFS for authentication. | The lakeFS image.tag must be &gt;= 1.0.0 | The fluffy image.tag must be &gt;= 0.2.7 | Change the ingress.hosts[0] from lakefs.company.com to a real host (usually same as lakeFS), also update additional references in the file (note: URL path after host if provided should stay unchanged). | Update the ingress configuration with other optional fields if used | Fluffy docker image: replace the fluffy.image.privateRegistry.secretToken with real token to dockerhub for the fluffy docker image. | . ",
+    "url": "/security/sso.html#troubleshooting-ldap-issues",
+    
+    "relUrl": "/security/sso.html#troubleshooting-ldap-issues"
+  },"590": {
     "doc": "Standalone Garbage Collection",
     "title": "Standalone Garbage Collection",
     "content": "lakeFS Enterprise . experimental . Standalone GC is only available for lakeFS Enterprise. Please verify with your account manager that your license includes this feature. Standalone GC is experimental and offers limited capabilities compared to the Spark-backed GC. Read through the limitations carefully before using it. ",
     "url": "/howto/garbage-collection/standalone-gc.html",
     
     "relUrl": "/howto/garbage-collection/standalone-gc.html"
-  },"590": {
+  },"591": {
     "doc": "Standalone Garbage Collection",
     "title": "Table of contents",
     "content": ". | About | Limitations . | Lab tests | . | Installation . | Step 1: Obtain Dockerhub token | Step 2: Login to Dockerhub with this token | Step 3: Download the docker image | . | Usage . | Permissions . | AWS | LakeFS | . | AWS Credentials . | S3-compatible clients | . | Configuration | Command line reference . | Flags: | Commands: | . | How to Run Standalone GC . | Directly passing in credentials parsed from ~/.aws/credentials | Mounting the ~/.aws directory | . | Get the List of Objects Marked for Deletion | Delete marked objects | . | . ",
     "url": "/howto/garbage-collection/standalone-gc.html#table-of-contents",
     
     "relUrl": "/howto/garbage-collection/standalone-gc.html#table-of-contents"
-  },"591": {
+  },"592": {
     "doc": "Standalone Garbage Collection",
     "title": "About",
     "content": "Standalone GC is a limited version of the Spark-backed GC that runs without any external dependencies, as a standalone docker image. ",
     "url": "/howto/garbage-collection/standalone-gc.html#about",
     
     "relUrl": "/howto/garbage-collection/standalone-gc.html#about"
-  },"592": {
+  },"593": {
     "doc": "Standalone Garbage Collection",
     "title": "Limitations",
     "content": ". | Except for the Lab tests performed, there are no further guarantees about the performance profile of the Standalone GC. | Horizontal scale is not supported - Only a single instance of lakefs-sgc can operate at a time on a given repository. | Standalone GC only marks objects and does not delete them - Equivalent to the GC’s mark only mode. More about that in the Get the List of Objects Marked for Deletion section. | . Lab tests . Repository spec: . | 100k objects | 250 commits | 100 branches | . Machine spec: . | 4GiB RAM | 8 CPUs | . In this setup, we measured: . | Time: &lt; 5m | Disk space: 123MB | . ",
     "url": "/howto/garbage-collection/standalone-gc.html#limitations",
     
     "relUrl": "/howto/garbage-collection/standalone-gc.html#limitations"
-  },"593": {
+  },"594": {
     "doc": "Standalone Garbage Collection",
     "title": "Installation",
     "content": "Step 1: Obtain Dockerhub token . As an enterprise customer, you should already have a dockerhub token for the externallakefs user. If not, contact us at support@treeverse.io. Step 2: Login to Dockerhub with this token . docker login -u &lt;token&gt; . Step 3: Download the docker image . Download the image from the lakefs-sgc repository: . docker pull treeverse/lakefs-sgc:&lt;tag&gt; . ",
     "url": "/howto/garbage-collection/standalone-gc.html#installation",
     
     "relUrl": "/howto/garbage-collection/standalone-gc.html#installation"
-  },"594": {
+  },"595": {
     "doc": "Standalone Garbage Collection",
     "title": "Usage",
     "content": "Permissions . To run lakefs-sgc, you’ll need AWS and LakeFS users, with the following permissions: . AWS . The minimal required permissions on AWS are: . { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Effect\": \"Allow\", \"Action\": [ \"s3:PutObject\", \"s3:GetObject\" ], \"Resource\": [ \"arn:aws:s3:::some-bucket/some/prefix/*\" ] }, { \"Effect\": \"Allow\", \"Action\": [ \"s3:ListBucket\" ], \"Resource\": [ \"arn:aws:s3:::some-bucket\" ] }, { \"Effect\": \"Allow\", \"Action\": [ \"s3:ListAllMyBuckets\" ], \"Resource\": [ \"arn:aws:s3:::*\" ] } ] } . In this permissions file, the example repository storage namespace is s3://some-bucket/some/prefix. LakeFS . The minimal required permissions on LakeFS are: . { \"statement\": [ { \"action\": [ \"retention:PrepareGarbageCollectionCommits\", \"retention:PrepareGarbageCollectionUncommitted\", \"fs:ReadConfig\", \"fs:ReadRepository\", \"fs:ListObjects\", \"fs:ReadConfig\" ], \"effect\": \"allow\", \"resource\": \"arn:lakefs:fs:::repository/&lt;repository&gt;\" } ] } . AWS Credentials . Currently, lakefs-sgc does not provide an option to explicitly set AWS credentials. It relies on the hosting machine to be set up correctly, and reads the AWS credentials from the machine. This means, you should set up your machine however AWS expects you to set it. For example, by following their guide on configuring the AWS CLI. S3-compatible clients . Naturally, this method of configuration allows for lakefs-sgc to work with any S3-compatible client (such as MinIO). An example setup for working with MinIO: . | Add a profile to your ~/.aws/config file: [profile minio] region = us-east-1 endpoint_url = &lt;MinIO URL&gt; s3 = signature_version = s3v4 . | Add an access and secret keys to your ~/.aws/credentials file: [minio] aws_access_key_id = &lt;MinIO access key&gt; aws_secret_access_key = &lt;MinIO secret key&gt; . | Run the lakefs-sgc docker image and pass it the minio profile - see example below. | . Configuration . The following configuration keys are available: . | Key | Description | Default value | Possible values | . | logging.format | Logs output format | “text” | “text”,”json” | . | logging.level | Logs level | “info” | “error”,”warn”,info”,”debug”,”trace” | . | logging.output | Where to output the logs to | ”-“ | ”-“ (stdout), “=” (stderr), or any string for file path | . | cache_dir | Directory to use for caching data during run | ~/.lakefs-sgc/data | string | . | aws.max_page_size | Max number of items per page when listing objects in AWS | 1000 | number | . | aws.s3.addressing_path_style | Whether or not to use path-style when reading objects from AWS | true | boolean | . | lakefs.endpoint_url | The URL to the lakeFS installation - should end with /api/v1 | NOT SET | URL | . | lakefs.access_key_id | Access key to the lakeFS installation | NOT SET | string | . | lakefs.secret_access_key | Secret access key to the lakeFS installation | NOT SET | string | . These keys can be provided in the following ways: . | Config file: Create a YAML file with the keys, each . is a new nesting level. For example, logging.level will be: logging: level: &lt;value&gt; # info,debug... Then, pass it to the program using the --config path/to/config.yaml argument. | Environment variables: by setting LAKEFS_SGC_&lt;KEY&gt;, with uppercase letters and .s converted to _s. For example logging.level will be: export LAKEFS_SGC_LOGGING_LEVEL=info . | . Example (minimalistic) config file: . logging: level: debug lakefs: endpoint_url: https://your.url/api/v1 access_key_id: &lt;lakeFS access key&gt; secret_access_key: &lt;lakeFS secret key&gt; . Command line reference . Flags: . | -c, --config: config file to use (default is $HOME/.lakefs-sgc.yaml) | . Commands: . run . Usage: lakefs-sgc run &lt;repository&gt; . Flags: . | --cache-dir: directory to cache read files (default is $HOME/.lakefs-sgc/data/) | --parallelism: number of parallel downloads for metadata files (default 10) | --presign: use pre-signed URLs when downloading/uploading data (recommended) (default true) | . How to Run Standalone GC . Directly passing in credentials parsed from ~/.aws/credentials . docker run \\ -e AWS_REGION=&lt;region&gt; \\ -e AWS_SESSION_TOKEN=\"$(grep 'aws_session_token' ~/.aws/credentials | awk -F' = ' '{print $2}')\" \\ -e AWS_ACCESS_KEY_ID=\"$(grep 'aws_access_key_id' ~/.aws/credentials | awk -F' = ' '{print $2}')\" \\ -e AWS_SECRET_ACCESS_KEY=\"$(grep 'aws_secret_access_key' ~/.aws/credentials | awk -F' = ' '{print $2}')\" \\ -e LAKEFS_SGC_LAKEFS_ENDPOINT_URL=&lt;lakefs endpoint URL&gt; \\ -e LAKEFS_SGC_LAKEFS_ACCESS_KEY_ID=&lt;lakefs accesss key&gt; \\ -e LAKEFS_SGC_LAKEFS_SECRET_ACCESS_KEY=&lt;lakefs secret key&gt; \\ -e LAKEFS_SGC_LOGGING_LEVEL=debug \\ treeverse/lakefs-sgc:&lt;tag&gt; run &lt;repository&gt; . Mounting the ~/.aws directory . When working with S3-compatible clients, it’s often more convenient to mount the ~/.aws directory and pass in the desired profile. First, change the permissions for ~/.aws/* to allow the docker container to read this directory: . chmod 644 ~/.aws/* . Then, run the docker image and mount ~/.aws to the lakefs-sgc home directory on the docker container: . docker run \\ --network=host \\ -v ~/.aws:/home/lakefs-sgc/.aws \\ -e AWS_REGION=us-east-1 \\ -e AWS_PROFILE=&lt;profile&gt; \\ -e LAKEFS_SGC_LAKEFS_ENDPOINT_URL=&lt;lakefs endpoint URL&gt; \\ -e LAKEFS_SGC_LAKEFS_ACCESS_KEY_ID=&lt;lakefs accesss key&gt; \\ -e LAKEFS_SGC_LAKEFS_SECRET_ACCESS_KEY=&lt;lakefs secret key&gt; \\ -e LAKEFS_SGC_LOGGING_LEVEL=debug \\ treeverse/lakefs-sgc:&lt;tag&gt; run &lt;repository&gt; . Get the List of Objects Marked for Deletion . lakefs-sgc will write its reports to &lt;REPOSITORY_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/reports/&lt;RUN_ID&gt;/. RUN_ID is generated during runtime by the Standalone GC. You can find it in the logs: . \"Marking objects for deletion\" ... run_id=gcoca17haabs73f2gtq0 . In this prefix, you’ll find 2 objects: . | deleted.csv - Containing all marked objects in a CSV containing one address column. Example: address \"data/gcnobu7n2efc74lfa5ug/csfnri7n2efc74lfa69g,_e7P9j-1ahTXtofw7tWwJUIhTfL0rEs_dvBrClzc_QE\" \"data/gcnobu7n2efc74lfa5ug/csfnri7n2efc74lfa78g,mKZnS-5YbLzmK0pKsGGimdxxBlt8QZzCyw1QeQrFvFE\" ... | summary.json - A small json summarizing the GC run. Example: { \"run_id\": \"gcoca17haabs73f2gtq0\", \"success\": true, \"first_slice\": \"gcss5tpsrurs73cqi6e0\", \"start_time\": \"2024-10-27T13:19:26.890099059Z\", \"cutoff_time\": \"2024-10-27T07:19:26.890099059Z\", \"num_deleted_objects\": 33000 } . | . Delete marked objects . To delete the objects marked by the GC, you’ll need to read the deleted.csv file, and manually delete each address from AWS. It is recommended to move all the marked objects to a different bucket instead of deleting them directly. Here’s an example bash script to perform this operation: . # Change these to your correct values storage_ns=&lt;storage namespace (s3://...)&gt; output_bucket=&lt;output bucket (s3://...)&gt; run_id=&lt;GC run id&gt; # Download the CSV file aws s3 cp \"$storage_ns/_lakefs/retention/gc/reports/$run_id/deleted.csv\" \"./run_id-$run_id.csv\" # Move all addresses to the output bucket under the \"run_id=$run_id\" prefix cat run_id-$run_id.csv | tail -n +2 | xargs -I {} aws s3 mv \"$storage_ns/{}\" \"$output_bucket/run_id=$run_id/\" . ",
     "url": "/howto/garbage-collection/standalone-gc.html#usage",
     
     "relUrl": "/howto/garbage-collection/standalone-gc.html#usage"
-  },"595": {
+  },"596": {
     "doc": "Short-lived token (STS like) Authentication for lakeFS",
     "title": "Short-lived token (STS like)",
     "content": "lakeFS Cloud . lakeFS Enterprise . STS Login is available in lakeFS Cloud and lakeFS Enterprise. currently only tested on lakeFS Enterprise. Secure Token Service (STS) authentication in lakeFS enables users to authenticate to lakeFS using temporary credentials obtained from an Identity Provider (IdP) via the OpenID Connect (OIDC) Authentication workflow. This document outlines the process of setting up the STS authentication flow and using the temporary credentials to interact with lakeFS through the high-level Python SDK. ",
     "url": "/security/sts-login.html#short-lived-token-sts-like",
     
     "relUrl": "/security/sts-login.html#short-lived-token-sts-like"
-  },"596": {
+  },"597": {
     "doc": "Short-lived token (STS like) Authentication for lakeFS",
     "title": "Login",
     "content": "Initiate a client session with temporary credentials using the high-level Python SDK: . import lakefs my_client = lakefs.client.from_web_identity(code = '&lt;CODE_FROM_IDP&gt;', state = '&lt;STATE_FROM_IDP&gt;' , redirect_uri = '&lt;URI_USED_FOR_REDIRECT_FROM_IDP&gt;', ttl_seconds = 7200) . ",
     "url": "/security/sts-login.html#login",
     
     "relUrl": "/security/sts-login.html#login"
-  },"597": {
+  },"598": {
     "doc": "Short-lived token (STS like) Authentication for lakeFS",
     "title": "Setup",
     "content": "Prerequisites . Ensure you have a way to generate the code, redirect_uri, and state values that are required to initiate a new client session using the STS login feature. For a reference implementation, see the sample implementation section. Configuration . To enable STS authentication, configure your lakeFS instance with the endpoint of the external Authentication Service. auth: authentication_api: endpoint: &lt;url-to-remote-authenticator-endpoint&gt; . The endpoint value should point to the external Authentication Service described at authentication.yml. Make sure to replace with the actual URL of your Authentication Service. Sample implementation to generate the code, redirect_uri, and state . The following code snippet demonstrates how to generate the values that are required to initiate a new client session using the STS login feature. Replace &lt;your-authorize-endpoint&gt; with the path to your IdP authorize endpoint. Examples: Auth0: The authorize endpoint will be https://&lt;your-auth0-domain&gt;/authorize Entra ID: The authorize endpoint will be https://&lt;your-entra-domain&gt;/oauth2/v2.0/authorize . import crypto from 'crypto'; import express from 'express'; import axios from 'axios'; import url from 'url'; import jsonwebtoken from 'jsonwebtoken'; const app = express(); // the local script will will spin up the server and the IdP provider will return to this endpoint the response. const callback = \"http://localhost:8080/oidc/callback\" const authorizeEndpoint = \"&lt;your-authorize-endpoint&gt;\" // step 1 // Create a code_verifier, which is a cryptographically-random, Base64-encoded key that will eventually be sent to Auth0 to request tokens. function base64URLEncode(str) { return str.toString('base64') .replace(/\\+/g, '-') .replace(/\\//g, '_') .replace(/=/g, ''); } var verifier = base64URLEncode(crypto.randomBytes(32)); console.log(`verifier: ${verifier}`); // step 2 // Generate a code_challenge from the code_verifier that will be sent to Auth0 to request an authorization_code. function sha256(buffer) { return crypto.createHash('sha256').update(buffer).digest(); } var challenge = base64URLEncode(sha256(verifier)); console.log(`challenge: ${challenge}`); const authorizeURL = `${authorizeEndpoint}?response_type=code&amp;code_challenge=${challenge}&amp;code_challenge_method=S256&amp;client_id=${auth0ClientId}&amp;redirect_uri=${callback}&amp;scope=openid&amp;state=${verifier}` console.log(`authorizeURL: ${authorizeURL}`) // Endpoint for OIDC callback app.get('/oidc/callback', async (req, res) =&gt; { try { const code = req.query.code; const state = req.query.state; console.log(`code: ${code}`); console.log(`state: ${state}`); // Return a success response res.status(200).json({ code, state, redirect_uri: callback, python-cmd: `lakefs.client.from_web_identity(code = ${code} redirect_uri = ${callback} state = ${state}, ttl_seconds = 7200) ` }); return } catch (err) { console.error(err); res.status(500).json({ message: 'Internal server error' }); } }); // Start the server const PORT = 8080; app.listen(PORT, () =&gt; { console.log(`Server is running on port ${PORT}`); }); . ",
     "url": "/security/sts-login.html#setup",
     
     "relUrl": "/security/sts-login.html#setup"
-  },"598": {
+  },"599": {
     "doc": "Short-lived token (STS like) Authentication for lakeFS",
     "title": "Architecture",
     "content": "The STS authentication flow involves several components that facilitate secure communication between the lakeFS client, lakeFS server, the remote authenticator, and the IdP. sequenceDiagram participant A as lakeFS Client participant B as lakeFS Server participant C as Remote Authenticator participant D as IdP A-&gt;&gt;B: Call STS login endpoint B-&gt;&gt;C: POST idp code state and redirect uri C-&gt;&gt;D: IdP request D-&gt;&gt;C: IdP response C-&gt;&gt;B: Auth response B-&gt;&gt;A: auth JWT . | lakeFS Client: Initiates the authentication process by providing IdP credentials. | lakeFS Server: Facilitates the authentication request between the client and the remote authenticator. | Remote Authenticator: Acts as a bridge between lakeFS and the IdP, handling credential validation. | IdP (Identity Provider): Validates the provided credentials and returns the authentication status. | . ",
     "url": "/security/sts-login.html#architecture",
     
     "relUrl": "/security/sts-login.html#architecture"
-  },"599": {
+  },"600": {
     "doc": "Short-lived token (STS like) Authentication for lakeFS",
     "title": "Short-lived token (STS like) Authentication for lakeFS",
     "content": " ",
     "url": "/security/sts-login.html",
     
     "relUrl": "/security/sts-login.html"
-  },"600": {
+  },"601": {
     "doc": "Troubleshooting lakeFS Enterprise",
     "title": "Troubleshooting lakeFS Enterprise",
     "content": " ",
     "url": "/enterprise/troubleshooting.html",
     
     "relUrl": "/enterprise/troubleshooting.html"
-  },"601": {
+  },"602": {
     "doc": "Troubleshooting lakeFS Enterprise",
     "title": "Table of contents",
     "content": ". | The flare command | What Information Does the flare Command Collect? | Usage - Collect and Send Flare | . A lakeFS Enterprise deployment has multiple moving parts that must all be deployed and configured correctly. This is especially true during initial setup. To help troubleshoot issues, both lakeFS and fluffy include the flare command. ",
     "url": "/enterprise/troubleshooting.html#table-of-contents",
     
     "relUrl": "/enterprise/troubleshooting.html#table-of-contents"
-  },"602": {
+  },"603": {
     "doc": "Troubleshooting lakeFS Enterprise",
     "title": "The flare command",
     "content": "Synopsis . Both lakefs and fluffy include the flare command . lakefs flare [flags] fluffy flare [flags] . Flags . --env-var-filename the name of the file environment variables will be written to (default: lakefs-env.txt) --include-env-vars should environment variables be collected by flare (default: true) -o, --output Output path relative to the current path -p, --package Package generated artifacts into a .zip file (default: false) --stdout Output to stdout instead of files (default: false) --zip-filename The name of the zip file created when the -p option is used (default: lakefs-flare.zip) . Example Usage . # This will run flare with output set to stdout, which is redirected into a file $ ./lakefs flare --stdout &gt; lakefs.flare # The same works for fluffy $ ./fluffy flare --stdout &gt; fluffy.flare . ",
     "url": "/enterprise/troubleshooting.html#the-flare-command",
     
     "relUrl": "/enterprise/troubleshooting.html#the-flare-command"
-  },"603": {
+  },"604": {
     "doc": "Troubleshooting lakeFS Enterprise",
     "title": "What Information Does the flare Command Collect?",
     "content": "Configuration . Both lakeFS and fluffy allow configuration to be supplied in multiple ways: configuration file, environment variables, .env files, and command flags. The flare command collects the fully resolved final configuration used by the lakeFS/fluffy process. Environment Variables . When troubleshooting, it’s important to get a view of the environment in which lakeFS/fluffy are running. This is especially true for container-based deployment environments, like Kubernetes, where env vars are used extensively. The flare command collects environment variables with the following prefixes: . | LAKEFS_ | FLUFFY_ | HTTP_ | HOSTNAME | . Sanitization and Secret Redaction . Both configuration and env var include sensitive secrets. The flare command has a multi-step process for redacting secrets from what it collects. The flare command is able to detect the following types of secrets: . | AWS static credentials | Azure storage keys | Basic HTTP auth username/password | JWTs | Bearer auth headers | GitHub tokens | Certificate private keys | . Aside from the specific secret type listed above, flare also has the ability to detect and redact generic high-entropy strings, which are likely to be secrets. Redacted secrets are replaced by a SHA512 hash of the value. This allows comparing them (e.g., between lakeFS and fluffy) without exposing the actual values. ",
     "url": "/enterprise/troubleshooting.html#what-information-does-the-flare-command-collect",
     
     "relUrl": "/enterprise/troubleshooting.html#what-information-does-the-flare-command-collect"
-  },"604": {
+  },"605": {
     "doc": "Troubleshooting lakeFS Enterprise",
     "title": "Usage - Collect and Send Flare",
     "content": "The following script is intended to be run locally and assumes that lakeFS and fluffy are deployed to a Kubernetes cluster, since this is the recommended setup. Running this script requires that kubectl be installed on the machine it is being run from and that kubectl is configured with the correct context and credentials to access the cluster. Aside from running the flare command on both lakeFS and fluffy, this script also fetches the logs from all running pods of lakeFS and fluffy. Step 1 - Set Script Variables . At the top of the script you’ll find the Variables block. It is important to change these values according to how lakeFS is deployed in your cluster. NAMESPACE - The K8s namespace where lakeFS and fluffy are deployed LAKEFS_DEPLOYMENT - The name of the lakeFS K8s deployment FLUFFY_DEPLOYMENT - The name of the fluffy K8s deployment LAKEFS_LOGS_OUTPUT_FILE - The name of the local file where lakeFS logs will be saved FLUFFY_LOGS_OUTPUT_FILE - The name of the local file where fluffy logs will be saved LAKEFS_FLARE_FILE - The name of the local file where the lakeFS flare result will be saved FLUFFY_FLARE_FILE - The name of the local file where the fluffy flare result will be saved . Step 2 - Execute the Script . #!/bin/bash RED='\\033[0;31m' NC='\\033[0m' # Variables NAMESPACE=lakefs-prod LAKEFS_DEPLOYMENT=lakefs-server FLUFFY_DEPLOYMENT=lakefs-fluffy LAKEFS_LOGS_OUTPUT_FILE=lakefs.log FLUFFY_LOGS_OUTPUT_FILE=fluffy.log LAKEFS_FLARE_FILE=lakefs.flare FLUFFY_FLARE_FILE=fluffy.flare # Find kubectl KUBECTLCMD=$(which kubectl) if [ -z \"$KUBECTLCMD\" ] then echo -e \"${RED}Couldn't find kubectl in path${NC}\" exit 1 fi $KUBECTLCMD get pods -o name -n $NAMESPACE | grep pod/$LAKEFS_DEPLOYMENT | xargs -I {} $KUBECTLCMD logs -n $NAMESPACE --all-containers=true --prefix --ignore-errors --timestamps {} &gt; $LAKEFS_LOGS_OUTPUT_FILE $KUBECTLCMD get pods -o name -n $NAMESPACE | grep pod/$FLUFFY_DEPLOYMENT | xargs -I {} $KUBECTLCMD logs -n $NAMESPACE --all-containers=true --prefix --ignore-errors --timestamps {} &gt; $FLUFFY_LOGS_OUTPUT_FILE $KUBECTLCMD exec deployment/$LAKEFS_DEPLOYMENT -- ./lakefs flare --stdout &gt; $LAKEFS_FLARE_FILE $KUBECTLCMD exec deployment/$FLUFFY_DEPLOYMENT -- ./lakefs flare --stdout &gt; $FLUFFY_FLARE_FILE . Step 3 - Inspect the Output Files . After executing the script you should have four files: lakeFS/fluffy logs and lakeFS/fluffy flare output. Before sharing these files, please review them to make sure all secrets were correctly redacted and that all the collected information is shareable. Step 4 - Zip Output Files and Attach to Support Ticket . Once you’re done inspecting the files, you can zip them into a single file and attach it to a Support Ticket in the support portal. New Ticket . When filing a new ticket, you can attach the zip file using the file upload input at the bottom of the new ticket form. Existing Ticket . To add a file to an existing ticket, click the ticket subject in the support portal. On the ticket details attach a file as a new response. You can also add text to the response, if you’d like to add further details. ",
     "url": "/enterprise/troubleshooting.html#usage---collect-and-send-flare",
     
     "relUrl": "/enterprise/troubleshooting.html#usage---collect-and-send-flare"
-  },"605": {
+  },"606": {
     "doc": "Unity Catalog",
     "title": "Using lakeFS with the Unity Catalog",
     "content": " ",
     "url": "/integrations/unity-catalog.html#using-lakefs-with-the-unity-catalog",
     
     "relUrl": "/integrations/unity-catalog.html#using-lakefs-with-the-unity-catalog"
-  },"606": {
+  },"607": {
     "doc": "Unity Catalog",
     "title": "Table of contents",
     "content": ". | Overview | Prerequisites . | Databricks authentication | . | Guide . | Table descriptor definition | Write some data | The Unity Catalog exporter script | Action configuration | Databricks Integration | . | . ",
     "url": "/integrations/unity-catalog.html#table-of-contents",
     
     "relUrl": "/integrations/unity-catalog.html#table-of-contents"
-  },"607": {
+  },"608": {
     "doc": "Unity Catalog",
     "title": "Overview",
     "content": "Databricks Unity Catalog serves as a centralized data governance platform for your data lakes. Through the Unity Catalog, you can search for and locate data assets across workspaces via a unified catalog. Leveraging the external tables feature within Unity Catalog, you can register a Delta Lake table exported from lakeFS and access it through the unified catalog. The subsequent step-by-step guide will lead you through the process of configuring a Lua hook that exports Delta Lake tables from lakeFS, and subsequently registers them in Unity Catalog. Currently, Unity Catalog export feature exclusively supports AWS S3 and Azure ADLS Gen2 as the underlying storage solution. It’s planned to support other cloud providers soon. Reference Guide: lakeFS + Unity Catalog Integration: Step-by-Step Tutorial . ",
     "url": "/integrations/unity-catalog.html#overview",
     
     "relUrl": "/integrations/unity-catalog.html#overview"
-  },"608": {
+  },"609": {
     "doc": "Unity Catalog",
     "title": "Prerequisites",
     "content": "Before starting, ensure you have the following: . | Access to Unity Catalog | An active lakeFS installation with S3 as the backing storage, and a repository in this installation. | A Databricks SQL warehouse. | AWS Credentials with S3 access. | lakeFS credentials with access to your Delta Tables. | . Supported from lakeFS v1.4.0 . Databricks authentication . Given that the hook will ultimately register a table in Unity Catalog, authentication with Databricks is imperative. Make sure that: . | You have a Databricks Service Principal. | The Service principal has token usage permissions, and an associated token configured. | The service principal has the Service principal: Manager privilege over itself (Workspace: Admin console -&gt; Service principals -&gt; &lt;service principal&gt; -&gt; Permissions -&gt; Grant access (&lt;service principal&gt;: Service principal: Manager), with Workspace access and Databricks SQL access checked (Admin console -&gt; Service principals -&gt; &lt;service principal&gt; -&gt; Configurations). | Your SQL warehouse allows the service principal to use it (SQL Warehouses -&gt; &lt;SQL warehouse&gt; -&gt; Permissions -&gt; &lt;service principal&gt;: Can use). | The catalog grants the USE CATALOG, USE SCHEMA, CREATE SCHEMA permissions to the service principal(Catalog -&gt; &lt;catalog name&gt; -&gt; Permissions -&gt; Grant -&gt; &lt;service principal&gt;: USE CATALOG, USE SCHEMA, CREATE SCHEMA). | You have an External Location configured, and the service principal has the CREATE EXTERNAL TABLE permission over it (Catalog -&gt; External Data -&gt; External Locations -&gt; Create location). | . ",
     "url": "/integrations/unity-catalog.html#prerequisites",
     
     "relUrl": "/integrations/unity-catalog.html#prerequisites"
-  },"609": {
+  },"610": {
     "doc": "Unity Catalog",
     "title": "Guide",
     "content": "Table descriptor definition . To guide the Unity Catalog exporter in configuring the table in the catalog, define its properties in the Delta Lake table descriptor. The table descriptor should include (at minimum) the following fields: . | name: The table name. | type: Should be delta. | catalog: The name of the catalog in which the table will be created. | path: The path in lakeFS (starting from the root of the branch) in which the Delta Lake table’s data is found. | . Let’s define the table descriptor and upload it to lakeFS: . Save the following as famous-people-td.yaml: . --- name: famous_people type: delta catalog: my-catalog-name path: tables/famous-people . It’s recommended to create a Unity catalog with the same name as your repository . Upload the table descriptor to _lakefs_tables/famous-people-td.yaml and commit: . lakectl fs upload lakefs://repo/main/_lakefs_tables/famous-people-td.yaml -s ./famous-people-td.yaml &amp;&amp; \\ lakectl commit lakefs://repo/main -m \"add famous people table descriptor\" . Write some data . Insert data into the table path, using your preferred method (e.g. Spark), and commit upon completion. We shall use Spark and lakeFS’s S3 gateway to write some data as a Delta table: . pyspark --packages \"io.delta:delta-spark_2.12:3.0.0,org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262\" \\ --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension \\ --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog \\ --conf spark.hadoop.fs.s3a.aws.credentials.provider='org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider' \\ --conf spark.hadoop.fs.s3a.endpoint='&lt;LAKEFS_SERVER_URL&gt;' \\ --conf spark.hadoop.fs.s3a.access.key='&lt;LAKEFS_ACCESS_KEY&gt;' \\ --conf spark.hadoop.fs.s3a.secret.key='&lt;LAKEFS_SECRET_ACCESS_KEY&gt;' \\ --conf spark.hadoop.fs.s3a.path.style.access=true . data = [ ('James','Bond','England','intelligence'), ('Robbie','Williams','England','music'), ('Hulk','Hogan','USA','entertainment'), ('Mister','T','USA','entertainment'), ('Rafael','Nadal','Spain','professional athlete'), ('Paul','Haver','Belgium','music'), ] columns = [\"firstname\",\"lastname\",\"country\",\"category\"] df = spark.createDataFrame(data=data, schema = columns) df.write.format(\"delta\").mode(\"overwrite\").partitionBy(\"category\", \"country\").save(\"s3a://repo/main/tables/famous-people\") . The Unity Catalog exporter script . For code references check delta_exporter and unity_exporter docs. Create unity_exporter.lua: . local aws = require(\"aws\") local formats = require(\"formats\") local databricks = require(\"databricks\") local delta_export = require(\"lakefs/catalogexport/delta_exporter\") local unity_export = require(\"lakefs/catalogexport/unity_exporter\") local sc = aws.s3_client(args.aws.access_key_id, args.aws.secret_access_key, args.aws.region) -- Export Delta Lake tables export: local delta_client = formats.delta_client(args.lakefs.access_key_id, args.lakefs.secret_access_key, args.aws.region) local delta_table_details = delta_export.export_delta_log(action, args.table_defs, sc.put_object, delta_client, \"_lakefs_tables\") -- Register the exported table in Unity Catalog: local databricks_client = databricks.client(args.databricks_host, args.databricks_token) local registration_statuses = unity_export.register_tables(action, \"_lakefs_tables\", delta_table_details, databricks_client, args.warehouse_id) for t, status in pairs(registration_statuses) do print(\"Unity catalog registration for table \\\"\" .. t .. \"\\\" completed with commit schema status : \" .. status .. \"\\n\") end . Upload the lua script to the main branch under scripts/unity_exporter.lua and commit: . lakectl fs upload lakefs://repo/main/scripts/unity_exporter.lua -s ./unity_exporter.lua &amp;&amp; \\ lakectl commit lakefs://repo/main -m \"upload unity exporter script\" . Action configuration . Define an action configuration that will run the above script after a commit is completed (post-commit) over the main branch. Create unity_exports_action.yaml: . --- name: unity_exports on: post-commit: branches: [\"main\"] hooks: - id: unity_export type: lua properties: script_path: scripts/unity_exporter.lua args: aws: access_key_id: &lt;AWS_ACCESS_KEY_ID&gt; secret_access_key: &lt;AWS_SECRET_ACCESS_KEY&gt; region: &lt;AWS_REGION&gt; lakefs: # provide credentials of a user that has access to the script and Delta Table access_key_id: &lt;LAKEFS_ACCESS_KEY_ID&gt; secret_access_key: &lt;LAKEFS_SECRET_ACCESS_KEY&gt; table_defs: # an array of table descriptors used to be defined in Unity Catalog - famous-people-td databricks_host: &lt;DATABRICKS_HOST_URL&gt; databricks_token: &lt;DATABRICKS_SERVICE_PRINCIPAL_TOKEN&gt; warehouse_id: &lt;WAREHOUSE_ID&gt; . Upload the action configurations to _lakefs_actions/unity_exports_action.yaml and commit: . Once the commit will finish its run, the action will start running since we’ve configured it to run on post-commit events on the main branch. lakectl fs upload lakefs://repo/main/_lakefs_actions/unity_exports_action.yaml -s ./unity_exports_action.yaml &amp;&amp; \\ lakectl commit lakefs://repo/main -m \"upload action and run it\" . The action has run and exported the famous_people Delta Lake table to the repo’s storage namespace, and has register the table as an external table in Unity Catalog under the catalog my-catalog-name, schema main (as the branch’s name) and table name famous_people: my-catalog-name.main.famous_people. Databricks Integration . After registering the table in Unity, you can leverage your preferred method to query the data from the exported table under my-catalog-name.main.famous_people, and view it in the Databricks’s Catalog Explorer, or retrieve it using the Databricks CLI with the following command: . databricks tables get my-catalog-name.main.famous_people . ",
     "url": "/integrations/unity-catalog.html#guide",
     
     "relUrl": "/integrations/unity-catalog.html#guide"
-  },"610": {
+  },"611": {
     "doc": "Unity Catalog",
     "title": "Unity Catalog",
     "content": " ",
     "url": "/integrations/unity-catalog.html",
     
     "relUrl": "/integrations/unity-catalog.html"
-  },"611": {
+  },"612": {
     "doc": "Unity Delta Sharing",
     "title": "Unity Delta Sharing",
     "content": "lakeFS Cloud . Please note, as of June 15th 2024, the Unity Delta Sharing feature will be removed. To integrate lakeFS with Unity Catalog, refer to the Unity integration docs. ",
     "url": "/howto/unity-delta-sharing.html",
     
     "relUrl": "/howto/unity-delta-sharing.html"
-  },"612": {
+  },"613": {
     "doc": "Unity Delta Sharing",
     "title": "Introduction",
     "content": "lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. Currently, this is available as a private preview. It provides full read-only functionality for Unity Catalog. It does not provide a “self-service” experience to set up the service. ",
     "url": "/howto/unity-delta-sharing.html#introduction",
     
     "relUrl": "/howto/unity-delta-sharing.html#introduction"
-  },"613": {
+  },"614": {
     "doc": "Unity Delta Sharing",
     "title": "Setup",
     "content": "This guide explains how to set up and use lakeFS Delta Sharing. Currently, you will have to configure lakeFS Delta Sharing in collaboration with Treeverse Customer Success. Once set up is complete, you will of course be able to use lakeFS Delta Sharing on existing and on new tables without further assistance. 1. Collect data and initial setup . | Select a Delta Sharing configuration URL. This is a single location on lakeFS to hold the top-level configuration of lakeFS Delta Sharing across all repositories of your organization. Typically, it will have the form lakefs://REPO/main/lakefs_delta_sharing.yaml for one of your repositories. A longer path may be supplied - however, we do recommend keeping it on the main branch, as this object represents state for the entire installation. | Create a user lakefs-delta-sharing-service for lakeFS Delta Sharing, and an access key for that user. It should have at least read permissions for the configuration URL and for all repositories and all data accesses by Unity. lakeFS Delta Sharing will these credentials to communicate with lakeFS. | . Communicate these items to Customer Success: . | Configuration URL | Access key ID and secret access key for user lakefs-delta-sharing-service. | . Note: All YAML files extensions used in this guide must be yaml. Do not use a yml extension instead. 2. Initial configuration . Select a secret authorization token to share Unity catalog. Unity catalog will use to authenticate to the lakeFS Delta Sharing server. You might use this command on Linux: . head -c 50 /dev/random | base64 . Create a file lakefs_delta_sharing.yaml and place it at the config URL selected above. It should look like this: . authorization_token: \"GENERATED TOKEN\" # Map lakeFS repositories to Unity shares repositories: - id: sample-repo share_name: undev # List branches and prefixes to export. Each of these branches (and only # these branches) will be available as a schema on Unity. branches: - main - staging - dev_* - id: repo2 share_name: share_two branches: - \"*\" . Note that a plain “*” line must be quoted in YAML. Upload it to your config URL. For instance if the config URL is lakefs://repo/main/lakefs_delta_sharing.yaml, you might use: . lakectl fs upload -s ./lakefs_delta_sharing.yaml lakefs://repo/main/lakefs_delta_sharing.yaml . 3. Connect Unity to lakeFS Delta Sharing! . You now need to configure Unity to use the lakeFS Delta Sharing server. Create a share provider file config.share.json; see the Delta Sharing manual: . { \"shareCredentialsVersion\": 1, \"endpoint\": \"https://ORG_ID.REGION.lakefscloud.io/service/delta-sharing/v1\", \"bearerToken\": \"GENERATED TOKEN\", \"expirationTime\": \"2030-01-01T00:00:00.0Z\" } . “GENERATED TOKEN” is the secret authorization token use above. Install the databricks cli. We will use it to create Delta Share on Unity. Follow the instructions to configure it. Run the provider creation command: . databricks unity-catalog providers create \\ --name lakefs-cloud \\ --recipient-profile-json-file config.share.json . Go to “Data » Delta Sharing” on the DataBricks environment. Once Treeverse have configured lakeFS Delta Sharing on your account with your config URL, the “lakefs-cloud” provider should appear under “Shared with me”. Click the provider to see its shares. You can now create a catalog from these shares. And you can see schemas for each of the branches that you configured in the share. Here branch name dev_experiment1 matches the pattern dev_* that we defined in the configuration object lakefs-delta-sharing.yaml, so it appears as a schema. At this point you have configured Delta Sharing on lakeFS, and DataBricks to communicate with lakeFS delta sharing. No further Treeverse involvement is required. Updates to lakefs_delta_sharing.yaml will update within a minute of uploading a new version. 4. Configure tables . Everything is ready: lakeFS repositories are configured as shares, and branches are configured as schemas. Now you can define tables! Once a repository is shared, its tables are configured as a table descriptor object on the repository on the path _lakefs_tables/TABLE.yaml. Delta Lake tables . Delta Lake format includes full metadata, so you only need to configure the prefix: . name: users type: delta path: path/to/users/ . Note: The filename of the ‘yaml’ file containing the table definition must match the ‘name’ of the table itself. In the example above, ‘_lakefs_tables/users.yaml’. When placed inside _lakefs_tables/users.yaml this defines a table users on the prefix path/to/users/ (so path/to/users/ holds the prefix _delta_log). Hive tables . Hive metadata server tables are essentially just a set of objects that share a prefix, with no table metadata stored on the object store. You need to configure prefix, partitions, and schema. name: clicks type: hive path: path/to/clicks/ partition_columns: ['year'] schema: type: struct fields: - name: year type: integer nullable: false metadata: {} - name: page type: string nullable: false metadata: {} - name: site type: string nullable: true metadata: comment: a comment about this column . Useful types recognized by DataBricks Photon include integer, long, short, string, double, float, date, and timestamp. For exact type mappings, and whether to specify a field as nullable: false, refer to DataBricks Photon documentation. ",
     "url": "/howto/unity-delta-sharing.html#setup",
     
     "relUrl": "/howto/unity-delta-sharing.html#setup"
-  },"614": {
+  },"615": {
     "doc": "Upgrade lakeFS",
     "title": "Upgrading lakeFS",
     "content": "Note: For a fully managed lakeFS service with guaranteed SLAs, try lakeFS Cloud . Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image (or downloading the latest version if you’re using the binary). If you’re upgrading, check whether the release requires a migration. ",
     "url": "/howto/deploy/upgrade.html#upgrading-lakefs",
     
     "relUrl": "/howto/deploy/upgrade.html#upgrading-lakefs"
-  },"615": {
+  },"616": {
     "doc": "Upgrade lakeFS",
     "title": "When DB migrations are required",
     "content": "lakeFS 0.103.0 or greater . Version 0.103.0 added support for rolling KV upgrade. This means that users who already migrated to the KV ref-store (versions 0.80.0 and above) no longer have to pass through specific versions for migration. This includes ACL migration which was introduced in lakeFS version 0.98.0. Running lakefs migrate up on the latest lakeFS version will perform all the necessary migrations up to that point. lakeFS 0.80.0 or greater (KV Migration) . Starting with version 0.80.2, lakeFS has transitioned from using a PostgreSQL based database implementation to a Key-Value datastore interface supporting multiple database implementations. More information can be found here. Users upgrading from a previous version of lakeFS must pass through the KV migration version (0.80.2) before upgrading to newer versions of lakeFS. IMPORTANT: Pre Migrate Requirements . | Users using OS environment variables for database configuration must define the connection_string explicitly or as environment variable before proceeding with the migration. | Database storage free capacity of at least twice the amount of the currently used capacity | It is strongly recommended to perform these additional steps: . | Commit all uncommitted data on branches | Create a snapshot of your database | . | By default, old database tables are not being deleted by the migration process, and should be removed manually after a successful migration. To enable table drop as part of the migration, set the database.drop_tables configuration param to true | . Migration Steps . For each lakeFS instance currently running with the database . | Modify the database section under lakeFS configuration yaml: . | Add type field with \"postgres\" as value | Copy the current configuration parameters to a new section called postgres | . --- database: type: \"postgres\" connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 postgres: connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 . | Stop all lakeFS instances | Using the lakefs binary for the new version (0.80.2), run the following: . lakefs migrate up . | lakeFS will run the migration process, which in the end should display the following message with no errors: . time=\"2022-08-10T14:46:25Z\" level=info msg=\"KV Migration took 717.629563ms\" func=\"pkg/logging.(*logrusEntryWrapper).Infof\" file=\"build/pkg/logging/logger.go:246\" TempDir=/tmp/kv_migrate_2913402680 . | It is now possible to remove the old database configuration. The updated configuration should look as such: . --- database: type: \"postgres\" postgres: connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 . | Deploy (or run) the new version of lakeFS. | . lakeFS 0.30.0 or greater . In case migration is required, you first need to stop the running lakeFS service. Using the lakefs binary for the new version, run the following: . lakefs migrate up . Deploy (or run) the new version of lakeFS. Note that an older version of lakeFS cannot run on a migrated database. Prior to lakeFS 0.30.0 . Note: with lakeFS &lt; 0.30.0, you should first upgrade to 0.30.0 following this guide. Then, proceed to upgrade to the newest version. Starting version 0.30.0, lakeFS handles your committed metadata in a new way, which is more robust and has better performance. To move your existing data, you will need to run the following upgrade commands. Verify lakeFS version == 0.30.0 (can skip if using Docker) . lakefs --version . Migrate data from the previous format: . lakefs migrate db . Or migrate using Docker image: . docker run --rm -it -e LAKEFS_DATABASE_CONNECTION_STRING=&lt;database connection string&gt; treeverse/lakefs:rocks-migrate migrate db . Once migrated, it is possible to now use more recent lakeFS versions. Please refer to their release notes for more information on ugrading and usage). If you want to start over, discarding your existing data, you need to explicitly state this in your lakeFS configuration file. To do so, add the following to your configuration (relevant only for 0.30.0): . cataloger: type: rocks . ",
     "url": "/howto/deploy/upgrade.html#when-db-migrations-are-required",
     
     "relUrl": "/howto/deploy/upgrade.html#when-db-migrations-are-required"
-  },"616": {
+  },"617": {
     "doc": "Upgrade lakeFS",
     "title": "Data Migration for Version v0.50.0",
     "content": "If you are using a version before 0.50.0, you must first perform the previous upgrade to that version. {: note: .note-warning } . ",
     "url": "/howto/deploy/upgrade.html#data-migration-for-version-v0500",
     
     "relUrl": "/howto/deploy/upgrade.html#data-migration-for-version-v0500"
-  },"617": {
+  },"618": {
     "doc": "Upgrade lakeFS",
     "title": "Upgrade lakeFS",
     "content": " ",
     "url": "/howto/deploy/upgrade.html",
     
     "relUrl": "/howto/deploy/upgrade.html"
-  },"618": {
+  },"619": {
     "doc": "Upgrade",
     "title": "Upgrade",
     "content": "For upgrading from lakeFS enterprise to a newer version see lakefs migration. ",
     "url": "/enterprise/upgrade.html",
     
     "relUrl": "/enterprise/upgrade.html"
-  },"619": {
+  },"620": {
     "doc": "Versioning Internals",
     "title": "Versioning Internals",
     "content": " ",
     "url": "/understand/how/versioning-internals.html",
     
     "relUrl": "/understand/how/versioning-internals.html"
-  },"620": {
+  },"621": {
     "doc": "Versioning Internals",
     "title": "Table of contents",
     "content": ". | Overview | SSTable File Format (“Graveler File”) | Constructing a consistent view of the keyspace (i.e., a commit) | Representing references and uncommitted metadata | . ",
     "url": "/understand/how/versioning-internals.html#table-of-contents",
     
     "relUrl": "/understand/how/versioning-internals.html#table-of-contents"
-  },"621": {
+  },"622": {
     "doc": "Versioning Internals",
     "title": "Overview",
     "content": "Since commits in lakeFS are immutable, they are easy to store on an immutable object store. Older commits are rarely accessed, while newer commits are accessed very frequently, a tiered storage approach can work very well - the object store is the source of truth, while local disk and even RAM can be used to cache the more frequently accessed ones. Since they are immutable - once cached, you only need to evict them when space is running out. There’s no complex invalidation that needs to happen. In terms of storage format, commits are be stored as SSTables, compatible with RocksDB. SSTables were chosen as a storage format for 3 major reasons: . | Extremely high read throughput on modern hardware: using commits representing a 200m object repository (modeled after the S3 inventory of one of our design partners), we were able to achieve close to 500k random GetObject calls / second. This provides a very high throughput/cost ratio, probably as high as can be achieved on public clouds. | Being a known storage format means it’s relatively easy to generate and consume. Storing it in the object store makes it accessible to data engineering tools for analysis and distributed computation, effectively reducing the silo effect of storing it in an operational database. | The SSTable format supports delta encoding for keys which makes them very space efficient for data lakes where many keys share the same common prefixes. | . Each lakeFS commit is represented as a set of contiguous, non-overlapping SSTables that make up the entire keyspace of a repository at that commit. ",
     "url": "/understand/how/versioning-internals.html#overview",
     
     "relUrl": "/understand/how/versioning-internals.html#overview"
-  },"622": {
+  },"623": {
     "doc": "Versioning Internals",
     "title": "SSTable File Format (“Graveler File”)",
     "content": "lakeFS metadata is encoded into a format called “Graveler” - a standardized way to encode content-addressable key value pairs. This is what a Graveler file looks like: . Each Key/Value pair (“ValueRecord”) is constructed of a key, identity, and value. A simple identity could be, for example, a sha256 hash of the value’s bytes. It could be any sequence of bytes that uniquely identifies the value. As far as the Graveler is concerned, two ValueRecords are considered identical if their key and identity fields are equal. A Graveler file itself is content-addressable, i.e., similarly to Git, the name of the file is its identity. File identity is calculated based on the identity of the ValueRecords the file contains: . valueRecordID = h(h(valueRecord.key) || h(valueRecord.Identity)) fileID = h(valueRecordID1 + … + valueRecordIDN) . ",
     "url": "/understand/how/versioning-internals.html#sstable-file-format-graveler-file",
     
     "relUrl": "/understand/how/versioning-internals.html#sstable-file-format-graveler-file"
-  },"623": {
+  },"624": {
     "doc": "Versioning Internals",
     "title": "Constructing a consistent view of the keyspace (i.e., a commit)",
     "content": "We have two additional requirements for the storage format: . | Be space and time efficient when creating a commit - assuming a commit changes a single object out of a billion, we don’t want to write a full snapshot of the entire repository. Ideally, we’ll be able to reuse some data files that haven’t changed to make the commit operations (in both space and time) proportional to the size of the difference as opposed to the total size of the repository. | Allow an efficient diff between commits which runs in time proportional to the size of their difference and not their absolute sizes. | . To support these requirements, we decided to essentially build a 2-layer Merkle tree composed of a set of leaf nodes (“Range”) addressed by their content address, and a “Meta Range”, which is a special range containing all ranges, thus representing an entire consistent view of the keyspace: . Assuming commit B is derived from commit A, and only changed files in range e-f, it can reuse all ranges except for SSTable #N (the one containing the modified range of keys), which will be recreated with a new hash representing the state as exists after applying commit B’s changes. This will, in turn, also create a new Metarange since its hash is now changed as well (as it is derived from the hash of all contained ranges). Assuming most commits usually change related objects (i.e., that are likely to share some common prefix), the reuse ratio could be very high. We tested this assumption using S3 inventory from 2 design partners - we partitioned the keyspace to an arbitrary number of simulated blocks and measured their change over time. We saw a daily change rate of about 5-20%. Given the size of the repositories, it’s safe to assume that a single day would translate into multiple commits. At a modest 20 commits per day, a commit is expected to reuse &gt;= 99% of the previous commit blocks, so acceptable in terms of write amplification generated on commit. On the object store, ranges are stored in the following hierarchy: . &lt;lakefs root&gt; _lakefs/ &lt;range hash1&gt; &lt;range hash2&gt; &lt;range hashN&gt; ... &lt;metarange hash1&gt; &lt;metarange hash2&gt; &lt;metarange hashN&gt; ... &lt;data object hash1&gt; &lt;data object hash2&gt; &lt;data object hashN&gt; ... Note: This relatively flat structure could be modified in the future. Looking at the diagram above, it imposes no real limitations on the depth of the tree. A tree could easily be made recursive by having Meta Ranges point to other Meta Ranges - and still provide all the same characteristics. For simplicity, we decided to start with a fixed 2-level hierarchy. ",
     "url": "/understand/how/versioning-internals.html#constructing-a-consistent-view-of-the-keyspace-ie-a-commit",
     
     "relUrl": "/understand/how/versioning-internals.html#constructing-a-consistent-view-of-the-keyspace-ie-a-commit"
-  },"624": {
+  },"625": {
     "doc": "Versioning Internals",
     "title": "Representing references and uncommitted metadata",
     "content": "lakeFS always stores the object data in the storage namespace in the user’s object store, committed and uncommitted data alike. However, the lakeFS object metadata might be stored in either the object store or a key-value store. Unlike committed metadata which is immutable, uncommitted (or “staged”) metadata experiences frequent random writes and is very mutable in nature. This is also true for “refs” - in particular, branches, which are simply pointers to an underlying commit, are modified frequently: on every commit or merge operation. Both these types of metadata are not only mutable, but also require strong consistency guarantees while also being fault tolerant. If we can’t access the current pointer of the main branch, a big portion of the system is essentially down. Luckily, this is also much smaller set of metadata compared to the committed metadata. References and uncommitted metadata are currently stored on a key-value store (See supported databases) for consistency guarantees. ",
     "url": "/understand/how/versioning-internals.html#representing-references-and-uncommitted-metadata",
     
     "relUrl": "/understand/how/versioning-internals.html#representing-references-and-uncommitted-metadata"
-  },"625": {
+  },"626": {
     "doc": "Vertex AI",
     "title": "Using Vertex AI with lakeFS",
     "content": "Vertex AI lets Google Cloud users Build, deploy, and scale machine learning (ML) models faster, with fully managed ML tools for any use case. lakeFS Works with Vertex AI by allowing users to create repositories on GCS Buckets, then use either the Dataset API to create managed Datasets on top of lakeFS version, or by automatically exporting lakeFS object versions in a way readable by Cloud Storage Mounts. ",
     "url": "/integrations/vertex_ai.html#using-vertex-ai-with-lakefs",
     
     "relUrl": "/integrations/vertex_ai.html#using-vertex-ai-with-lakefs"
-  },"626": {
+  },"627": {
     "doc": "Vertex AI",
     "title": "Table of contents",
     "content": ". | Using lakeFS with Vertex Managed Datasets | Using lakeFS with Cloud Storage Fuse | . ",
     "url": "/integrations/vertex_ai.html#table-of-contents",
     
     "relUrl": "/integrations/vertex_ai.html#table-of-contents"
-  },"627": {
+  },"628": {
     "doc": "Vertex AI",
     "title": "Using lakeFS with Vertex Managed Datasets",
     "content": "Vertex’s ImageDataset and VideoDataset allow creating a dataset by importing a CSV file from gcs (see gcs_source). This CSV file contains GCS addresses of image files and their corresponding labels. Since the lakeFS API supports exporting the underlying GCS address of versioned objects, we can generate such a CSV file when creating the dataset: . #!/usr/bin/env python # Requirements: # google-cloud-aiplatform&gt;=1.31.0 # lakefs-client&gt;=0.107.0 import csv from pathlib import PosixPath from io import StringIO import lakefs_client from lakefs_client.client import LakeFSClient from google.cloud import storage from google.cloud import aiplatform # lakeFS connection details configuration = lakefs_client.Configuration() configuration.username = 'AKIAIOSFODNN7EXAMPLE' configuration.password = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY' configuration.host = 'https://lakefs.example.com/' client = LakeFSClient(configuration) # Dataset configuration lakefs_repo = 'my-repository' lakefs_ref = 'main' img_dataset = 'datasets/my-images/' # Vertex configuration import_bucket = 'underlying-gcs-bucket' # produce import file for Vertex's SDK buf = StringIO() csv_writer = csv.writer(buf) has_more = True next_offset = \"\" while has_more: files = client.objects_api.list_objects( lakefs_repo, lakefs_ref, prefix=img_dataset, after=next_offset) for r in files.get('results'): p = PosixPath(r.path) csv_writer.writerow((r.physical_address, p.parent.name)) has_more = files.get('pagination').get('has_more') next_offset = files.get('pagination').get('next_offset') # spit out CSV print('generated path and labels CSV') buf.seek(0) # Write it to storage storage_client = storage.Client() bucket = storage_client.bucket(import_bucket) blob = bucket.blob(f'vertex/imports/{lakefs_repo}/{lakefs_ref}/labels.csv') with blob.open('w') as out: out.write(buf.read()) print(f'wrote csv to gs: gs://{import_bucket}/vertex/imports/{lakefs_repo}/{lakefs_ref}/labels.csv') # import in vertex, as dataset print('Importing dataset...') ds = aiplatform.ImageDataset.create( display_name=f'{lakefs_repo}_{lakefs_ref}_imgs', gcs_source=f'gs://{import_bucket}/vertex/imports/{lakefs_repo}/{lakefs_ref}/labels.csv', import_schema_uri=aiplatform.schema.dataset.ioformat.image.single_label_classification, sync=True ) ds.wait() print(f'Done! {ds.display_name} ({ds.resource_name})') . ",
     "url": "/integrations/vertex_ai.html#using-lakefs-with-vertex-managed-datasets",
     
     "relUrl": "/integrations/vertex_ai.html#using-lakefs-with-vertex-managed-datasets"
-  },"628": {
+  },"629": {
     "doc": "Vertex AI",
     "title": "Using lakeFS with Cloud Storage Fuse",
     "content": "Vertex allows using Google Cloud Storage mounted as a Fuse Filesystem as custom input for training jobs. Instead of having to copy lakeFS files for each version we want to consume, we can create symlinks by using gcsfuse’s native symlink inodes. This process can be fully automated by using the example gcsfuse_symlink_exporter.lua Lua hook. Here’s what we need to do: . | Upload the example .lua file into our lakeFS repository. For this example, we’ll put it under scripts/gcsfuse_symlink_exporter.lua. | Create a new hook definition file and upload to _lakefs_actions/export_images.yaml: | . --- # Example hook declaration: (_lakefs_actions/export_images.yaml): name: export_images on: post-commit: branches: [\"main\"] post-merge: branches: [\"main\"] post-create-tag: hooks: - id: gcsfuse_export_images type: lua properties: script_path: scripts/export_gcs_fuse.lua # Path to the script we uploaded in the previous step args: prefix: \"datasets/images/\" # Path we want to export every commit destination: \"gs://my-bucket/exports/my-repo/\" # Where should we create the symlinks? mount: from: \"gs://my-bucket/repos/my-repo/\" # Symlinks are to a unix-mounted file to: \"/gcs/my-bucket/repos/my-repo/\" # This will ensure they point to a location that exists. # Should be the contents of a valid credentials.json file # See: https://developers.google.com/workspace/guides/create-credentials # Will be used to write the symlink files gcs_credentials_json_string: | { \"client_id\": \"...\", \"client_secret\": \"...\", \"refresh_token\": \"...\", \"type\": \"...\" } . Done! On the next tag creation or update to the main branch, we’ll automatically export the lakeFS version of datasets/images/ to a mountable location. To consume the symlink-ed files, we can read them normally from the mount: . with open('/gcs/my-bucket/exports/my-repo/branches/main/datasets/images/001.jpg') as f: image_data = f.read() . Previously exported commits are also readable, if we exported them in the past: . commit_id = 'abcdef123deadbeef567' with open(f'/gcs/my-bucket/exports/my-repo/commits/{commit_id}/datasets/images/001.jpg') as f: image_data = f.read() . Considerations when using lakeFS with Cloud Storage Fuse . For lakeFS paths to be readable by gcsfuse, the mount option --implicit-dirs must be specified. ",
     "url": "/integrations/vertex_ai.html#using-lakefs-with-cloud-storage-fuse",
     
     "relUrl": "/integrations/vertex_ai.html#using-lakefs-with-cloud-storage-fuse"
-  },"629": {
+  },"630": {
     "doc": "Vertex AI",
     "title": "Vertex AI",
     "content": " ",
     "url": "/integrations/vertex_ai.html",
     
     "relUrl": "/integrations/vertex_ai.html"
-  },"630": {
+  },"631": {
     "doc": "S3 Virtual-host addressing (advanced)",
     "title": "Configuring lakeFS to use S3 Virtual-Host addressing",
     "content": " ",
     "url": "/howto/virtual-host-addressing.html#configuring-lakefs-to-use-s3-virtual-host-addressing",
     
     "relUrl": "/howto/virtual-host-addressing.html#configuring-lakefs-to-use-s3-virtual-host-addressing"
-  },"631": {
+  },"632": {
     "doc": "S3 Virtual-host addressing (advanced)",
     "title": "Understanding virtual-host addressing",
     "content": "Some systems require S3 endpoints (such as lakeFS’s S3 Gateway) to support virtual-host style addressing. lakeFS supports this, but requires some configuration in order to extract the bucket name (used as the lakeFS repository ID) from the host address. For example: . GET http://foo.example.com/some/location . There are two ways to interpret the URL above: . | as a virtual-host URL where the endpoint URL is example.com, the bucket name is foo, and the path is /some/location | as a path-based URL where the endpoint is foo.example.com, the bucket name is some and the path is location | . By default, lakeFS reads URLs as path-based. To read the URL as a virtual-host request, lakeFS requires additional configuration which includes defining an explicit set of DNS records for the lakeFS S3 gateway. ",
     "url": "/howto/virtual-host-addressing.html#understanding-virtual-host-addressing",
     
     "relUrl": "/howto/virtual-host-addressing.html#understanding-virtual-host-addressing"
-  },"632": {
+  },"633": {
     "doc": "S3 Virtual-host addressing (advanced)",
     "title": "Adding an explicit S3 domain name to the S3 Gateway configuration",
     "content": "The first step would be to tell the lakeFS installation which hostnames are used for the S3 Gateway. This should be a different DNS record from the one used for e.g. the UI or API. Typically, if the lakeFS installation is served under lakefs.example.com, a good choice would be s3.lakefs.example.com. This could be done using either an environment variable: . LAKEFS_GATEWAYS_S3_DOMAIN_NAME=\"s3.lakefs.example.com\" . Or by adding the gateways.s3.domain_name setting to the lakeFS config.yaml file: . --- database: connection_string: \"...\" ... # This section defines an explict S3 gateway address that supports virtual-host addressing gateways: s3: domain_name: s3.lakefs.example.com . For more information on how to configure lakeFS, check out the configuration reference . ",
     "url": "/howto/virtual-host-addressing.html#adding-an-explicit-s3-domain-name-to-the-s3-gateway-configuration",
     
     "relUrl": "/howto/virtual-host-addressing.html#adding-an-explicit-s3-domain-name-to-the-s3-gateway-configuration"
-  },"633": {
+  },"634": {
     "doc": "S3 Virtual-host addressing (advanced)",
     "title": "Setting up the appropriate DNS records",
     "content": "Once our lakeFS installation is configured with an explicit S3 gateway endpoint address, we need to define 2 DNS records and have them point at our lakeFS installation. This requires 2 CNAME records: . | s3.lakefs.example.com - CNAME to lakefs.example.com. This would be used as the S3 endpoint when configuring clients and will serve as our bare domain. | *.s3.lakefs.example.com - Also a CNAME to lakefs.example.com. This will resolve virtual-host requests such as example-repo.s3.lakefs.example.com that lakeFS would now know how to parse. | . For more information on how to configure these, see the official documentation of your DNS provider. On AWS, This could also be done using ALIAS records for a load balancer. ",
     "url": "/howto/virtual-host-addressing.html#setting-up-the-appropriate-dns-records",
     
     "relUrl": "/howto/virtual-host-addressing.html#setting-up-the-appropriate-dns-records"
-  },"634": {
+  },"635": {
     "doc": "S3 Virtual-host addressing (advanced)",
     "title": "S3 Virtual-host addressing (advanced)",
     "content": " ",
     "url": "/howto/virtual-host-addressing.html",
     
     "relUrl": "/howto/virtual-host-addressing.html"
-  },"635": {
+  },"636": {
     "doc": "Webhooks",
     "title": "Webhooks",
     "content": " ",
     "url": "/howto/hooks/webhooks.html",
     
     "relUrl": "/howto/hooks/webhooks.html"
-  },"636": {
+  },"637": {
     "doc": "Webhooks",
     "title": "Table of contents",
     "content": ". | Action File Webhook properties | Request body schema | . A Webhook is a Hook type that sends an HTTP POST request to the configured URL. Any non 2XX response by the responding endpoint will fail the Hook, cancel the execution of the following Hooks under the same Action. For pre-* hooks, the triggering operation will also be aborted. Warning: You should not use pre-* webhooks for long-running tasks, since they block the performed operation. Moreover, the branch is locked during the execution of pre-* hooks, so the webhook server cannot perform any write operations on the branch (like uploading or commits). ",
     "url": "/howto/hooks/webhooks.html#table-of-contents",
     
     "relUrl": "/howto/hooks/webhooks.html#table-of-contents"
-  },"637": {
+  },"638": {
     "doc": "Webhooks",
     "title": "Action File Webhook properties",
     "content": "See the Action configuration for overall configuration schema and details. | Property | Description | Data Type | Required | Default Value | Env Vars Support | . | url | The URL address of the request | String | true |   | no | . | timeout | Time to wait for response before failing the hook | String (golang’s Duration representation) | false | 1 minute | no | . | query_params | List of query params that will be added to the request | Dictionary(String:String or String:List(String) | false |   | yes | . | headers | Headers to add to the request | Dictionary(String:String) | false |   | yes | . Secrets &amp; Environment Variables lakeFS Actions supports secrets by using environment variables. The format {{ ENV.SOME_ENV_VAR }} will be replaced with the value of $SOME_ENV_VAR during the execution of the action. If that environment variable doesn’t exist in the lakeFS server environment, the action run will fail. All environment variables need to begin with “LAKEFSACTIONS_”. Otherwise, they will be blocked. Additionally, the actions.env.enabled configuration parameter can be set to false to block access to all environment variables. Example: ... hooks: - id: prevent_user_columns type: webhook description: Ensure no user_* columns under public/ properties: url: \"http://&lt;host:port&gt;/webhooks/schema\" timeout: 1m30s query_params: disallow: [\"user_\", \"private_\"] prefix: public/ headers: secret_header: \"{{ ENV.MY_SECRET }}\" ... ",
     "url": "/howto/hooks/webhooks.html#action-file-webhook-properties",
     
     "relUrl": "/howto/hooks/webhooks.html#action-file-webhook-properties"
-  },"638": {
+  },"639": {
     "doc": "Webhooks",
     "title": "Request body schema",
     "content": "Upon execution, a webhook will send a request containing a JSON object with the following fields: . | Field | Description | Type | . | event_type | Type of the event that triggered the Action | string | . | event_time | Time of the event that triggered the Action (RFC3339 formatted) | string | . | action_name | Containing Hook Action’s Name | string | . | hook_id | ID of the Hook | string | . | repository_id | ID of the Repository | string | . | branch_id1 | ID of the Branch | string | . | source_ref | Reference to the source on which the event was triggered | string | . | commit_message2 | The message for the commit (or merge) that is taking place | string | . | committer2 | Name of the committer | string | . | commit_metadata2 | The metadata for the commit that is taking place | string | . | commit_id[^2,^4] | The ID of the commit that is being created | string | . | tag_id3 | The ID of the created/deleted tag | string | . Example: . { \"event_type\": \"pre-merge\", \"event_time\": \"2021-02-28T14:03:31Z\", \"action_name\": \"test action\", \"hook_id\": \"prevent_user_columns\", \"repository_id\": \"repo1\", \"branch_id\": \"feature-1\", \"source_ref\": \"feature-1\", \"commit_message\": \"merge commit message\", \"commit_id\": \"5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03\", \"committer\": \"committer\", \"commit_metadata\": { \"key\": \"value\" } } . | N\\A for Tag events &#8617; . | N\\A for Tag and Create/Delete Branch events &#8617; &#8617;2 &#8617;3 . | Applicable only for Tag events &#8617; . | . ",
     "url": "/howto/hooks/webhooks.html#request-body-schema",
     
     "relUrl": "/howto/hooks/webhooks.html#request-body-schema"
-  },"639": {
+  },"640": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Work with lakeFS Data Locally",
     "content": "When working with lakeFS, there are scenarios where we need to access and manipulate data locally. An example use case for working locally is machine learning model development. Machine learning model development is dynamic and iterative. To optimize this process, experiments need to be conducted with speed, tracking ease, and reproducibility. Localizing model data during development accelerates the process by enabling interactive and offline development and reducing data access latency. lakeFS provides 2 ways to expose versioned data locally . ",
     "url": "/quickstart/work-with-data-locally.html#work-with-lakefs-data-locally",
     
     "relUrl": "/quickstart/work-with-data-locally.html#work-with-lakefs-data-locally"
-  },"640": {
+  },"641": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Table of contents",
     "content": ". | lakeFS Mount | lakectl local | . ",
     "url": "/quickstart/work-with-data-locally.html#table-of-contents",
     
     "relUrl": "/quickstart/work-with-data-locally.html#table-of-contents"
-  },"641": {
+  },"642": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "lakeFS Mount",
     "content": "lakeFS Mount is available (in preview) for lakeFS Enterprise and lakeFS Cloud customers. You can try it out by signing up for the preview . Getting started with lakeFS Mount . Prerequisites: . | A working lakeFS Server running either lakeFS Enterprise or lakeFS Cloud | You’ve installed the lakectl command line utility: this is the official lakeFS command line interface, on top of which lakeFS Mount is built. | lakectl is configured properly to access your lakeFS server as detailed in the configuration instructions | . Mounting a path to a local directory: . | In lakeFS create a new branch called my-experiment. You can do this through the UI or with lakectl: . docker exec lakefs \\ lakectl branch create \\ lakefs://quickstart/my-experiment \\ --source lakefs://quickstart/main . | Mount images from your quickstart repository into a local directory named my_local_dir . everest mount lakefs://quickstart/my-experiment/images my_local_dir . | . Once complete, my_local_dir should be mounted with the specified path. | Verify that my_local_dir is linked to the correct path in your lakeFS remote: | . ls -l my_local_dir . | To unmount the directory, simply run: | . everest umount ./my_local_dir . Which will unmount the path and terminate the local mount-server. ",
     "url": "/quickstart/work-with-data-locally.html#lakefs-mount",
     
     "relUrl": "/quickstart/work-with-data-locally.html#lakefs-mount"
-  },"642": {
+  },"643": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "lakectl local",
     "content": "Alternatively, we can use lakectl local to bring a subset of our lakeFS data to a local directory within the lakeFS container and edit an image dataset used for ML model development. Unlike lakeFS Mount, using lakectl local requires copying data to/from lakeFS and your local machine. Reference Guide: lakeFS lakectl local for machine learning . Cloning a Subset of lakeFS Data into a Local Directory . | In lakeFS create a new branch called my-experiment. You can do this through the UI or with lakectl: . docker exec lakefs lakectl branch create lakefs://quickstart/my-experiment --source lakefs://quickstart/main . | Clone images from your quickstart repository into a local directory named my_local_dir within your container: . docker exec lakefs lakectl local clone lakefs://quickstart/my-experiment/images my_local_dir . | Verify that my_local_dir is linked to the correct path in your lakeFS remote: . docker exec lakefs lakectl local list . You should see confirmation that my_local_dir is tracking the desired lakeFS path.: . my_local_dir lakefs://quickstart/my-experiment/images/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53 . | Verify that your local environment is up-to-date with its remote path: . docker exec lakefs lakectl local status my_local_dir . You should get a confirmation message like this showing that there is no difference between your local environment and the lakeFS remote: . diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'... diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'... No diff found. | . Making Changes to Data Locally . | Download a new image of an Axolotl and add it to the dataset cloned into my_local_dir: . curl -L https://go.lakefs.io/43ENDyS &gt; axolotl.png docker cp axolotl.png lakefs:/home/lakefs/my_local_dir . | Clean the dataset by removing images larger than 225 KB: docker exec lakefs find my_local_dir -type f -size +225k -delete . | Check the status of your local changes compared to the lakeFS remote path: docker exec lakefs lakectl local status my_local_dir . You should get a confirmation message like this, showing the modifications you made locally: . diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'... diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'... ╔════════╦══════════╦═════════════════════╗ ║ SOURCE ║ CHANGE ║ PATH ║ ╠════════╬══════════╬═════════════════════╣ ║ local ║ modified ║ axolotl.png ║ ║ local ║ removed ║ duckdb-main-02.png ║ ║ local ║ removed ║ empty-repo-list.png ║ ║ local ║ removed ║ repo-contents.png ║ ╚════════╩══════════╩═════════════════════╝ . | . Pushing Local Changes to lakeFS . Once we are done with editing the image dataset in our local environment, we will push our changes to the lakeFS remote so that the improved dataset is shared and versioned. | Commit your local changes to lakeFS: . docker exec lakefs lakectl local commit -m 'Deleted images larger than 225KB in size and changed the Axolotl image' my_local_dir . In your branch, you should see the commit including your local changes: . | Compare my-experiment branch to the main branch to visualize your changes: . | . ",
     "url": "/quickstart/work-with-data-locally.html#lakectl-local",
     
     "relUrl": "/quickstart/work-with-data-locally.html#lakectl-local"
-  },"643": {
+  },"644": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Bonus Challenge",
     "content": "And so with that, this quickstart for lakeFS draws to a close. If you’re simply having too much fun to stop then here’s an exercise for you. Implement the requirement from the beginning of this quickstart correctly, such that you write denmark-lakes.parquet in the respective branch and successfully merge it back into main. Look up how to list the contents of the main branch and verify that it looks like this: . object 2023-03-21 17:33:51 +0000 UTC 20.9 kB denmark-lakes.parquet object 2023-03-21 14:45:38 +0000 UTC 916.4 kB lakes.parquet . ",
     "url": "/quickstart/work-with-data-locally.html#bonus-challenge",
     
     "relUrl": "/quickstart/work-with-data-locally.html#bonus-challenge"
-  },"644": {
+  },"645": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "Finishing Up",
     "content": "Once you’ve finished the quickstart, shut down your local environment with the following command: . docker stop lakefs . ",
     "url": "/quickstart/work-with-data-locally.html#finishing-up",
     
     "relUrl": "/quickstart/work-with-data-locally.html#finishing-up"
-  },"645": {
+  },"646": {
     "doc": "7️⃣ Work with lakeFS data locally",
     "title": "7️⃣ Work with lakeFS data locally",
     "content": " ",

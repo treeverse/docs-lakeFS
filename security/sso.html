@@ -932,15 +932,35 @@
 </h2>
     
 
-    <p>In order for Fluffy to work, the following values must be configured. Update (or override) the following attributes in the chart’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file.</p>
+    <p>Fluffy is incharge of providing LDAP authentication for lakeFS Enterprise. 
+The authentication works by querying the LDAP server for user information and authenticating the user based on the provided credentials.</p>
+
+    <p><strong>Important:</strong> An administrative bind user must be configured. It should have search permissions for the LDAP server that will be used to query the LDAP server for user information.</p>
+
+    <p><strong>For Helm:</strong> set the following attributes in the Helm chart values, for lakeFS <code class="language-plaintext highlighter-rouge">lakefsConfig.*</code> and <code class="language-plaintext highlighter-rouge">fluffyConfig.*</code> for fluffy.</p>
+
+    <p><strong>No Helm:</strong> If not using Helm use the YAML below to directly update the configuration file for each service.</p>
+
+    <p><strong>lakeFS Configuration:</strong></p>
+
     <ol>
-      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.auth.remote_authenticator.endpoint</code> with the lakeFS server URL combined with the <code class="language-plaintext highlighter-rouge">api/v1/ldap/login</code> suffix (e.g <code class="language-plaintext highlighter-rouge">http://lakefs.company.com/api/v1/ldap/login</code>)</li>
-      <li>Repalce <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.ldap.remote_authenticator.server_endpoint</code> with your LDAP server endpoint  (e.g <code class="language-plaintext highlighter-rouge">ldaps://ldap.ldap-address.com:636</code>)</li>
-      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.ldap.remote_authenticator.bind_dn</code> with the LDAP bind user/permissions to query your LDAP server.</li>
-      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.ldap.remote_authenticator.user_base_dn</code> with the user base to search users in.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.remote_authenticator.enabled</code> with <code class="language-plaintext highlighter-rouge">true</code></li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.remote_authenticator.endpoint</code> with the fluffy authentication server URL combined with the <code class="language-plaintext highlighter-rouge">api/v1/ldap/login</code> suffix (e.g <code class="language-plaintext highlighter-rouge">http://lakefs.company.com/api/v1/ldap/login</code>)</li>
     </ol>
 
-    <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+    <p><strong>fluffy Configuration:</strong></p>
+
+    <p>See <a href="/enterprise/configuration.html#fluffy-server-configuration">Fluffy configuration</a> reference.</p>
+
+    <ol>
+      <li>Repalce <code class="language-plaintext highlighter-rouge">auth.ldap.remote_authenticator.server_endpoint</code> with your LDAP server endpoint  (e.g <code class="language-plaintext highlighter-rouge">ldaps://ldap.ldap-address.com:636</code>)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.ldap.remote_authenticator.bind_dn</code> with the LDAP bind user/permissions to query your LDAP server.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.ldap.remote_authenticator.user_base_dn</code> with the user base to search users in.</li>
+    </ol>
+
+    <p><strong>lakeFS Server Configuration file:</strong></p>
+
+    <p><code class="language-plaintext highlighter-rouge">$lakefs run -c ./lakefs.yaml</code></p>
 
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
 
@@ -955,7 +975,9 @@
       <span class="pi">-</span> <span class="s">internal_auth_session</span>
 </code></pre></div>    </div>
 
-    <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+    <p>Fluffy Configuration file:</p>
+
+    <p><code class="language-plaintext highlighter-rouge">$fluffy run -c ./fluffy.yaml</code></p>
 
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
   <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
@@ -968,14 +990,85 @@
   <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">/</span>
   <span class="na">ldap</span><span class="pi">:</span> 
     <span class="na">server_endpoint</span><span class="pi">:</span> <span class="s1">'</span><span class="s">ldaps://ldap.company.com:636'</span>
-    <span class="na">bind_dn</span><span class="pi">:</span> <span class="s">uid=&lt;bind-user-name&gt;,ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
+    <span class="na">bind_dn</span><span class="pi">:</span> <span class="s">uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
     <span class="na">bind_password</span><span class="pi">:</span> <span class="s1">'</span><span class="s">&lt;ldap</span><span class="nv"> </span><span class="s">pwd&gt;'</span>
     <span class="na">username_attribute</span><span class="pi">:</span> <span class="s">uid</span>
-    <span class="na">user_base_dn</span><span class="pi">:</span> <span class="s">ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
+    <span class="na">user_base_dn</span><span class="pi">:</span> <span class="s">ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
     <span class="na">user_filter</span><span class="pi">:</span> <span class="s">(objectClass=inetOrgPerson)</span>
     <span class="na">connection_timeout_seconds</span><span class="pi">:</span> <span class="m">15</span>
     <span class="na">request_timeout_seconds</span><span class="pi">:</span> <span class="m">7</span>
 </code></pre></div>    </div>
+<h2 id="troubleshooting-ldap-issues">
+  
+  
+    <a href="#troubleshooting-ldap-issues" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Troubleshooting LDAP issues
+  
+  
+</h2>
+    
+<h3 id="inspecting-logs">
+  
+  
+    <a href="#inspecting-logs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inspecting Logs
+  
+  
+</h3>
+    
+
+    <p>If you encounter LDAP connection errors, you should inspect the <strong>fluffy container</strong> logs to get more information.</p>
+<h3 id="authentication-issues">
+  
+  
+    <a href="#authentication-issues" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication issues
+  
+  
+</h3>
+    
+
+    <p>Auth issues (e.g. user not found, invalid credentials) can be debugged with the <a href="https://www.unix.com/man-page/osx/1/ldapwhoami">ldapwhoami</a> CLI tool.</p>
+
+    <p>The Examples are based on the fluffy config above:</p>
+
+    <p>To verify that the main bind user can connect:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-D</span> <span class="s2">"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-x</span> <span class="nt">-W</span>
+</code></pre></div>    </div>
+
+    <p>To verify that a specific lakeFS user <code class="language-plaintext highlighter-rouge">dev-user</code> can connect:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-D</span> <span class="s2">"uid=dev-user,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-x</span> <span class="nt">-W</span>
+</code></pre></div>    </div>
+<h3 id="user-not-found-issue">
+  
+  
+    <a href="#user-not-found-issue" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User not found issue
+  
+  
+</h3>
+    
+
+    <p>Upon a login request in fluffy, the bind user will search for the user in the LDAP server. If the user is not found it will be presented in the logs.</p>
+
+    <p>We can search the user using <a href="https://docs.ldap.com/ldap-sdk/docs/tool-usages/ldapsearch.html">ldapsearch</a> CLI tool.</p>
+
+    <p>Search ALL users in the base DN (no filters):</p>
+
+    <p><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">-b</code> is the <code class="language-plaintext highlighter-rouge">user_base_dn</code>, <code class="language-plaintext highlighter-rouge">-D</code> is <code class="language-plaintext highlighter-rouge">bind_dn</code> and <code class="language-plaintext highlighter-rouge">-w</code> is <code class="language-plaintext highlighter-rouge">bind_password</code> from the fluffy configuration.</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-D</span> <span class="s2">"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-w</span> <span class="s1">'&lt;bind_user_pwd&gt;'</span>
+</code></pre></div>    </div>
+
+    <p>If the user is found, we should now use filters for the specific user the same way fluffy does it and expect to see the user.</p>
+
+    <p>For example, to repdocue the same search as fluffy does:</p>
+    <ul>
+      <li>user <code class="language-plaintext highlighter-rouge">dev-user</code> set from <code class="language-plaintext highlighter-rouge">uid</code> attribute in LDAP</li>
+      <li>Fluffy configuration values: <code class="language-plaintext highlighter-rouge">user_filter: (objectClass=inetOrgPerson)</code> and <code class="language-plaintext highlighter-rouge">username_attribute: uid</code></li>
+    </ul>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-D</span> <span class="s2">"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-w</span> <span class="s1">'&lt;bind_user_pwd&gt;'</span> <span class="s2">"(&amp;(uid=dev-user)(objectClass=inetOrgPerson))"</span>
+</code></pre></div>    </div>
+
   </div>
 </div>
 <h3 id="helm">
