@@ -597,6 +597,7 @@
       <li><a href="#lakefs-hadoop-filesystem" id="markdown-toc-lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a></li>
     </ol>
   </li>
+  <li><a href="#how-lakefs-clients-and-gateway-handle-metadata-and-data-access" id="markdown-toc-how-lakefs-clients-and-gateway-handle-metadata-and-data-access">How lakeFS Clients and Gateway Handle Metadata and Data Access</a></li>
 </ol>
 
 </div>
@@ -800,6 +801,19 @@ operations related to lakeFS metadata, at scale. Examples include <a href="/howt
 but due to limitations of the S3 API, doing so requires reading and writing data objects through the lakeFS server.
 Using <a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFSFileSystem</a> increases Spark ETL jobs performance by executing the metadata operations on the lakeFS server,
 and all data operations directly through the same underlying object store that lakeFS uses.</p>
+<h2 id="how-lakefs-clients-and-gateway-handle-metadata-and-data-access">
+  
+  
+    <a href="#how-lakefs-clients-and-gateway-handle-metadata-and-data-access" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> How lakeFS Clients and Gateway Handle Metadata and Data Access
+  
+  
+</h2>
+    
+
+<p>When using the Python client, lakeCTL, or the lakeFS Spark client, these clients communicate with the lakeFS server to retrieve metadata information. For example, they may query lakeFS to understand which version of a file is needed or to track changes in branches and commits. This communication does not include the actual data transfer, but instead involves passing only metadata about data locations and versions.
+Once the client knows the exact data location from the lakeFS metadata, it directly accesses the data in the underlying object storage (potentially using presigned URLs) without routing through lakeFS. For instance, if data is stored in S3, the Spark client will retrieve the S3 paths from lakeFS, then directly read and write to those paths in S3 without involving lakeFS in the data transfer.</p>
+
+<p><img src="/assets/img/s3gatewayvsclientdataflow.png" alt="lakeFS Clients vs Gateway Data Flow" width="500px" /></p>
 
                 
 
