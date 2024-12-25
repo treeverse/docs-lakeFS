@@ -838,6 +838,31 @@ everest umount <span class="s2">"./pets"</span>
     
 
 <p>You can use lakeFS’s existing <a href="/security/rbac.html">Role-Based Access Control mechanism</a>, which includes repository and path-level policies. lakeFS Mount translates filesystem operations into lakeFS API operations and authorizes them based on these policies.</p>
+
+<p>The minimal RBAC permissions required for mounting a prefix from a lakeFS repository looks like this:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MountPolicy"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"fs:ReadObject"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/object/&lt;prefix&gt;/*"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"fs:ListObjects"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fs:ReadCommit"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"fs:ReadRepository"</span><span class="w">
+
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
 <h3 id="does-data-pass-through-the-lakefs-server-when-using-lakefs-mount">
   
   
@@ -901,7 +926,7 @@ everest umount <span class="s2">"./pets"</span>
 <p>It is perfectly safe to mount a lakeFS path within a Git repository.
 lakeFS Mount prevents git from adding mounted objects to the git repository (i.e when running <code class="language-plaintext highlighter-rouge">git add -A</code>) by adding a virtual <code class="language-plaintext highlighter-rouge">.gitignore</code> file to the mounted directory.</p>
 
-<p>The .gitignore file will also instruct Git to ignore all files except <code class="language-plaintext highlighter-rouge">.everest/source</code> and in its absence, it will try to find a <code class="language-plaintext highlighter-rouge">.everest/source</code> file in the destination folder, and read the lakeFS URI from there. 
+<p>The .gitignore file will also instruct Git to ignore all files except <code class="language-plaintext highlighter-rouge">.everest/source</code> and in its absence, it will try to find a <code class="language-plaintext highlighter-rouge">.everest/source</code> file in the destination folder, and read the lakeFS URI from there.
 Since <code class="language-plaintext highlighter-rouge">.everest/source</code> is in source control, it will mount the same lakeFS commit every time!</p>
 <h3 id="im-already-using-lakectl-local-for-working-with-lakefs-data-locally-why-should-i-use-lakefs-mount">
   
