@@ -579,6 +579,7 @@
   <li><a href="#officially-supported-clients-idps-capabilities-and-limitations" id="markdown-toc-officially-supported-clients-idps-capabilities-and-limitations">Officially Supported Clients (IdPs), Capabilities, and Limitations</a></li>
   <li><a href="#enabling-scim-in-lakefs-cloud" id="markdown-toc-enabling-scim-in-lakefs-cloud">Enabling SCIM in lakeFS Cloud</a></li>
   <li><a href="#setting-up-scim-provisioning-in-entra-id-aka-azure-ad" id="markdown-toc-setting-up-scim-provisioning-in-entra-id-aka-azure-ad">Setting Up SCIM Provisioning in Entra ID (a.k.a Azure AD)</a></li>
+  <li><a href="#required-attributes" id="markdown-toc-required-attributes">Required Attributes</a></li>
 </ol>
 
 </div>
@@ -706,7 +707,44 @@ Both Okta and Entra ID only support syncing direct group membership via SCIM. Th
   <li>In <strong>Secret Token</strong> paste the token you copied in the previous step. If you haven’t created a token yet, you may do so now</li>
   <li>Click <strong>Test Connection</strong></li>
   <li>If the test fails, please ensure you’ve entered the correct SCIM endpoint URL from lakeFS Cloud and copied the token correctly. Otherwise, click “Save” at the top of the settings panel</li>
+  <li>Configure provisioning attribute mappings(this determines which attributes are sent to the lakeFS SCIM endpoint)</li>
 </ol>
+<h2 id="required-attributes">
+  
+  
+    <a href="#required-attributes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Required Attributes
+  
+  
+</h2>
+    
+<p>The LakeFS SCIM implementation has a number of attributes that it expects to see in requests. Missing, incorrect, or extraneous attributes will generally result in a 400 error code.</p>
+<h3 id="user-resource-attributes">
+  
+  
+    <a href="#user-resource-attributes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User Resource Attributes
+  
+  
+</h3>
+    
+<ul>
+  <li>username: Unique identifier for the User, typically used by the user to directly authenticate to the service provider. Each User MUST include a non-empty userName value. This identifier MUST be unique across the service provider’s entire set of Users. REQUIRED.</li>
+  <li>externalId: A String that is an identifier for the resource as defined by the provisioning client. REQUIRED.</li>
+  <li>emails: Email addresses for the user. The value SHOULD be canonicalized by the service provider, e.g., ‘bjensen@example.com’ instead of ‘bjensen@EXAMPLE.COM’. Canonical type values of ‘work’, ‘home’, and ‘other’. One should be marked as primary. REQUIRED.</li>
+  <li>active: A Boolean value indicating the User’s administrative status.</li>
+</ul>
+<h3 id="group-resource-attributes">
+  
+  
+    <a href="#group-resource-attributes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Group Resource Attributes
+  
+  
+</h3>
+    
+<ul>
+  <li>displayName: A human-readable name for the Group. REQUIRED.</li>
+  <li>externalId: A String that is an identifier for the resource as defined by the provisioning client. REQUIRED.</li>
+  <li>members: A list of members of the Group.</li>
+</ul>
 
 <blockquote class="note">
   <p><strong>Note:</strong> lakeFS Cloud is designed to work with the default attribute mapping for users and groups provided by Entra ID.
