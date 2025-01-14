@@ -596,6 +596,42 @@ The following documentation is aimed for users with existing installations who w
 Existing lakeFS installations that have a single user and a single set of credentials will migrate seamlessly to the new version.<br />
 Installations that have more than one user / credentials will require to run a command and choose which set of user + credentials to migrate 
 (more details <a href="#migration-of-existing-user">here</a>)</p>
+<h3 id="credentials-replacement">
+  
+  
+    <a href="#credentials-replacement" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Credentials Replacement
+  
+  
+</h3>
+    
+
+<p>In a single user setup, replacing credentials can be done as follows:</p>
+<ol>
+  <li>Delete the existing user:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> lakectl auth <span class="nb">users </span>delete <span class="nt">--id</span> &lt;user-id&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>Shut down the lakeFS server - Required for invalidating the old credentials on the server</li>
+  <li>Create a new user, with the same name and new credentials:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> lakefs superuser <span class="nt">--user-name</span> &lt;user-id&gt;
+</code></pre></div>    </div>
+    <p>This will generate a new set of credentials, and will print it out to the screen:</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> credentials:
+   access_key_id: *** (omitted)
+   secret_access_key: *** (omitted)
+</code></pre></div>    </div>
+  </li>
+  <li>Re-run lakeFS server</li>
+</ol>
+
+<blockquote class="note warning">
+  <p>Calling the <code class="language-plaintext highlighter-rouge">superuser</code> command with pre-defined <code class="language-plaintext highlighter-rouge">--access-key-id</code> and <code class="language-plaintext highlighter-rouge">--secret-access-key</code> is possible,
+but should be done with caution. Make sure that <code class="language-plaintext highlighter-rouge">--secret-access-key</code> is <strong>not empty</strong>,
+as providing an access key without a secret key will trigger an ACL import flow
+(see <a href="#migration-of-existing-user">Migration of existing user</a>).
+In case you already deleted the user by following step (1), this import operation will <strong>fail</strong> and result in an 
+<strong>unrecoverable</strong> state, from which a clean installation is the only way out.</p>
+</blockquote>
 <h2 id="acls">
   
   
