@@ -168,60 +168,60 @@
     "relUrl": "/reference/api.html"
   },"24": {
     "doc": "Architecture",
+    "title": "Architecture",
+    "content": "The lakeFS Enterprise software consists of two components: . | lakeFS Open Source: treeverse/lakeFS. See Github releases for release info. | A proprietary component called Fluffy which includes lakeFS’ Enterprise features. | . [1] Any user request to lakeFS via Browser or Programmatic access (SDK, HTTP API, lakectl). [2] Reverse Proxy (e.g. NGINX, Traefik, K8S Ingress): will handle user requests and proxy between lakeFS server and fluffy server based on the path prefix while maintaining the same host. [3] lakeFS server - the main lakeFS service. [4] fluffy server - service that is responsible for the Enterprise features., it is separated by ports for security reasons. | SSO auth (i.e Browser login via Azure AD, Okta, Auth0), default port 8000. | RBAC authorization, default port 9000. | . [5] The KV Store - Where metadata is stored used both by lakeFS and fluffy. [6] SSO IdP - Identity provider (e.g. Azure AD, Okta, JumpCloud). fluffy implements SAML and Oauth2 protocols. For more details and pricing, please contact sales. Note: Setting up lakeFS enterprise with an SSO IdP (OIDC, SAML or LDAP) requires configuring access from the IdP too. ",
+    "url": "/enterprise/architecture.html",
+    
+    "relUrl": "/enterprise/architecture.html"
+  },"25": {
+    "doc": "Architecture",
     "title": "lakeFS Architecture",
     "content": "lakeFS is distributed as a single binary encapsulating several logical services. The server itself is stateless, meaning you can easily add more instances to handle a bigger load. ",
     "url": "/understand/architecture.html#lakefs-architecture",
     
     "relUrl": "/understand/architecture.html#lakefs-architecture"
-  },"25": {
+  },"26": {
     "doc": "Architecture",
     "title": "Table of contents",
     "content": ". | Object Storage | Metadata Storage | Load Balancing | lakeFS Components . | S3 Gateway | OpenAPI Server | Storage Adapter | Graveler | Authentication &amp; Authorization Service | Hooks Engine | UI | . | Applications | lakeFS Clients . | OpenAPI Generated SDKs | lakectl | Spark Metadata Client | lakeFS Hadoop FileSystem | . | How lakeFS Clients and Gateway Handle Metadata and Data Access | . Object Storage . lakeFS stores data in object stores. Those supported include: . | AWS S3 | Google Cloud Storage | Azure Blob Storage | MinIO | NetApp StorageGRID | Ceph | . Metadata Storage . In additional a Key Value storage is used for storing metadata, with supported databases including PostgreSQL, DynamoDB, and CosmosDB Instructions of how to deploy such database on AWS can be found here. Additional information on the data format can be found in Versioning internals and Internal database structure . Load Balancing . Accessing lakeFS is done using HTTP. lakeFS exposes a frontend UI, an OpenAPI server, as well as an S3-compatible service (see S3 Gateway below). lakeFS uses a single port that serves all three endpoints, so for most use cases a single load balancer pointing to lakeFS server(s) would do. ",
     "url": "/understand/architecture.html#table-of-contents",
     
     "relUrl": "/understand/architecture.html#table-of-contents"
-  },"26": {
+  },"27": {
     "doc": "Architecture",
     "title": "lakeFS Components",
     "content": "S3 Gateway . The S3 Gateway is the layer in lakeFS responsible for the compatibility with S3. It implements a compatible subset of the S3 API to ensure most data systems can use lakeFS as a drop-in replacement for S3. See the S3 API Reference section for information on supported API operations. OpenAPI Server . The Swagger (OpenAPI) server exposes the full set of lakeFS operations (see Reference). This includes basic CRUD operations against repositories and objects, as well as versioning related operations such as branching, merging, committing, and reverting changes to data. Storage Adapter . The Storage Adapter is an abstraction layer for communicating with any underlying object store. Its implementations allow compatibility with many types of underlying storage such as S3, GCS, Azure Blob Storage, or non-production usages such as the local storage adapter. See the roadmap for information on the future plans for storage compatibility. Graveler . The Graveler handles lakeFS versioning by translating lakeFS addresses to the actual stored objects. To learn about the data model used to store lakeFS metadata, see the versioning internals page. Authentication &amp; Authorization Service . The Auth service handles the creation, management, and validation of user credentials and RBAC policies. The credential scheme, along with the request signing logic, are compatible with AWS IAM (both SIGv2 and SIGv4). Currently, the Auth service manages its own database of users and credentials and doesn’t use IAM in any way. Hooks Engine . The Hooks Engine enables CI/CD for data by triggering user defined Actions that will run during commit/merge. UI . The UI layer is a simple browser-based client that uses the OpenAPI server. It allows management, exploration, and data access to repositories, branches, commits and objects in the system. ",
     "url": "/understand/architecture.html#lakefs-components",
     
     "relUrl": "/understand/architecture.html#lakefs-components"
-  },"27": {
+  },"28": {
     "doc": "Architecture",
     "title": "Applications",
     "content": "As a rule of thumb, lakeFS supports any S3-compatible application. This means that many common data applications work with lakeFS out-of-the-box. Check out our integrations to learn more. ",
     "url": "/understand/architecture.html#applications",
     
     "relUrl": "/understand/architecture.html#applications"
-  },"28": {
+  },"29": {
     "doc": "Architecture",
     "title": "lakeFS Clients",
     "content": "Some data applications benefit from deeper integrations with lakeFS to support different use cases or enhanced functionality provided by lakeFS clients. OpenAPI Generated SDKs . OpenAPI specification can be used to generate lakeFS clients for many programming languages. For example, the Python lakefs-client or the Java client are published with every new lakeFS release. lakectl . lakectl is a CLI tool that enables lakeFS operations using the lakeFS API from your preferred terminal. Spark Metadata Client . The lakeFS Spark Metadata Client makes it easy to perform operations related to lakeFS metadata, at scale. Examples include garbage collection or exporting data from lakeFS. lakeFS Hadoop FileSystem . Thanks to the S3 Gateway, it’s possible to interact with lakeFS using Hadoop’s S3AFIleSystem, but due to limitations of the S3 API, doing so requires reading and writing data objects through the lakeFS server. Using lakeFSFileSystem increases Spark ETL jobs performance by executing the metadata operations on the lakeFS server, and all data operations directly through the same underlying object store that lakeFS uses. ",
     "url": "/understand/architecture.html#lakefs-clients",
     
     "relUrl": "/understand/architecture.html#lakefs-clients"
-  },"29": {
+  },"30": {
     "doc": "Architecture",
     "title": "How lakeFS Clients and Gateway Handle Metadata and Data Access",
     "content": "When using the Python client, lakeCTL, or the lakeFS Spark client, these clients communicate with the lakeFS server to retrieve metadata information. For example, they may query lakeFS to understand which version of a file is needed or to track changes in branches and commits. This communication does not include the actual data transfer, but instead involves passing only metadata about data locations and versions. Once the client knows the exact data location from the lakeFS metadata, it directly accesses the data in the underlying object storage (potentially using presigned URLs) without routing through lakeFS. For instance, if data is stored in S3, the Spark client will retrieve the S3 paths from lakeFS, then directly read and write to those paths in S3 without involving lakeFS in the data transfer. ",
     "url": "/understand/architecture.html#how-lakefs-clients-and-gateway-handle-metadata-and-data-access",
     
     "relUrl": "/understand/architecture.html#how-lakefs-clients-and-gateway-handle-metadata-and-data-access"
-  },"30": {
+  },"31": {
     "doc": "Architecture",
     "title": "Architecture",
     "content": " ",
     "url": "/understand/architecture.html",
     
     "relUrl": "/understand/architecture.html"
-  },"31": {
-    "doc": "Architecture",
-    "title": "Architecture",
-    "content": "The lakeFS Enterprise software consists of two components: . | lakeFS Open Source: treeverse/lakeFS. See Github releases for release info. | A proprietary component called Fluffy which includes lakeFS’ Enterprise features. | . [1] Any user request to lakeFS via Browser or Programmatic access (SDK, HTTP API, lakectl). [2] Reverse Proxy (e.g. NGINX, Traefik, K8S Ingress): will handle user requests and proxy between lakeFS server and fluffy server based on the path prefix while maintaining the same host. [3] lakeFS server - the main lakeFS service. [4] fluffy server - service that is responsible for the Enterprise features., it is separated by ports for security reasons. | SSO auth (i.e Browser login via Azure AD, Okta, Auth0), default port 8000. | RBAC authorization, default port 9000. | . [5] The KV Store - Where metadata is stored used both by lakeFS and fluffy. [6] SSO IdP - Identity provider (e.g. Azure AD, Okta, JumpCloud). fluffy implements SAML and Oauth2 protocols. For more details and pricing, please contact sales. Note: Setting up lakeFS enterprise with an SSO IdP (OIDC, SAML or LDAP) requires configuring access from the IdP too. ",
-    "url": "/enterprise/architecture.html",
-    
-    "relUrl": "/enterprise/architecture.html"
   },"32": {
     "doc": "Amazon Athena",
     "title": "Using lakeFS with Amazon Athena",
@@ -1938,82 +1938,82 @@
     
     "relUrl": "/howto/import.html"
   },"277": {
-    "doc": "How lakeFS Works",
-    "title": "How lakeFS Works",
-    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
-    "url": "/understand/how/",
+    "doc": "Slack",
+    "title": "Slack",
+    "content": " ",
+    "url": "/slack/",
     
-    "relUrl": "/understand/how/"
+    "relUrl": "/slack/"
   },"278": {
-    "doc": "Use Cases",
-    "title": "lakeFS Use Cases",
-    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/understand/use_cases/#lakefs-use-cases",
+    "doc": "Get Started",
+    "title": "Get Started with lakeFS Enterprise",
+    "content": " ",
+    "url": "/enterprise/getstarted/#get-started-with-lakefs-enterprise",
     
-    "relUrl": "/understand/use_cases/#lakefs-use-cases"
+    "relUrl": "/enterprise/getstarted/#get-started-with-lakefs-enterprise"
   },"279": {
-    "doc": "Use Cases",
-    "title": "Use Cases",
-    "content": " ",
-    "url": "/understand/use_cases/",
+    "doc": "Get Started",
+    "title": "Request a Trial License",
+    "content": "To start a 30-day free trial, please contact us. You will be granted with a token that allows downloading a Docker image that includes lakeFS Enterprise features. ",
+    "url": "/enterprise/getstarted/#request-a-trial-license",
     
-    "relUrl": "/understand/use_cases/"
+    "relUrl": "/enterprise/getstarted/#request-a-trial-license"
   },"280": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management in lakeFS",
-    "content": "lakeFS provides full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs",
+    "doc": "Get Started",
+    "title": "Install lakeFS Enterprise",
+    "content": "lakeFS Enterprise offers two installation methods: . | Quickstart: The fastest way to get started with lakeFS Enterprise. Intended for testing and evaluation. | Production deployment: Run lakeFS Enterprise on a Kubernetes cluster on AWS, Azure, GCP, or on-prem. | . ",
+    "url": "/enterprise/getstarted/#install-lakefs-enterprise",
     
-    "relUrl": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs"
+    "relUrl": "/enterprise/getstarted/#install-lakefs-enterprise"
   },"281": {
-    "doc": "Data Lifecycle Management",
-    "title": "Data Lifecycle Management",
+    "doc": "Get Started",
+    "title": "Get Started",
     "content": " ",
-    "url": "/understand/data_lifecycle_management/",
+    "url": "/enterprise/getstarted/",
     
-    "relUrl": "/understand/data_lifecycle_management/"
+    "relUrl": "/enterprise/getstarted/"
   },"282": {
-    "doc": "Understanding lakeFS",
-    "title": "Understanding lakeFS",
-    "content": ". ",
-    "url": "/understand/",
+    "doc": "lakeFS Enterprise",
+    "title": "lakeFS Enterprise",
+    "content": " ",
+    "url": "/enterprise/",
     
-    "relUrl": "/understand/"
+    "relUrl": "/enterprise/"
   },"283": {
-    "doc": "Understanding lakeFS",
-    "title": "Architecture and Internals",
-    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
-    "url": "/understand/#architecture-and-internals",
+    "doc": "lakeFS Enterprise",
+    "title": "What is lakeFS Enterprise?",
+    "content": "lakeFS Enterprise is a commercially-supported version of lakeFS, offering additional features and functionalities that meet the needs of organizations from a production-grade system. ",
+    "url": "/enterprise/#what-is-lakefs-enterprise",
     
-    "relUrl": "/understand/#architecture-and-internals"
+    "relUrl": "/enterprise/#what-is-lakefs-enterprise"
   },"284": {
-    "doc": "Understanding lakeFS",
-    "title": "lakeFS Use Cases",
-    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
-    "url": "/understand/#lakefs-use-cases",
+    "doc": "lakeFS Enterprise",
+    "title": "Why did we build lakeFS Enterprise?",
+    "content": "lakeFS Enterprise was built for organizations that require the support, security standards and features required of a production-grade system and are not using public clouds, hence they cannot use lakeFS Cloud. ",
+    "url": "/enterprise/#why-did-we-build-lakefs-enterprise",
     
-    "relUrl": "/understand/#lakefs-use-cases"
+    "relUrl": "/enterprise/#why-did-we-build-lakefs-enterprise"
   },"285": {
-    "doc": "Understanding lakeFS",
-    "title": "lakeFS Concepts and Model",
-    "content": "lakeFS adopts many of the terms and concepts from git. This page goes into details on the similarities and differences, and provides a good background to the concepts used in lakeFS. ",
-    "url": "/understand/#lakefs-concepts-and-model",
+    "doc": "lakeFS Enterprise",
+    "title": "What is the value of using lakeFS Enterprise?",
+    "content": ". | Support: the lakeFS team is committed to supporting you under an SLA for both issues and product enhancements. | Security: Full support for a suite of security features and additional lakeFS functionality. | . ",
+    "url": "/enterprise/#what-is-the-value-of-using-lakefs-enterprise",
     
-    "relUrl": "/understand/#lakefs-concepts-and-model"
+    "relUrl": "/enterprise/#what-is-the-value-of-using-lakefs-enterprise"
   },"286": {
-    "doc": "Understanding lakeFS",
-    "title": "Performance",
-    "content": "Check out the Performance best practices guide for useful hints and tips on ensuring high performance from lakeFS. ",
-    "url": "/understand/#performance",
+    "doc": "lakeFS Enterprise",
+    "title": "What security features does lakeFS Enterprise provide?",
+    "content": "With lakeFS Enterprise you’ll receive access to the security package containing the following features: . | A rich Role-Based Access Control permission system that allows for fine-grained control by associating permissions with users and groups, granting them specific actions on specific resources. This ensures data security and compliance within an organization. | To easily manage users and groups, lakeFS Enterprise provides SSO integration (including support for SAML, OIDC, ADFS, Okta, and Azure AD), supporting existing credentials from a trusted provider, eliminating separate logins. | lakeFS Enterprise supports SCIM for automatically provisioning and deprovisioning users and group memberships to allow organizations to maintain a single source of truth for their user database. | STS Auth offers temporary, secure logins using an Identity Provider, simplifying user access and enhancing security. | Authentication with AWS IAM Roles allows authentication using AWS IAM roles instead of lakeFS credentials, removing the need to maintain static credentials for lakeFS Enterprise users running on AWS. | Auditing provides a detailed action log of events happening within lakeFS, including who performed which action, on which resource - and when. | . ",
+    "url": "/enterprise/#what-security-features-does-lakefs-enterprise-provide",
     
-    "relUrl": "/understand/#performance"
+    "relUrl": "/enterprise/#what-security-features-does-lakefs-enterprise-provide"
   },"287": {
-    "doc": "Understanding lakeFS",
-    "title": "FAQ and Glossary",
-    "content": "The FAQ covers many common questions around lakeFS, and the glossary provides a useful reference for the terms used in lakeFS. ",
-    "url": "/understand/#faq-and-glossary",
+    "doc": "lakeFS Enterprise",
+    "title": "What additional functionality does lakeFS Enterprise provide?",
+    "content": ". | lakeFS Mount allows users to virtually mount a remote lakeFS repository onto a local directory. Once mounted, users can access the data as if it resides on their local filesystem, using any tool, library, or framework that reads from a local filesystem. | Transactional Mirroring - allows replicating lakeFS repositories into consistent read-only copies in remote locations. | . | Feature | OSS | Enterprise | . | Format-agnostic data version control | ✅ | ✅ | . | Cloud-agnostic | ✅ | ✅ | . | Zero Clone copy for isolated environment | ✅ | ✅ | . | Atomic Data Promotion (via merges) | ✅ | ✅ | . | Data stays in one place | ✅ | ✅ | . | Configurable Garbage Collection | ✅ | ✅ | . | Data CI/CD using lakeFS hooks | ✅ | ✅ | . | Integrates with your data stack | ✅ | ✅ | . | Role Based Access Control (RBAC) |   | ✅ | . | Single Sign On (SSO) |   | ✅ | . | SCIM Support |   | ✅ | . | IAM Roles |   | ✅ | . | Mount Capability |   | ✅ | . | Audit Logs |   | ✅ | . | Transactional Mirroring (cross-region) |   | ✅ | . | Support SLA |   | ✅ | . You can learn more about the lakeFS Enterprise architecture, or follow the examples in the Quickstart guide. ",
+    "url": "/enterprise/#what-additional-functionality-does-lakefs-enterprise-provide",
     
-    "relUrl": "/understand/#faq-and-glossary"
+    "relUrl": "/enterprise/#what-additional-functionality-does-lakefs-enterprise-provide"
   },"288": {
     "doc": "lakeFS Cloud",
     "title": "lakeFS Cloud",
@@ -2078,432 +2078,432 @@
     
     "relUrl": "/cloud/#lakefs-cloud-scalability-model"
   },"297": {
-    "doc": "Install lakeFS",
-    "title": "Deploy and Setup lakeFS",
-    "content": "The instructions given here are for a self-managed deployment of lakeFS. For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . This section will guide you through deploying lakeFS on top of an object store. You will require a database, and can optionally configure authentication using providers specific to your deployment platform. Which options are available depends on your deployment platform. For example, the object store available on Azure differs from that on AWS. ",
-    "url": "/howto/deploy/#deploy-and-setup-lakefs",
-    
-    "relUrl": "/howto/deploy/#deploy-and-setup-lakefs"
-  },"298": {
-    "doc": "Install lakeFS",
-    "title": "Deployment and Setup Details",
-    "content": "lakeFS releases include binaries for common operating systems, a containerized option or a Helm chart. Check out our guides below for full deployment details: . | AWS | Azure | GCP | On-premises and other cloud providers | . ",
-    "url": "/howto/deploy/#deployment-and-setup-details",
-    
-    "relUrl": "/howto/deploy/#deployment-and-setup-details"
-  },"299": {
-    "doc": "Install lakeFS",
-    "title": "Install lakeFS",
-    "content": " ",
-    "url": "/howto/deploy/",
-    
-    "relUrl": "/howto/deploy/"
-  },"300": {
-    "doc": "Garbage Collection",
-    "title": "Garbage Collection",
-    "content": "lakeFS Cloud users enjoy a managed garbage collection service, and do not need to run this Spark program. ",
-    "url": "/howto/garbage-collection/",
-    
-    "relUrl": "/howto/garbage-collection/"
-  },"301": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks in lakeFS",
-    "content": " ",
-    "url": "/howto/hooks/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/howto/hooks/#actions-and-hooks-in-lakefs"
-  },"302": {
-    "doc": "Actions and Hooks",
-    "title": "Table of contents",
-    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
-    "url": "/howto/hooks/#table-of-contents",
-    
-    "relUrl": "/howto/hooks/#table-of-contents"
-  },"303": {
-    "doc": "Actions and Hooks",
-    "title": "Overview",
-    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
-    "url": "/howto/hooks/#overview",
-    
-    "relUrl": "/howto/hooks/#overview"
-  },"304": {
-    "doc": "Actions and Hooks",
-    "title": "Configuration",
-    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
-    "url": "/howto/hooks/#configuration",
-    
-    "relUrl": "/howto/hooks/#configuration"
-  },"305": {
-    "doc": "Actions and Hooks",
-    "title": "Supported Events",
-    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
-    "url": "/howto/hooks/#supported-events",
-    
-    "relUrl": "/howto/hooks/#supported-events"
-  },"306": {
-    "doc": "Actions and Hooks",
-    "title": "Runs API &amp; CLI",
-    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
-    "url": "/howto/hooks/#runs-api--cli",
-    
-    "relUrl": "/howto/hooks/#runs-api--cli"
-  },"307": {
-    "doc": "Actions and Hooks",
-    "title": "Result Files",
-    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
-    "url": "/howto/hooks/#result-files",
-    
-    "relUrl": "/howto/hooks/#result-files"
-  },"308": {
-    "doc": "Actions and Hooks",
-    "title": "Actions and Hooks",
-    "content": " ",
-    "url": "/howto/hooks/",
-    
-    "relUrl": "/howto/hooks/"
-  },"309": {
-    "doc": "How-To",
-    "title": "lakeFS - How To",
-    "content": ". ",
-    "url": "/howto/#lakefs---how-to",
-    
-    "relUrl": "/howto/#lakefs---how-to"
-  },"310": {
-    "doc": "How-To",
-    "title": "Installation and upgrades",
-    "content": ". | Step-by-step instructions for deploying and configuring lakeFS on AWS, GCP, Azure, and on-premises. | Details on how to upgrade lakeFS . | . ",
-    "url": "/howto/#installation-and-upgrades",
-    
-    "relUrl": "/howto/#installation-and-upgrades"
-  },"311": {
-    "doc": "How-To",
-    "title": "Getting data in and out of lakeFS",
-    "content": ". | Import and Export Data from lakeFS | Copy data to/from lakeFS | Using external Data Catalogs with data stored on lakeFS | Migrating away from lakeFS | Working with lakeFS data locally | . ",
-    "url": "/howto/#getting-data-in-and-out-of-lakefs",
-    
-    "relUrl": "/howto/#getting-data-in-and-out-of-lakefs"
-  },"312": {
-    "doc": "How-To",
-    "title": "Actions and Hooks in lakeFS",
-    "content": ". | Use Actions and Hooks as part of your workflow to validate data, enforce constraints, and do more when events occur. | . ",
-    "url": "/howto/#actions-and-hooks-in-lakefs",
-    
-    "relUrl": "/howto/#actions-and-hooks-in-lakefs"
-  },"313": {
-    "doc": "How-To",
-    "title": "Branch Protection",
-    "content": ". | Branch Protection prevents commits directly to a branch. This is a good way to enforce good practice and make sure that changes to important branches are only done by a merge. | . ",
-    "url": "/howto/#branch-protection",
-    
-    "relUrl": "/howto/#branch-protection"
-  },"314": {
-    "doc": "How-To",
-    "title": "Pull Requests",
-    "content": ". | Improve collaboration over data with Pull Requests. | . ",
-    "url": "/howto/#pull-requests",
-    
-    "relUrl": "/howto/#pull-requests"
-  },"315": {
-    "doc": "How-To",
-    "title": "lakeFS Sizing Guide",
-    "content": ". | This comprehensive guide details all you need to know to correctly size and test your lakeFS deployment for production use at scale, including: . | System Requirements | Scaling factors | Benchmarks | Important metrics | Reference architectures | . | . ",
-    "url": "/howto/#lakefs-sizing-guide",
-    
-    "relUrl": "/howto/#lakefs-sizing-guide"
-  },"316": {
-    "doc": "How-To",
-    "title": "Garbage Collection",
-    "content": ". | lakeFS will keep all of your objects forever, unless you tell it otherwise. Use Garbage Collection (GC) to remove objects from the underlying storage. If you want GC to happen automagically then you can use Managed Garbage Collection which is available as part of lakeFS Cloud. | . ",
-    "url": "/howto/#garbage-collection",
-    
-    "relUrl": "/howto/#garbage-collection"
-  },"317": {
-    "doc": "How-To",
-    "title": "Private Link",
-    "content": ". | Private Link enables lakeFS Cloud to interact with your infrastructure using private networking. | . ",
-    "url": "/howto/#private-link",
-    
-    "relUrl": "/howto/#private-link"
-  },"318": {
-    "doc": "How-To",
-    "title": "Unity Delta Sharing",
-    "content": ". | lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. | . ",
-    "url": "/howto/#unity-delta-sharing",
-    
-    "relUrl": "/howto/#unity-delta-sharing"
-  },"319": {
-    "doc": "How-To",
-    "title": "How-To",
-    "content": " ",
-    "url": "/howto/",
-    
-    "relUrl": "/howto/"
-  },"320": {
-    "doc": "Slack",
-    "title": "Slack",
-    "content": " ",
-    "url": "/slack/",
-    
-    "relUrl": "/slack/"
-  },"321": {
-    "doc": "Integrations",
-    "title": "Integrations with lakeFS",
-    "content": "You can use lakeFS with a wide range of tools and frameworks. lakeFS provides several clients directly, as well as an S3-compatible gateway. This gateway means that if you want to use something with lakeFS, so long as that technology can interface with S3, it can interface with lakeFS. See below for detailed instructions for using different technologies with lakeFS. | Airbyte | Amazon Athena | Amazon SageMaker | Apache Airflow | . | Apache Hive | Apache Iceberg | Apache Kafka | Apache Spark | . | AWS CLI | Cloudera | Databricks | Delta Lake | . | Dremio | DuckDB | Git | Glue / Hive metastore | . | HuggingFace Datasets | Kubeflow | Presto / Trino | Python | . | R | Red Hat OpenShift AI | Vertex AI | | . If there is a technology not listed here that you would like to use with lakeFS, please drop by our Slack and we’ll help you get started with it. ",
-    "url": "/integrations/#integrations-with-lakefs",
-    
-    "relUrl": "/integrations/#integrations-with-lakefs"
-  },"322": {
-    "doc": "Integrations",
-    "title": "Integrations",
-    "content": " ",
-    "url": "/integrations/",
-    
-    "relUrl": "/integrations/"
-  },"323": {
-    "doc": "Security",
-    "title": "lakeFS Security Reference",
-    "content": ". Understanding Your Data Security . At lakeFS, we understand the critical nature of data security. Thousands of organizations worldwide rely on lakeFS to manage their data with confidence. Here’s a few concepts we follow to ensure your data remains secure: . Data Stays in Place: The data you version control remains within your existing object storage. lakeFS creates metadata for your data without moving it. New data is stored in the bucket you designate within your object storage. lakeFS Servers Stores only Metadata: The lakeFS Server (also in the case of lakeFS Cloud) only stores the metadata used for version control operations (i.e. diff, merge). It does not store any of your actual data. Minimal Permissions: lakeFS requires minimal permissions to manage your data. We can even version data we cannot directly access by utilizing presigned URLs. Learn more about some of the featured that help keep lakeFS Secure: . | Authentication - An overview of the authentication and authorization mechanisms available in lakeFS, including built-in and external services, API and S3 Gateway authentication, and user permissions management. | Remote Authenticator - This feature allows organizations to leverage their existing identity infrastructure while using lakeFS, providing a flexible and secure authentication mechanism. | Role-Based Access Control (RBAC) - RBAC with lakeFS provides a flexible and granular approach to managing access and permissions, similar to other cloud-based systems like AWS IAM. | Presigned URL - This feature allows for more flexible and direct data access in lakeFS, particularly useful for scenarios where bypassing the lakeFS server for data retrieval or storage is beneficial. | Single Sign On (SSO) - lakeFS provides administrators with the necessary information to set up SSO for both lakeFS Cloud and Enterprise editions, covering various authentication protocols and identity providers. | Short Lived Token (STS like) - This feature allows lakeFS to leverage temporary credentials for secure and flexible authentication, integrating seamlessly with existing identity providers. | Login to lakeFS with AWS IAM - This feature enhances the integration between lakeFS and AWS by supporting authenticating users programmatically using AWS IAM roles instead of using static lakeFS access and secret keys. | . SOC2 Compliance . lakeFS Cloud is SOC2 compliant, demonstrating our commitment to stringent security standards. More questions? Contact us . For details on supported versions, security updates, and vulnerability reporting, please refer to our security policy on GitHub. If you have additional questions regarding lakeFS Security, talk to an expert. ",
-    "url": "/security/#lakefs-security-reference",
-    
-    "relUrl": "/security/#lakefs-security-reference"
-  },"324": {
-    "doc": "Security",
-    "title": "Security",
-    "content": " ",
-    "url": "/security/",
-    
-    "relUrl": "/security/"
-  },"325": {
-    "doc": "Get Started",
-    "title": "Get Started with lakeFS Enterprise",
-    "content": " ",
-    "url": "/enterprise/getstarted/#get-started-with-lakefs-enterprise",
-    
-    "relUrl": "/enterprise/getstarted/#get-started-with-lakefs-enterprise"
-  },"326": {
-    "doc": "Get Started",
-    "title": "Request a Trial License",
-    "content": "To start a 30-day free trial, please contact us. You will be granted with a token that allows downloading a Docker image that includes lakeFS Enterprise features. ",
-    "url": "/enterprise/getstarted/#request-a-trial-license",
-    
-    "relUrl": "/enterprise/getstarted/#request-a-trial-license"
-  },"327": {
-    "doc": "Get Started",
-    "title": "Install lakeFS Enterprise",
-    "content": "lakeFS Enterprise offers two installation methods: . | Quickstart: The fastest way to get started with lakeFS Enterprise. Intended for testing and evaluation. | Production deployment: Run lakeFS Enterprise on a Kubernetes cluster on AWS, Azure, GCP, or on-prem. | . ",
-    "url": "/enterprise/getstarted/#install-lakefs-enterprise",
-    
-    "relUrl": "/enterprise/getstarted/#install-lakefs-enterprise"
-  },"328": {
-    "doc": "Get Started",
-    "title": "Get Started",
-    "content": " ",
-    "url": "/enterprise/getstarted/",
-    
-    "relUrl": "/enterprise/getstarted/"
-  },"329": {
-    "doc": "lakeFS Enterprise",
-    "title": "lakeFS Enterprise",
-    "content": " ",
-    "url": "/enterprise/",
-    
-    "relUrl": "/enterprise/"
-  },"330": {
-    "doc": "lakeFS Enterprise",
-    "title": "What is lakeFS Enterprise?",
-    "content": "lakeFS Enterprise is a commercially-supported version of lakeFS, offering additional features and functionalities that meet the needs of organizations from a production-grade system. ",
-    "url": "/enterprise/#what-is-lakefs-enterprise",
-    
-    "relUrl": "/enterprise/#what-is-lakefs-enterprise"
-  },"331": {
-    "doc": "lakeFS Enterprise",
-    "title": "Why did we build lakeFS Enterprise?",
-    "content": "lakeFS Enterprise was built for organizations that require the support, security standards and features required of a production-grade system and are not using public clouds, hence they cannot use lakeFS Cloud. ",
-    "url": "/enterprise/#why-did-we-build-lakefs-enterprise",
-    
-    "relUrl": "/enterprise/#why-did-we-build-lakefs-enterprise"
-  },"332": {
-    "doc": "lakeFS Enterprise",
-    "title": "What is the value of using lakeFS Enterprise?",
-    "content": ". | Support: the lakeFS team is committed to supporting you under an SLA for both issues and product enhancements. | Security: Full support for a suite of security features and additional lakeFS functionality. | . ",
-    "url": "/enterprise/#what-is-the-value-of-using-lakefs-enterprise",
-    
-    "relUrl": "/enterprise/#what-is-the-value-of-using-lakefs-enterprise"
-  },"333": {
-    "doc": "lakeFS Enterprise",
-    "title": "What security features does lakeFS Enterprise provide?",
-    "content": "With lakeFS Enterprise you’ll receive access to the security package containing the following features: . | A rich Role-Based Access Control permission system that allows for fine-grained control by associating permissions with users and groups, granting them specific actions on specific resources. This ensures data security and compliance within an organization. | To easily manage users and groups, lakeFS Enterprise provides SSO integration (including support for SAML, OIDC, ADFS, Okta, and Azure AD), supporting existing credentials from a trusted provider, eliminating separate logins. | lakeFS Enterprise supports SCIM for automatically provisioning and deprovisioning users and group memberships to allow organizations to maintain a single source of truth for their user database. | STS Auth offers temporary, secure logins using an Identity Provider, simplifying user access and enhancing security. | Authentication with AWS IAM Roles allows authentication using AWS IAM roles instead of lakeFS credentials, removing the need to maintain static credentials for lakeFS Enterprise users running on AWS. | Auditing provides a detailed action log of events happening within lakeFS, including who performed which action, on which resource - and when. | . ",
-    "url": "/enterprise/#what-security-features-does-lakefs-enterprise-provide",
-    
-    "relUrl": "/enterprise/#what-security-features-does-lakefs-enterprise-provide"
-  },"334": {
-    "doc": "lakeFS Enterprise",
-    "title": "What additional functionality does lakeFS Enterprise provide?",
-    "content": ". | lakeFS Mount allows users to virtually mount a remote lakeFS repository onto a local directory. Once mounted, users can access the data as if it resides on their local filesystem, using any tool, library, or framework that reads from a local filesystem. | Transactional Mirroring - allows replicating lakeFS repositories into consistent read-only copies in remote locations. | . | Feature | OSS | Enterprise | . | Format-agnostic data version control | ✅ | ✅ | . | Cloud-agnostic | ✅ | ✅ | . | Zero Clone copy for isolated environment | ✅ | ✅ | . | Atomic Data Promotion (via merges) | ✅ | ✅ | . | Data stays in one place | ✅ | ✅ | . | Configurable Garbage Collection | ✅ | ✅ | . | Data CI/CD using lakeFS hooks | ✅ | ✅ | . | Integrates with your data stack | ✅ | ✅ | . | Role Based Access Control (RBAC) |   | ✅ | . | Single Sign On (SSO) |   | ✅ | . | SCIM Support |   | ✅ | . | IAM Roles |   | ✅ | . | Mount Capability |   | ✅ | . | Audit Logs |   | ✅ | . | Transactional Mirroring (cross-region) |   | ✅ | . | Support SLA |   | ✅ | . You can learn more about the lakeFS Enterprise architecture, or follow the examples in the Quickstart guide. ",
-    "url": "/enterprise/#what-additional-functionality-does-lakefs-enterprise-provide",
-    
-    "relUrl": "/enterprise/#what-additional-functionality-does-lakefs-enterprise-provide"
-  },"335": {
-    "doc": "Reference",
-    "title": "lakeFS Reference",
-    "content": ". ",
-    "url": "/reference/#lakefs-reference",
-    
-    "relUrl": "/reference/#lakefs-reference"
-  },"336": {
-    "doc": "Reference",
-    "title": "API",
-    "content": ". | lakeFS API | S3 Gateway API | . ",
-    "url": "/reference/#api",
-    
-    "relUrl": "/reference/#api"
-  },"337": {
-    "doc": "Reference",
-    "title": "Components",
-    "content": ". | Server Configuration | lakeFS command-line tool lakectl | . ",
-    "url": "/reference/#components",
-    
-    "relUrl": "/reference/#components"
-  },"338": {
-    "doc": "Reference",
-    "title": "Clients",
-    "content": ". | Spark Metadata Client | lakeFS Hadoop FileSystem | Python Client | . ",
-    "url": "/reference/#clients",
-    
-    "relUrl": "/reference/#clients"
-  },"339": {
-    "doc": "Reference",
-    "title": "Security",
-    "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | Login to lakeFS with AWS IAM | . ",
-    "url": "/reference/#security",
-    
-    "relUrl": "/reference/#security"
-  },"340": {
-    "doc": "Reference",
-    "title": "Other Reference Documentation",
-    "content": ". | Monitoring using Prometheus | Auditing | . ",
-    "url": "/reference/#other-reference-documentation",
-    
-    "relUrl": "/reference/#other-reference-documentation"
-  },"341": {
-    "doc": "Reference",
-    "title": "Reference",
-    "content": " ",
-    "url": "/reference/",
-    
-    "relUrl": "/reference/"
-  },"342": {
     "doc": "⭐ Quickstart",
     "title": "lakeFS Quickstart",
     "content": "Welcome to lakeFS! . lakeFS provides a “Git for data” platform enabling you to implement best practices from software engineering on your data lake, including branching and merging, CI/CD, and production-like dev/test environments. This quickstart will introduce you to some of the core ideas in lakeFS and show what you can do by illustrating the concept of branching, merging, and rolling back changes to data. It’s laid out in five short sections: . Launch . Spin up the quickstart environment locally under Docker . Query . Query the pre-populated data on the main branch . Branch . Make changes to the data on a new branch . Merge . Merge the changed data back to the main branch . Rollback . Change our mind and revert the changes . Actions . Use Actions to trigger code when an event occurs . Work Locally . Experiment with lakeFS data on a local environment . You can use the 30-day free trial of lakeFS Cloud if you want to try out lakeFS without installing anything. ",
     "url": "/quickstart/#lakefs-quickstart",
     
     "relUrl": "/quickstart/#lakefs-quickstart"
-  },"343": {
+  },"298": {
     "doc": "⭐ Quickstart",
     "title": "⭐ Quickstart",
     "content": " ",
     "url": "/quickstart/",
     
     "relUrl": "/quickstart/"
-  },"344": {
+  },"299": {
+    "doc": "Security",
+    "title": "lakeFS Security Reference",
+    "content": ". Understanding Your Data Security . At lakeFS, we understand the critical nature of data security. Thousands of organizations worldwide rely on lakeFS to manage their data with confidence. Here’s a few concepts we follow to ensure your data remains secure: . Data Stays in Place: The data you version control remains within your existing object storage. lakeFS creates metadata for your data without moving it. New data is stored in the bucket you designate within your object storage. lakeFS Servers Stores only Metadata: The lakeFS Server (also in the case of lakeFS Cloud) only stores the metadata used for version control operations (i.e. diff, merge). It does not store any of your actual data. Minimal Permissions: lakeFS requires minimal permissions to manage your data. We can even version data we cannot directly access by utilizing presigned URLs. Learn more about some of the featured that help keep lakeFS Secure: . | Authentication - An overview of the authentication and authorization mechanisms available in lakeFS, including built-in and external services, API and S3 Gateway authentication, and user permissions management. | Remote Authenticator - This feature allows organizations to leverage their existing identity infrastructure while using lakeFS, providing a flexible and secure authentication mechanism. | Role-Based Access Control (RBAC) - RBAC with lakeFS provides a flexible and granular approach to managing access and permissions, similar to other cloud-based systems like AWS IAM. | Presigned URL - This feature allows for more flexible and direct data access in lakeFS, particularly useful for scenarios where bypassing the lakeFS server for data retrieval or storage is beneficial. | Single Sign On (SSO) - lakeFS provides administrators with the necessary information to set up SSO for both lakeFS Cloud and Enterprise editions, covering various authentication protocols and identity providers. | Short Lived Token (STS like) - This feature allows lakeFS to leverage temporary credentials for secure and flexible authentication, integrating seamlessly with existing identity providers. | Login to lakeFS with AWS IAM - This feature enhances the integration between lakeFS and AWS by supporting authenticating users programmatically using AWS IAM roles instead of using static lakeFS access and secret keys. | . SOC2 Compliance . lakeFS Cloud is SOC2 compliant, demonstrating our commitment to stringent security standards. More questions? Contact us . For details on supported versions, security updates, and vulnerability reporting, please refer to our security policy on GitHub. If you have additional questions regarding lakeFS Security, talk to an expert. ",
+    "url": "/security/#lakefs-security-reference",
+    
+    "relUrl": "/security/#lakefs-security-reference"
+  },"300": {
+    "doc": "Security",
+    "title": "Security",
+    "content": " ",
+    "url": "/security/",
+    
+    "relUrl": "/security/"
+  },"301": {
     "doc": "Documentation",
     "title": "lakeFS Documentation",
     "content": "Any contribution to the docs, whether it is in conjunction with a code contribution or as a standalone, is appreciated. Please see the contributing guide for details on contributing to lakeFS in general. ",
     "url": "/project/docs/#lakefs-documentation",
     
     "relUrl": "/project/docs/#lakefs-documentation"
-  },"345": {
+  },"302": {
     "doc": "Documentation",
     "title": "Table of contents",
     "content": ". | lakeFS Documentation Philosophy | lakeFS Style Guide: | Headings and Table of Contents | Callouts 💬 | Links 🔗 | Test your changes locally | Link Checking locally | . 📝 Notice! lakeFS documentation is written using Markdown. Make sure to familiarize yourself with the Markdown Guide. Customizing the lakeFS docs site should follow the following guidelines: Just The Docs Customization and style-guide. ",
     "url": "/project/docs/#table-of-contents",
     
     "relUrl": "/project/docs/#table-of-contents"
-  },"346": {
+  },"303": {
     "doc": "Documentation",
     "title": "lakeFS Documentation Philosophy",
     "content": "We are heavily inspired by the Diátaxis approach to documentation. At a very high-level, it defines documentation as falling into one of four categories: . | How To | Tutorial | Reference | Explanation | . There is a lot more to it than this, and you are encouraged to read the Diátaxis website for more details. Its application to lakeFS was discussed in #6197 . ",
     "url": "/project/docs/#lakefs-documentation-philosophy",
     
     "relUrl": "/project/docs/#lakefs-documentation-philosophy"
-  },"347": {
+  },"304": {
     "doc": "Documentation",
     "title": "lakeFS Style Guide:",
     "content": ". | Don’t use unnecessary tech jargon or vague/wordy constructions - keep it friendly, not condescending. | Be inclusive and welcoming - use gender-neutral words and pronouns when talking about abstract people like users and developers. | Replace complex expressions with simpler ones. | Keep it short - 25-30 words max per sentence. Otherwise, your readers might get lost on the way. | Use active voice instead of passive. For example: This feature can be used to do task X. vs. You can use this feature to do task X. The second one reads much better, right? | You can explain things better by including examples. Show, not tell. Use illustrations, images, gifs, code snippets, etc. | Establish a visual hierarchy to help people quickly find the information they need. Use text formatting to create levels of title and subtitle (such as # to ###### markdown headings). The title of every page should use the topmost heading #; all other headings on the page should use lower headers ## to ######. | . ",
     "url": "/project/docs/#lakefs-style-guide",
     
     "relUrl": "/project/docs/#lakefs-style-guide"
-  },"348": {
+  },"305": {
     "doc": "Documentation",
     "title": "Headings and Table of Contents",
     "content": "The title of the page should be H1 (# in markdown). Use headings in descending order and do not skip any. Pages should generally have a table of contents to help the user navigate it. Use the following snippet to add it to your page: . &lt;div class=\"toc-block\"&gt; ## {: .no_toc .text-delta } 1. TOC {:toc} {::options toc_levels=\"2\" /} &lt;/div&gt; . By default the page’s Table of Contents will include only H2 headings. If you want to include H2 and H3 then use this snippet instead: . &lt;div class=\"toc-block\"&gt; ## {: .no_toc .text-delta } 1. TOC {:toc} {::options toc_levels=\"2..3\" /} &lt;/div&gt; . Both of these snippets invoke {:toc} which is used by Kramdown (the Markdown processor that Jekyll uses) to insert a table of contents from the headings present in the markdown. ",
     "url": "/project/docs/#headings-and-table-of-contents",
     
     "relUrl": "/project/docs/#headings-and-table-of-contents"
-  },"349": {
+  },"306": {
     "doc": "Documentation",
     "title": "Callouts 💬",
     "content": "Multiple callout types are available. Please review this page for details. ",
     "url": "/project/docs/#callouts-",
     
     "relUrl": "/project/docs/#callouts-"
-  },"350": {
+  },"307": {
     "doc": "Documentation",
     "title": "Links 🔗",
     "content": "Links should use absolute paths in conjunction with {% link %}, e.g. {% link foo/example.md %}. Adding a link with an anchor is a bit trickier. Create a reference [link text][link-reference] and then define the anchor at the end of the document: . [link-reference]: {% link foo.example.md %}#anchor . This is so that references work within the versioned documentation that is deployed. Relative links, unless within the local folder, are discouraged as it can cause additional work when moving pages at a later date. ",
     "url": "/project/docs/#links-",
     
     "relUrl": "/project/docs/#links-"
-  },"351": {
+  },"308": {
     "doc": "Documentation",
     "title": "Test your changes locally",
     "content": "If you have the necessary dependencies installed, you can run Jekyll to build and serve the documentation from your machine using the provided Makefile target: . make docs-serve . The alternative is to use Docker which has the benefit of handling all the dependencies for you. Docker . | Launch the Docker container: . docker run --rm \\ --name lakefs_docs \\ -e TZ=\"Etc/UTC\" \\ --publish 4000:4000 --publish 35729:35729 \\ --volume=\"$PWD/docs:/srv/jekyll:Z\" \\ --volume=\"$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z\" \\ --interactive --tty \\ jekyll/jekyll:4.2.2 \\ jekyll serve --livereload . If you have make installed, you can also run make docs-serve-docker instead. | The first time you run the container it will need to download dependencies and will take several minutes to be ready. Once you see the following output, the docs server is ready to open in your web browser: . Server running... press ctrl-c to stop. | When you make a change to a page’s source the server will automatically rebuild the page which will be shown in the server log by this entry: . Regenerating: 1 file(s) changed at 2023-01-26 08:34:47 contributing.md Remote Theme: Using theme pmarsceill/just-the-docs . This can take a short while—you’ll see something like this in the server’s output when it’s done...done in 34.714073460 seconds. Your page will automatically reload to show the changes. | . If you are doing lots of work on the docs you may want to leave the Docker container in place (so that you don’t have to wait for the dependencies to load each time you re-create it). To do this replace the --rm with --detach in the docker run command, and use docker logs -f lakefs_docs to view the server log. ",
     "url": "/project/docs/#test-your-changes-locally",
     
     "relUrl": "/project/docs/#test-your-changes-locally"
-  },"352": {
+  },"309": {
     "doc": "Documentation",
     "title": "Link Checking locally",
     "content": "When making a pull request to lakeFS that involves a docs/* file, a GitHub action will automagically check the links. You can also run this link checker manually on your local machine: . | Build the site: . docker run --rm \\ --name lakefs_docs \\ -e TZ=\"Etc/UTC\" \\ --volume=\"$PWD/docs:/srv/jekyll:Z\" \\ --volume=\"$PWD/docs/.jekyll-bundle-cache:/usr/local/bundle:Z\" \\ --interactive --tty \\ jekyll/jekyll:3.8 \\ jekyll build --config _config.yml -d _site --watch . | Check the links: . docker run --rm \\ --name lakefs_docs_lychee \\ --volume \"$PWD:/data\"\\ --volume \"/tmp:/output\"\\ --tty \\ lycheeverse/lychee:master \\ --exclude-file /data/docs/.lycheeignore \\ --output /output/lychee_report.md \\ --format markdown \\ /data/docs/_site . | Review the lychee_report.md in your local /tmp folder . | . ",
     "url": "/project/docs/#link-checking-locally",
     
     "relUrl": "/project/docs/#link-checking-locally"
-  },"353": {
+  },"310": {
     "doc": "Documentation",
     "title": "Documentation",
     "content": " ",
     "url": "/project/docs/",
     
     "relUrl": "/project/docs/"
-  },"354": {
+  },"311": {
     "doc": "The lakeFS Project",
     "title": "The lakeFS Project",
     "content": "lakeFS provides version control over the data lake and lakehouse, and uses Git-like semantics to create and access those versions. If you know git, you’ll be right at home with lakeFS. lakeFS is an open-source project under the Apache 2.0 license. The project was created and is supported by Treeverse, a commercial company founded by engineers passionate about providing solutions to the evolving world of data engineering. ",
     "url": "/project/",
     
     "relUrl": "/project/"
-  },"355": {
+  },"312": {
     "doc": "The lakeFS Project",
     "title": "Table of contents",
     "content": ". | Our commitment to open source | Roadmap | . ",
     "url": "/project/#table-of-contents",
     
     "relUrl": "/project/#table-of-contents"
-  },"356": {
+  },"313": {
     "doc": "The lakeFS Project",
     "title": "Our commitment to open source",
     "content": "lakeFS is an open-source project under the Apache 2.0 license. The project was created and is supported by Treeverse, a commercial company founded by engineers passionate about providing solutions to the evolving world of data engineering. Why did we choose to open the source of our core capabilities? . We believe in the bottom-up adoption of technologies. We believe collaborative communities have the power to bring the best solutions to the community. We believe that every engineer should be able to use, contribute to, and influence cutting edge technologies, so they can innovate in their domain. What is our commitment to open source? . We created lakeFS, our open-source project, to provide a Git-like interface on top of object stores - so that you can fully take advantage of with any data application at any scale. For that reason, we commit that the following capabilities are and will remain open-source as part of lakeFS: . | All versioning capabilities, | Git-Like interface for the versioning operations, | Support for public object store APIs, | Integrations with publicly available applications accessing an object store, | CLI, API, and GUI interfaces. | . We also commit to keeping lakeFS scalable in throughput and performance. We are deeply committed to our community of engineers who use and contribute to the project. We are and will continue to be highly responsive and shape lakeFS together to provide the data versioning capabilities we are all looking for. What is lakeFS Cloud? . Treeverse offers lakeFS Cloud, which provides all the same benefits of the Git-like interface on top of object stores as a fully-managed service. The vision behind lakeFS Cloud is to provide a managed data versioning and management solution for data practitioners. lakeFS Cloud will leverage the lakeFS open-source technology, integrate capabilities and unique features, and lead its users to implement best practices. As part of our commitment to the open source values of transparency and interoperability, we believe everyone should be able to enjoy these benefits, regardless of whether or not they choose to use the managed offering. Because of that, we will not intentionally make it harder to build these features independently on top of the open source solution. ",
     "url": "/project/#our-commitment-to-open-source",
     
     "relUrl": "/project/#our-commitment-to-open-source"
-  },"357": {
+  },"314": {
     "doc": "The lakeFS Project",
     "title": "Roadmap",
     "content": "This is the lakeFS public roadmap. As the project evolves and the community grows, this roadmap might change. Please share your feedback on the #dev on Slack or by starting a GitHub Discussion! . ",
     "url": "/project/#roadmap",
     
     "relUrl": "/project/#roadmap"
+  },"315": {
+    "doc": "Use Cases",
+    "title": "lakeFS Use Cases",
+    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/understand/use_cases/#lakefs-use-cases",
+    
+    "relUrl": "/understand/use_cases/#lakefs-use-cases"
+  },"316": {
+    "doc": "Use Cases",
+    "title": "Use Cases",
+    "content": " ",
+    "url": "/understand/use_cases/",
+    
+    "relUrl": "/understand/use_cases/"
+  },"317": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management in lakeFS",
+    "content": "lakeFS provides full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs",
+    
+    "relUrl": "/understand/data_lifecycle_management/#data-lifecycle-management-in-lakefs"
+  },"318": {
+    "doc": "Data Lifecycle Management",
+    "title": "Data Lifecycle Management",
+    "content": " ",
+    "url": "/understand/data_lifecycle_management/",
+    
+    "relUrl": "/understand/data_lifecycle_management/"
+  },"319": {
+    "doc": "How lakeFS Works",
+    "title": "How lakeFS Works",
+    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
+    "url": "/understand/how/",
+    
+    "relUrl": "/understand/how/"
+  },"320": {
+    "doc": "Understanding lakeFS",
+    "title": "Understanding lakeFS",
+    "content": ". ",
+    "url": "/understand/",
+    
+    "relUrl": "/understand/"
+  },"321": {
+    "doc": "Understanding lakeFS",
+    "title": "Architecture and Internals",
+    "content": "The Architecture page includes a logical overview of lakeFS and its components. For deep-dive content about lakeFS see: . | Internal database structure | Merges in lakeFS | Versioning Internals | . ",
+    "url": "/understand/#architecture-and-internals",
+    
+    "relUrl": "/understand/#architecture-and-internals"
+  },"322": {
+    "doc": "Understanding lakeFS",
+    "title": "lakeFS Use Cases",
+    "content": "lakeFS has many uses in the data world, including . | CI/CD for Data Lakes | ETL Testing Environment | Reproducibility | Rollback | . One of the important things that lakeFS provides is full support for Data Lifecycle Management through all stages: . | In Test | During Deployment | In Production | . ",
+    "url": "/understand/#lakefs-use-cases",
+    
+    "relUrl": "/understand/#lakefs-use-cases"
+  },"323": {
+    "doc": "Understanding lakeFS",
+    "title": "lakeFS Concepts and Model",
+    "content": "lakeFS adopts many of the terms and concepts from git. This page goes into details on the similarities and differences, and provides a good background to the concepts used in lakeFS. ",
+    "url": "/understand/#lakefs-concepts-and-model",
+    
+    "relUrl": "/understand/#lakefs-concepts-and-model"
+  },"324": {
+    "doc": "Understanding lakeFS",
+    "title": "Performance",
+    "content": "Check out the Performance best practices guide for useful hints and tips on ensuring high performance from lakeFS. ",
+    "url": "/understand/#performance",
+    
+    "relUrl": "/understand/#performance"
+  },"325": {
+    "doc": "Understanding lakeFS",
+    "title": "FAQ and Glossary",
+    "content": "The FAQ covers many common questions around lakeFS, and the glossary provides a useful reference for the terms used in lakeFS. ",
+    "url": "/understand/#faq-and-glossary",
+    
+    "relUrl": "/understand/#faq-and-glossary"
+  },"326": {
+    "doc": "Install lakeFS",
+    "title": "Deploy and Setup lakeFS",
+    "content": "The instructions given here are for a self-managed deployment of lakeFS. For a hosted lakeFS service with guaranteed SLAs, try lakeFS Cloud . This section will guide you through deploying lakeFS on top of an object store. You will require a database, and can optionally configure authentication using providers specific to your deployment platform. Which options are available depends on your deployment platform. For example, the object store available on Azure differs from that on AWS. ",
+    "url": "/howto/deploy/#deploy-and-setup-lakefs",
+    
+    "relUrl": "/howto/deploy/#deploy-and-setup-lakefs"
+  },"327": {
+    "doc": "Install lakeFS",
+    "title": "Deployment and Setup Details",
+    "content": "lakeFS releases include binaries for common operating systems, a containerized option or a Helm chart. Check out our guides below for full deployment details: . | AWS | Azure | GCP | On-premises and other cloud providers | . ",
+    "url": "/howto/deploy/#deployment-and-setup-details",
+    
+    "relUrl": "/howto/deploy/#deployment-and-setup-details"
+  },"328": {
+    "doc": "Install lakeFS",
+    "title": "Install lakeFS",
+    "content": " ",
+    "url": "/howto/deploy/",
+    
+    "relUrl": "/howto/deploy/"
+  },"329": {
+    "doc": "Garbage Collection",
+    "title": "Garbage Collection",
+    "content": "lakeFS Cloud users enjoy a managed garbage collection service, and do not need to run this Spark program. ",
+    "url": "/howto/garbage-collection/",
+    
+    "relUrl": "/howto/garbage-collection/"
+  },"330": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks in lakeFS",
+    "content": " ",
+    "url": "/howto/hooks/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/howto/hooks/#actions-and-hooks-in-lakefs"
+  },"331": {
+    "doc": "Actions and Hooks",
+    "title": "Table of contents",
+    "content": ". | Overview | Configuration | Supported Events | Runs API &amp; CLI | Result Files | . Like other version control systems, lakeFS allows you to configure Actions to trigger when predefined events occur. There are numerous uses for Actions, including: . | Format Validator: A webhook that checks new files to ensure they are of a set of allowed data formats. | Schema Validator: A webhook that reads new Parquet and ORC files to ensure they don’t contain a block list of column names (or name prefixes). This is useful for avoiding accidental PII exposure. | Integration with external systems: Post-merge and post-commit hooks could be used to export metadata about the change to another system. A common example is exporting symlink.txt files that allow e.g. AWS Athena to read data from lakeFS. | Notifying downstream consumers: Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an API, notifying it of the change that happened | . For step-by-step examples of hooks in action check out the lakeFS Quickstart and the lakeFS samples repository. ",
+    "url": "/howto/hooks/#table-of-contents",
+    
+    "relUrl": "/howto/hooks/#table-of-contents"
+  },"332": {
+    "doc": "Actions and Hooks",
+    "title": "Overview",
+    "content": "An action defines one or more hooks to execute. lakeFS supports three types of hook: . | Lua - uses an embedded Lua VM | Webhook - makes a REST call to an external URL | Airflow - triggers a DAG in Airflow | . “Before” hooks must run successfully before their action. If the hook fails, it aborts the action. Lua hooks and Webhooks are synchronous, and lakeFS waits for them to run to completion. Airflow hooks are asynchronous: lakeFS stops waiting as soon as Airflow accepts triggering the DAG. ",
+    "url": "/howto/hooks/#overview",
+    
+    "relUrl": "/howto/hooks/#overview"
+  },"333": {
+    "doc": "Actions and Hooks",
+    "title": "Configuration",
+    "content": "There are two parts to configuration an Action: . | Create an Action file and upload it to the lakeFS repository | Configure the hook(s) that you specified in the Action file. How these are configured will depend on the type of hook. | . Action files . An Action is a list of Hooks with the same trigger configuration, i.e. an event will trigger all Hooks under an Action or none at all. The Hooks under an Action are ordered and so is their execution. Before each hook execution the if boolean expression is evaluated. The expression can use the functions success() and failure(), which return true if the hook’s actions succeeded or failed, respectively. By default, when if is empty or omitted, the step will run only if no error occurred (the same as success()). Action File schema . | Property | Description | Data Type | Required | Default Value | . | name | Identifes the Action file | String | no | Action filename | . | on | List of events that will trigger the hooks | List | yes |   | . | on&lt;event&gt;.branches | Glob pattern list of branches that triggers the hooks | List | no | Not applicable to Tag events. If empty, Action runs on all branches | . | hooks | List of hooks to be executed | List | yes |   | . | hook.id | ID of the hook, must be unique within the action. | String | yes |   | . | hook.type | Type of the hook (types) | String | yes |   | . | hook.description | Description for the hook | String | no |   | . | hook.if | Expression that will be evaluated before execute the hook | String | no | No value is the same as evaluate success() | . | hook.properties | Hook’s specific configuration, see Lua, WebHook, and Airflow for details | Dictionary | true |   | . Example Action File . name: Good files check description: set of checks to verify that branch is good on: pre-commit: pre-merge: branches: - main hooks: - id: no_temp type: webhook description: checking no temporary files found properties: url: \"https://example.com/webhook?notmp=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: no_freeze type: webhook description: check production is not in dev freeze properties: url: \"https://example.com/webhook?nofreeze=true?t=1za2PbkZK1bd4prMuTDr6BeEQwWYcX2R\" - id: alert type: webhook if: failure() description: notify alert system when check failed properties: url: \"https://example.com/alert\" query_params: title: good files webhook failed - id: notification type: webhook if: true description: notify that will always run - no matter if one of the previous steps failed properties: url: \"https://example.com/notification\" query_params: title: good files completed . Note: lakeFS will validate action files only when an Event has occurred. Use lakectl actions validate &lt;path&gt; to validate your action files locally. Uploading Action files . Action files should be uploaded with the prefix _lakefs_actions/ to the lakeFS repository. When an actionable event (see Supported Events above) takes place, lakeFS will read all files with prefix _lakefs_actions/ in the repository branch where the action occurred. A failure to parse an Action file will result with a failing Run. For example, lakeFS will search and execute all the matching Action files with the prefix lakefs://example-repo/feature-1/_lakefs_actions/ on: . | Commit to feature-1 branch on example-repo repository. | Merge to main branch from feature-1 branch on repo1 repository. | . ",
+    "url": "/howto/hooks/#configuration",
+    
+    "relUrl": "/howto/hooks/#configuration"
+  },"334": {
+    "doc": "Actions and Hooks",
+    "title": "Supported Events",
+    "content": "| Event | Description | . | pre-commit | Runs when the commit occurs, before the commit is finalized | . | post-commit | Runs after the commit is finalized | . | pre-merge | Runs on the source branch when the merge occurs, before the merge is finalized | . | post-merge | Runs on the merge result, after the merge is finalized | . | pre-create-branch | Runs on the source branch prior to creating a new branch | . | post-create-branch | Runs on the new branch after the branch was created | . | pre-delete-branch | Runs prior to deleting a branch | . | post-delete-branch | Runs after the branch was deleted | . | pre-create-tag | Runs prior to creating a new tag | . | post-create-tag | Runs after the tag was created | . | pre-delete-tag | Runs prior to deleting a tag | . | post-delete-tag | Runs after the tag was deleted | . lakeFS Actions are handled per repository and cannot be shared between repositories. A failure of any Hook under any Action of a pre-* event will result in aborting the lakeFS operation that is taking place. Hook failures under any Action of a post-* event will not revert the operation. Hooks are managed by Action files that are written to a prefix in the lakeFS repository. This allows configuration-as-code inside lakeFS, where Action files are declarative and written in YAML. ",
+    "url": "/howto/hooks/#supported-events",
+    
+    "relUrl": "/howto/hooks/#supported-events"
+  },"335": {
+    "doc": "Actions and Hooks",
+    "title": "Runs API &amp; CLI",
+    "content": "A Run is an instantiation of the repository’s Action files when the triggering event occurs. For example, if your repository contains a pre-commit hook, every commit would generate a Run for that specific commit. lakeFS will fetch, parse and filter the repository Action files and start to execute the Hooks under each Action. All executed Hooks (each with hook_run_id) exist in the context of that Run (run_id). The lakeFS API and lakectl expose the results of executions per repository, branch, commit, and specific Action. The endpoint also allows to download the execution log of any executed Hook under each Run for observability. ",
+    "url": "/howto/hooks/#runs-api--cli",
+    
+    "relUrl": "/howto/hooks/#runs-api--cli"
+  },"336": {
+    "doc": "Actions and Hooks",
+    "title": "Result Files",
+    "content": "The metadata section of lakeFS repository with each Run contains two types of files: . | _lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log - Execution log of the specific Hook run. | _lakefs/actions/log/&lt;runID&gt;/run.manifest - Manifest with all Hooks execution for the run with their results and additional metadata. | . Note: Metadata section of a lakeFS repository is where lakeFS keeps its metadata, like commits and metaranges. Metadata files stored in the metadata section aren’t accessible like user stored files. ",
+    "url": "/howto/hooks/#result-files",
+    
+    "relUrl": "/howto/hooks/#result-files"
+  },"337": {
+    "doc": "Actions and Hooks",
+    "title": "Actions and Hooks",
+    "content": " ",
+    "url": "/howto/hooks/",
+    
+    "relUrl": "/howto/hooks/"
+  },"338": {
+    "doc": "How-To",
+    "title": "lakeFS - How To",
+    "content": ". ",
+    "url": "/howto/#lakefs---how-to",
+    
+    "relUrl": "/howto/#lakefs---how-to"
+  },"339": {
+    "doc": "How-To",
+    "title": "Installation and upgrades",
+    "content": ". | Step-by-step instructions for deploying and configuring lakeFS on AWS, GCP, Azure, and on-premises. | Details on how to upgrade lakeFS . | . ",
+    "url": "/howto/#installation-and-upgrades",
+    
+    "relUrl": "/howto/#installation-and-upgrades"
+  },"340": {
+    "doc": "How-To",
+    "title": "Getting data in and out of lakeFS",
+    "content": ". | Import and Export Data from lakeFS | Copy data to/from lakeFS | Using external Data Catalogs with data stored on lakeFS | Migrating away from lakeFS | Working with lakeFS data locally | . ",
+    "url": "/howto/#getting-data-in-and-out-of-lakefs",
+    
+    "relUrl": "/howto/#getting-data-in-and-out-of-lakefs"
+  },"341": {
+    "doc": "How-To",
+    "title": "Actions and Hooks in lakeFS",
+    "content": ". | Use Actions and Hooks as part of your workflow to validate data, enforce constraints, and do more when events occur. | . ",
+    "url": "/howto/#actions-and-hooks-in-lakefs",
+    
+    "relUrl": "/howto/#actions-and-hooks-in-lakefs"
+  },"342": {
+    "doc": "How-To",
+    "title": "Branch Protection",
+    "content": ". | Branch Protection prevents commits directly to a branch. This is a good way to enforce good practice and make sure that changes to important branches are only done by a merge. | . ",
+    "url": "/howto/#branch-protection",
+    
+    "relUrl": "/howto/#branch-protection"
+  },"343": {
+    "doc": "How-To",
+    "title": "Pull Requests",
+    "content": ". | Improve collaboration over data with Pull Requests. | . ",
+    "url": "/howto/#pull-requests",
+    
+    "relUrl": "/howto/#pull-requests"
+  },"344": {
+    "doc": "How-To",
+    "title": "lakeFS Sizing Guide",
+    "content": ". | This comprehensive guide details all you need to know to correctly size and test your lakeFS deployment for production use at scale, including: . | System Requirements | Scaling factors | Benchmarks | Important metrics | Reference architectures | . | . ",
+    "url": "/howto/#lakefs-sizing-guide",
+    
+    "relUrl": "/howto/#lakefs-sizing-guide"
+  },"345": {
+    "doc": "How-To",
+    "title": "Garbage Collection",
+    "content": ". | lakeFS will keep all of your objects forever, unless you tell it otherwise. Use Garbage Collection (GC) to remove objects from the underlying storage. If you want GC to happen automagically then you can use Managed Garbage Collection which is available as part of lakeFS Cloud. | . ",
+    "url": "/howto/#garbage-collection",
+    
+    "relUrl": "/howto/#garbage-collection"
+  },"346": {
+    "doc": "How-To",
+    "title": "Private Link",
+    "content": ". | Private Link enables lakeFS Cloud to interact with your infrastructure using private networking. | . ",
+    "url": "/howto/#private-link",
+    
+    "relUrl": "/howto/#private-link"
+  },"347": {
+    "doc": "How-To",
+    "title": "Unity Delta Sharing",
+    "content": ". | lakeFS Unity Delta Sharing provides a read-only experience from Unity Catalog for lakeFS customers. | . ",
+    "url": "/howto/#unity-delta-sharing",
+    
+    "relUrl": "/howto/#unity-delta-sharing"
+  },"348": {
+    "doc": "How-To",
+    "title": "How-To",
+    "content": " ",
+    "url": "/howto/",
+    
+    "relUrl": "/howto/"
+  },"349": {
+    "doc": "Integrations",
+    "title": "Integrations with lakeFS",
+    "content": "You can use lakeFS with a wide range of tools and frameworks. lakeFS provides several clients directly, as well as an S3-compatible gateway. This gateway means that if you want to use something with lakeFS, so long as that technology can interface with S3, it can interface with lakeFS. See below for detailed instructions for using different technologies with lakeFS. | Airbyte | Amazon Athena | Amazon SageMaker | Apache Airflow | . | Apache Hive | Apache Iceberg | Apache Kafka | Apache Spark | . | AWS CLI | Cloudera | Databricks | Delta Lake | . | Dremio | DuckDB | Git | Glue / Hive metastore | . | HuggingFace Datasets | Kubeflow | Presto / Trino | Python | . | R | Red Hat OpenShift AI | Vertex AI | | . If there is a technology not listed here that you would like to use with lakeFS, please drop by our Slack and we’ll help you get started with it. ",
+    "url": "/integrations/#integrations-with-lakefs",
+    
+    "relUrl": "/integrations/#integrations-with-lakefs"
+  },"350": {
+    "doc": "Integrations",
+    "title": "Integrations",
+    "content": " ",
+    "url": "/integrations/",
+    
+    "relUrl": "/integrations/"
+  },"351": {
+    "doc": "Reference",
+    "title": "lakeFS Reference",
+    "content": ". ",
+    "url": "/reference/#lakefs-reference",
+    
+    "relUrl": "/reference/#lakefs-reference"
+  },"352": {
+    "doc": "Reference",
+    "title": "API",
+    "content": ". | lakeFS API | S3 Gateway API | . ",
+    "url": "/reference/#api",
+    
+    "relUrl": "/reference/#api"
+  },"353": {
+    "doc": "Reference",
+    "title": "Components",
+    "content": ". | Server Configuration | lakeFS command-line tool lakectl | . ",
+    "url": "/reference/#components",
+    
+    "relUrl": "/reference/#components"
+  },"354": {
+    "doc": "Reference",
+    "title": "Clients",
+    "content": ". | Spark Metadata Client | lakeFS Hadoop FileSystem | Python Client | . ",
+    "url": "/reference/#clients",
+    
+    "relUrl": "/reference/#clients"
+  },"355": {
+    "doc": "Reference",
+    "title": "Security",
+    "content": ". | Authentication | Remote Authenticator | Role-Based Access Control (RBAC) | Presigned URL | Access Control Lists (ACLs) | Single Sign On (SSO) | Login to lakeFS with AWS IAM | . ",
+    "url": "/reference/#security",
+    
+    "relUrl": "/reference/#security"
+  },"356": {
+    "doc": "Reference",
+    "title": "Other Reference Documentation",
+    "content": ". | Monitoring using Prometheus | Auditing | . ",
+    "url": "/reference/#other-reference-documentation",
+    
+    "relUrl": "/reference/#other-reference-documentation"
+  },"357": {
+    "doc": "Reference",
+    "title": "Reference",
+    "content": " ",
+    "url": "/reference/",
+    
+    "relUrl": "/reference/"
   },"358": {
     "doc": "Welcome to lakeFS",
     "title": "Welcome to the Lake!",
@@ -3821,54 +3821,54 @@
     
     "relUrl": "/understand/use_cases/reproducibility.html"
   },"546": {
-    "doc": "Rollback",
-    "title": "Rollbacks",
-    "content": " ",
-    "url": "/understand/use_cases/rollback.html#rollbacks",
-    
-    "relUrl": "/understand/use_cases/rollback.html#rollbacks"
-  },"547": {
-    "doc": "Rollback",
-    "title": "What Is a Rollback?",
-    "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a significant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
-    "url": "/understand/use_cases/rollback.html#what-is-a-rollback",
-    
-    "relUrl": "/understand/use_cases/rollback.html#what-is-a-rollback"
-  },"548": {
-    "doc": "Rollback",
-    "title": "Why Rollbacks Are Useful",
-    "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
-    "url": "/understand/use_cases/rollback.html#why-rollbacks-are-useful",
-    
-    "relUrl": "/understand/use_cases/rollback.html#why-rollbacks-are-useful"
-  },"549": {
-    "doc": "Rollback",
-    "title": "Performing Rollbacks with lakeFS",
-    "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
-    "url": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs",
-    
-    "relUrl": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs"
-  },"550": {
-    "doc": "Rollback",
-    "title": "Rollback",
-    "content": " ",
-    "url": "/understand/use_cases/rollback.html",
-    
-    "relUrl": "/understand/use_cases/rollback.html"
-  },"551": {
     "doc": "5️⃣ Roll back Changes",
     "title": "Rolling back Changes in lakeFS",
     "content": "Our intrepid user (you) merged a change back into the main branch and realised that they had made a mistake 🤦🏻. The good news for them (you) is that lakeFS can revert changes made, similar to how you would in Git 😅. From your terminal window run lakectl with the revert command: . docker exec -it lakefs lakectl branch revert lakefs://quickstart/main main --parent-number 1 --yes . You should see a confirmation of a successful rollback: . Branch: lakefs://quickstart/main commit main successfully reverted . Back in the object page and the DuckDB query we can see that the original file is now back to how it was: . ",
     "url": "/quickstart/rollback.html#rolling-back-changes-in-lakefs",
     
     "relUrl": "/quickstart/rollback.html#rolling-back-changes-in-lakefs"
-  },"552": {
+  },"547": {
     "doc": "5️⃣ Roll back Changes",
     "title": "5️⃣ Roll back Changes",
     "content": " ",
     "url": "/quickstart/rollback.html",
     
     "relUrl": "/quickstart/rollback.html"
+  },"548": {
+    "doc": "Rollback",
+    "title": "Rollbacks",
+    "content": " ",
+    "url": "/understand/use_cases/rollback.html#rollbacks",
+    
+    "relUrl": "/understand/use_cases/rollback.html#rollbacks"
+  },"549": {
+    "doc": "Rollback",
+    "title": "What Is a Rollback?",
+    "content": "A rollback operation is used to to fix critical data errors immediately. What is a critical data error? Think of a situation where erroneous or misformatted data causes a significant issue with an important service or function. In such situations, the first thing to do is stop the bleeding. Rolling back returns data to a state in the past, before the error was present. You might not be showing all the latest data after a rollback, but at least you aren’t showing incorrect data or raising errors. ",
+    "url": "/understand/use_cases/rollback.html#what-is-a-rollback",
+    
+    "relUrl": "/understand/use_cases/rollback.html#what-is-a-rollback"
+  },"550": {
+    "doc": "Rollback",
+    "title": "Why Rollbacks Are Useful",
+    "content": "A Rollback is used as a stopgap measure to “put out the fire” as quickly as possible while RCA (root cause analysis) is performed to understand 1) exactly how the error happened, and 2) what can be done to prevent it from happening again. It can be a pressured, stressful situation to deal with a critical data error. Having the ability to employ a rollback relieves some of the pressure and makes it more likely you can figure out what happened without creating additional issues. As a real world example, the 14-day outage some Atlassian users experienced in May 2022 could have been an uninteresting minor incident had rolling back the deleted customer data been an option. ",
+    "url": "/understand/use_cases/rollback.html#why-rollbacks-are-useful",
+    
+    "relUrl": "/understand/use_cases/rollback.html#why-rollbacks-are-useful"
+  },"551": {
+    "doc": "Rollback",
+    "title": "Performing Rollbacks with lakeFS",
+    "content": "lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs. Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback. To demonstrate how this works, let’s take the example of a lakeFS repo with the following commit history: . As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time. How to Rollback From a Bad Data Sync? . Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a revert operation to undo the changes introduced in that sync. Step 1: Copy the commit_id associated with the commit we want to revert. As the screenshot above shows, you can use the Copy ID to Clipboard button to do this. Step 2: Run the revert command using lakectl, the lakeFS CLI. In this example, the command will be as follows: . lakectl branch revert lakefs://example/main 9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d . This will undo the changes introduced by this commit, completing the rollback! . The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections. In lakeFS, rolling back data is always a one-liner. ",
+    "url": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs",
+    
+    "relUrl": "/understand/use_cases/rollback.html#performing-rollbacks-with-lakefs"
+  },"552": {
+    "doc": "Rollback",
+    "title": "Rollback",
+    "content": " ",
+    "url": "/understand/use_cases/rollback.html",
+    
+    "relUrl": "/understand/use_cases/rollback.html"
   },"553": {
     "doc": "S3 Gateway API",
     "title": "S3-Supported API",
@@ -4346,40 +4346,40 @@
     
     "relUrl": "/howto/unity-delta-sharing.html#setup"
   },"621": {
-    "doc": "Upgrade lakeFS",
-    "title": "Upgrading lakeFS",
-    "content": "Note: For a fully managed lakeFS service with guaranteed SLAs, try lakeFS Cloud . Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image (or downloading the latest version if you’re using the binary). If you’re upgrading, check whether the release requires a migration. ",
-    "url": "/howto/deploy/upgrade.html#upgrading-lakefs",
-    
-    "relUrl": "/howto/deploy/upgrade.html#upgrading-lakefs"
-  },"622": {
-    "doc": "Upgrade lakeFS",
-    "title": "When DB migrations are required",
-    "content": "lakeFS 0.103.0 or greater . Version 0.103.0 added support for rolling KV upgrade. This means that users who already migrated to the KV ref-store (versions 0.80.0 and above) no longer have to pass through specific versions for migration. This includes ACL migration which was introduced in lakeFS version 0.98.0. Running lakefs migrate up on the latest lakeFS version will perform all the necessary migrations up to that point. lakeFS 0.80.0 or greater (KV Migration) . Starting with version 0.80.2, lakeFS has transitioned from using a PostgreSQL based database implementation to a Key-Value datastore interface supporting multiple database implementations. More information can be found here. Users upgrading from a previous version of lakeFS must pass through the KV migration version (0.80.2) before upgrading to newer versions of lakeFS. IMPORTANT: Pre Migrate Requirements . | Users using OS environment variables for database configuration must define the connection_string explicitly or as environment variable before proceeding with the migration. | Database storage free capacity of at least twice the amount of the currently used capacity | It is strongly recommended to perform these additional steps: . | Commit all uncommitted data on branches | Create a snapshot of your database | . | By default, old database tables are not being deleted by the migration process, and should be removed manually after a successful migration. To enable table drop as part of the migration, set the database.drop_tables configuration param to true | . Migration Steps . For each lakeFS instance currently running with the database . | Modify the database section under lakeFS configuration yaml: . | Add type field with \"postgres\" as value | Copy the current configuration parameters to a new section called postgres | . --- database: type: \"postgres\" connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 postgres: connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 . | Stop all lakeFS instances | Using the lakefs binary for the new version (0.80.2), run the following: . lakefs migrate up . | lakeFS will run the migration process, which in the end should display the following message with no errors: . time=\"2022-08-10T14:46:25Z\" level=info msg=\"KV Migration took 717.629563ms\" func=\"pkg/logging.(*logrusEntryWrapper).Infof\" file=\"build/pkg/logging/logger.go:246\" TempDir=/tmp/kv_migrate_2913402680 . | It is now possible to remove the old database configuration. The updated configuration should look as such: . --- database: type: \"postgres\" postgres: connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 . | Deploy (or run) the new version of lakeFS. | . lakeFS 0.30.0 or greater . In case migration is required, you first need to stop the running lakeFS service. Using the lakefs binary for the new version, run the following: . lakefs migrate up . Deploy (or run) the new version of lakeFS. Note that an older version of lakeFS cannot run on a migrated database. Prior to lakeFS 0.30.0 . Note: with lakeFS &lt; 0.30.0, you should first upgrade to 0.30.0 following this guide. Then, proceed to upgrade to the newest version. Starting version 0.30.0, lakeFS handles your committed metadata in a new way, which is more robust and has better performance. To move your existing data, you will need to run the following upgrade commands. Verify lakeFS version == 0.30.0 (can skip if using Docker) . lakefs --version . Migrate data from the previous format: . lakefs migrate db . Or migrate using Docker image: . docker run --rm -it -e LAKEFS_DATABASE_CONNECTION_STRING=&lt;database connection string&gt; treeverse/lakefs:rocks-migrate migrate db . Once migrated, it is possible to now use more recent lakeFS versions. Please refer to their release notes for more information on ugrading and usage). If you want to start over, discarding your existing data, you need to explicitly state this in your lakeFS configuration file. To do so, add the following to your configuration (relevant only for 0.30.0): . cataloger: type: rocks . ",
-    "url": "/howto/deploy/upgrade.html#when-db-migrations-are-required",
-    
-    "relUrl": "/howto/deploy/upgrade.html#when-db-migrations-are-required"
-  },"623": {
-    "doc": "Upgrade lakeFS",
-    "title": "Data Migration for Version v0.50.0",
-    "content": "If you are using a version before 0.50.0, you must first perform the previous upgrade to that version. {: note: .note-warning } . ",
-    "url": "/howto/deploy/upgrade.html#data-migration-for-version-v0500",
-    
-    "relUrl": "/howto/deploy/upgrade.html#data-migration-for-version-v0500"
-  },"624": {
-    "doc": "Upgrade lakeFS",
-    "title": "Upgrade lakeFS",
-    "content": " ",
-    "url": "/howto/deploy/upgrade.html",
-    
-    "relUrl": "/howto/deploy/upgrade.html"
-  },"625": {
     "doc": "Upgrade",
     "title": "Upgrade",
     "content": "For upgrading from lakeFS enterprise to a newer version see lakefs migration. ",
     "url": "/enterprise/upgrade.html",
     
     "relUrl": "/enterprise/upgrade.html"
+  },"622": {
+    "doc": "Upgrade lakeFS",
+    "title": "Upgrading lakeFS",
+    "content": "Note: For a fully managed lakeFS service with guaranteed SLAs, try lakeFS Cloud . Upgrading lakeFS from a previous version usually just requires re-deploying with the latest image (or downloading the latest version if you’re using the binary). If you’re upgrading, check whether the release requires a migration. ",
+    "url": "/howto/deploy/upgrade.html#upgrading-lakefs",
+    
+    "relUrl": "/howto/deploy/upgrade.html#upgrading-lakefs"
+  },"623": {
+    "doc": "Upgrade lakeFS",
+    "title": "When DB migrations are required",
+    "content": "lakeFS 0.103.0 or greater . Version 0.103.0 added support for rolling KV upgrade. This means that users who already migrated to the KV ref-store (versions 0.80.0 and above) no longer have to pass through specific versions for migration. This includes ACL migration which was introduced in lakeFS version 0.98.0. Running lakefs migrate up on the latest lakeFS version will perform all the necessary migrations up to that point. lakeFS 0.80.0 or greater (KV Migration) . Starting with version 0.80.2, lakeFS has transitioned from using a PostgreSQL based database implementation to a Key-Value datastore interface supporting multiple database implementations. More information can be found here. Users upgrading from a previous version of lakeFS must pass through the KV migration version (0.80.2) before upgrading to newer versions of lakeFS. IMPORTANT: Pre Migrate Requirements . | Users using OS environment variables for database configuration must define the connection_string explicitly or as environment variable before proceeding with the migration. | Database storage free capacity of at least twice the amount of the currently used capacity | It is strongly recommended to perform these additional steps: . | Commit all uncommitted data on branches | Create a snapshot of your database | . | By default, old database tables are not being deleted by the migration process, and should be removed manually after a successful migration. To enable table drop as part of the migration, set the database.drop_tables configuration param to true | . Migration Steps . For each lakeFS instance currently running with the database . | Modify the database section under lakeFS configuration yaml: . | Add type field with \"postgres\" as value | Copy the current configuration parameters to a new section called postgres | . --- database: type: \"postgres\" connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 postgres: connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 . | Stop all lakeFS instances | Using the lakefs binary for the new version (0.80.2), run the following: . lakefs migrate up . | lakeFS will run the migration process, which in the end should display the following message with no errors: . time=\"2022-08-10T14:46:25Z\" level=info msg=\"KV Migration took 717.629563ms\" func=\"pkg/logging.(*logrusEntryWrapper).Infof\" file=\"build/pkg/logging/logger.go:246\" TempDir=/tmp/kv_migrate_2913402680 . | It is now possible to remove the old database configuration. The updated configuration should look as such: . --- database: type: \"postgres\" postgres: connection_string: \"postgres://localhost:5432/postgres?sslmode=disable\" max_open_connections: 20 . | Deploy (or run) the new version of lakeFS. | . lakeFS 0.30.0 or greater . In case migration is required, you first need to stop the running lakeFS service. Using the lakefs binary for the new version, run the following: . lakefs migrate up . Deploy (or run) the new version of lakeFS. Note that an older version of lakeFS cannot run on a migrated database. Prior to lakeFS 0.30.0 . Note: with lakeFS &lt; 0.30.0, you should first upgrade to 0.30.0 following this guide. Then, proceed to upgrade to the newest version. Starting version 0.30.0, lakeFS handles your committed metadata in a new way, which is more robust and has better performance. To move your existing data, you will need to run the following upgrade commands. Verify lakeFS version == 0.30.0 (can skip if using Docker) . lakefs --version . Migrate data from the previous format: . lakefs migrate db . Or migrate using Docker image: . docker run --rm -it -e LAKEFS_DATABASE_CONNECTION_STRING=&lt;database connection string&gt; treeverse/lakefs:rocks-migrate migrate db . Once migrated, it is possible to now use more recent lakeFS versions. Please refer to their release notes for more information on ugrading and usage). If you want to start over, discarding your existing data, you need to explicitly state this in your lakeFS configuration file. To do so, add the following to your configuration (relevant only for 0.30.0): . cataloger: type: rocks . ",
+    "url": "/howto/deploy/upgrade.html#when-db-migrations-are-required",
+    
+    "relUrl": "/howto/deploy/upgrade.html#when-db-migrations-are-required"
+  },"624": {
+    "doc": "Upgrade lakeFS",
+    "title": "Data Migration for Version v0.50.0",
+    "content": "If you are using a version before 0.50.0, you must first perform the previous upgrade to that version. {: note: .note-warning } . ",
+    "url": "/howto/deploy/upgrade.html#data-migration-for-version-v0500",
+    
+    "relUrl": "/howto/deploy/upgrade.html#data-migration-for-version-v0500"
+  },"625": {
+    "doc": "Upgrade lakeFS",
+    "title": "Upgrade lakeFS",
+    "content": " ",
+    "url": "/howto/deploy/upgrade.html",
+    
+    "relUrl": "/howto/deploy/upgrade.html"
   },"626": {
     "doc": "Versioning Internals",
     "title": "Versioning Internals",
