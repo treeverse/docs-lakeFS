@@ -565,7 +565,7 @@
 
 <p>To migrate from lakeFS Open Source to lakeFS Enterprise, follow the steps below:</p>
 
-<ol>
+<ol class="warning">
   <li>Make sure you have the Fluffy Docker token, if not <a href="https://lakefs.io/contact-sales/">contact us</a> to gain access to Fluffy. You will be granted with a token that enables downloading <em>dockerhub/fluffy</em> from <a href="https://hub.docker.com/u/treeverse">Docker Hub</a>.</li>
   <li>Sanity Test (Optional): Install a new test lakeFS Enterprise before moving your current production setup. Test the setup &gt; login &gt; Create repository etc. Once everything seems to work, delete and cleanup the test setup and we will move to the migration process.</li>
   <li>Follow lakeFS <a href="/enterprise/getstarted/install.html">Enterprise installation guide</a>
@@ -584,7 +584,14 @@
     </ol>
   </li>
   <li>Once the migration completed - Upgrade your helm release with the modified <code class="language-plaintext highlighter-rouge">values.yaml</code> and the new version and run <code class="language-plaintext highlighter-rouge">helm ugprade</code>.</li>
+  <li>Login to the new lakeFS pod: Execute the following command, make sure you have proper credentials, or discard to get new ones:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs setup <span class="nt">--user-name</span> &lt;admin&gt; <span class="nt">--access-key-id</span> &lt;key&gt; <span class="nt">--secret-access-key</span> &lt;secret&gt; <span class="nt">--no-check</span>
+</code></pre></div>    </div>
+  </li>
 </ol>
+<blockquote>
+  <p>Please note that the newly set up lakeFS instance remains inaccessible to users until full setup completion, due to the absence of established credentials within the system.</p>
+</blockquote>
 
                 
 
