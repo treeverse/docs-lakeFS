@@ -283,7 +283,8 @@
                     </li></ul></li><li class="nav-list-item "><a href="/howto/import.html"
                    class="nav-list-link">Import Data</a></li><li class="nav-list-item "><a href="/howto/migrate-away.html"
                    class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/howto/mirroring.html"
-                   class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/howto/private-link.html"
+                   class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/howto/multiple-storage-backends.html"
+                   class="nav-list-link">Multiple Storage Backend</a></li><li class="nav-list-item "><a href="/howto/private-link.html"
                    class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/howto/pull-requests.html"
                    class="nav-list-link">Pull Requests</a></li><li class="nav-list-item "><a href="/howto/virtual-host-addressing.html"
                    class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li><li class="nav-list-item "><a href="/howto/sizing-guide.html"
@@ -1185,7 +1186,131 @@ local development, if using <a href="https://docs.aws.amazon.com/AmazonS3/latest
   <li><code class="language-plaintext highlighter-rouge">ugc.prepare_max_file_size</code> <code class="language-plaintext highlighter-rouge">(int: 125829120)</code> - Uncommitted garbage collection prepare request, limit the produced file maximum size</li>
   <li><code class="language-plaintext highlighter-rouge">ugc.prepare_interval</code> <code class="language-plaintext highlighter-rouge">(duraction: 1m)</code> - Uncommitted garbage collection prepare request, limit produce time to interval</li>
 </ul>
-<h2 class="ref-list" id="using-environment-variables">
+<h2 class="ref-list no_toc" id="lakefs-enterprise">
+  
+  
+    <a href="#lakefs-enterprise" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Enterprise
+  
+  
+</h2>
+    
+
+<p>This section provides configuration references exclusive to <a href="../enterprise">lakeFS Enterprise</a>, and serves as a complement
+to the general configuration <a href="#reference">reference</a> above.</p>
+<h3 id="blockstores">
+  
+  
+    <a href="#blockstores" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> blockstores
+  
+  
+</h3>
+    
+
+<blockquote class="note">
+  <p><strong>Note:</strong> The <code class="language-plaintext highlighter-rouge">blockstores</code> configuration is required for <a href="/howto/multiple-storage-backends.html">multi-storage backend</a>
+setups and replaces the previous <code class="language-plaintext highlighter-rouge">blockstore</code> configuration.</p>
+</blockquote>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.signing.secret_key</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - A random generated string that is used for HMAC signing when using get/link physical address</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores</code> <code class="language-plaintext highlighter-rouge">([{id: string, type: string, ...}] : required)</code> - Defines multiple storage backends used in a multi-storage backend setup. Each storage backend must have a unique id and a valid configuration.</li>
+</ul>
+<h4 id="common-fields-for-all-stores">
+  
+  
+    <a href="#common-fields-for-all-stores" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Common Fields for All Stores
+  
+  
+</h4>
+    
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].id</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - Unique identifier for the storage backend.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].backward_compatible</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Optional. Defaults to false. Used to migrate from a single to a multi-storage backend setup.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].description</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - A human-readable description of the storage backend.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].type</code> <code class="language-plaintext highlighter-rouge">(string : required)</code> - <code class="language-plaintext highlighter-rouge">(one of ["local", "s3", "gs", "azure", "mem"] : required)</code>. Block adapter to use. This controls where the underlying data will be stored.</li>
+</ul>
+<h4 id="blockstoresstoreslocal">
+  
+  
+    <a href="#blockstoresstoreslocal" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> blockstores.stores.local
+  
+  
+</h4>
+    
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].local.path</code> <code class="language-plaintext highlighter-rouge">(string: "~/lakefs/data")</code> - When using the local Block Adapter, which directory to store files in</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].local.import_enabled</code> <code class="language-plaintext highlighter-rouge">(bool: false)</code> - Enable import for local Block Adapter, relevant only if you are using shared location</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].local.import_hidden</code> <code class="language-plaintext highlighter-rouge">(bool: false)</code> - When enabled import will scan and import any file or folder that starts with a dot character.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].local.allowed_external_prefixes</code> <code class="language-plaintext highlighter-rouge">([]string: [])</code> - List of absolute path prefixes used to match any access for external location (ex: /var/data/). Empty list mean no access to external location.</li>
+</ul>
+<h4 id="blockstoresstoress3">
+  
+  
+    <a href="#blockstoresstoress3" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> blockstores.stores.s3
+  
+  
+</h4>
+    
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.region</code> <code class="language-plaintext highlighter-rouge">(string : "us-east-1")</code> - Default region for lakeFS to use when interacting with S3.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.profile</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-using-profiles">named credentials profile</a></li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].credentials_file</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html">credentials file</a></li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].credentials.access_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a static set of credential</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].credentials.secret_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a static set of credential</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.credentials.session_token</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as a static session token</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, custom endpoint for the AWS S3 API (https://s3_compatible_service_endpoint:port)</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.force_path_style</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - When true, use path-style S3 URLs (https://<host>/<bucket> instead of https://<bucket>.<host>)</host></bucket></bucket></host></li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.discover_bucket_region</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - (Can be turned off if the underlying S3 bucket doesn’t support the GetBucketRegion API).</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.skip_verify_certificate_test_only</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Skip certificate verification while connecting to the storage endpoint. Should be used only for testing.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.server_side_encryption</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Server side encryption format used (Example on AWS using SSE-KMS while passing “aws:kms”)</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.server_side_encryption_kms_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Server side encryption KMS key ID</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.pre_signed_expiry</code> <code class="language-plaintext highlighter-rouge">(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.pre_signed_endpoint</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Custom endpoint for pre-signed URLs.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.disable_pre_signed</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Disable use of pre-signed URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.disable_pre_signed_ui</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.disable_pre_signed_multipart</code> <code class="language-plaintext highlighter-rouge">(bool : )</code> - Disable use of pre-signed multipart upload <strong>experimental</strong>, enabled on S3 block adapter with presign support.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.client_log_request</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Set SDK logging bit to log requests</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].s3.client_log_retries</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Set SDK logging bit to log retries</li>
+</ul>
+<h4 id="blockstoresazure">
+  
+  
+    <a href="#blockstoresazure" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> blockstores.azure
+  
+  
+</h4>
+    
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].azure.storage_account</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as the Azure storage account</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].azure.storage_access_key</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified, will be used as the Azure storage access key</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].azure.pre_signed_expiry</code> <code class="language-plaintext highlighter-rouge">(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].azure.disable_pre_signed</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Disable use of pre-signed URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].azure.disable_pre_signed_ui</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].azure.domain</code> <code class="language-plaintext highlighter-rouge">(string : blob.core.windows.net)</code> - Enables support of different Azure cloud domains. Current supported domains (in Beta stage): [<code class="language-plaintext highlighter-rouge">blob.core.chinacloudapi.cn</code>, <code class="language-plaintext highlighter-rouge">blob.core.usgovcloudapi.net</code>]</li>
+</ul>
+<h4 id="blockstoresgs">
+  
+  
+    <a href="#blockstoresgs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> blockstores.gs
+  
+  
+</h4>
+    
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.credentials_file</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified will be used as a file path of the JSON file that contains your Google service account key</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.credentials_json</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - If specified will be used as JSON string that contains your Google service account key (when credentials_file is not set)</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.pre_signed_expiry</code> <code class="language-plaintext highlighter-rouge">(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.disable_pre_signed</code> <code class="language-plaintext highlighter-rouge">(bool : false)</code> - Disable use of pre-signed URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.disable_pre_signed_ui</code> <code class="language-plaintext highlighter-rouge">(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.server_side_encryption_customer_supplied</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Server side encryption with AES key in hex format, exclusive with key ID below</li>
+  <li><code class="language-plaintext highlighter-rouge">blockstores.stores[].gs.server_side_encryption_kms_key_id</code> <code class="language-plaintext highlighter-rouge">(string : )</code> - Server side encryption KMS key ID, exclusive with above</li>
+</ul>
+<h2 id="using-environment-variables">
   
   
     <a href="#using-environment-variables" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Environment Variables
