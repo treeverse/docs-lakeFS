@@ -1493,16 +1493,57 @@ If delimiter is empty, will default to a recursive listing. Otherwise, common pr
     
 
 <p>Returns an object-wise diff of uncommitted changes on <code class="language-plaintext highlighter-rouge">branch_id</code>.</p>
-<h3 id="lakefsstat_objectrepository_id-ref_id-path">
+<h3 id="lakefsstat_objectrepository_id-ref_id-path-user_metadata">
   
   
-    <a href="#lakefsstat_objectrepository_id-ref_id-path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/stat_object(repository_id, ref_id, path)</code>
+    <a href="#lakefsstat_objectrepository_id-ref_id-path-user_metadata" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/stat_object(repository_id, ref_id, path[, user_metadata])</code>
   
   
 </h3>
     
 
-<p>Returns a stat object for the given path under the given reference and repository.</p>
+<p>Returns a stat object for the given path under the given reference and repository.
+Returns 2 values:</p>
+
+<ol>
+  <li>The HTTP status code returned by the lakeFS API</li>
+  <li>The stat response object as a JSON string</li>
+</ol>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">repository_id</code>: The repository ID</li>
+  <li><code class="language-plaintext highlighter-rouge">ref_id</code>: The reference to stat from (branch, tag, commit ID)</li>
+  <li><code class="language-plaintext highlighter-rouge">path</code>: Path to the object to stat</li>
+  <li><code class="language-plaintext highlighter-rouge">user_metadata</code>: (Optional) Boolean flag to include user metadata in response</li>
+</ul>
+<h3 id="lakefsupdate_object_user_metadatarepository_id-branch_id-path-metadata">
+  
+  
+    <a href="#lakefsupdate_object_user_metadatarepository_id-branch_id-path-metadata" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/update_object_user_metadata(repository_id, branch_id, path, metadata)</code>
+  
+  
+</h3>
+    
+
+<p>Update user metadata for an object.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">repository_id</code>: The repository ID</li>
+  <li><code class="language-plaintext highlighter-rouge">branch_id</code>: The branch containing the object</li>
+  <li><code class="language-plaintext highlighter-rouge">path</code>: Path to the object to update</li>
+  <li><code class="language-plaintext highlighter-rouge">metadata</code>: A table containing key-value pairs to set as user metadata</li>
+</ul>
+
+<p>Returns 2 values:</p>
+
+<ol>
+  <li>The HTTP status code returned by the lakeFS API (204 on success)</li>
+  <li>Empty on success, error on failure</li>
+</ol>
 <h3 id="lakefscatalogexportglue_exporterget_full_table_namedescriptor-action_info">
   
   
