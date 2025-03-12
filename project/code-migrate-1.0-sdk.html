@@ -670,7 +670,8 @@
 </h3>
     
 
-<p>If you are using the lakeFS client for Java or for any other JVM-based language, be aware that the current package is not stable with respect to minor version upgrades. Transitioning from <code class="language-plaintext highlighter-rouge">io.lakefs:lakefs-client</code> to <code class="language-plaintext highlighter-rouge">io.lakefs:sdk</code> will necessitate rewriting your API calls to fit the new design paradigm.</p>
+<p>If you are using the lakeFS client for Java or for any other JVM-based language, be aware that the current package is not stable with respect to minor version upgrades.
+Transitioning from <code class="language-plaintext highlighter-rouge">io.lakefs:lakefs-client</code> to <code class="language-plaintext highlighter-rouge">io.lakefs:sdk</code> will necessitate rewriting your API calls to fit the new design paradigm.</p>
 <h3 id="problem-with-the-old-style">
   
   
@@ -750,7 +751,8 @@
 </h3>
     
 
-<p>If you are using the lakeFS client for Python, be aware that the current package is not stable with respect to minor version upgrades. Transitioning from <code class="language-plaintext highlighter-rouge">lakefs-client</code> to <code class="language-plaintext highlighter-rouge">lakefs-sdk</code> will necessitate rewriting your API calls.</p>
+<p>If you continue using the Python <code class="language-plaintext highlighter-rouge">lakefs-client</code> package for lakeFS, it’s important to note that the package has reached its end of support with minor version updates.
+You need to switch from <code class="language-plaintext highlighter-rouge">lakefs-client</code> to <code class="language-plaintext highlighter-rouge">lakefs-sdk</code>, which will require rewriting your API calls.</p>
 <h3 id="heres-a-breakdown-of-the-changes-1">
   
   
@@ -771,20 +773,24 @@
   <li><strong><code class="language-plaintext highlighter-rouge">get_object</code></strong> <strong>API call</strong>: The return value of <code class="language-plaintext highlighter-rouge">client.get_object(...)</code> is a <code class="language-plaintext highlighter-rouge">bytearray</code> containing the content of the object.</li>
   <li><code class="language-plaintext highlighter-rouge">**client.{operation}_api**</code><strong>:</strong> The <code class="language-plaintext highlighter-rouge">lakefs-client</code> package’s <code class="language-plaintext highlighter-rouge">LakeFSClient</code> class’s deprecation-marked operations (<code class="language-plaintext highlighter-rouge">client.{operation}</code>) will no longer be available in the <code class="language-plaintext highlighter-rouge">lakefs-sdk</code> package’s <code class="language-plaintext highlighter-rouge">LakeFSClient</code> class. In their place, the <code class="language-plaintext highlighter-rouge">client.{operation}_api</code> should be used.</li>
   <li><strong>Minimum Python Version</strong>: 3.7</li>
-  <li><strong>Fetching results from response objects</strong>: Instead of fetching the required results properties from a dictionary using <code class="language-plaintext highlighter-rouge">response_result.get_property(prop_name)</code>, the response objects will include domain specific entities, thus referring to the properties in the <code class="language-plaintext highlighter-rouge">results</code> of the response - <code class="language-plaintext highlighter-rouge">response_result.prop_name</code>. For example, instead of:</li>
-</ol>
+  <li>
+    <p><strong>Fetching results from response objects</strong>: Instead of fetching the required results properties from a dictionary using <code class="language-plaintext highlighter-rouge">response_result.get_property(prop_name)</code>, the response objects will include domain specific entities, thus referring to the properties in the <code class="language-plaintext highlighter-rouge">results</code> of the response - <code class="language-plaintext highlighter-rouge">response_result.prop_name</code>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
+    <p>For example, instead of:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
 <span class="n">diff</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 'results' is a 'DiffList' object
 </span><span class="n">path</span> <span class="o">=</span> <span class="n">diff</span><span class="p">.</span><span class="n">get_property</span><span class="p">(</span><span class="s">'path'</span><span class="p">)</span> <span class="c1"># 'diff' is a dictionary
-</span></code></pre></div></div>
+</span></code></pre></div>    </div>
 
-<p>You should use:</p>
+    <p>You should use:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="p">.</span><span class="n">branches_api</span><span class="p">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s">'repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
 <span class="n">diff</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 'results' is a 'DiffList' object
 </span><span class="n">path</span> <span class="o">=</span> <span class="n">diff</span><span class="p">.</span><span class="n">path</span> <span class="c1"># 'diff' is a 'Diff' object
-</span></code></pre></div></div>
+</span></code></pre></div>    </div>
+  </li>
+</ol>
 
                 
 

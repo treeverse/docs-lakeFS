@@ -611,9 +611,8 @@
 </div>
 
 <blockquote class="warning">
-  <p>If you are still using the <a href="https://pypi.org/project/lakefs-client/">legacy Python <code class="language-plaintext highlighter-rouge">lakefs-client</code></a>, it’s
-time to upgrade!  This client is <a href="/posts/deprecate-py-legacy.html">deprecated</a> and will be removed
-soon.</p>
+  <p>If your project is currently using the <a href="https://pypi.org/project/lakefs-client/">legacy Python <code class="language-plaintext highlighter-rouge">lakefs-client</code></a>, please be aware that this version has been <a href="/posts/deprecate-py-legacy.html">deprecated</a>.
+As of release v1.44.0, it’s no longer supported for new updates or features.</p>
 </blockquote>
 
 <p class="note"><strong>High Level Python SDK</strong>  <span class="badge mr-1">New</span>
@@ -621,16 +620,15 @@ We’ve just released a new High Level Python SDK library, and we’re super exc
 full story!
 Though our previous SDK client is still supported and maintained, we highly recommend using the new High Level SDK.
 <strong>For previous Python SDKs follow these links:</strong>
-<a href="https://pydocs-sdk.lakefs.io">lakefs-sdk</a>
 <a href="https://pydocs.lakefs.io">legacy-sdk</a> (Deprecated)</p>
 
-<p>There are three primary ways to work with lakeFS from Python:</p>
+<p>Overview of lakeFS integration approaches using Python:</p>
 
 <ul>
-  <li><a href="#using-boto">Use Boto</a> to perform <strong>object operations</strong> through the <strong>lakeFS S3 gateway</strong>.</li>
   <li><a href="#using-the-lakefs-sdk">Use the High Level lakeFS SDK</a> to perform <strong>object operations</strong>, <strong>versioning</strong> and other <strong>lakeFS-specific operations</strong>.</li>
-  <li><a href="#using-lakefs-spec-for-higher-level-file-operations">Using lakefs-spec</a> to
-perform high-level file operations through a file-system-like API.</li>
+  <li><a href="https://pydocs-sdk.lakefs.io">Use the generated lakefs-sdk</a> for direct API access based on the OpenAPI specification of lakeFS.</li>
+  <li><a href="#using-boto">Use Boto</a> to perform <strong>object operations</strong> through the <strong>lakeFS S3 gateway</strong>.</li>
+  <li><a href="#using-lakefs-spec-for-higher-level-file-operations">Using lakefs-spec</a> to perform high-level file operations through a file-system-like API.</li>
 </ul>
 <h2 id="using-the-lakefs-sdk">
   
@@ -682,6 +680,7 @@ In case no authentication parameters exist, it is also possible to explicitly cr
 <p>You can use TLS with a CA that is not trusted on the host by configuring the
 client with a CA cert bundle file.  It should contain concatenated CA
 certificates in PEM format:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="s">"http://localhost:8000"</span><span class="p">,</span>
     <span class="n">username</span><span class="o">=</span><span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
@@ -762,6 +761,7 @@ production setting.</p>
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{id: 'example-repo', creation_date: 1697815536, default_branch: 'main', storage_namespace: 's3://storage-bucket/repos/example-repo'}
 </code></pre></div></div>
 <h4 id="list-repositories">
@@ -788,6 +788,7 @@ production setting.</p>
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Listing repositories:
 {id: 'example-repo', creation_date: 1697815536, default_branch: 'main', storage_namespace: 's3://storage-bucket/repos/example-repo'}
 </code></pre></div></div>
@@ -816,6 +817,7 @@ production setting.</p>
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>experiment1 ref: 7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859
 experiment2 ref: 7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f8859
 </code></pre></div></div>
@@ -842,6 +844,7 @@ experiment2 ref: 7a300b41a8e1ca666c653171a364c08f640549c24d7e82b401bf077c646f885
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>experiment1
 experiment2
 main
@@ -880,6 +883,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'path': 'text/sample_data.txt', 'physical_address': 's3://storage-bucket/repos/example-repo/data/gke0ignnl531fa6k90p0/ckpfk4fnl531fa6k90pg', 'physical_address_expiry': None, 'checksum': '4a09d10820234a95bb548f14e4435bba', 'size_bytes': 15, 'mtime': 1701865289, 'metadata': {}, 'content_type': 'text/plain'}
 </code></pre></div></div>
 
@@ -894,6 +898,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>This is my object data
 </code></pre></div></div>
 
@@ -928,6 +933,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'path': 'csv/sample_data.csv', 'physical_address': 's3://storage-bucket/repos/example-repo/data/gke0ignnl531fa6k90p0/ckpfk4fnl531fa6k90pg', 'physical_address_expiry': None, 'checksum': 'f181262c138901a74d47652d5ea72295', 'size_bytes': 88, 'mtime': 1701865939, 'metadata': {}, 'content_type': 'text/csv'}
 </code></pre></div></div>
 
@@ -944,6 +950,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'path': 'raw/file1.data', 'physical_address': 's3://storage-bucket/repos/example-repo/data/gke0ignnl531fa6k90p0/ckpfltvnl531fa6k90q0', 'physical_address_expiry': None, 'checksum': '0ef432f8eb0305f730b0c57bbd7a6b08', 'size_bytes': 18, 'mtime': 1701866323, 'metadata': {}, 'content_type': 'application/octet-stream'}
 </code></pre></div></div>
 <h3 id="uncommitted-changes">
@@ -988,6 +995,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'id': 'c4666db80d2a984b4eab8ce02b6a60830767eba53995c26350e0ad994e15fedb', 'parents': ['a7a092a5a32a2cd97f22abcc99414f6283d29f6b9dd2725ce89f90188c5901e5'], 'committer': 'admin', 'message': 'Add some data!', 'creation_date': 1701866838, 'meta_range_id': '999bedeab1b740f83d2cf8c52548d55446f9038c69724d399adc4438412cade2', 'metadata': {'using': 'python_sdk'}}
 
 </code></pre></div></div>
@@ -1004,6 +1012,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0
 </code></pre></div></div>
 <h4 id="merging-changes-from-a-branch-into-main">
@@ -1029,6 +1038,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'type': 'added', 'path': 'text/sample_data.txt', 'path_type': 'object', 'size_bytes': 15}
 {'type': 'added', 'path': 'csv/sample_data.csv', 'path_type': 'object', 'size_bytes': 88}
 {'type': 'added', 'path': 'raw/file1.data', 'path_type': 'object', 'size_bytes': 18}
@@ -1054,6 +1064,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0
 </code></pre></div></div>
 <h3 id="read-data-from-main-branch">
@@ -1080,6 +1091,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>['ID', 'Name', 'Email']
 ['1', 'Alice', 'alice@example.com']
 ['2', 'Bob', 'bob@example.com']
@@ -1137,6 +1149,7 @@ filesystem. This is extremely useful when working with data transformation packa
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>imported a total of 25478 objects!
 </code></pre></div></div>
 <h3 id="transactions">
@@ -1174,6 +1187,7 @@ Transactions are currently supported as a context manager only.</p>
   
 </h4>
     
+
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0
 True
 </code></pre></div></div>
@@ -1259,7 +1273,8 @@ see the <a href="https://lakefs-spec.org/latest/reference/lakefs_spec/">API refe
 </h3>
     
 
-<p>A number of Python data science projects support fsspec, with <a href="https://pandas.pydata.org/">pandas</a> being a prominent example. Reading a Parquet file from a lakeFS repository into a Pandas data frame for analysis is very easy, demonstrated on the quickstart repository sample data:</p>
+<p>A number of Python data science projects support fsspec, with <a href="https://pandas.pydata.org/">pandas</a> being a prominent example.
+Reading a Parquet file from a lakeFS repository into a Pandas data frame for analysis is very easy, demonstrated on the quickstart repository sample data:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
 

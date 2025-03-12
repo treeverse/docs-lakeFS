@@ -641,7 +641,7 @@
 </h2>
     
 
-<p>lakeFS supports UI, CLI (<code class="language-plaintext highlighter-rouge">lakectl</code> commandline utility) and several clients for the <a href="/reference/api.html">API</a> to run the Git-like operations. Let us explore how to create dev/test environments using each of these options below.</p>
+<p>lakeFS supports UI, CLI (<code class="language-plaintext highlighter-rouge">lakectl</code> command-line utility) and several clients for the <a href="/reference/api.html">API</a> to run the Git-like operations. Let us explore how to create dev/test environments using each of these options below.</p>
 
 <p>There are two ways that you can try out lakeFS:</p>
 
@@ -666,11 +666,11 @@
 
 <p><img src="/assets/img/iso_env_myrepo.png" alt="sample repository" /></p>
 
-<p>Click on <code class="language-plaintext highlighter-rouge">my-repo</code> and notice that by default, the repo has a <code class="language-plaintext highlighter-rouge">main</code> branch created and <code class="language-plaintext highlighter-rouge">sample_data</code> preloaded to work with.</p>
+<p>Click on <code class="language-plaintext highlighter-rouge">my-repo</code> and notice that by default, the repository has a <code class="language-plaintext highlighter-rouge">main</code> branch created and <code class="language-plaintext highlighter-rouge">sample_data</code> preloaded to work with.</p>
 
 <p><img src="/assets/img/iso_env_sampledata.png" alt="main branch" /></p>
 
-<p>You can create a new branch (say, <code class="language-plaintext highlighter-rouge">test-env</code>) by going to the <em>Branches</em> tab and clicking <em>Create Branch</em>. Once it is successful, you will see two branches under the repo: <code class="language-plaintext highlighter-rouge">main</code> and <code class="language-plaintext highlighter-rouge">test-env</code>.</p>
+<p>You can create a new branch (say, <code class="language-plaintext highlighter-rouge">test-env</code>) by going to the <em>Branches</em> tab and clicking <em>Create Branch</em>. Once it is successful, you will see two branches under the repository: <code class="language-plaintext highlighter-rouge">main</code> and <code class="language-plaintext highlighter-rouge">test-env</code>.</p>
 
 <p><img src="/assets/img/iso_env_testenv_branch.png" alt="test-env branch" /></p>
 
@@ -684,7 +684,7 @@
 </h3>
     
 
-<p>This use case shows how to create dev/test data environments for ETL testing using lakeFS branches. The following tutorial provides a lakeFS environment, a Jupyter notebook, and Python lakefs_client API to demonstrate integration of lakeFS with <a href="/integrations/spark.html">Spark</a>. You can run this tutorial on your local machine.</p>
+<p>This use case shows how to create dev/test data environments for ETL testing using lakeFS branches. The following tutorial provides a lakeFS environment, a Jupyter notebook, and Python SDK API to demonstrate integration of lakeFS with <a href="/integrations/spark.html">Spark</a>. You can run this tutorial on your local machine.</p>
 
 <p>Follow the tutorial video below to get started with the playground and Jupyter notebook, or follow the instructions on this page.</p>
 <iframe width="420" height="315" src="https://www.youtube.com/embed/fprpDZ96JQo"></iframe>
@@ -710,24 +710,24 @@
 <p>Follow along the steps below to create dev/test environment with lakeFS.</p>
 
 <ul>
-  <li>
-    <p>Start by cloning the lakeFS samples Git repository:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/treeverse/lakeFS-samples.git
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>lakeFS-samples
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Run following commands to download and run Docker container which includes Python, Spark, Jupyter Notebook, JDK, Hadoop binaries, lakeFS Python client and Airflow (Docker image size is around 4.5GB):</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git submodule init
-git submodule update
-docker compose up
-</code></pre></div>    </div>
-  </li>
+  <li>Start by cloning the lakeFS samples Git repository:</li>
 </ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/treeverse/lakeFS-samples.git
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>lakeFS-samples
+</code></pre></div></div>
+
+<ul>
+  <li>Run following commands to download and run Docker container which includes Python, Spark, Jupyter Notebook, JDK, Hadoop binaries, lakeFS Python SDK and Airflow (Docker image size is around 4.5GB):</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git submodule init <span class="o">&amp;&amp;</span> git submodule update
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker compose up
+</code></pre></div></div>
 
 <p>Open the <a href="http://localhost:8888">local Jupyter Notebook</a> and go to the <code class="language-plaintext highlighter-rouge">spark-demo.ipynb</code> notebook.</p>
 <h4 id="configuring-lakefs-python-client">
@@ -739,34 +739,33 @@ docker compose up
 </h4>
     
 
-<p>Setup lakeFS access credentials for the lakeFS instance running. The defaults for these that the samples repo Docker Compose uses are shown here:</p>
+<p>Setup lakeFS access credentials for the lakeFS instance running. The defaults for these that the samples repository Docker Compose uses are shown here:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefsAccessKey <span class="o">=</span> <span class="s1">'AKIAIOSFODNN7EXAMPLE'</span>
-lakefsSecretKey <span class="o">=</span> <span class="s1">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span>
-lakefsEndPoint <span class="o">=</span> <span class="s1">'http://lakefs:8000'</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakefs_access_key = 'AKIAIOSFODNN7EXAMPLE'
+lakefs_secret_key = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+lakefs_endpoint = 'http://lakefs:8000'
 </code></pre></div></div>
 
 <p>Next, setup the storage namespace to a location in the bucket you have configured. The storage namespace is a location in the underlying storage where data for this repository will be stored.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>storageNamespace <span class="o">=</span> <span class="s1">'s3://example/'</span> 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>storageNamespace = 's3://example/' 
 </code></pre></div></div>
 
-<p>You can use lakeFS through the UI, API or <code class="language-plaintext highlighter-rouge">lakectl</code> commandline. For this use-case, we use python <code class="language-plaintext highlighter-rouge">lakefs_client</code> to run lakeFS core operations.</p>
+<p>You can use lakeFS through the UI, API or <code class="language-plaintext highlighter-rouge">lakectl</code> command-line. For this use-case, we use python <code class="language-plaintext highlighter-rouge">lakefs</code> to run lakeFS core operations.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import lakefs_client
-from lakefs_client import models
-from lakefs_client.client import LakeFSClient
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
+<span class="kn">from</span> <span class="nn">lakefs</span> <span class="kn">import</span> <span class="n">Client</span>
 
-<span class="c"># lakeFS credentials and endpoint</span>
-configuration <span class="o">=</span> lakefs_client.Configuration<span class="o">()</span>
-configuration.username <span class="o">=</span> lakefsAccessKey
-configuration.password <span class="o">=</span> lakefsSecretKey
-configuration.host <span class="o">=</span> lakefsEndPoint
-
-client <span class="o">=</span> LakeFSClient<span class="o">(</span>configuration<span class="o">)</span>
+<span class="c1"># lakeFS credentials and endpoint
+</span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="n">lakefs_endpoint</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="n">lakefs_access_key</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="n">lakefs_secret_key</span>
+<span class="p">)</span>
 </code></pre></div></div>
 
 <p>lakeFS can be configured to work with Spark in two ways:</p>
+
 <ul>
   <li>Access lakeFS using the <a href="/integrations/spark.html#use-the-s3-compatible-api">S3-compatible API</a></li>
   <li>Access lakeFS using the <a href="/integrations/spark.html#lakefs-hadoop-filesystem">lakeFS-specific Hadoop FileSystem</a></li>
@@ -782,27 +781,22 @@ client <span class="o">=</span> LakeFSClient<span class="o">(</span>configuratio
 
 <p>To upload an object to the <code class="language-plaintext highlighter-rouge">my-repo</code>, use the following command.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import os
-contentToUpload <span class="o">=</span> open<span class="o">(</span><span class="s1">'/data/lakefs_test.csv'</span>, <span class="s1">'rb'</span><span class="o">)</span>
-client.objects.upload_object<span class="o">(</span>
-    <span class="nv">repository</span><span class="o">=</span><span class="s2">"my-repo"</span>,
-    <span class="nv">branch</span><span class="o">=</span><span class="s2">"main"</span>,
-    <span class="nv">path</span><span class="o">=</span>fileName, <span class="nv">content</span><span class="o">=</span>contentToUpload<span class="o">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">lakefs</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'/data/lakefs_test.csv'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">"my-repo"</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">).</span><span class="n">branch</span><span class="p">(</span><span class="s">"main"</span><span class="p">).</span><span class="nb">object</span><span class="p">(</span><span class="n">filenName</span><span class="p">).</span><span class="n">upload</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">())</span>
 </code></pre></div></div>
 
 <p>Once uploaded, commit the changes to the <code class="language-plaintext highlighter-rouge">main</code> branch and attach some metadata to the commit as well.</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>client.commits.commit<span class="o">(</span>
-    <span class="nv">repository</span><span class="o">=</span><span class="s2">"my-repo"</span>,
-    <span class="nv">branch</span><span class="o">=</span><span class="s2">"main"</span>,
-    <span class="nv">commit_creation</span><span class="o">=</span>models.CommitCreation<span class="o">(</span>
-        <span class="nv">message</span><span class="o">=</span><span class="s1">'Added my first object!'</span>,
-        <span class="nv">metadata</span><span class="o">={</span><span class="s1">'using'</span>: <span class="s1">'python_api'</span><span class="o">}))</span>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">"my-repo"</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">).</span><span class="n">branch</span><span class="p">(</span><span class="s">"main"</span><span class="p">).</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">"Added my first object!"</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s">'using'</span><span class="p">:</span> <span class="s">'python'</span><span class="p">})</span>
 </code></pre></div></div>
 
 <p>In this example, we use lakeFS S3A gateway to read data from the storage bucket.</p>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dataPath <span class="o">=</span> f<span class="s2">"s3a://my-repo/main/lakefs_test.csv"</span>
-<span class="nb">df</span> <span class="o">=</span> spark.read.csv<span class="o">(</span>dataPath<span class="o">)</span>
-df.show<span class="o">()</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dataPath</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"s3a://my-repo/main/lakefs_test.csv"</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="n">csv</span><span class="p">(</span><span class="n">dataPath</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
 <h4 id="create-a-test-branch">
   
@@ -813,19 +807,15 @@ df.show<span class="o">()</span>
 </h4>
     
 
-<p>Let us start by creating a new branch <code class="language-plaintext highlighter-rouge">test-env</code> on the example repo <code class="language-plaintext highlighter-rouge">my-repo</code>.</p>
+<p>Let us start by creating a new branch <code class="language-plaintext highlighter-rouge">test-env</code> on the example repository <code class="language-plaintext highlighter-rouge">my-repo</code>.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>client.branches.create_branch<span class="o">(</span>
-    <span class="nv">repository</span><span class="o">=</span><span class="s2">"my-repo"</span>,
-    <span class="nv">branch_creation</span><span class="o">=</span>models.BranchCreation<span class="o">(</span>
-        <span class="nv">name</span><span class="o">=</span><span class="s2">"test-env"</span>,
-        <span class="nb">source</span><span class="o">=</span><span class="s2">"main"</span><span class="o">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">"my-repo"</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">).</span><span class="n">branch</span><span class="p">(</span><span class="s">"test-env"</span><span class="p">).</span><span class="n">create</span><span class="p">(</span><span class="n">source_reference</span><span class="o">=</span><span class="s">"main"</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Now we can use Spark to write the csv file from <code class="language-plaintext highlighter-rouge">main</code> branch as a Parquet file to the <code class="language-plaintext highlighter-rouge">test-env</code> of our lakeFS repo. Suppose we accidentally write the dataframe back to “test-env” branch again, this time in append mode.</p>
+<p>Now we can use Spark to write the csv file from <code class="language-plaintext highlighter-rouge">main</code> branch as a Parquet file to the <code class="language-plaintext highlighter-rouge">test-env</code> of our lakeFS repository. Suppose we accidentally write the dataframe back to “test-env” branch again, this time in append mode.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>df.write.mode<span class="o">(</span><span class="s1">'overwrite'</span><span class="o">)</span>.parquet<span class="o">(</span><span class="s1">'s3a://my-repo/test-env/'</span><span class="o">)</span>
-df.write.mode<span class="o">(</span><span class="s1">'append'</span><span class="o">)</span>.parquet<span class="o">(</span><span class="s1">'s3a://my-repo/test-env/'</span><span class="o">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">write</span><span class="p">.</span><span class="n">mode</span><span class="p">(</span><span class="s">'overwrite'</span><span class="p">).</span><span class="n">parquet</span><span class="p">(</span><span class="s">'s3a://my-repo/test-env/'</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">write</span><span class="p">.</span><span class="n">mode</span><span class="p">(</span><span class="s">'append'</span><span class="p">).</span><span class="n">parquet</span><span class="p">(</span><span class="s">'s3a://my-repo/test-env/'</span><span class="p">)</span>
 </code></pre></div></div>
 <p>What happens if we re-read in the data on both branches and perform a count on the resulting DataFrames?
 There will be twice as many rows in <code class="language-plaintext highlighter-rouge">test-env</code> branch. That is, we accidentally duplicated our data! Oh no!</p>

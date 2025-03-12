@@ -631,27 +631,23 @@ you should use the <a href="/integrations/python.html">Python OpenAPI client</a>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">kfp</span> <span class="kn">import</span> <span class="n">components</span>
 
 <span class="k">def</span> <span class="nf">create_branch</span><span class="p">(</span><span class="n">repo_name</span><span class="p">,</span> <span class="n">branch_name</span><span class="p">,</span> <span class="n">source_branch</span><span class="p">):</span>
-   <span class="kn">import</span> <span class="nn">lakefs_client</span>
-   <span class="kn">from</span> <span class="nn">lakefs_client</span> <span class="kn">import</span> <span class="n">models</span>
-   <span class="kn">from</span> <span class="nn">lakefs_client.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
-
-   <span class="c1"># lakeFS credentials and endpoint
-</span>   <span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="p">.</span><span class="n">Configuration</span><span class="p">()</span>
-   <span class="n">configuration</span><span class="p">.</span><span class="n">username</span> <span class="o">=</span> <span class="s">'AKIAIOSFODNN7EXAMPLE'</span>
-   <span class="n">configuration</span><span class="p">.</span><span class="n">password</span> <span class="o">=</span> <span class="s">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span>
-   <span class="n">configuration</span><span class="p">.</span><span class="n">host</span> <span class="o">=</span> <span class="s">'https://lakefs.example.com'</span>
-   <span class="n">client</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
-
-   <span class="n">client</span><span class="p">.</span><span class="n">branches</span><span class="p">.</span><span class="n">create_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">repo_name</span><span class="p">,</span> <span class="n">branch_creation</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">branch_name</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source_branch</span><span class="p">))</span>
+   <span class="kn">import</span> <span class="nn">lakefs</span>
+   <span class="kn">from</span> <span class="nn">lakefs.client</span> <span class="kn">import</span> <span class="n">Client</span>
+   <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
+      <span class="n">host</span><span class="o">=</span><span class="s">"https://lakefs.example.com"</span><span class="p">,</span>
+      <span class="n">username</span><span class="o">=</span><span class="s">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
+      <span class="n">password</span><span class="o">=</span><span class="s">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
+   <span class="p">)</span>
+   <span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="n">repo_name</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">).</span><span class="n">branch</span><span class="p">(</span><span class="n">branch_name</span><span class="p">).</span><span class="n">create</span><span class="p">(</span><span class="n">source_reference</span><span class="o">=</span><span class="n">source_branch</span><span class="p">)</span>
 
 <span class="c1"># Convert the function to a lakeFS pipeline step.
 </span><span class="n">create_branch_op</span> <span class="o">=</span> <span class="n">components</span><span class="p">.</span><span class="n">func_to_container_op</span><span class="p">(</span>
    <span class="n">func</span><span class="o">=</span><span class="n">create_branch</span><span class="p">,</span>
-   <span class="n">packages_to_install</span><span class="o">=</span><span class="p">[</span><span class="s">'lakefs_client==&lt;lakeFS version&gt;'</span><span class="p">])</span> <span class="c1"># Type in the lakeFS version you are using
-</span></code></pre></div></div>
+   <span class="n">packages_to_install</span><span class="o">=</span><span class="p">[</span><span class="s">'lakefs'</span><span class="p">])</span>
+</code></pre></div></div>
 
 <p>You can invoke any lakeFS operation supported by lakeFS OpenAPI. For example, you could implement a commit and merge function-based ContainerOps.
-Check out the full API <a href="https://docs.lakefs.io/reference/api.html">reference</a>.</p>
+Check out the <a href="/integrations/python.html">Python documentation</a> and the full <a href="/reference/api.html">API reference</a>.</p>
 <h3 id="non-function-based-containerops">
   
   
