@@ -1351,6 +1351,44 @@ requests to either S3 or lakeFS according to the provided bucket name.</p>
 </code></pre></div></div>
 
 <p>The client is now configured to operate on your lakeFS installation.</p>
+<h4 id="configuring-boto3-s3-client-with-checksum-settings">
+  
+  
+    <a href="#configuring-boto3-s3-client-with-checksum-settings" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuring Boto3 S3 Client with Checksum Settings
+  
+  
+</h4>
+    
+
+<p>In newer versions of Boto3, when connecting to <strong>lakeFS</strong> using <strong>HTTPS</strong>,
+you might encounter an <strong>AccessDenied</strong> error on upload,
+while the lakeFS logs display an error <code class="language-plaintext highlighter-rouge">encoding/hex: invalid byte: U+0053 'S'</code>.</p>
+
+<p>To avoid this issue, explicitly configure the Boto3 client with the following checksum settings:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">request_checksum_calculation: 'when_required'</code></li>
+  <li><code class="language-plaintext highlighter-rouge">response_checksum_validation: 'when_required'</code></li>
+</ul>
+
+<p>Example of how to configure it:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">from</span> <span class="nn">botocore.config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="c1"># Configure checksum settings
+</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">request_checksum_calculation</span><span class="o">=</span><span class="s">'when_required'</span><span class="p">,</span>
+    <span class="n">response_checksum_validation</span><span class="o">=</span><span class="s">'when_required'</span>
+<span class="p">)</span>
+
+<span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">client</span><span class="p">(</span>
+    <span class="s">'s3'</span><span class="p">,</span>
+    <span class="n">endpoint_url</span><span class="o">=</span><span class="s">'https://lakefs.example.com'</span><span class="p">,</span>
+    <span class="n">aws_access_key_id</span><span class="o">=</span><span class="s">'AKIAIOSFODNN7EXAMPLE'</span><span class="p">,</span>
+    <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
 <h3 id="usage-examples-1">
   
   
