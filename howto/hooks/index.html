@@ -669,63 +669,63 @@ Running a post-merge hook to trigger an Airflow DAG or to send a Webhook to an A
   </thead>
   <tbody>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">name               </code></td>
+      <td><code class="language-plaintext highlighter-rouge">name</code></td>
       <td>Identifes the Action file</td>
       <td>String</td>
       <td>no</td>
       <td>Action filename</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">on                 </code></td>
+      <td><code class="language-plaintext highlighter-rouge">on</code></td>
       <td>List of events that will trigger the hooks</td>
       <td>List</td>
       <td>yes</td>
       <td> </td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">on&lt;event&gt;.branches </code></td>
+      <td><code class="language-plaintext highlighter-rouge">on&lt;event&gt;.branches</code></td>
       <td>Glob pattern list of branches that triggers the hooks</td>
       <td>List</td>
       <td>no</td>
       <td><strong>Not applicable to Tag events.</strong> If empty, Action runs on all branches</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">hooks              </code></td>
+      <td><code class="language-plaintext highlighter-rouge">hooks</code></td>
       <td>List of hooks to be executed</td>
       <td>List</td>
       <td>yes</td>
       <td> </td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">hook.id            </code></td>
+      <td><code class="language-plaintext highlighter-rouge">hook.id</code></td>
       <td>ID of the hook, must be unique within the action.</td>
       <td>String</td>
       <td>yes</td>
       <td> </td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">hook.type          </code></td>
+      <td><code class="language-plaintext highlighter-rouge">hook.type</code></td>
       <td>Type of the hook (<a href="#supported-events">types</a>)</td>
       <td>String</td>
       <td>yes</td>
       <td> </td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">hook.description   </code></td>
+      <td><code class="language-plaintext highlighter-rouge">hook.description</code></td>
       <td>Description for the hook</td>
       <td>String</td>
       <td>no</td>
       <td> </td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">hook.if            </code></td>
+      <td><code class="language-plaintext highlighter-rouge">hook.if</code></td>
       <td>Expression that will be evaluated before execute the hook</td>
       <td>String</td>
       <td>no</td>
       <td>No value is the same as evaluate <code class="language-plaintext highlighter-rouge">success()</code></td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">hook.properties    </code></td>
+      <td><code class="language-plaintext highlighter-rouge">hook.properties</code></td>
       <td>Hook’s specific configuration, see <a href="/howto/hooks/lua.html#action-file-lua-hook-properties">Lua</a>, <a href="/howto/hooks/webhooks.html#action-file-webhook-properties">WebHook</a>, and <a href="/howto/hooks/airflow.html#action-file-airflow-hook-properties">Airflow</a> for details</td>
       <td>Dictionary</td>
       <td>true</td>
@@ -795,6 +795,7 @@ in the repository branch where the action occurred.
 A failure to parse an Action file will result with a failing Run.</p>
 
 <p>For example, lakeFS will search and execute all the matching Action files with the prefix <code class="language-plaintext highlighter-rouge">lakefs://example-repo/feature-1/_lakefs_actions/</code> on:</p>
+
 <ol>
   <li>Commit to <code class="language-plaintext highlighter-rouge">feature-1</code> branch on <code class="language-plaintext highlighter-rouge">example-repo</code> repository.</li>
   <li>Merge to <code class="language-plaintext highlighter-rouge">main</code> branch from <code class="language-plaintext highlighter-rouge">feature-1</code> branch on <code class="language-plaintext highlighter-rouge">repo1</code> repository.</li>
@@ -816,6 +817,10 @@ A failure to parse an Action file will result with a failing Run.</p>
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">prepare-commit</code></td>
+      <td>(EXPERIMENTAL) Runs before the commit occurs; branch modification will be included in the commit</td>
+    </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">pre-commit</code></td>
       <td>Runs when the commit occurs, before the commit is finalized</td>
@@ -875,6 +880,8 @@ A failure to parse an Action file will result with a failing Run.</p>
   </tbody>
 </table></div>
 
+<p class="note"><strong>Note:</strong> The <code class="language-plaintext highlighter-rouge">prepare-commit</code> hook is experimental. During its execution (between <code class="language-plaintext highlighter-rouge">prepare-commit</code> and <code class="language-plaintext highlighter-rouge">pre-commit</code>), other changes may be applied to the branch as there is no branch-level locking mechanism at this point. If you need to verify or validate the content that will be committed, use the <code class="language-plaintext highlighter-rouge">pre-commit</code> hook instead, as it provides a consistent view of the changes that will be included in the commit.</p>
+
 <p>lakeFS Actions are handled per repository and cannot be shared between repositories.
 A failure of any Hook under any Action of a <code class="language-plaintext highlighter-rouge">pre-*</code> event will result in aborting the lakeFS operation that is taking place.
 Hook failures under any Action of a <code class="language-plaintext highlighter-rouge">post-*</code> event will not revert the operation.</p>
@@ -908,6 +915,7 @@ The endpoint also allows to download the execution log of any executed Hook unde
     
 
 <p>The metadata section of lakeFS repository with each Run contains two types of files:</p>
+
 <ol>
   <li><code class="language-plaintext highlighter-rouge">_lakefs/actions/log/&lt;runID&gt;/&lt;hookRunID&gt;.log</code> - Execution log of the specific Hook run.</li>
   <li><code class="language-plaintext highlighter-rouge">_lakefs/actions/log/&lt;runID&gt;/run.manifest</code> - Manifest with all Hooks execution for the run with their results and additional metadata.</li>
