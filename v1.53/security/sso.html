@@ -1,0 +1,1243 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/v1.53/assets/css/just-the-docs-default.css">
+  
+  <style type="text/css">
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.external):nth-child(10) > .nav-list > .nav-list-item:nth-child(8) > .nav-list-link { display: block; font-weight: 600; text-decoration: none; background-image: linear-gradient(-90deg, #ebedf5 0%, rgba(235, 237, 245, 0.8) 80%, rgba(235, 237, 245, 0) 100%); }
+
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(10) > .nav-list-expander svg, .site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(10) > .nav-list > .nav-list-item:not(.passive):nth-child(8) > .nav-list-expander svg { transform: rotate(-90deg); }
+.site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(10) > .nav-list, .site-nav > .nav-list:nth-child(1):not(.nav-category-list) > .nav-list-item:not(.passive):nth-child(10) > .nav-list > .nav-list-item:not(.passive):nth-child(8) > .nav-list { display: block; }
+
+.site-nav > .nav-category-list > .nav-list-item:not(.passive) > .nav-list-expander svg { transform: rotate(-90deg); }
+.site-nav > .nav-category-list > .nav-list-item:not(.passive) > .nav-list { display: block; }
+
+</style>
+
+
+  
+
+  
+    <script src="/v1.53/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/v1.53/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+  <link rel="icon" href="/v1.53/favicon.ico" type="image/x-icon">
+
+
+
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Single Sign On (SSO) | lakeFS Documentation</title>
+<meta name="generator" content="Jekyll v3.9.3" />
+<meta property="og:title" content="Single Sign On (SSO)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to configure Single Sign On (SSO) for lakeFS Cloud and lakeFS Enterprise." />
+<meta property="og:description" content="How to configure Single Sign On (SSO) for lakeFS Cloud and lakeFS Enterprise." />
+<meta property="og:site_name" content="lakeFS Documentation" />
+<meta property="og:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:image" content="https://docs.lakefs.io/assets/img/docs_logo.png" />
+<meta property="twitter:title" content="Single Sign On (SSO)" />
+<meta name="twitter:site" content="@lakeFS" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"How to configure Single Sign On (SSO) for lakeFS Cloud and lakeFS Enterprise.","headline":"Single Sign On (SSO)","image":"https://docs.lakefs.io/assets/img/docs_logo.png","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/v1.53/assets/logo.svg"}},"url":"/v1.53/security/sso.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <!-- Google Tag Manager Head -->
+<!-- type="text/plain" is intentional for cookie consent support -->
+<script type="text/plain" data-category="analytics">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KTZBZW9');</script>
+<!-- End Google Tag Manager Head -->
+
+<meta name="robots" content="noindex">
+
+<meta property="og:image" content="/v1.53/assets/img/lakefs-logo-with-text.png">
+<link rel="preload" href="/assets/fonts/Rene Bieder - Galano Grotesque.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="/assets/fonts/Rene Bieder - Galano Grotesque Medium.otf" as="font" type="font/otf" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/fontawesome.min.css" integrity="sha512-giQeaPns4lQTBMRpOOHsYnGw1tGVzbAIHUyHRgn7+6FmiEgGGjaG0T2LZJmAPMzRCl+Cug0ItQ2xDZpTmEc+CQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v3.0.0/dist/cookieconsent.css">
+<link rel="stylesheet" href="/v1.53/assets/css/cookieconsent.css" />
+<script type="module" src="/v1.53/assets/js/cookieconsent-init.js"></script>
+<script src="/v1.53/assets/js/copy-code.js"></script>
+<script>
+    $(function () {
+        $(".tabs").tabs();
+    });
+</script>
+<script src="/v1.53/assets/js/feedback.js"></script>
+
+
+</head>
+
+<script src="https://unpkg.com/mermaid@9.3.0/dist/mermaid.min.js"></script>
+<script>
+    $(document).ready(function () {
+        mermaid.initialize({
+            startOnLoad:true,
+            theme: "default",
+        });
+        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+    });
+</script>
+<body>
+<img src="/assets/img/cookies.png" style="display: none;">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTZBZW9"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="svg-link" viewBox="0 0 24 24">
+        <title>Link</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-link">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+    </symbol>
+    <symbol id="svg-search" viewBox="0 0 24 24">
+        <title>Search</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-search">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </symbol>
+    <symbol id="svg-menu" viewBox="0 0 24 24">
+        <title>Menu</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="16px" viewBox="0 0 20 16" version="1.1"
+             class="feather feather-menu">
+            <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="header-/-mobile" transform="translate(-30.000000, -32.000000)" fill="#279890">
+                    <g id="Group" transform="translate(30.000000, 32.000000)">
+                        <path
+                                d="M20,14 L20,16 L0,16 L0,14 L20,14 Z M20,7 L20,9 L0,9 L0,7 L20,7 Z M20,0 L20,2 L0,2 L0,0 L20,0 Z"
+                                id="mobile-menu" />
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </symbol>
+    <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+        <title>Expand</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-chevron-right">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </symbol>
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+        <title>Document</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="feather feather-file">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+        </svg>
+    </symbol>
+</svg>
+<div class="body-wrapper">
+    <div class="side-bar">
+        <div class="site-header">
+            <a href="https://lakefs.io" class="site-title lh-tight">
+  <div class="site-logo" role="img" aria-label="lakeFS Documentation"></div>
+
+</a>
+            <a href="#" id="menu-button" class="site-button">
+                <svg viewBox="0 0 24 24" class="icon">
+                    <use xlink:href="#svg-menu"></use>
+                </svg>
+            </a>
+        </div>
+        <nav role="navigation" aria-label="Main" id="site-nav" class="site-nav">
+            
+            <div class="search">
+                <div class="search-input-wrap">
+                    <input type="text" id="search-input" class="search-input" tabindex="0"
+                           placeholder="Search lakeFS Documentation" aria-label="Search lakeFS Documentation"
+                           autocomplete="off">
+                    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon">
+                            <use xlink:href="#svg-search"></use>
+                        </svg></label>
+                </div>
+                <div id="search-results" class="search-results"></div>
+            </div>
+            
+
+            <div class="nav-category nav-version">
+                <label for="selectversion">Version:</label>
+                <select id="selectversion" name="version" onchange="javascript:location.href = '/' + encodeURI(this.value);">
+                    <option value="" selected>Latest</option>
+                </select>
+            </div>
+            <script async>
+                window.addEventListener("load",  async () => {
+                    const pathFirstLevel = location.pathname.split('/')[1];
+                    const selectedVersion = pathFirstLevel.startsWith('v') && pathFirstLevel || '';
+                    const selectVersionElmFirst = document.getElementById('selectversion').firstElementChild;
+                    const response = await fetch('/versions.json');
+                    if (!response.ok) {
+                        return
+                    }
+                    const versions = await response.json();
+                    for (let [key, value] of Object.entries(versions)) {
+                        const el = document.createElement("option");
+                        el.value = key;
+                        el.textContent = value;
+                        if (key === selectedVersion) {
+                            el.selected = true;
+                        }
+                        selectVersionElmFirst.after(el);
+                    }
+                });
+            </script>
+
+            <ul class="nav-list"><li
+            class="nav-list-item"><a href="/v1.53/"
+           class="nav-list-link">Welcome to lakeFS</a></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/quickstart/"
+           class="nav-list-link">⭐ Quickstart</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.53/quickstart/launch.html"
+                   class="nav-list-link">1️⃣ Run lakeFS</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/query.html"
+                   class="nav-list-link">2️⃣ Query the data</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/branch.html"
+                   class="nav-list-link">3️⃣ Create a branch</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/commit-and-merge.html"
+                   class="nav-list-link">4️⃣ Commit and Merge</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/rollback.html"
+                   class="nav-list-link">5️⃣ Roll back Changes</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/actions-and-hooks.html"
+                   class="nav-list-link">6️⃣ Using Actions and Hooks in lakeFS</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/work-with-data-locally.html"
+                   class="nav-list-link">7️⃣ Work with lakeFS data locally</a></li><li class="nav-list-item "><a href="/v1.53/quickstart/learning-more-lakefs.html"
+                   class="nav-list-link">Learn more about lakeFS</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/howto/"
+           class="nav-list-link">How-To</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/howto/deploy/"
+                   class="nav-list-link">Install lakeFS</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/howto/deploy/aws.html"
+                           class="nav-list-link">AWS</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/deploy/azure.html"
+                           class="nav-list-link">Azure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/deploy/gcp.html"
+                           class="nav-list-link">GCP</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/deploy/onprem.html"
+                           class="nav-list-link">On-Premises</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/deploy/upgrade.html"
+                           class="nav-list-link">Upgrade lakeFS</a>
+                    </li></ul></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/howto/hooks/"
+                   class="nav-list-link">Actions and Hooks</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/howto/hooks/airflow.html"
+                           class="nav-list-link">Airflow Hooks</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/hooks/lua.html"
+                           class="nav-list-link">Lua Hooks</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/hooks/webhooks.html"
+                           class="nav-list-link">Webhooks</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.53/howto/backup-and-restore.html"
+                   class="nav-list-link">Backup and Restore Repository</a></li><li class="nav-list-item "><a href="/v1.53/howto/protect-branches.html"
+                   class="nav-list-link">Branch Protection</a></li><li class="nav-list-item "><a href="/v1.53/howto/copying.html"
+                   class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/v1.53/howto/catalog_exports.html"
+                   class="nav-list-link">Data Catalogs Exports</a></li><li class="nav-list-item "><a href="/v1.53/howto/export.html"
+                   class="nav-list-link">Export Data</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/howto/garbage-collection/"
+                   class="nav-list-link">Garbage Collection</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/howto/garbage-collection/gc.html"
+                           class="nav-list-link">Garbage Collection</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/garbage-collection/managed-gc.html"
+                           class="nav-list-link">Managed Garbage Collection</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/howto/garbage-collection/standalone-gc.html"
+                           class="nav-list-link">Standalone Garbage Collection</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.53/howto/import.html"
+                   class="nav-list-link">Import Data</a></li><li class="nav-list-item "><a href="/v1.53/howto/migrate-away.html"
+                   class="nav-list-link">Migrating away from lakeFS</a></li><li class="nav-list-item "><a href="/v1.53/howto/mirroring.html"
+                   class="nav-list-link">Mirroring</a></li><li class="nav-list-item "><a href="/v1.53/howto/multiple-storage-backends.html"
+                   class="nav-list-link">Multiple Storage Backend</a></li><li class="nav-list-item "><a href="/v1.53/howto/private-link.html"
+                   class="nav-list-link">Private Link</a></li><li class="nav-list-item "><a href="/v1.53/howto/pull-requests.html"
+                   class="nav-list-link">Pull Requests</a></li><li class="nav-list-item "><a href="/v1.53/howto/virtual-host-addressing.html"
+                   class="nav-list-link">S3 Virtual-host addressing (advanced)</a></li><li class="nav-list-item "><a href="/v1.53/howto/sizing-guide.html"
+                   class="nav-list-link">Sizing Guide</a></li><li class="nav-list-item "><a href="/v1.53/howto/scim.html"
+                   class="nav-list-link">System for Cross-domain Identity Management (SCIM)</a></li><li class="nav-list-item "><a href="/v1.53/howto/local-checkouts.html"
+                   class="nav-list-link">Work with lakeFS data locally</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/integrations/"
+           class="nav-list-link">Integrations</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.53/integrations/aws_cli.html"
+                   class="nav-list-link">AWS CLI</a></li><li class="nav-list-item "><a href="/v1.53/integrations/airbyte.html"
+                   class="nav-list-link">Airbyte</a></li><li class="nav-list-item "><a href="/v1.53/integrations/athena.html"
+                   class="nav-list-link">Amazon Athena</a></li><li class="nav-list-item "><a href="/v1.53/integrations/sagemaker.html"
+                   class="nav-list-link">Amazon SageMaker</a></li><li class="nav-list-item "><a href="/v1.53/integrations/airflow.html"
+                   class="nav-list-link">Apache Airflow</a></li><li class="nav-list-item "><a href="/v1.53/integrations/hive.html"
+                   class="nav-list-link">Apache Hive</a></li><li class="nav-list-item "><a href="/v1.53/integrations/iceberg.html"
+                   class="nav-list-link">Apache Iceberg</a></li><li class="nav-list-item "><a href="/v1.53/integrations/kafka.html"
+                   class="nav-list-link">Apache Kafka</a></li><li class="nav-list-item "><a href="/v1.53/integrations/spark.html"
+                   class="nav-list-link">Apache Spark</a></li><li class="nav-list-item "><a href="/v1.53/integrations/cloudera.html"
+                   class="nav-list-link">Cloudera</a></li><li class="nav-list-item "><a href="/v1.53/integrations/databricks.html"
+                   class="nav-list-link">Databricks</a></li><li class="nav-list-item "><a href="/v1.53/integrations/delta.html"
+                   class="nav-list-link">Delta Lake</a></li><li class="nav-list-item "><a href="/v1.53/integrations/dremio.html"
+                   class="nav-list-link">Dremio</a></li><li class="nav-list-item "><a href="/v1.53/integrations/duckdb.html"
+                   class="nav-list-link">DuckDB</a></li><li class="nav-list-item "><a href="/v1.53/integrations/git.html"
+                   class="nav-list-link">Git</a></li><li class="nav-list-item "><a href="/v1.53/integrations/glue_hive_metastore.html"
+                   class="nav-list-link">Glue / Hive metastore</a></li><li class="nav-list-item "><a href="/v1.53/integrations/glue_metastore.html"
+                   class="nav-list-link">Glue Data Catalog</a></li><li class="nav-list-item "><a href="/v1.53/integrations/huggingface_datasets.html"
+                   class="nav-list-link">HuggingFace Datasets</a></li><li class="nav-list-item "><a href="/v1.53/integrations/kubeflow.html"
+                   class="nav-list-link">Kubeflow</a></li><li class="nav-list-item "><a href="/v1.53/integrations/mlflow.html"
+                   class="nav-list-link">MLflow</a></li><li class="nav-list-item "><a href="/v1.53/integrations/presto_trino.html"
+                   class="nav-list-link">Presto / Trino</a></li><li class="nav-list-item "><a href="/v1.53/integrations/python.html"
+                   class="nav-list-link">Python</a></li><li class="nav-list-item "><a href="/v1.53/integrations/r.html"
+                   class="nav-list-link">R</a></li><li class="nav-list-item "><a href="/v1.53/integrations/red_hat_openshift_ai.html"
+                   class="nav-list-link">Red Hat OpenShift AI</a></li><li class="nav-list-item "><a href="/v1.53/integrations/unity-catalog.html"
+                   class="nav-list-link">Unity Catalog</a></li><li class="nav-list-item "><a href="/v1.53/integrations/vertex_ai.html"
+                   class="nav-list-link">Vertex AI</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/understand/"
+           class="nav-list-link">Understanding lakeFS</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.53/understand/architecture.html"
+                   class="nav-list-link">Architecture</a></li><li class="nav-list-item "><a href="/v1.53/understand/model.html"
+                   class="nav-list-link">Concepts and  Model</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/understand/data_lifecycle_management/"
+                   class="nav-list-link">Data Lifecycle Management</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/understand/data_lifecycle_management/ci.html"
+                           class="nav-list-link">During Deployment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/data_lifecycle_management/production.html"
+                           class="nav-list-link">In Production</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/data_lifecycle_management/data-devenv.html"
+                           class="nav-list-link">In Test</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.53/understand/data-structure.html"
+                   class="nav-list-link">Data Structure</a></li><li class="nav-list-item "><a href="/v1.53/understand/faq.html"
+                   class="nav-list-link">FAQ</a></li><li class="nav-list-item "><a href="/v1.53/understand/glossary.html"
+                   class="nav-list-link">Glossary</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/understand/how/"
+                   class="nav-list-link">How lakeFS Works</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/understand/how/kv.html"
+                           class="nav-list-link">Internal database structure</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/how/merge.html"
+                           class="nav-list-link">Merge</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/how/versioning-internals.html"
+                           class="nav-list-link">Versioning Internals</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.53/understand/performance-best-practices.html"
+                   class="nav-list-link">Performance Best Practices</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/understand/use_cases/"
+                   class="nav-list-link">Use Cases</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/understand/use_cases/cicd_for_data.html"
+                           class="nav-list-link">CI/CD for Data Lakes</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/use_cases/etl_testing.html"
+                           class="nav-list-link">ETL Testing Environment</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/use_cases/reproducibility.html"
+                           class="nav-list-link">Reproducibility</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/understand/use_cases/rollback.html"
+                           class="nav-list-link">Rollback</a>
+                    </li></ul></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/reference/"
+           class="nav-list-link">Reference</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.53/reference/auditing.html"
+                   class="nav-list-link">Auditing</a></li><li class="nav-list-item "><a href="/v1.53/reference/monitor.html"
+                   class="nav-list-link">Monitoring using Prometheus</a></li><li class="nav-list-item "><a href="/v1.53/reference/s3.html"
+                   class="nav-list-link">S3 Gateway API</a></li><li class="nav-list-item "><a href="/v1.53/reference/spark-client.html"
+                   class="nav-list-link">Spark Client</a></li><li class="nav-list-item "><a href="/v1.53/reference/api.html"
+                   class="nav-list-link">lakeFS API</a></li><li class="nav-list-item "><a href="/v1.53/reference/configuration.html"
+                   class="nav-list-link">lakeFS Server Configuration</a></li><li class="nav-list-item "><a href="/v1.53/reference/cli.html"
+                   class="nav-list-link">lakectl (lakeFS command-line tool)</a></li></ul></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/project/"
+           class="nav-list-link">The lakeFS Project</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.53/project/contributing.html"
+                   class="nav-list-link">Contributing to lakeFS</a></li><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/project/docs/"
+                   class="nav-list-link">Documentation</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/project/docs/callouts.html"
+                           class="nav-list-link">Callouts</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.53/project/code-migrate-1.0-sdk.html"
+                   class="nav-list-link">Migrating to 1.0</a></li></ul></li><li
+            class="nav-list-item"><a href="/v1.53/cloud/"
+           class="nav-list-link">lakeFS Cloud</a></li><li
+            class="nav-list-item"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/enterprise/"
+           class="nav-list-link">lakeFS Enterprise</a><ul class="nav-list "><li class="nav-list-item "><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                        <use xlink:href="#svg-arrow-right"></use>
+                    </svg></a><a href="/v1.53/enterprise/getstarted/"
+                   class="nav-list-link">Get Started</a><ul class="nav-list"><li class="nav-list-item ">
+                        <a href="/v1.53/enterprise/getstarted/quickstart.html"
+                           class="nav-list-link">Quickstart</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/enterprise/getstarted/install.html"
+                           class="nav-list-link">Install</a>
+                    </li><li class="nav-list-item ">
+                        <a href="/v1.53/enterprise/getstarted/migrate-from-oss.html"
+                           class="nav-list-link">Migrate from lakeFS OSS</a>
+                    </li></ul></li><li class="nav-list-item "><a href="/v1.53/enterprise/upgrade.html"
+                   class="nav-list-link">Upgrade</a></li><li class="nav-list-item "><a href="/v1.53/enterprise/troubleshooting.html"
+                   class="nav-list-link">Troubleshooting lakeFS Enterprise</a></li><li class="nav-list-item "><a href="/v1.53/enterprise/configuration.html"
+                   class="nav-list-link">Configuration Reference</a></li><li class="nav-list-item "><a href="/v1.53/enterprise/architecture.html"
+                   class="nav-list-link">Architecture</a></li></ul></li><li
+            class="nav-list-item active"><a href="#" class="nav-list-expander"><svg viewBox="0 0 24 24">
+                <use xlink:href="#svg-arrow-right"></use>
+            </svg></a><a href="/v1.53/security/"
+           class="nav-list-link">Security</a><ul class="nav-list "><li class="nav-list-item "><a href="/v1.53/security/access-control-lists.html"
+                   class="nav-list-link">Access Control Lists (ACLs) -Deprecated-</a></li><li class="nav-list-item "><a href="/v1.53/security/authentication.html"
+                   class="nav-list-link">Authentication</a></li><li class="nav-list-item "><a href="/v1.53/security/external-principals-aws.html"
+                   class="nav-list-link">Login to lakeFS with AWS IAM Roles</a></li><li class="nav-list-item "><a href="/v1.53/security/presigned-url.html"
+                   class="nav-list-link">Presigned URLs</a></li><li class="nav-list-item "><a href="/v1.53/security/remote-authenticator.html"
+                   class="nav-list-link">Remote Authenticator</a></li><li class="nav-list-item "><a href="/v1.53/security/rbac.html"
+                   class="nav-list-link">Role-Based Access Control (RBAC)</a></li><li class="nav-list-item "><a href="/v1.53/security/sts-login.html"
+                   class="nav-list-link">Short-lived token (STS like) Authentication for lakeFS</a></li><li class="nav-list-item  active"><a href="/v1.53/security/sso.html"
+                   class="nav-list-link active">Single Sign On (SSO)</a></li></ul></li></ul>
+            <div class="mobile-menu">
+                
+<nav aria-label="Auxiliary" class="aux-nav">
+    <ul class="aux-nav-list">
+        
+        
+        <li class="aux-nav-list-item">
+            <a href="https://docs.lakefs.io/" class="site-button" >
+                Docs
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/blog/" class="site-button" >
+                Blog
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/community/" class="site-button" >
+                Community
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                GitHub
+            </a>
+        </li>
+        
+        
+        
+        
+        <li class="aux-nav-list-item button">
+            <a href="https://lakefs.io/slack" class="site-button" >
+                Join us on Slack
+            </a>
+        </li>
+        
+        
+    </ul>
+</nav>
+
+            </div>
+        </nav>
+
+    </div>
+    <div class="main" id="top">
+         <div class="feedback-container">
+            <div id="is-helpful-ty">
+                <div class="text-epsilon">Thank you for your feedback.</div>
+                <div class="mt-2 text-epsilon">
+                    <a href="https://lakefs.io/slack" target="_blank">Join the community</a> to get more help.
+                </div>
+            </div>
+            <div class="feedback-buttons">
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-up" id="page-helpful-yes"></button>
+                    <span class="tooltiptext">
+                        This page is <b>helpful</b>
+                    </span>
+                </span>
+                <span class="tooltip">
+                    <button class="page-helpful-btn far fa-lg fa-thumbs-down" id="page-helpful-no"></button>
+                    <span class="tooltiptext">
+                        This page is <b>not helpful</b>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div id="main-header" class="main-header">
+            
+<nav aria-label="Auxiliary" class="aux-nav">
+    <ul class="aux-nav-list">
+        
+        
+        <li class="aux-nav-list-item">
+            <a href="https://docs.lakefs.io/" class="site-button" >
+                Docs
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/blog/" class="site-button" >
+                Blog
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://lakefs.io/community/" class="site-button" >
+                Community
+            </a>
+        </li>
+        
+        <li class="aux-nav-list-item">
+            <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                GitHub
+            </a>
+        </li>
+        
+        
+        
+        
+        <li class="aux-nav-list-item button">
+            <a href="https://lakefs.io/slack" class="site-button" >
+                Join us on Slack
+            </a>
+        </li>
+        
+        
+    </ul>
+</nav>
+
+        </div>
+        <div id="main-content-wrap" class="main-content-wrap">
+            
+            
+            <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb-nav-list">
+                    
+                    <li class="breadcrumb-nav-list-item"><a href="/v1.53/security/">Security</a>
+                    </li>
+                    
+                    <li class="breadcrumb-nav-list-item"><span>Single Sign On (SSO)</span></li>
+                </ol>
+            </nav>
+            
+            
+            <div id="main-content" class="main-content" role="main">
+                
+                    <h1 class="d-inline-block" id="single-sign-on-sso">
+  
+  
+    <a href="#single-sign-on-sso" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Single Sign On (SSO)
+  
+  
+</h1>
+    
+<p class="label label-green"><a style="color: white;" href="#sso-for-lakefs-cloud">lakeFS Cloud</a></p>
+
+<p class="d-inline-block label label-purple"><a style="color: white;" href="#sso-for-lakefs-enterprise">lakeFS Enterprise</a></p>
+
+<blockquote class="note">
+  <p>SSO is available for lakeFS Cloud and lakeFS Enterprise. If you’re using the open-source version of lakeFS you can read more about the <a href="/security/authentication.html">authentication options available</a>.</p>
+</blockquote>
+<h2 id="sso-for-lakefs-cloud">
+  
+  
+    <a href="#sso-for-lakefs-cloud" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SSO for lakeFS Cloud
+  
+  
+</h2>
+    
+
+<p>lakeFS Cloud uses Auth0 for authentication and thus support the same identity providers as Auth0 including Active Directory/LDAP, ADFS, Azure Active Directory Native, Google Workspace, OpenID Connect, Okta, PingFederate, SAML, and Azure Active Directory.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#okta">Okta</a></li>
+    <li><a href="#adfs">AD FS</a></li>
+    <li><a href="#azure-ad">Azure AD</a></li>
+  </ul>
+  <div id="okta">
+<h2 id="okta">
+  
+  
+    <a href="#okta" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Okta
+  
+  
+</h2>
+    
+
+    <blockquote class="note">
+      <p>This guide is based on <a href="https://help.okta.com/en-us/Content/Topics/Apps/Apps_App_Integration_Wizard_OIDC.htm">Okta’s Create OIDC app integrations guide</a>.</p>
+    </blockquote>
+
+    <p>Steps:</p>
+    <ol>
+      <li>Login to your Okta account</li>
+      <li>Select <strong>Applications &gt; Applications</strong>, then <strong>Create App Integration</strong>.</li>
+      <li>Select Create New App and enter the following:
+        <ol>
+          <li>For <strong>Sign-in method</strong>, choose OIDC.</li>
+          <li>Under <strong>Application type</strong>, choose <strong>Web app</strong>.</li>
+          <li>Select Next.</li>
+        </ol>
+      </li>
+      <li>Under General Settings:
+        <ol>
+          <li><strong>App integration name</strong>, enter a name for your application. (i.e lakeFS Cloud)</li>
+        </ol>
+      </li>
+      <li>In the <strong>Sign-in redirect URIs</strong> field, enter https://lakefs-cloud.us.auth0.com/login (United States) or https://lakefs-cloud.eu.auth0.com/login (Europe).</li>
+      <li>Under <strong>Sign-in redirect URIs</strong>, click <strong>Add URI</strong>, enter https://lakefs-cloud.us.auth0.com/login/callback (United States) or https://lakefs-cloud.eu.auth0.com/login/callback (Europe).</li>
+      <li>Under <strong>Assignments</strong>, choose the wanted <strong>Controlled access</strong>. (i.e Allow everyone in your organization to access)</li>
+      <li>Uncheck <strong>Enable immediate access with Federation Broker Mode</strong>.</li>
+      <li>Select <strong>Save</strong>.</li>
+    </ol>
+
+    <p>Once you finish registering your application with Okta, save the <strong>Client ID</strong>, <strong>Client Secret</strong> and your <strong>Okta Domain</strong>, send this to Treeverse’s team to finish the integration.</p>
+  </div>
+  <div id="adfs">
+<h2 id="active-directory-federation-services-ad-fs">
+  
+  
+    <a href="#active-directory-federation-services-ad-fs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Active Directory Federation Services (AD FS)
+  
+  
+</h2>
+    
+
+    <p>Prerequisites:</p>
+    <ul>
+      <li>Client’s AD FS server should be exposed publicly or to Auth0’s IP ranges (either directly or using Web Application Proxy)</li>
+    </ul>
+
+    <p>Steps:</p>
+    <ol>
+      <li>Connect to the AD FS server</li>
+      <li>Open AD FS’ PowerShell CLI as Administrator through the server manager</li>
+      <li>
+        <p>Execute the following:</p>
+
+        <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>new-object Net.WebClient <span class="nt">-property</span> @<span class="o">{</span>Encoding <span class="o">=</span> <span class="o">[</span>Text.Encoding]::UTF8<span class="o">})</span>.DownloadString<span class="o">(</span><span class="s2">"https://raw.github.com/auth0/adfs-auth0/master/adfs.ps1"</span><span class="o">)</span> | iex
+
+ AddRelyingParty <span class="s2">"urn:auth0:lakefs-cloud"</span> <span class="s2">"https://lakefs-cloud.us.auth0.com/login/callback"</span>
+</code></pre></div>        </div>
+
+        <p><strong>Note</strong>: If your organization data is located in Europe, use <code class="language-plaintext highlighter-rouge">lakefs-cloud.eu.auth0.com</code> instead of <code class="language-plaintext highlighter-rouge">lakefs-cloud.us.auth0.com</code>.</p>
+      </li>
+    </ol>
+
+    <p>Once you finish registering lakeFS Cloud with AD FS, save the <strong>AD FS URL</strong> and send this to Treeverse’s team to finish the integration.</p>
+  </div>
+  <div id="azure-ad">
+<h2 id="azure-active-directory-ad">
+  
+  
+    <a href="#azure-active-directory-ad" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Azure Active Directory (AD)
+  
+  
+</h2>
+    
+
+    <p>Prerequisites:</p>
+    <ul>
+      <li>Azure account with permissions to manage applications in Azure Active Directory</li>
+    </ul>
+
+    <p><strong>Note</strong>: If you’ve already set up lakeFS Cloud with your Azure account, you can skip the <a href="#register-lakefs-cloud-with-azure">Register lakeFS Cloud with Azure</a> and <a href="#add-a-secret">Add client secret</a> and go directly to <a href="#add-a-redirect-uri">Add a redirect URI</a>.</p>
+<h3 id="register-lakefs-cloud-with-azure">
+  
+  
+    <a href="#register-lakefs-cloud-with-azure" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Register lakeFS Cloud with Azure
+  
+  
+</h3>
+    
+
+    <p>Steps:</p>
+    <ol>
+      <li>Sign in to the Azure portal.</li>
+      <li>If you have access to multiple tenants, use the Directories + subscriptions filter in the top menu to switch to the tenant in which you want to register the application.</li>
+      <li>Search for and select Azure Active Directory.</li>
+      <li>Under Manage, select App registrations &gt; New registration.</li>
+      <li>Enter a display Name for your application. Users of your application might see the display name when they use the app, for example during sign-in. You can change the display name at any time and multiple app registrations can share the same name. The app registration’s automatically generated Application (client) ID, not its display name, uniquely identifies your app within the identity platform.</li>
+      <li>
+        <p>Specify who can use the application, sometimes called its sign-in audience.</p>
+
+        <p>Note: don’t enter anything for Redirect URI (optional). You’ll configure a redirect URI in the next section.</p>
+      </li>
+      <li>Select Register to complete the initial app registration.</li>
+    </ol>
+
+    <p>When registration finishes, the Azure portal displays the app registration’s Overview pane. You see the Application (client) ID. Also called the client ID, this value uniquely identifies your application in the Microsoft identity platform.</p>
+
+    <p>Important: new app registrations are hidden to users by default. When you are ready for users to see the app on their My Apps page you can enable it. To enable the app, in the Azure portal navigate to Azure Active Directory &gt; Enterprise applications and select the app. Then on the Properties page toggle Visible to users? to Yes.</p>
+<h3 id="add-a-secret">
+  
+  
+    <a href="#add-a-secret" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Add a secret
+  
+  
+</h3>
+    
+    <p>Sometimes called an application password, a client secret is a string value your app can use in place of a certificate to identity itself.</p>
+
+    <p>Steps:</p>
+    <ol>
+      <li>In the Azure portal, in App registrations, select your application.</li>
+      <li>Select Certificates &amp; secrets &gt; Client secrets &gt; New client secret.</li>
+      <li>Add a description for your client secret.</li>
+      <li>Select an expiration for the secret or specify a custom lifetime.
+        <ol>
+          <li>Client secret lifetime is limited to two years (24 months) or less. You can’t specify a custom lifetime longer than 24 months.</li>
+          <li>Microsoft recommends that you set an expiration value of less than 12 months.</li>
+        </ol>
+      </li>
+      <li>Select Add.</li>
+      <li>Record the secret’s value for use in your client application code. This secret value is never displayed again after you leave this page.</li>
+    </ol>
+<h3 id="add-a-redirect-uri">
+  
+  
+    <a href="#add-a-redirect-uri" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Add a redirect URI
+  
+  
+</h3>
+    
+    <p>A redirect URI is the location where the Microsoft identity platform redirects a user’s client and sends security tokens after authentication.</p>
+
+    <p>You add and modify redirect URIs for your registered applications by configuring their platform settings.</p>
+
+    <p>Enter https://lakefs-cloud.us.auth0.com/login/callback as your redirect URI.</p>
+
+    <p>Settings for each application type, including redirect URIs, are configured in Platform configurations in the Azure portal. Some platforms, like Web and Single-page applications, require you to manually specify a redirect URI. For other platforms, like mobile and desktop, you can select from redirect URIs generated for you when you configure their other settings.</p>
+
+    <p>Steps:</p>
+    <ol>
+      <li>In the Azure portal, in App registrations, select your application.</li>
+      <li>Under Manage, select Authentication.</li>
+      <li>Under Platform configurations, select Add a platform.</li>
+      <li>Under Configure platforms, select the web option.</li>
+      <li>Select Configure to complete the platform configuration.</li>
+    </ol>
+
+    <p>Once you finish registering lakeFS Cloud with Azure AD send the following items to the Treeverse’s team:</p>
+    <ol>
+      <li><strong>Client ID</strong></li>
+      <li><strong>Client Secret</strong></li>
+      <li><strong>Azure AD Domain</strong></li>
+      <li><strong>Identity API Version</strong> (v1 for Azure AD or v2 for Microsoft Identity Platform/Entra)</li>
+    </ol>
+
+  </div>
+</div>
+<h2 id="sso-for-lakefs-enterprise">
+  
+  
+    <a href="#sso-for-lakefs-enterprise" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SSO for lakeFS Enterprise
+  
+  
+</h2>
+    
+
+<p>Authentication in lakeFS Enterprise is handled by a secondary service which runs side-by-side with lakeFS. With a nod to Hogwarts and their security system, we’ve named this service <em>Fluffy</em>. Details for configuring the supported identity providers with Fluffy are shown below. In addition, please review the necessary <a href="#helm">Helm configuration</a> to configure Fluffy.</p>
+
+<ul>
+  <li>Active Directory Federation Services (AD FS) (using SAML)</li>
+  <li>OpenID Connect</li>
+  <li>LDAP</li>
+</ul>
+
+<p>If you’re using an authentication provider that is not listed please <a href="https://lakefs.io/contact-us/">contact us</a> for further assistance.</p>
+
+<div class="tabs">
+  <ul>
+    <li><a href="#adfs">AD FS</a></li>
+    <li><a href="#oidc">OpenID Connect</a></li>
+    <li><a href="#ldap">LDAP</a></li>
+  </ul>
+  <div id="adfs">
+<h2 id="active-directory-federation-services-ad-fs-using-saml">
+  
+  
+    <a href="#active-directory-federation-services-ad-fs-using-saml" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Active Directory Federation Services (AD FS) (using SAML)
+  
+  
+</h2>
+    
+
+    <blockquote class="note">
+      <p>AD FS integration uses certificates to sign &amp; encrypt requests going out from Fluffy and decrypt incoming requests from AD FS server.</p>
+    </blockquote>
+
+    <p>In order for Fluffy to work, the following values must be configured. Update (or override) the following attributes in the chart’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file.</p>
+    <ol>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffy.saml_rsa_public_cert</code> and <code class="language-plaintext highlighter-rouge">fluffy.saml_rsa_private_key</code> with real certificate values</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.saml.idp_metadata_url</code> with the metadata URL of the AD FS provider (e.g <code class="language-plaintext highlighter-rouge">adfs-auth.company.com</code>)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.saml.external_user_id_claim_name</code> with the claim name representing user id name in AD FS</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> with your lakeFS server URL.</li>
+    </ol>
+
+    <p>If you’d like to generate the certificates using OpenSSL, you can take a look at the following example:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl req <span class="nt">-x509</span> <span class="nt">-newkey</span> rsa:2048 <span class="nt">-keyout</span> myservice.key <span class="nt">-out</span> myservice.cert <span class="nt">-days</span> 365 <span class="nt">-nodes</span> <span class="nt">-subj</span> <span class="s2">"/CN=lakefs.company.com"</span> -
+</code></pre></div>    </div>
+
+    <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth</span><span class="pi">:</span>
+  <span class="na">cookie_auth_verification</span><span class="pi">:</span>
+    <span class="na">auth_source</span><span class="pi">:</span> <span class="s">saml</span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s">displayName</span>
+    <span class="na">persist_friendly_name</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">external_user_id_claim_name</span><span class="pi">:</span> <span class="s">samName</span>
+    <span class="na">default_initial_groups</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">Developers"</span>
+  <span class="na">logout_redirect_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs.company.com/logout-saml"</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>
+  <span class="na">ui_config</span><span class="pi">:</span>
+    <span class="na">login_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs.company.com/sso/login-saml"</span>
+    <span class="na">logout_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://lakefs.company.com/sso/logout-saml"</span>
+    <span class="na">login_cookie_names</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">internal_auth_session</span>
+      <span class="pi">-</span> <span class="s">saml_auth_session</span>
+</code></pre></div>    </div>
+
+    <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
+  <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">audit_log_level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">="</span>
+<span class="na">auth</span><span class="pi">:</span>  
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>    
+  <span class="na">logout_redirect_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+  <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+  <span class="na">saml</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span> 
+    <span class="na">sp_root_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+    <span class="na">sp_x509_key_path</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/etc/saml_certs/rsa_saml_private.cert'</span>
+    <span class="na">sp_x509_cert_path</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/etc/saml_certs/rsa_saml_public.pem'</span>
+    <span class="na">sp_sign_request</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">sp_signature_method</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"</span>
+    <span class="na">idp_metadata_url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://adfs-auth.company.com/federationmetadata/2007-06/federationmetadata.xml"</span>
+    <span class="c1"># idp_authn_name_id_format: "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"</span>
+    <span class="na">external_user_id_claim_name</span><span class="pi">:</span> <span class="s">samName</span>
+    <span class="c1"># idp_metadata_file_path: </span>
+    <span class="c1"># idp_skip_verify_tls_cert: true</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="oidc">
+<h3 id="openid-connect">
+  
+  
+    <a href="#openid-connect" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> OpenID Connect
+  
+  
+</h3>
+    
+
+    <p>In order for Fluffy to work, the following values must be configured. Update (or override) the following attributes in the chart’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file.</p>
+    <ol>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.friendly_name_claim_name</code> with the right claim name.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefsConfig.default_initial_groups</code> with desired claim name (See <a href="/security/rbac.html#preconfigured-groups">pre-configured</a> groups for enterprise)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.logout_redirect_url</code> with your full OIDC logout URL (e.g <code class="language-plaintext highlighter-rouge">https://oidc-provider-url.com/logout/path</code>)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.url</code> with your OIDC provider URL (e.g <code class="language-plaintext highlighter-rouge">https://oidc-provider-url.com</code>)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.logout_endpoint_query_parameters</code> with parameters you’d like to pass to the OIDC provider for logout.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.client_id</code> and <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.client_secret</code> with the client ID &amp; secret for OIDC.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">fluffyConfig.auth.oidc.logout_client_id_query_parameter</code> with the query parameter that represent the client_id, note that it should match the the key/query param that represents the client id and required by the specific OIDC provider.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> with the lakeFS server URL.</li>
+    </ol>
+
+    <p>lakeFS Server Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="na">friendly_name_claim_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">name"</span>
+    <span class="na">persist_friendly_name</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">default_initial_groups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">Developers"</span><span class="pi">]</span>
+  <span class="na">ui_config</span><span class="pi">:</span>
+    <span class="na">login_url</span><span class="pi">:</span> <span class="s">/oidc/login</span>
+    <span class="na">logout_url</span><span class="pi">:</span> <span class="s">/oidc/logout</span>
+    <span class="na">login_cookie_names</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">internal_auth_session</span>
+      <span class="pi">-</span> <span class="s">oidc_auth_session</span>
+</code></pre></div>    </div>
+
+    <p>Fluffy Configuration (Update in helm’s <code class="language-plaintext highlighter-rouge">values.yaml</code> file):</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
+  <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">audit_log_level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">="</span>
+<span class="na">installation</span><span class="pi">:</span>
+  <span class="na">fixed_id</span><span class="pi">:</span> <span class="s">fluffy-authenticator</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">/</span>
+  <span class="na">logout_redirect_url</span><span class="pi">:</span> <span class="s">https://oidc-provider-url.com/logout/url</span>
+  <span class="na">oidc</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">https://oidc-provider-url.com/</span>
+    <span class="na">client_id</span><span class="pi">:</span> <span class="s">&lt;oidc-client-id&gt;</span>
+    <span class="na">client_secret</span><span class="pi">:</span> <span class="s">&lt;oidc-client-secret&gt;</span>
+    <span class="na">callback_base_url</span><span class="pi">:</span> <span class="s">https://lakefs.company.com</span>
+    <span class="na">is_default_login</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">logout_client_id_query_parameter</span><span class="pi">:</span> <span class="s">client_id</span>
+    <span class="na">logout_endpoint_query_parameters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">returnTo</span> 
+      <span class="pi">-</span> <span class="s">https://lakefs.company.com/oidc/login</span>
+  <span class="na">encrypt</span><span class="pi">:</span>
+    <span class="na">secret_key</span><span class="pi">:</span> <span class="s">shared-secrey-key</span>
+</code></pre></div>    </div>
+  </div>
+  <div id="ldap">
+<h2 id="ldap">
+  
+  
+    <a href="#ldap" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> LDAP
+  
+  
+</h2>
+    
+
+    <p>Fluffy is incharge of providing LDAP authentication for lakeFS Enterprise. 
+The authentication works by querying the LDAP server for user information and authenticating the user based on the provided credentials.</p>
+
+    <p><strong>Important:</strong> An administrative bind user must be configured. It should have search permissions for the LDAP server that will be used to query the LDAP server for user information.</p>
+
+    <p><strong>For Helm:</strong> set the following attributes in the Helm chart values, for lakeFS <code class="language-plaintext highlighter-rouge">lakefsConfig.*</code> and <code class="language-plaintext highlighter-rouge">fluffyConfig.*</code> for fluffy.</p>
+
+    <p><strong>No Helm:</strong> If not using Helm use the YAML below to directly update the configuration file for each service.</p>
+
+    <p><strong>lakeFS Configuration:</strong></p>
+
+    <ol>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.remote_authenticator.enabled</code> with <code class="language-plaintext highlighter-rouge">true</code></li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.remote_authenticator.endpoint</code> with the fluffy authentication server URL combined with the <code class="language-plaintext highlighter-rouge">api/v1/ldap/login</code> suffix (e.g <code class="language-plaintext highlighter-rouge">http://lakefs.company.com/api/v1/ldap/login</code>)</li>
+    </ol>
+
+    <p><strong>fluffy Configuration:</strong></p>
+
+    <p>See <a href="/enterprise/configuration.html#fluffy-server-configuration">Fluffy configuration</a> reference.</p>
+
+    <ol>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.ldap.remote_authenticator.server_endpoint</code> with your LDAP server endpoint  (e.g <code class="language-plaintext highlighter-rouge">ldaps://ldap.ldap-address.com:636</code>)</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.ldap.remote_authenticator.bind_dn</code> with the LDAP bind user/permissions to query your LDAP server.</li>
+      <li>Replace <code class="language-plaintext highlighter-rouge">auth.ldap.remote_authenticator.user_base_dn</code> with the user base to search users in.</li>
+    </ol>
+
+    <p><strong>lakeFS Server Configuration file:</strong></p>
+
+    <p><code class="language-plaintext highlighter-rouge">$lakefs run -c ./lakefs.yaml</code></p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Important: make sure to include the rest of your lakeFS Configuration here!</span>
+
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">remote_authenticator</span><span class="pi">:</span>
+    <span class="na">enabled</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">endpoint</span><span class="pi">:</span> <span class="s">http://&lt;Fluffy URL&gt;:&lt;Fluffy http port&gt;/api/v1/ldap/login</span>
+    <span class="na">default_user_group</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Developers"</span> <span class="c1"># Value needs to correspond with an existing group in lakeFS</span>
+  <span class="na">ui_config</span><span class="pi">:</span>
+    <span class="na">logout_url</span><span class="pi">:</span> <span class="s">/logout</span>
+    <span class="na">login_cookie_names</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">internal_auth_session</span>
+</code></pre></div>    </div>
+
+    <p>Fluffy Configuration file:</p>
+
+    <p><code class="language-plaintext highlighter-rouge">$fluffy run -c ./fluffy.yaml</code></p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">logging</span><span class="pi">:</span>
+  <span class="na">format</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json"</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">audit_log_level</span><span class="pi">:</span> <span class="s2">"</span><span class="s">INFO"</span>
+  <span class="na">output</span><span class="pi">:</span> <span class="s2">"</span><span class="s">="</span>
+<span class="na">installation</span><span class="pi">:</span>
+  <span class="na">fixed_id</span><span class="pi">:</span> <span class="s">fluffy-authenticator</span>
+<span class="na">auth</span><span class="pi">:</span>
+  <span class="na">post_login_redirect_url</span><span class="pi">:</span> <span class="s">/</span>
+  <span class="na">ldap</span><span class="pi">:</span> 
+    <span class="na">server_endpoint</span><span class="pi">:</span> <span class="s1">'</span><span class="s">ldaps://ldap.company.com:636'</span>
+    <span class="na">bind_dn</span><span class="pi">:</span> <span class="s">uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
+    <span class="na">bind_password</span><span class="pi">:</span> <span class="s1">'</span><span class="s">&lt;ldap</span><span class="nv"> </span><span class="s">pwd&gt;'</span>
+    <span class="na">username_attribute</span><span class="pi">:</span> <span class="s">uid</span>
+    <span class="na">user_base_dn</span><span class="pi">:</span> <span class="s">ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com</span>
+    <span class="na">user_filter</span><span class="pi">:</span> <span class="s">(objectClass=inetOrgPerson)</span>
+    <span class="na">connection_timeout_seconds</span><span class="pi">:</span> <span class="m">15</span>
+    <span class="na">request_timeout_seconds</span><span class="pi">:</span> <span class="m">7</span>
+</code></pre></div>    </div>
+<h2 id="troubleshooting-ldap-issues">
+  
+  
+    <a href="#troubleshooting-ldap-issues" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Troubleshooting LDAP issues
+  
+  
+</h2>
+    
+<h3 id="inspecting-logs">
+  
+  
+    <a href="#inspecting-logs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Inspecting Logs
+  
+  
+</h3>
+    
+
+    <p>If you encounter LDAP connection errors, you should inspect the <strong>fluffy container</strong> logs to get more information.</p>
+<h3 id="authentication-issues">
+  
+  
+    <a href="#authentication-issues" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication issues
+  
+  
+</h3>
+    
+
+    <p>Auth issues (e.g. user not found, invalid credentials) can be debugged with the <code class="language-plaintext highlighter-rouge">ldapwhoami</code> CLI tool.</p>
+
+    <p>The Examples are based on the fluffy config above:</p>
+
+    <p>To verify that the main bind user can connect:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-D</span> <span class="s2">"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-x</span> <span class="nt">-W</span>
+</code></pre></div>    </div>
+
+    <p>To verify that a specific lakeFS user <code class="language-plaintext highlighter-rouge">dev-user</code> can connect:</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-D</span> <span class="s2">"uid=dev-user,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-x</span> <span class="nt">-W</span>
+</code></pre></div>    </div>
+<h3 id="user-not-found-issue">
+  
+  
+    <a href="#user-not-found-issue" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> User not found issue
+  
+  
+</h3>
+    
+
+    <p>Upon a login request in fluffy, the bind user will search for the user in the LDAP server. If the user is not found it will be presented in the logs.</p>
+
+    <p>We can search the user using <a href="https://docs.ldap.com/ldap-sdk/docs/tool-usages/ldapsearch.html">ldapsearch</a> CLI tool.</p>
+
+    <p>Search ALL users in the base DN (no filters):</p>
+
+    <p><strong>Note:</strong> <code class="language-plaintext highlighter-rouge">-b</code> is the <code class="language-plaintext highlighter-rouge">user_base_dn</code>, <code class="language-plaintext highlighter-rouge">-D</code> is <code class="language-plaintext highlighter-rouge">bind_dn</code> and <code class="language-plaintext highlighter-rouge">-w</code> is <code class="language-plaintext highlighter-rouge">bind_password</code> from the fluffy configuration.</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-D</span> <span class="s2">"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-w</span> <span class="s1">'&lt;bind_user_pwd&gt;'</span>
+</code></pre></div>    </div>
+
+    <p>If the user is found, we should now use filters for the specific user the same way fluffy does it and expect to see the user.</p>
+
+    <p>For example, to repdocue the same search as fluffy does:</p>
+    <ul>
+      <li>user <code class="language-plaintext highlighter-rouge">dev-user</code> set from <code class="language-plaintext highlighter-rouge">uid</code> attribute in LDAP</li>
+      <li>Fluffy configuration values: <code class="language-plaintext highlighter-rouge">user_filter: (objectClass=inetOrgPerson)</code> and <code class="language-plaintext highlighter-rouge">username_attribute: uid</code></li>
+    </ul>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-H</span> ldap://ldap.company.com:636 <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-D</span> <span class="s2">"uid=&lt;bind-user-name&gt;,ou=&lt;some-ou&gt;,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com"</span> <span class="nt">-w</span> <span class="s1">'&lt;bind_user_pwd&gt;'</span> <span class="s2">"(&amp;(uid=dev-user)(objectClass=inetOrgPerson))"</span>
+</code></pre></div>    </div>
+
+  </div>
+</div>
+<h3 id="helm">
+  
+  
+    <a href="#helm" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Helm
+  
+  
+</h3>
+    
+
+<p>In order to use lakeFS Enterprise and Fluffy, we provided out of the box setup, see <a href="https://github.com/treeverse/charts">lakeFS Helm chart configuration</a>.</p>
+
+<p>Notes:</p>
+<ul>
+  <li>Check the <a href="https://github.com/treeverse/charts/tree/master/examples/lakefs/enterprise">examples on GitHub</a> we provide for each authentication method (oidc/adfs/ldap + rbac).</li>
+  <li>The examples are provisioned with a Postgres pod for quick-start, make sure to replace that to a stable database once ready.</li>
+  <li>The encrypt secret key <code class="language-plaintext highlighter-rouge">secrets.authEncryptSecretKey</code> is shared between fluffy and lakeFS for authentication.</li>
+  <li>The lakeFS <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 1.0.0</li>
+  <li>The fluffy <code class="language-plaintext highlighter-rouge">image.tag</code> must be &gt;= 0.2.7</li>
+  <li>Change the <code class="language-plaintext highlighter-rouge">ingress.hosts[0]</code> from <code class="language-plaintext highlighter-rouge">lakefs.company.com</code> to a real host (usually same as lakeFS), also update additional references in the file (note: URL path after host if provided should stay unchanged).</li>
+  <li>Update the <code class="language-plaintext highlighter-rouge">ingress</code> configuration with other optional fields if used</li>
+  <li>Fluffy docker image: replace the <code class="language-plaintext highlighter-rouge">fluffy.image.privateRegistry.secretToken</code> with real token to dockerhub for the fluffy docker image.</li>
+</ul>
+
+                
+
+                
+                
+
+                
+
+            </div>
+        </div>
+
+        
+        
+
+        <div class="search-overlay"></div>
+        
+    </div>
+</div>
+
+<footer>
+    <div class="footer-sidebar"></div>
+    <div class="footer-main">
+        <div class="row">
+            <div class="left">
+                <ul class="footer-links">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://docs.lakefs.io/" class="site-button" >
+                            Docs
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/blog/" class="site-button" >
+                            Blog
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                            GitHub
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/community/" class="site-button" >
+                            Community
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/cloud-registration/" class="site-button" >
+                            lakeFS Cloud
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/contact-us/" class="site-button" >
+                            Contact
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="right">
+                <ul class="footer-social">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/youtube" class="site-button" >
+                            <img src="/v1.53/assets/icons/youtube.svg" class="no-hover" />
+                            <img src="/v1.53/assets/icons/youtube-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://www.linkedin.com/company/treeverse" class="site-button" >
+                            <img src="/v1.53/assets/icons/linkedin.svg" class="no-hover" />
+                            <img src="/v1.53/assets/icons/linkedin-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://github.com/treeverse/lakeFS" class="site-button" >
+                            <img src="/v1.53/assets/icons/github.svg" class="no-hover" />
+                            <img src="/v1.53/assets/icons/github-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://twitter.com/lakeFS" class="site-button" >
+                            <img src="/v1.53/assets/icons/twitter.svg" class="no-hover" />
+                            <img src="/v1.53/assets/icons/twitter-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/slack" class="site-button" >
+                            <img src="/v1.53/assets/icons/slack.svg" class="no-hover" />
+                            <img src="/v1.53/assets/icons/slack-hover.svg" class="hover" />
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row top-border">
+            <div class="left">
+                <a href="https://lakefs.io" class="lh-tight" style="margin-bottom: 0px;">
+                    <div class="site-logo"></div>
+                </a>                    
+            </div>
+            <div class="right">
+                <ul class="bottom-footer-links">
+                    
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/terms-of-use/" class="site-button" >
+                            Terms of use
+                        </a>
+                    </li>
+                    
+                    <li class="aux-nav-list-item">
+                        <a href="https://lakefs.io/privacy-policy/" class="site-button" >
+                            Privacy Policy
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</body>
+
+</html>
+
