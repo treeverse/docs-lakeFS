@@ -563,7 +563,9 @@
   
 </h1>
     
+
 <p>This section explains how to backup and restore lakeFS repository for different use-cases:</p>
+
 <ol>
   <li>Disaster Recovery: you want to backup the repository regularly so you can restore it in case of any disaster.  You’d also need to make sure to backup the repository’s storage namespace to another, preferably geographically separate location.</li>
   <li>Migrate Repository: you want to migrate a repository from one environment to another lakeFS environment.</li>
@@ -584,6 +586,7 @@
   <li><a href="#commit-changes" id="markdown-toc-commit-changes">Commit Changes</a></li>
   <li><a href="#backup-repository" id="markdown-toc-backup-repository">Backup Repository</a></li>
   <li><a href="#restore-repository" id="markdown-toc-restore-repository">Restore Repository</a></li>
+  <li><a href="#python-helper-script-for-backup-and-restore" id="markdown-toc-python-helper-script-for-backup-and-restore">Python Helper Script for Backup and Restore</a></li>
 </ol>
 
 </div>
@@ -597,6 +600,7 @@
   
 </h2>
     
+
 <p>Backup process doesn’t backup uncommitted data, so make sure to commit any staged writes before running the backup. But this is an optional process.</p>
 
 <p>You can manually commit the changes by using lakeFS UI or you can programatically commit any uncommitted changes. This Python example shows how to programatically loop through all branches in lakeFS and commit any uncommitted data but this might take a lot of time if you have many branches in the repo:</p>
@@ -626,6 +630,7 @@
   
 </h3>
     
+
 <p>Dump metadata/refs of the repository by using lakeFS API or CLI.</p>
 
 <ul>
@@ -662,6 +667,7 @@ az storage blob upload --file refs_manifest.json --container-name sourceContaine
   
 </h3>
     
+
 <p>Copy the repository’s storage namespace to another, preferably geographically separate location. Copy command depends on the type of object storage and the tool that you use.</p>
 
 <ul>
@@ -695,6 +701,7 @@ az storage blob upload --file refs_manifest.json --container-name sourceContaine
   
 </h3>
     
+
 <p>Create a bare lakeFS repository with a new name if you want to clone the repository or use the same repository name if you want to migrate or restore the repository.</p>
 
 <ul>
@@ -732,6 +739,7 @@ az storage blob upload --file refs_manifest.json --container-name sourceContaine
   
 </h3>
     
+
 <p>Run restore_refs to load back all commits, tags and branches.</p>
 
 <ul>
@@ -745,6 +753,7 @@ az storage blob upload --file refs_manifest.json --container-name sourceContaine
 </code></pre></div></div>
 
 <p>Then read refs_manifest.json file and restore metadata to new repository:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'./refs_manifest.json'</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
     <span class="n">refs_manifest_json</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">refs_manifest_json</span><span class="p">)</span>
@@ -763,10 +772,105 @@ az storage blob upload --file refs_manifest.json --container-name sourceContaine
   <li><a href="https://docs.lakefs.io/reference/cli.html#lakectl-refs-restore">lakeFS CLI</a> command to restore metadata to new repository using Azure storage:</li>
 </ul>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az storage blob download --container-name targetContainer --name example-repo/_lakefs/refs_manifest.json --account-name target-storage-account-name --account-key &lt;target-storage-account-key&gt; | lakectl refs-restore lakefs://target-example-repo --manifest -
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az storage blob download <span class="nt">--container-name</span> targetContainer <span class="nt">--name</span> example-repo/_lakefs/refs_manifest.json <span class="nt">--account-name</span> target-storage-account-name <span class="nt">--account-key</span> &lt;target-storage-account-key&gt; | lakectl refs-restore lakefs://target-example-repo <span class="nt">--manifest</span> -
 </code></pre></div></div>
 
 <p class="note"><strong>Note:</strong> If you are running backups regularly, it is highly advised to test the restore process periodically to make sure that you are able to restore the repository in case of disaster.</p>
+<h2 id="python-helper-script-for-backup-and-restore">
+  
+  
+    <a href="#python-helper-script-for-backup-and-restore" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Python Helper Script for Backup and Restore
+  
+  
+</h2>
+    
+
+<p>For more streamlined repository backup and restore operations, you can use the <code class="language-plaintext highlighter-rouge">lakefs-refs.py</code> script available in the <a href="https://github.com/treeverse/lakeFS/tree/master/scripts">lakeFS repository</a>.</p>
+<h3 id="overview">
+  
+  
+    <a href="#overview" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Overview
+  
+  
+</h3>
+    
+
+<p>The <code class="language-plaintext highlighter-rouge">lakefs-refs.py</code> script automates the backup and restore procedures described in this document. It handles all the necessary steps to dump and restore lakeFS repository references, making the process simpler and less error-prone for repository migration and backup purposes.</p>
+<h3 id="prerequisites">
+  
+  
+    <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+  
+  
+</h3>
+    
+
+<p>Install the required dependencies:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div></div>
+<h3 id="usage-examples">
+  
+  
+    <a href="#usage-examples" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Usage Examples
+  
+  
+</h3>
+    
+<h4 id="dump-repository-references">
+  
+  
+    <a href="#dump-repository-references" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Dump Repository References
+  
+  
+</h4>
+    
+
+<p>The script provides an easy way to dump repository metadata:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python lakefs-refs.py dump &lt;repository-name&gt; <span class="o">[</span><span class="nt">--all</span><span class="o">]</span> <span class="o">[</span><span class="nt">--commit</span><span class="o">]</span> <span class="o">[</span><span class="nt">--rm</span><span class="o">]</span> <span class="o">[</span><span class="nt">--endpoint-url</span> &lt;url&gt;] <span class="o">[</span><span class="nt">--access-key-id</span> &lt;key&gt;] <span class="o">[</span><span class="nt">--secret-access-key</span> &lt;secret&gt;]
+</code></pre></div></div>
+
+<p>Options:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;repository-name&gt;</code>: Name of the specific repository to dump</li>
+  <li><code class="language-plaintext highlighter-rouge">--all</code>: Dump all repositories instead of a specific one</li>
+  <li><code class="language-plaintext highlighter-rouge">--commit</code>: Commit any uncommitted changes before dumping</li>
+  <li><code class="language-plaintext highlighter-rouge">--rm</code>: Delete repository definition after successful dump</li>
+  <li>Authentication options (see below)</li>
+</ul>
+<h4 id="restore-repository-references">
+  
+  
+    <a href="#restore-repository-references" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Restore Repository References
+  
+  
+</h4>
+    
+
+<p>For restoring repository metadata from manifest files:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python lakefs-refs.py restore &lt;manifest-file&gt; <span class="o">[</span>&lt;manifest-file2&gt; ...] <span class="o">[</span><span class="nt">--ignore-storage-id</span><span class="o">]</span> <span class="o">[</span><span class="nt">--endpoint-url</span> &lt;url&gt;] <span class="o">[</span><span class="nt">--access-key-id</span> &lt;key&gt;] <span class="o">[</span><span class="nt">--secret-access-key</span> &lt;secret&gt;]
+</code></pre></div></div>
+
+<p>Options:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;manifest-file&gt;</code>: One or more manifest files to restore</li>
+  <li><code class="language-plaintext highlighter-rouge">--ignore-storage-id</code>: Create repository without storage_id (useful when migrating to a different storage backend)</li>
+  <li>Authentication options (see below)</li>
+</ul>
+<h3 id="authentication">
+  
+  
+    <a href="#authentication" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication
+  
+  
+</h3>
+    
+
+<p>The script uses the same authentication method as <code class="language-plaintext highlighter-rouge">lakectl</code>, supporting authentication via command line parameters, environment variables (<code class="language-plaintext highlighter-rouge">LAKECTL_*</code>), or the <code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code> configuration file.</p>
 
                 
 

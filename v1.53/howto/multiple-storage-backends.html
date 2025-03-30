@@ -599,12 +599,13 @@
 </h2>
     
 
-<p>lakeFS multi-storage backend support enables seamless data management across multiple storage systems — 
+<p>lakeFS multi-storage backend support enables seamless data management across multiple storage systems —
 on-premises, across public clouds, or hybrid environments. This capability makes lakeFS a unified data management platform
 for all organizational data assets, which is especially critical in AI/ML environments that rely on diverse datasets stored
 in multiple locations.</p>
 
 <p>With a multi-store setup, lakeFS can connect to and manage any combination of supported storage systems, including:</p>
+
 <ul>
   <li>AWS S3</li>
   <li>Azure Blob</li>
@@ -654,7 +655,7 @@ in multiple locations.</p>
 </h2>
     
 
-<p>To configure your lakeFS server to connect to multiple storage backends, define them under the <code class="language-plaintext highlighter-rouge">blockstores</code> section in your server configurations. 
+<p>To configure your lakeFS server to connect to multiple storage backends, define them under the <code class="language-plaintext highlighter-rouge">blockstores</code> section in your server configurations.
 The <code class="language-plaintext highlighter-rouge">blockstores.stores</code> field is an array of storage backends, each with its own configuration.</p>
 
 <p>For a complete list of available options, refer to the <a href="/v1.53/reference/configuration.html#blockstores">server configuration reference</a>.</p>
@@ -731,11 +732,13 @@ to ensure a smooth transition.</p>
         <span class="na">storage_account</span><span class="pi">:</span> <span class="s2">"</span><span class="s">analytics-account"</span>
         <span class="na">storage_access_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">EXAMPLE45551FSAsVVCXCF"</span>
 </code></pre></div>    </div>
+
   </div>
 
   <div id="hybrid">
 
     <p>This hybrid setup allows lakeFS to manage data across both cloud and on-prem storages.</p>
+
     <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">blockstores</span><span class="pi">:</span>
   <span class="na">signing</span><span class="pi">:</span>
     <span class="na">secret_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">some-secret"</span>
@@ -756,6 +759,7 @@ to ensure a smooth transition.</p>
           <span class="na">access_key_id</span><span class="pi">:</span> <span class="s2">"</span><span class="s">minio_access_key"</span>
           <span class="na">secret_access_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">minio_secret_key"</span>
 </code></pre></div>    </div>
+
   </div>
 </div>
 <h3 id="key-considerations">
@@ -773,8 +777,8 @@ to ensure a smooth transition.</p>
   <li>S3 Authentication Handling:
     <ul>
       <li>All standard S3 authentication methods are supported.</li>
-      <li>Every blockstore needs to be authenticated.  So make sure to configure a profile or static credentials for all storages of type <code class="language-plaintext highlighter-rouge">s3</code>. 
-S3 storage will use the credentials chain by default, so you might be able to use that for one storage.</li>
+      <li>Every blockstore needs to be authenticated.  So make sure to configure a profile or static credentials for all storages of type <code class="language-plaintext highlighter-rouge">s3</code>.
+  S3 storage will use the credentials chain by default, so you might be able to use that for one storage.</li>
     </ul>
   </li>
 </ul>
@@ -792,8 +796,9 @@ S3 storage will use the credentials chain by default, so you might be able to us
     
 
 <p>When upgrading from a single storage backend to a multi-storage setup, follow these guidelines:</p>
+
 <ul>
-  <li>Use the new <code class="language-plaintext highlighter-rouge">blockstores</code> structure, <strong>replacing</strong> the existing <code class="language-plaintext highlighter-rouge">blockstore</code> configuration. Note that <code class="language-plaintext highlighter-rouge">blockstore</code> and <code class="language-plaintext highlighter-rouge">blockstores</code> 
+  <li>Use the new <code class="language-plaintext highlighter-rouge">blockstores</code> structure, <strong>replacing</strong> the existing <code class="language-plaintext highlighter-rouge">blockstore</code> configuration. Note that <code class="language-plaintext highlighter-rouge">blockstore</code> and <code class="language-plaintext highlighter-rouge">blockstores</code>
 configurations are mutually exclusive - lakeFS does not support both simultaneously.</li>
   <li>Define all previously available <a href="/v1.53/reference/configuration.html#blockstore">single-blockstore settings</a> under their respective storage backends.</li>
   <li>The <code class="language-plaintext highlighter-rouge">signing.secret_key</code> is a required setting global to all connected stores.</li>
@@ -819,8 +824,9 @@ If removed, lakeFS will fail to start because it will treat existing repositorie
 <p>To add a storage backend, update the server configuration with the new storage entry and restart the server.</p>
 
 <p>To remove a storage backend:</p>
+
 <ul>
-  <li>Delete all repositories associated with the storage backend.</li>
+  <li>Delete all repositories associated with the storage backend. (definition only)</li>
   <li>Remove the storage entry from the configuration.</li>
   <li>Restart the server.</li>
 </ul>
@@ -874,6 +880,162 @@ configurations. In multi-storage setups, this is the recommended method to list 
     </tr>
   </tbody>
 </table></div>
+<h3 id="migrating-from-multiple-storage-backend-to-single-storage-backend">
+  
+  
+    <a href="#migrating-from-multiple-storage-backend-to-single-storage-backend" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migrating from Multiple Storage Backend to Single Storage Backend
+  
+  
+</h3>
+    
+
+<p>Once you upgrade to a multi-storage setup, you cannot simply revert back by changing the configuration from <code class="language-plaintext highlighter-rouge">blockstores</code> to <code class="language-plaintext highlighter-rouge">blockstore</code>. The internal repository metadata format changes to support multiple storage backends, and is not backward compatible with the single storage format. If you need to consolidate your data and revert from a multi-storage setup to a single storage backend, you’ll need to perform a full migration by following these steps:</p>
+<h4 id="overview">
+  
+  
+    <a href="#overview" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Overview
+  
+  
+</h4>
+    
+
+<p>The migration process involves:</p>
+
+<ol>
+  <li>Dumping repository references from the multi-storage setup</li>
+  <li>Deleting repositories in the multi-storage environment</li>
+  <li>Configuring lakeFS with a single storage backend</li>
+  <li></li>
+  <li>Restoring repositories to the single storage environment</li>
+</ol>
+<h4 id="step-by-step-guide">
+  
+  
+    <a href="#step-by-step-guide" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Step-by-Step Guide
+  
+  
+</h4>
+    
+
+<p>Use the <code class="language-plaintext highlighter-rouge">lakefs-refs.py</code> script, instruction on how to aquire found in <a href="/v1.53/howto/backup-and-restore.html#python-helper-script-for-backup-and-restore">Backup and Restore</a>.</p>
+
+<ol>
+  <li>
+    <p><strong>Dump Repository References</strong></p>
+
+    <p>To dump the repository metadata:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Dump a single repository</span>
+python lakefs-refs.py dump my-repository
+   
+<span class="c"># Or dump all repositories</span>
+python lakefs-refs.py dump <span class="nt">--all</span>
+</code></pre></div>    </div>
+
+    <p>This will create manifest files for each repository.</p>
+
+    <p>Optionally, you can use the <code class="language-plaintext highlighter-rouge">--rm</code> flag to automatically delete repositories after successful dump:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Dump and delete a single repository</span>
+python lakefs-refs.py dump my-repository <span class="nt">--rm</span>
+   
+<span class="c"># Or dump and delete all repositories</span>
+python lakefs-refs.py dump <span class="nt">--all</span> <span class="nt">--rm</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Delete Source Repositories</strong> (if not using –rm flag)</p>
+
+    <p>If you didn’t use the <code class="language-plaintext highlighter-rouge">--rm</code> flag in step 1, you’ll need to delete the repositories manually. Note that deleting a repository only removes the repository record from lakeFS - it does not delete the actual data files or metadata from your storage.</p>
+
+    <p>You can delete repositories through:</p>
+
+    <p>a. The lakeFS UI
+b. Using lakectl (ex: <code class="language-plaintext highlighter-rouge">lakectl repo delete lakefs://my-repository</code>)</p>
+  </li>
+  <li>
+    <p><strong>Configure lakeFS Single Storage</strong></p>
+
+    <ul>
+      <li>Update your lakeFS configuration to use a single storage backend (using the <code class="language-plaintext highlighter-rouge">blockstore</code> section instead of <code class="language-plaintext highlighter-rouge">blockstores</code>).</li>
+      <li>Start or restart lakeFS after applying the new configuration</li>
+      <li>Example of single storage backend configuration: (multi storage backend example can be found in the <a href="#configuration">Configuration</a> section)</li>
+    </ul>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
+<span class="na">blockstore</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">s3</span>
+  <span class="na">s3</span><span class="pi">:</span>
+    <span class="na">region</span><span class="pi">:</span> <span class="s">us-east-1</span>
+<span class="nn">...</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Copy Repository Data</strong> (if needed)</p>
+  </li>
+</ol>
+
+<p>If the repositories you want to restore were created on a storage system that lakeFS is no longer connected to:</p>
+
+<p>a. Copy data from the old storage locations to the new one:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="c"># Example for S3</span>
+   aws s3 <span class="nb">sync </span>s3://old-bucket/path/to/storge-namespace s3://new-bucket/path/to/storage-namespace
+   
+   <span class="c"># Alternative: Using rclone for cross-provider transfers</span>
+   <span class="c"># rclone supports various storage providers (S3, Azure, GCS, etc.)</span>
+   rclone <span class="nb">sync </span>azure:old-container/path/to/storage-namespace aws:new-bucket/path/to/storage-namespace
+</code></pre></div></div>
+
+<p>b. Update the manifest file, created on step 1 (dump repository references) with the new storage namespace:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">   </span><span class="p">{</span><span class="w">
+     </span><span class="nl">"repository"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+       </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-repository"</span><span class="p">,</span><span class="w">
+       </span><span class="nl">"storage_namespace"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3://new-bucket/path/to/repo"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="err">update</span><span class="w"> </span><span class="err">here</span><span class="w"> </span><span class="err">...</span><span class="w">
+       </span><span class="nl">"default_branch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main"</span><span class="p">,</span><span class="w">
+       </span><span class="nl">"storage_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"storage-1"</span><span class="w">
+     </span><span class="p">},</span><span class="w">
+     </span><span class="nl">"refs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+       </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="err">existing</span><span class="w"> </span><span class="err">refs</span><span class="w"> </span><span class="err">data</span><span class="w"> </span><span class="err">...</span><span class="w">
+     </span><span class="p">}</span><span class="w">
+   </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ol>
+  <li>
+    <p><strong>Restore Repositories</strong></p>
+
+    <blockquote class="note">
+      <p>Note: If you copied the data to a new location in step 4, make sure to update the storage namespace in the manifest files before restoring.</p>
+    </blockquote>
+
+    <p>Use the <code class="language-plaintext highlighter-rouge">--ignore-storage-id</code> flag to ensure repositories are created without storage IDs in the single-storage environment:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Restore a single repository</span>
+python lakefs-refs.py restore my-repository_manifest.json <span class="nt">--ignore-storage-id</span>
+   
+<span class="c"># Or restore multiple repositories</span>
+python lakefs-refs.py restore repo1_manifest.json repo2_manifest.json <span class="nt">--ignore-storage-id</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+<h4 id="important-notes">
+  
+  
+    <a href="#important-notes" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Important Notes
+  
+  
+</h4>
+    
+
+<ul>
+  <li>Keep the manifest files safe as they contain repository metadata</li>
+  <li>If using different storage backends, ensure proper access permissions to copy the data</li>
+  <li>The <code class="language-plaintext highlighter-rouge">--commit</code> flag can be used if you want to ensure all changes are committed before dumping</li>
+  <li>Make sure the new storage backend has sufficient space for all repository data</li>
+  <li>A lakeFS instance configured with a single storage type will not start if repositories created on multiple storage setup still exist</li>
+</ul>
 <h2 id="working-with-repositories">
   
   
@@ -883,7 +1045,7 @@ configurations. In multi-storage setups, this is the recommended method to list 
 </h2>
     
 
-<p>After setting up lakeFS Enterprise to connect with multiple storage backends, this section explains how to use these 
+<p>After setting up lakeFS Enterprise to connect with multiple storage backends, this section explains how to use these
 connected storages when working with lakeFS.</p>
 
 <p>With multiple storage backends configured, lakeFS repositories are now linked to a specific storage. Together with
@@ -943,11 +1105,13 @@ you can use <code class="language-plaintext highlighter-rouge">kwargs</code> to 
 
 <span class="n">repo</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">Repository</span><span class="p">(</span><span class="s">"example-repo"</span><span class="p">).</span><span class="n">create</span><span class="p">(</span><span class="n">storage_namespace</span><span class="o">=</span><span class="s">"s3://storage-bucket/repos/example-repo"</span><span class="p">,</span> <span class="n">storage_id</span><span class="o">=</span><span class="s">"my-storage-id"</span><span class="p">)</span>
 </code></pre></div>    </div>
+
   </div>
 
 </div>
 
 <p><strong>Important notes:</strong></p>
+
 <ul>
   <li>In multi-storage setups where a storage backend is marked as <code class="language-plaintext highlighter-rouge">backward_compatible: true</code>, repository creation requests
 without a storage ID will default to this storage.</li>
@@ -993,7 +1157,7 @@ without a storage ID will default to this storage.</li>
 </h3>
     
 
-<p>Importing data into a repository is supported when the credentials used for the repository’s backing blockstore allow 
+<p>Importing data into a repository is supported when the credentials used for the repository’s backing blockstore allow
 read and list access to the storage location.</p>
 <h2 id="limitations">
   
@@ -1013,6 +1177,7 @@ read and list access to the storage location.</p>
     
 
 <p>Multi-storage backend support has been validated on:</p>
+
 <ul>
   <li>Self-managed S3-compatible object storage (MinIO)</li>
   <li>Amazon S3</li>
@@ -1020,7 +1185,7 @@ read and list access to the storage location.</p>
 </ul>
 
 <blockquote class="note">
-  <p><strong>Note:</strong> Other storage backends may work but have not been officially tested. If you’re interested in exploring 
+  <p><strong>Note:</strong> Other storage backends may work but have not been officially tested. If you’re interested in exploring
 additional configurations, please reach <a href="https://info.lakefs.io/thanks-msb">contact us</a>.</p>
 </blockquote>
 <h3 id="unsupported-clients">
@@ -1032,8 +1197,9 @@ additional configurations, please reach <a href="https://info.lakefs.io/thanks-m
 </h3>
     
 
-<p>The following clients do not currently support working with multiple storage backends. However, we are actively working 
+<p>The following clients do not currently support working with multiple storage backends. However, we are actively working
 to bridge this gap:</p>
+
 <ul>
   <li><a href="/v1.53/howto/garbage-collection/">Spark-based GC</a></li>
   <li><a href="/v1.53/reference/spark-client.html">Spark client</a></li>
