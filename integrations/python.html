@@ -573,6 +573,10 @@
     
 
 <ol id="markdown-toc">
+  <li><a href="#references--resources" id="markdown-toc-references--resources">References &amp; Resources</a>    <ol>
+      <li><a href="#python-integration-options" id="markdown-toc-python-integration-options">Python Integration Options</a></li>
+    </ol>
+  </li>
   <li><a href="#using-the-lakefs-sdk" id="markdown-toc-using-the-lakefs-sdk">Using the lakeFS SDK</a>    <ol>
       <li><a href="#installing" id="markdown-toc-installing">Installing</a></li>
       <li><a href="#initializing" id="markdown-toc-initializing">Initializing</a></li>
@@ -617,14 +621,35 @@ full story!
 Though our previous SDK client is still supported and maintained, we highly recommend using the new High Level SDK.
 <strong>For previous Python SDKs follow these links:</strong>
 <a href="https://pydocs.lakefs.io">legacy-sdk</a> (Deprecated)</p>
+<h2 id="references--resources">
+  
+  
+    <a href="#references--resources" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> References &amp; Resources
+  
+  
+</h2>
+    
 
-<p>Overview of lakeFS integration approaches using Python:</p>
+<ul>
+  <li><strong>High Level Python SDK Documentation</strong>: <a href="https://pydocs-lakefs.lakefs.io">https://pydocs-lakefs.lakefs.io</a></li>
+  <li><strong>Generated Python SDK Documentation</strong>: <a href="https://pydocs-sdk.lakefs.io">https://pydocs-sdk.lakefs.io</a></li>
+  <li><strong>Boto S3 Router</strong>: <a href="https://github.com/treeverse/boto-s3-router">https://github.com/treeverse/boto-s3-router</a></li>
+  <li><strong>lakefs-spec API Reference</strong>: <a href="https://lakefs-spec.org/latest/reference/lakefs_spec/">https://lakefs-spec.org/latest/reference/lakefs_spec/</a></li>
+</ul>
+<h3 id="python-integration-options">
+  
+  
+    <a href="#python-integration-options" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Python Integration Options
+  
+  
+</h3>
+    
 
 <ul>
   <li><a href="#using-the-lakefs-sdk">Use the High Level lakeFS SDK</a> to perform <strong>object operations</strong>, <strong>versioning</strong> and other <strong>lakeFS-specific operations</strong>.</li>
   <li><a href="https://pydocs-sdk.lakefs.io">Use the generated lakefs-sdk</a> for direct API access based on the OpenAPI specification of lakeFS.</li>
-  <li><a href="#using-boto">Use Boto</a> to perform <strong>object operations</strong> through the <strong>lakeFS S3 gateway</strong>.</li>
   <li><a href="#using-lakefs-spec-for-higher-level-file-operations">Using lakefs-spec</a> to perform high-level file operations through a file-system-like API.</li>
+  <li><a href="#using-boto">Use Boto</a> to perform <strong>object operations</strong> through the <strong>lakeFS S3 gateway</strong>.</li>
 </ul>
 <h2 id="using-the-lakefs-sdk">
   
@@ -884,6 +909,7 @@ filesystem. This is extremely useful when working with data transformation packa
 </code></pre></div></div>
 
 <p>Reading the data is just as simple:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">reader</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">'r'</span><span class="p">).</span><span class="n">read</span><span class="p">())</span>
 </code></pre></div></div>
 <h4 id="output-5">
@@ -1223,7 +1249,7 @@ in the <a href="https://github.com/aai-institute/lakefs-spec">lakefs-spec</a> re
 
 <p>Install <code class="language-plaintext highlighter-rouge">lakefs-spec</code> directly with <code class="language-plaintext highlighter-rouge">pip</code>:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python -m pip install --upgrade lakefs-spec
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python <span class="nt">-m</span> pip <span class="nb">install</span> <span class="nt">--upgrade</span> lakefs-spec
 </code></pre></div></div>
 <h3 id="interacting-with-lakefs-through-a-file-system">
   
@@ -1365,6 +1391,7 @@ you might encounter an <strong>AccessDenied</strong> error on upload,
 while the lakeFS logs display an error <code class="language-plaintext highlighter-rouge">encoding/hex: invalid byte: U+0053 'S'</code>.</p>
 
 <p>To avoid this issue, explicitly configure the Boto3 client with the following checksum settings:</p>
+
 <ul>
   <li><code class="language-plaintext highlighter-rouge">request_checksum_calculation: 'when_required'</code></li>
   <li><code class="language-plaintext highlighter-rouge">response_checksum_validation: 'when_required'</code></li>
