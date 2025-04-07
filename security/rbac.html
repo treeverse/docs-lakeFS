@@ -587,6 +587,7 @@
   <li><a href="#actions-and-permissions" id="markdown-toc-actions-and-permissions">Actions and Permissions</a></li>
   <li><a href="#preconfigured-policies" id="markdown-toc-preconfigured-policies">Preconfigured Policies</a></li>
   <li><a href="#additional-policies" id="markdown-toc-additional-policies">Additional Policies</a></li>
+  <li><a href="#multiple-resources-statements" id="markdown-toc-multiple-resources-statements">Multiple Resources Statements</a></li>
   <li><a href="#preconfigured-groups" id="markdown-toc-preconfigured-groups">Preconfigured Groups</a></li>
   <li><a href="#pluggable-authentication-and-authorization" id="markdown-toc-pluggable-authentication-and-authorization">Pluggable Authentication and Authorization</a></li>
 </ol>
@@ -1474,6 +1475,65 @@ create a repository (<code class="language-plaintext highlighter-rouge">POST /re
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
+<h2 id="multiple-resources-statements">
+  
+  
+    <a href="#multiple-resources-statements" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Multiple Resources Statements
+  
+  
+</h2>
+    
+
+<p>lakeFS supports specifying multiple resources in a single RBAC statement. This is available on lakeFS Cloud, or on lakeFS Enterprise if starting at version lakeFS v1.54.0 and Fluffy v0.12.0
+In addition to a single resource, the resource field can contain a string representing a JSON-encoded list of resources.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"fs:Read*"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[</span><span class="se">\"</span><span class="s2">arn:lakefs:fs:::repository/repo1</span><span class="se">\"</span><span class="s2">,</span><span class="se">\"</span><span class="s2">arn:lakefs:fs:::repository/repo2</span><span class="se">\"</span><span class="s2">]"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>The list must be properly encoded as a JSON string: quote each resource, and escape those quotes as shown. Otherwise, the policy cannot be parsed.</p>
+<h3 id="multi-resource-policy-creation-using-python-sdk">
+  
+  
+    <a href="#multi-resource-policy-creation-using-python-sdk" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Multi-Resource Policy Creation Using Python SDK
+  
+  
+</h3>
+    
+
+<p>Here is how you can leverage Python SDK to create a multiple resource policy:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs_sdk</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+<span class="kn">from</span> <span class="nn">lakefs_sdk</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_sdk</span><span class="p">.</span><span class="n">Configuration</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">lakefsEndPoint</span><span class="p">,</span>
+        <span class="n">username</span><span class="o">=</span><span class="n">lakefsAccessKey</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">lakefsSecretKey</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">clt</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+
+<span class="n">clt</span><span class="p">.</span><span class="n">auth_api</span><span class="p">.</span><span class="n">create_policy</span><span class="p">(</span>
+    <span class="n">policy</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">Policy</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s">'FSReadTwoRepos'</span><span class="p">,</span>
+        <span class="n">statement</span><span class="o">=</span><span class="p">[</span><span class="n">models</span><span class="p">.</span><span class="n">Statement</span><span class="p">(</span>
+            <span class="n">effect</span><span class="o">=</span><span class="s">"deny"</span><span class="p">,</span>
+            <span class="n">resource</span><span class="o">=</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">([</span><span class="s">"arn:lakefs:fs:::repository/repo1"</span><span class="p">,</span><span class="s">"arn:lakefs:fs:::repository/repo2"</span><span class="p">]),</span>
+            <span class="n">action</span><span class="o">=</span><span class="p">[</span><span class="s">"fs:ReadRepository"</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
 <h2 id="preconfigured-groups">
   
   
