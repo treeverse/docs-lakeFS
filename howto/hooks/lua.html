@@ -1688,6 +1688,37 @@ The response is of the form:
           <span class="pi">-</span> <span class="s">mytable</span>
 
 </code></pre></div></div>
+<h3 id="lakefscatalogexportdelta_exporterchanged_table_defstable_def_names-table_descriptors_path-repository_id-ref-compare_ref">
+  
+  
+    <a href="#lakefscatalogexportdelta_exporterchanged_table_defstable_def_names-table_descriptors_path-repository_id-ref-compare_ref" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/delta_exporter.changed_table_defs(table_def_names, table_descriptors_path, repository_id, ref, compare_ref)</code>
+  
+  
+</h3>
+    
+
+<p>Utility function to filter list of table defs based on those that have changed. Returns the subset of the tables in the table_def_names parameter that have changed.</p>
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">table_def_names(table of strings)</code>: List of table names to filter based on the diff</li>
+  <li><code class="language-plaintext highlighter-rouge">table_descriptors_path(string)</code>: The path under which the table descriptors of the provided <code class="language-plaintext highlighter-rouge">table_def_names</code> reside</li>
+  <li><code class="language-plaintext highlighter-rouge">repository_id(string)</code>: The repository ID</li>
+  <li><code class="language-plaintext highlighter-rouge">ref(string)</code>: base reference pointing at a specific version of the data i.e. a branch, commit ID, or tag</li>
+  <li><code class="language-plaintext highlighter-rouge">compare_ref(string)</code>: compared-to reference for the diff to determine which tables changed</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">delta_export</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs/catalogexport/delta_exporter"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">action</span><span class="p">.</span><span class="n">commit</span><span class="p">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="kd">local</span> <span class="n">compare_ref</span> <span class="o">=</span> <span class="n">action</span><span class="p">.</span><span class="n">commit_id</span>
+<span class="kd">local</span> <span class="n">changed_table_defs</span> <span class="o">=</span> <span class="n">delta_export</span><span class="p">.</span><span class="n">changed_table_defs</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">table_defs</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">table_descriptors_path</span><span class="p">,</span> <span class="n">action</span><span class="p">.</span><span class="n">repository_id</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">compare_ref</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">#</span><span class="n">changed_table_defs</span> <span class="k">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">changed_table_defs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="k">end</span>
+</code></pre></div></div>
 <h3 id="lakefscatalogexporttable_extractor">
   
   
@@ -1709,17 +1740,24 @@ The response is of the form:
 
 <p>List all YAML files under <code class="language-plaintext highlighter-rouge">_lakefs_tables/*</code> and return a list of type <code class="language-plaintext highlighter-rouge">[{physical_address, path}]</code>, ignores hidden files. 
 The <code class="language-plaintext highlighter-rouge">client</code> is <code class="language-plaintext highlighter-rouge">lakefs</code> client.</p>
-<h3 id="lakefscatalogexporttable_extractorget_table_descriptorclient-repo_id-commit_id-logical_path">
+<h3 id="lakefscatalogexporttable_extractorget_table_descriptorclient-repo_id-ref-logical_path">
   
   
-    <a href="#lakefscatalogexporttable_extractorget_table_descriptorclient-repo_id-commit_id-logical_path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/table_extractor.get_table_descriptor(client, repo_id, commit_id, logical_path)</code>
+    <a href="#lakefscatalogexporttable_extractorget_table_descriptorclient-repo_id-ref-logical_path" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">lakefs/catalogexport/table_extractor.get_table_descriptor(client, repo_id, ref, logical_path)</code>
   
   
 </h3>
     
 
-<p>Read a table descriptor and parse YAML object. Will set <code class="language-plaintext highlighter-rouge">partition_columns</code> to <code class="language-plaintext highlighter-rouge">{}</code> if no partitions are defined.
-The <code class="language-plaintext highlighter-rouge">client</code> is <code class="language-plaintext highlighter-rouge">lakefs</code> client.</p>
+<p>Read a table descriptor and parse YAML object. Will set <code class="language-plaintext highlighter-rouge">partition_columns</code> to <code class="language-plaintext highlighter-rouge">{}</code> if no partitions are defined.</p>
+
+<p>Parameters:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">client</code>: <code class="language-plaintext highlighter-rouge">lakefs</code> client</li>
+  <li><code class="language-plaintext highlighter-rouge">repo_id(string)</code>: The repository ID</li>
+  <li><code class="language-plaintext highlighter-rouge">ref(string)</code>: reference pointing at a specific version of the data i.e. a branch, commit ID, or tag</li>
+  <li><code class="language-plaintext highlighter-rouge">logical_path(string)</code>: logical path of the table descriptor file within the repo</li>
+</ul>
 <h3 id="lakefscatalogexporthiveextract_partition_pagerclient-repo_id-commit_id-base_path-partition_cols-page_size">
   
   
