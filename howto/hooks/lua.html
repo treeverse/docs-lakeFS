@@ -1133,6 +1133,31 @@ Returns the created/fetched schema name.</p>
 <span class="kd">local</span> <span class="n">client</span> <span class="o">=</span> <span class="n">databricks</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"https://my-host.cloud.databricks.com"</span><span class="p">,</span> <span class="s2">"my-service-principal-token"</span><span class="p">)</span>
 <span class="kd">local</span> <span class="n">schema_name</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">create_schema</span><span class="p">(</span><span class="s2">"main"</span><span class="p">,</span> <span class="s2">"mycatalog"</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
 </code></pre></div></div>
+<h3 id="databricksclientexecute_statementstatement-warehouse_id-catalog_name-schema_name">
+  
+  
+    <a href="#databricksclientexecute_statementstatement-warehouse_id-catalog_name-schema_name" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">databricks/client.execute_statement(statement, warehouse_id, catalog_name, schema_name)</code>
+  
+  
+</h3>
+    
+
+<p>Parameters:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">statement(boolean)</code>: The SQL statement to execute on the databricks table</li>
+  <li><code class="language-plaintext highlighter-rouge">warehouse_id(string)</code>: The SQL warehouse ID used in Databricks to run the <code class="language-plaintext highlighter-rouge">CREATE TABLE</code> query (fetched from the SQL warehouse</li>
+  <li><code class="language-plaintext highlighter-rouge">catalog_name(string)</code>: The catalog name under which the schema will be created (or from which it will be fetched)</li>
+  <li><code class="language-plaintext highlighter-rouge">schema_name(string)</code>: The required schema name
+<code class="language-plaintext highlighter-rouge">status</code>, return the SQL status i.e. SUCCEEDED or an error code/message</li>
+</ul>
+
+<p>Example:</p>
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">databricks</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"databricks"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">client</span> <span class="o">=</span> <span class="n">databricks</span><span class="p">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"https://my-host.cloud.databricks.com"</span><span class="p">,</span> <span class="s2">"my-service-principal-token"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">statement</span> <span class="o">=</span> <span class="s2">"ALTER TABLE "</span> <span class="o">..</span> <span class="n">table_descriptor</span><span class="p">.</span><span class="n">name</span> <span class="o">..</span> <span class="s2">" ALTER COLUMN ID SET MASK mask_num"</span>
+<span class="n">databricks_client</span><span class="p">.</span><span class="n">execute_statement</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">args</span><span class="p">.</span><span class="n">warehouse_id</span><span class="p">,</span> <span class="n">table_descriptor</span><span class="p">.</span><span class="n">catalog</span><span class="p">,</span> <span class="n">table_descriptor</span><span class="p">.</span><span class="n">schema</span><span class="p">)</span>
+</code></pre></div></div>
 <h3 id="databricksclientregister_external_tabletable_name-physical_path-warehouse_id-catalog_name-schema_name-metadata">
   
   
