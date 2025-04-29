@@ -574,7 +574,7 @@
 </h2>
     
 
-<p>Enjoyed the quickstart and want to try out lakeFS against your own data? Here’s how to run lakeFS locally as a Docker container locally connecting to an object store.</p>
+<p>Enjoyed the quickstart and want to try out lakeFS against your own data? Here’s how to run lakeFS locally, connecting to an object store.</p>
 
 <div class="tabs">
   <ul>
@@ -585,47 +585,43 @@
   </ul>
   <div id="on-aws-s3">
 
-    <p class="note">Note: Make sure the Quickstart Docker Compose from the previous steps isn’t also running as you’ll get a port conflict.</p>
+    <p class="note">Note: Make sure the Quickstart server from the previous steps isn’t also running as you’ll get a port conflict.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'s3'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s1">'YourAccessKeyValue'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s1">'YourSecretKeyValue'</span> <span class="se">\</span>
-   treeverse/lakefs run <span class="nt">--local-settings</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"s3"</span>
+<span class="nb">export </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"YourAccessKeyValue"</span>
+<span class="nb">export </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"YourSecretKeyValue"</span>
+lakefs run <span class="nt">--local-settings</span>
 </code></pre></div>    </div>
 
   </div>
   <div id="on-azure-blob">
 
-    <p class="note">Note: Make sure the Quickstart Docker Compose from the previous steps isn’t also running as you’ll get a port conflict.</p>
+    <p class="note">Note: Make sure the Quickstart server from the previous steps isn’t also running as you’ll get a port conflict.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'azure'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCOUNT</span><span class="o">=</span><span class="s1">'YourAzureStorageAccountName'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="s1">'YourAzureStorageAccessKey'</span> <span class="se">\</span>
-   treeverse/lakefs run <span class="nt">--local-settings</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"azure"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCOUNT</span><span class="o">=</span><span class="s2">"YourAzureStorageAccountName"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_AZURE_STORAGE_ACCESS_KEY</span><span class="o">=</span><span class="s2">"YourAzureStorageAccessKey"</span>
+lakefs run <span class="nt">--local-settings</span>
 </code></pre></div>    </div>
 
   </div>
   <div id="on-google-gcs">
 
-    <p class="note">Note: Make sure the Quickstart Docker Compose from the previous steps isn’t also running as you’ll get a port conflict.</p>
+    <p class="note">Note: Make sure the Quickstart server from the previous steps isn’t also running as you’ll get a port conflict.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'gs'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_GS_CREDENTIALS_JSON</span><span class="o">=</span><span class="s1">'YourGoogleServiceAccountKeyJSON'</span> <span class="se">\</span>
-   treeverse/lakefs run <span class="nt">--local-settings</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"gs"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_GS_CREDENTIALS_JSON</span><span class="o">=</span><span class="s2">"YourGoogleServiceAccountKeyJSON"</span>
+lakefs run <span class="nt">--local-settings</span>
 </code></pre></div>    </div>
     <p>where you will replace <code class="language-plaintext highlighter-rouge">YourGoogleServiceAccountKeyJSON</code> with JSON string that contains your Google service account key.</p>
 
     <p>If you want to use the JSON file that contains your Google service account key instead of JSON string (as in the previous command) then go to the directory where JSON file is stored and run the command with local parameters:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-   <span class="nt">-v</span> <span class="nv">$PWD</span>:/myfiles <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'gs'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_GS_CREDENTIALS_FILE</span><span class="o">=</span><span class="s1">'/myfiles/YourGoogleServiceAccountKey.json'</span> <span class="se">\</span>
-   treeverse/lakefs run <span class="nt">--local-settings</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"gs"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_GS_CREDENTIALS_FILE</span><span class="o">=</span><span class="s2">"/myfiles/YourGoogleServiceAccountKey.json"</span>
+lakefs run <span class="nt">--local-settings</span>
 </code></pre></div>    </div>
+
     <p>This command will mount your present working directory (PWD) within the container and will read the JSON file from your PWD.</p>
 
   </div>
@@ -633,16 +629,15 @@
 
     <p>To use lakeFS with MinIO (or other S3-compatible object storage), use the following example:</p>
 
-    <p class="note">Note: Make sure the Quickstart Docker Compose from the previous steps isn’t also running as you’ll get a port conflict.</p>
+    <p class="note">Note: Make sure the Quickstart server from the previous steps isn’t also running as you’ll get a port conflict.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--pull</span> always <span class="nt">-p</span> 8000:8000 <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s1">'s3'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE</span><span class="o">=</span><span class="s1">'true'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_S3_ENDPOINT</span><span class="o">=</span><span class="s1">'http://&lt;minio_endpoint&gt;'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_S3_DISCOVER_BUCKET_REGION</span><span class="o">=</span><span class="s1">'false'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s1">'&lt;minio_access_key&gt;'</span> <span class="se">\</span>
-   <span class="nt">-e</span> <span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s1">'&lt;minio_secret_key&gt;'</span> <span class="se">\</span>
-   treeverse/lakefs run <span class="nt">--local-settings</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">"s3"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE</span><span class="o">=</span><span class="s2">"true"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_S3_ENDPOINT</span><span class="o">=</span><span class="s2">"http://&lt;minio_endpoint&gt;"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_S3_DISCOVER_BUCKET_REGION</span><span class="o">=</span><span class="s2">"false"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"&lt;minio_access_key&gt;"</span>
+<span class="nb">export </span><span class="nv">LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"&lt;minio_secret_key&gt;"</span>
+lakefs run <span class="nt">--local-settings</span>
 </code></pre></div>    </div>
 
   </div>
