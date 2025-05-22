@@ -775,18 +775,55 @@ To install the required packages, run the following command:</li>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>lakefs[aws-iam]
 </code></pre></div></div>
 
-<p>In order to generate a lakeFS client with the assumed role, initiate a boto3 session with the desired role and call <code class="language-plaintext highlighter-rouge">lakefs.client.frow_aws_role</code>:</p>
+<p>There are two ways in which external principals can be used to authenticate to lakeFS:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
-<span class="kn">import</span> <span class="nn">boto3</span>    
-<span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
-<span class="n">my_client</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">from_aws_role</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">ttl_seconds</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">"&lt;lakefs-host&gt;"</span><span class="p">)</span>
+<ol>
+  <li>
+    <p>If no other authentication flow is provided, and the <code class="language-plaintext highlighter-rouge">credentials.provider.type</code> configuration is set to <code class="language-plaintext highlighter-rouge">aws_iam</code> in <code class="language-plaintext highlighter-rouge">.lakectl.yaml</code>, the client will use the machine’s AWS role to authenticate with lakeFS:</p>
 
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">credentials</span><span class="pi">:</span>
+   <span class="na">provider</span><span class="pi">:</span>
+     <span class="na">type</span><span class="pi">:</span> <span class="s">aws_iam</span>
+     <span class="na">aws_iam</span><span class="pi">:</span>
+       <span class="na">token_ttl_seconds</span><span class="pi">:</span> <span class="m">3600</span>            <span class="c1"># TTL for the temporary token (default: 3600)</span>
+       <span class="na">url_presign_ttl_seconds</span><span class="pi">:</span> <span class="m">60</span>        <span class="c1"># TTL for presigned URLs (default: 60)</span>
+       <span class="na">token_request_headers</span><span class="pi">:</span>             <span class="c1"># Optional headers for token requests</span>
+         <span class="na">HeaderName</span><span class="pi">:</span> <span class="s">HeaderValue</span>
+</code></pre></div>    </div>
+    <p>Or using environment variables:</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">export </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_TYPE</span><span class="o">=</span><span class="s2">"aws_iam"</span>
+ <span class="nb">export </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_TTL_SECONDS</span><span class="o">=</span><span class="s2">"3600"</span>
+ <span class="nb">export </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_PRESIGNED_URL_TTL_SECONDS</span><span class="o">=</span><span class="s2">"60"</span>
+ <span class="nb">export </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_REQUEST_HEADERS</span><span class="o">=</span><span class="s1">'{"HeaderName":"HeaderValue"}'</span>
+</code></pre></div>    </div>
+    <p>To use the client, merely import and initialize it:</p>
+    <div class="language-python warning highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">lakefs.client</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="n">my_client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+   
 <span class="c1"># list repositories
 </span><span class="n">repos</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repositories</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">my_client</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-</code></pre></div></div>
+     <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</code></pre></div>    </div>
+    <blockquote>
+      <p>Please note, using the IAM provider configurations will not work with the lakectl command line tool, and will stop you from running it.</p>
+    </blockquote>
+  </li>
+  <li>
+    <p>Generate a lakeFS client with the assumed role by initiating a boto3 session with the desired role and call <code class="language-plaintext highlighter-rouge">lakefs.client.frow_aws_role</code>:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kn">import</span> <span class="nn">lakefs</span>
+ <span class="kn">import</span> <span class="nn">boto3</span>    
+ <span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="p">.</span><span class="n">Session</span><span class="p">()</span>
+ <span class="n">my_client</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">from_aws_role</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">ttl_seconds</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">"&lt;lakefs-host&gt;"</span><span class="p">)</span>
+    
+ <span class="c1"># list repositories
+</span> <span class="n">repos</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repositories</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">my_client</span><span class="p">)</span>
+ <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+     <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
 
                 
 
