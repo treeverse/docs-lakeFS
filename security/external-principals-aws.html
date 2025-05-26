@@ -772,7 +772,7 @@ Currently, the login operation is supported out of the box in:</p>
 To install the required packages, run the following command:</li>
 </ol>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>lakefs[aws-iam]
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install</span> <span class="s2">"lakefs[aws-iam]"</span>
 </code></pre></div></div>
 
 <p>There are two ways in which external principals can be used to authenticate to lakeFS:</p>
@@ -796,14 +796,11 @@ To install the required packages, run the following command:</li>
  <span class="nb">export </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_PRESIGNED_URL_TTL_SECONDS</span><span class="o">=</span><span class="s2">"60"</span>
  <span class="nb">export </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_REQUEST_HEADERS</span><span class="o">=</span><span class="s1">'{"HeaderName":"HeaderValue"}'</span>
 </code></pre></div>    </div>
-    <p>To use the client, merely import and initialize it:</p>
-    <div class="language-python warning highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">lakefs.client</span> <span class="kn">import</span> <span class="n">Client</span>
-<span class="n">my_client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
-   
-<span class="c1"># list repositories
-</span><span class="n">repos</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repositories</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">my_client</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
-     <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <p>To use the client, merely <code class="language-plaintext highlighter-rouge">import lakefs</code> and use it as you would normally do:</p>
+    <div class="language-python warning highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
+
+<span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">"example-repo"</span><span class="p">).</span><span class="n">branches</span><span class="p">():</span>
+ <span class="k">print</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
 </code></pre></div>    </div>
     <blockquote>
       <p>Please note, using the IAM provider configurations will not work with the lakectl command line tool, and will stop you from running it.</p>
