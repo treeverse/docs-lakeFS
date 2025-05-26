@@ -582,7 +582,9 @@ Everest mount supports writing to the file system for both NFS and FUSE protocol
 <ol id="markdown-toc">
   <li><a href="#use-cases" id="markdown-toc-use-cases">Use Cases</a></li>
   <li><a href="#requirements" id="markdown-toc-requirements">Requirements</a></li>
-  <li><a href="#authentication-with-lakefs" id="markdown-toc-authentication-with-lakefs">Authentication with lakeFS</a></li>
+  <li><a href="#authentication-chain-for-lakefs" id="markdown-toc-authentication-chain-for-lakefs">Authentication Chain for lakeFS</a></li>
+  <li><a href="#authenticate-with-lakefs-credentials" id="markdown-toc-authenticate-with-lakefs-credentials">Authenticate with lakeFS Credentials</a></li>
+  <li><a href="#authenticating-with-aws-iam-role" id="markdown-toc-authenticating-with-aws-iam-role">Authenticating with AWS IAM Role</a></li>
   <li><a href="#command-line-interface" id="markdown-toc-command-line-interface">Command Line Interface</a></li>
   <li><a href="#examples" id="markdown-toc-examples">Examples</a></li>
   <li><a href="#faqs" id="markdown-toc-faqs">FAQs</a></li>
@@ -630,10 +632,27 @@ Everest mount supports writing to the file system for both NFS and FUSE protocol
 <ul>
   <li>NFS V3 (Network File System) is supported on macOS.</li>
 </ul>
-<h2 id="authentication-with-lakefs">
+<h2 id="authentication-chain-for-lakefs">
   
   
-    <a href="#authentication-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication with lakeFS
+    <a href="#authentication-chain-for-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication Chain for lakeFS
+  
+  
+</h2>
+    
+
+<p>When running an Everest <code class="language-plaintext highlighter-rouge">mount</code> command, authentication occurs in the following order:</p>
+
+<ol>
+  <li><strong>Session token</strong> from the environment variable <code class="language-plaintext highlighter-rouge">EVEREST_LAKEFS_CREDENTIALS_SESSION_TOKEN</code> or <code class="language-plaintext highlighter-rouge">LAKECTL_CREDENTIALS_SESSION_TOKEN</code>.<br />
+If the token is expired, authentication will fail.</li>
+  <li><strong>lakeFS key pair</strong>, using lakeFS access key ID and secret key. (picked up from lakectl if Everest not provided)</li>
+  <li><strong>IAM authentication</strong>, if configured and <strong>no static credentials are set</strong>.</li>
+</ol>
+<h2 id="authenticate-with-lakefs-credentials">
+  
+  
+    <a href="#authenticate-with-lakefs-credentials" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authenticate with lakeFS Credentials
   
   
 </h2>
@@ -646,6 +665,73 @@ Searching for lakeFS credentials and server endpoint in the following order:</p>
   <li><code class="language-plaintext highlighter-rouge">LAKECTL_*</code> Environment variables</li>
   <li><code class="language-plaintext highlighter-rouge">~/.lakectl.yaml</code> Configuration file or via <code class="language-plaintext highlighter-rouge">--lakectl-config</code> flag</li>
 </ul>
+<h2 id="authenticating-with-aws-iam-role">
+  
+  
+    <a href="#authenticating-with-aws-iam-role" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authenticating with AWS IAM Role
+  
+  
+</h2>
+    
+
+<p>Starting from <strong>lakeFS ≥ v1.57.0</strong> and <strong>Everest ≥ v0.4.0</strong>, authenticating with IAM roles is supported!<br />
+When IAM authentication is configured, Everest will use AWS SDK default behavior that will pick your <strong>AWS environment</strong> to generate a <strong>session token</strong> used for authenticating against lakeFS (i.e use <code class="language-plaintext highlighter-rouge">AWS_PROFILE</code>, <code class="language-plaintext highlighter-rouge">AWS_ACCESS_KEY_ID</code>, etc). This token is seamlessly refreshed as long as the AWS session remains valid.</p>
+<h3 id="prerequisites">
+  
+  
+    <a href="#prerequisites" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Prerequisites
+  
+  
+</h3>
+    
+<ol>
+  <li>Make sure your lakeFS server supports <a href="https://docs.lakefs.io/security/external-principals-aws.html">AWS IAM Role Login</a>.</li>
+  <li>Make sure your IAM role is attached to lakeFS. See <a href="https://docs.lakefs.io/security/external-principals-aws.html#administration-of-iam-roles-in-lakefs">Administration of IAM Roles in lakeFS</a></li>
+</ol>
+<h3 id="configure-everest-to-use-iam">
+  
+  
+    <a href="#configure-everest-to-use-iam" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configure everest to use IAM
+  
+  
+</h3>
+    
+
+<p>To use IAM authentication, new configuration fields were introduced:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">credentials.provider.type</code> <code class="language-plaintext highlighter-rouge">(string: '')</code> - Settings this <code class="language-plaintext highlighter-rouge">aws_iam</code> will expect <code class="language-plaintext highlighter-rouge">aws_iam</code> block and try to use IAM.</li>
+  <li><code class="language-plaintext highlighter-rouge">credentials.provider.aws_iam.token_ttl_second</code> <code class="language-plaintext highlighter-rouge">(duration: 60m)</code> - Optional: lakeFS token duration.</li>
+  <li><code class="language-plaintext highlighter-rouge">credentials.provider.aws_iam.url_presign_ttl_seconds</code> <code class="language-plaintext highlighter-rouge">(duration: 15m)</code> - Optional: AWS STS’s presigned URL validation duration.</li>
+  <li><code class="language-plaintext highlighter-rouge">credentials.provider.aws_iam.refresh_interval</code> <code class="language-plaintext highlighter-rouge">(duration: 15m)</code> - Optional: Amount of time before token expiration that Everest will try to fetch a new session token instead of using the current one.</li>
+  <li><code class="language-plaintext highlighter-rouge">credentials.provider.aws_iam.token_request_headers</code>: Map of required headers and their values to be signed by the AWS STS request as configured in your lakeFS server. If nothing is set the <strong>default</strong> behavior is adding <code class="language-plaintext highlighter-rouge">x-lakefs-server-id:&lt;lakeFS host&gt;</code>. If your lakeFS server doesn’t require any headers (less secure) you can set this empty by setting <code class="language-plaintext highlighter-rouge">{}</code> empty map in your config.</li>
+</ul>
+
+<p>These configuration fields can be set via <code class="language-plaintext highlighter-rouge">.lakectl.yaml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">credentials</span><span class="pi">:</span>
+  <span class="na">provider</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">aws_iam</span>          <span class="c1"># Required</span>
+    <span class="na">aws_iam</span><span class="pi">:</span>
+      <span class="na">token_ttl_seconds</span><span class="pi">:</span> <span class="s">60m</span>              <span class="c1"># Optional, default: 1h</span>
+      <span class="na">url_presign_ttl_seconds</span><span class="pi">:</span> <span class="s">15m</span>        <span class="c1"># Optional, default: 15m</span>
+      <span class="na">refresh_interval</span><span class="pi">:</span> <span class="s">5m</span>                <span class="c1"># Optional, default: 5m</span>
+      <span class="na">token_request_headers</span><span class="pi">:</span>              <span class="c1"># Optional, if omitted then will set x-lakefs-server-id: &lt;lakeFS host&gt; by default, to override default set to '{}'</span>
+      <span class="c1"># x-lakefs-server-id: &lt;lakeFS host&gt;     Added by default if token_request_headers is not set	</span>
+<span class="err">	</span>  <span class="na">custome-key</span><span class="pi">:</span>  <span class="s">custome-val</span>
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">endpoint_url</span><span class="pi">:</span> <span class="s">&lt;lakeFS endpoint url&gt;</span>
+</code></pre></div></div>
+
+<p>To set using environment variables - those will start with the prefix <code class="language-plaintext highlighter-rouge">EVEREST_LAKEFS_*</code> or <code class="language-plaintext highlighter-rouge">LAKECTL_*</code>.
+For example, setting the provider type using env vars:
+<code class="language-plaintext highlighter-rouge">export EVEREST_LAKEFS_CREDENTIALS_PROVIDER_TYPE=aws_iam</code> or <code class="language-plaintext highlighter-rouge">LAKECTL_CREDENTIALS_PROVIDER_TYPE=aws_iam</code>.</p>
+
+<p>Tip: To troubleshoot presign request issues, you can enable debug logging for presign requests using the environment variable:
+<code class="language-plaintext highlighter-rouge">EVEREST_LAKEFS_CREDENTIALS_PROVIDER_AWS_IAM_CLIENT_LOG_PRE_SIGNING_REQUEST=true</code></p>
+
+<p class="note"><strong>Note</strong>
+⚠️ If you choose to configure IAM provider using the same lakectl file (i.e <code class="language-plaintext highlighter-rouge">lakectl.yaml</code>) that you use for the <strong>lakectl cli</strong>, you must upgrade lakectl to version (<code class="language-plaintext highlighter-rouge">≥ v1.57.0</code>) otherwise lakectl will raise errors when using it.</p>
 <h2 id="command-line-interface">
   
   
