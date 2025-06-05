@@ -259,8 +259,7 @@
                     </li><li class="nav-list-item ">
                         <a href="/howto/hooks/webhooks.html"
                            class="nav-list-link">Webhooks</a>
-                    </li></ul></li><li class="nav-list-item "><a href="/howto/lakefs-tables.html"
-                   class="nav-list-link">lakeFS Tables<span class="badge badge-enterprise" title="Enterprise">Enterprise</span></a></li><li class="nav-list-item "><a href="/howto/backup-and-restore.html"
+                    </li></ul></li><li class="nav-list-item "><a href="/howto/backup-and-restore.html"
                    class="nav-list-link">Backup and Restore Repository</a></li><li class="nav-list-item "><a href="/howto/protect-branches.html"
                    class="nav-list-link">Branch Protection</a></li><li class="nav-list-item "><a href="/howto/copying.html"
                    class="nav-list-link">Copying data to/from lakeFS</a></li><li class="nav-list-item "><a href="/howto/catalog_exports.html"
@@ -298,7 +297,7 @@
                    class="nav-list-link">Amazon SageMaker</a></li><li class="nav-list-item "><a href="/integrations/airflow.html"
                    class="nav-list-link">Apache Airflow</a></li><li class="nav-list-item "><a href="/integrations/hive.html"
                    class="nav-list-link">Apache Hive</a></li><li class="nav-list-item  active"><a href="/integrations/iceberg.html"
-                   class="nav-list-link active">Apache Iceberg</a></li><li class="nav-list-item "><a href="/integrations/kafka.html"
+                   class="nav-list-link active">Apache Iceberg<span class="badge badge-enterprise" title="Enterprise">Enterprise</span></a></li><li class="nav-list-item "><a href="/integrations/kafka.html"
                    class="nav-list-link">Apache Kafka</a></li><li class="nav-list-item "><a href="/integrations/spark.html"
                    class="nav-list-link">Apache Spark</a></li><li class="nav-list-item "><a href="/integrations/cloudera.html"
                    class="nav-list-link">Cloudera</a></li><li class="nav-list-item "><a href="/integrations/databricks.html"
@@ -585,33 +584,490 @@
     
 
 <ol id="markdown-toc">
-  <li><a href="#setup" id="markdown-toc-setup">Setup</a></li>
-  <li><a href="#configure" id="markdown-toc-configure">Configure</a></li>
-  <li><a href="#using-iceberg-tables-with-lakefs" id="markdown-toc-using-iceberg-tables-with-lakefs">Using Iceberg tables with lakeFS</a>    <ol>
-      <li><a href="#create-a-table" id="markdown-toc-create-a-table">Create a table</a></li>
-      <li><a href="#insert-data-into-the-table" id="markdown-toc-insert-data-into-the-table">Insert data into the table</a></li>
-      <li><a href="#create-a-branch" id="markdown-toc-create-a-branch">Create a branch</a></li>
-      <li><a href="#make-changes-on-the-branch" id="markdown-toc-make-changes-on-the-branch">Make changes on the branch</a></li>
-      <li><a href="#query-the-table" id="markdown-toc-query-the-table">Query the table</a></li>
+  <li><a href="#lakefs-iceberg-rest-catalog" id="markdown-toc-lakefs-iceberg-rest-catalog">lakeFS Iceberg REST Catalog</a>    <ol>
+      <li><a href="#what-is-lakefs-iceberg-rest-catalog" id="markdown-toc-what-is-lakefs-iceberg-rest-catalog">What is lakeFS Iceberg REST Catalog?</a></li>
+      <li><a href="#use-cases" id="markdown-toc-use-cases">Use Cases</a></li>
+      <li><a href="#configuration" id="markdown-toc-configuration">Configuration</a></li>
+      <li><a href="#namespaces-and-tables" id="markdown-toc-namespaces-and-tables">Namespaces and Tables</a></li>
+      <li><a href="#table-operations" id="markdown-toc-table-operations">Table Operations</a></li>
+      <li><a href="#version-control-features" id="markdown-toc-version-control-features">Version Control Features</a></li>
+      <li><a href="#authentication" id="markdown-toc-authentication">Authentication</a></li>
+      <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
+      <li><a href="#table-maintenance" id="markdown-toc-table-maintenance">Table Maintenance</a></li>
+      <li><a href="#roadmap" id="markdown-toc-roadmap">Roadmap</a></li>
+      <li><a href="#related-resources" id="markdown-toc-related-resources">Related Resources</a></li>
     </ol>
   </li>
-  <li><a href="#migrating-an-existing-iceberg-table-to-lakefs-catalog" id="markdown-toc-migrating-an-existing-iceberg-table-to-lakefs-catalog">Migrating an existing Iceberg Table to lakeFS Catalog</a></li>
+  <li><a href="#deprecated-iceberg-hadoopcatalog" id="markdown-toc-deprecated-iceberg-hadoopcatalog">Deprecated: Iceberg HadoopCatalog</a></li>
 </ol>
 
 </div>
+<h2 id="lakefs-iceberg-rest-catalog">
+  
+  
+    <a href="#lakefs-iceberg-rest-catalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> lakeFS Iceberg REST Catalog
+  
+  
+</h2>
+    
 
-<p>To enrich your Iceberg tables with lakeFS capabilities, you can use the lakeFS implementation of the Iceberg catalog.
-You will then be able to query your Iceberg tables using lakeFS references, such as branches, tags, and commit hashes:</p>
+<p class="label label-purple">lakeFS Enterprise</p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="k">catalog</span><span class="p">.</span><span class="k">ref</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="k">table</span>
+<blockquote class="note">
+  <p>💡 lakeFS Iceberg REST Catalog is currently in private preview for <a href="/enterprise/">lakeFS Enterprise</a> customers.
+<a href="https://lakefs.io/book-a-demo/">Contact us</a> to get started!</p>
+</blockquote>
+<h3 id="what-is-lakefs-iceberg-rest-catalog">
+  
+  
+    <a href="#what-is-lakefs-iceberg-rest-catalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> What is lakeFS Iceberg REST Catalog?
+  
+  
+</h3>
+    
+
+<p>lakeFS Iceberg REST Catalog allow you to use lakeFS as a <a href="https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml">spec-compliant</a> Apache <a href="https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/apache/iceberg/main/open-api/rest-catalog-open-api.yaml">Iceberg REST catalog</a>, 
+allowing Iceberg clients to manage and access tables using a standard REST API.</p>
+
+<p>Using lakeFS Iceberg REST Catalog, you can use lakeFS a drop-in replacement for other Iceberg catalogs like AWS Glue, Nessie, Hive Metastore - or the lakeFS HadoopCatalog (see <a href="#deprecated-iceberg-hadoopcatalog">below</a>)</p>
+
+<p>With lakeFS Iceberg REST Catalog, you can:</p>
+
+<ul>
+  <li>Manage Iceberg tables with full version control capabilities.</li>
+  <li>Use standard Iceberg clients and tools without modification.</li>
+  <li>Leverage lakeFS’s branching and merging features for managing table’s lifecycle.</li>
+  <li>Maintain data consistency across different environments.</li>
+</ul>
+<h3 id="use-cases">
+  
+  
+    <a href="#use-cases" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Use Cases
+  
+  
+</h3>
+    
+
+<ol>
+  <li><strong>Version-Controlled Data Development</strong>:
+    <ul>
+      <li>Create feature branches for table schema changes or data migrations</li>
+      <li>Test modifications in isolation, across multiple tables</li>
+      <li>Merge changes safely with conflict detection</li>
+    </ul>
+  </li>
+  <li><strong>Multi-Environment Management</strong>:
+    <ul>
+      <li>Use branches to represent different environments (dev, staging, prod)</li>
+      <li>Promote changes between environments through merges, with automated testing</li>
+      <li>Maintain consistent table schemas across environments</li>
+    </ul>
+  </li>
+  <li><strong>Collaborative Data Development</strong>:
+    <ul>
+      <li>Multiple teams can work on different table features simultaneously</li>
+      <li>Maintain data quality through pre-merge validations</li>
+      <li>Collaborate using <a href="/howto/pull-requests.html">pull requests</a> on changes to data and schema</li>
+    </ul>
+  </li>
+  <li><strong>Manage and Govern Access to data</strong>:
+    <ul>
+      <li>Use the detailed built-in commit log capturing who, what and how data is changed</li>
+      <li>Manage access using fine grained access control to users and groups using RBAC policies</li>
+      <li>Rollback changes atomically and safely to reduce time-to-recover and increase system stability</li>
+    </ul>
+  </li>
+</ol>
+<h3 id="configuration">
+  
+  
+    <a href="#configuration" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
+  
+  
+</h3>
+    
+
+<p>The Iceberg REST catalog API is exposed at <code class="language-plaintext highlighter-rouge">/iceberg/api</code> in your lakeFS server.</p>
+
+<p>To use it:</p>
+
+<ol>
+  <li>Enable the feature (<a href="https://lakefs.io/book-a-demo/">contact us</a> for details).</li>
+  <li>Configure your Iceberg clients to use the lakeFS REST catalog endpoint.</li>
+  <li>Use your lakeFS access key and secret for authentication.</li>
+</ol>
+<h4 id="catalog-initialization-example-using-pyiceberg">
+  
+  
+    <a href="#catalog-initialization-example-using-pyiceberg" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Catalog Initialization Example (using <a href="https://py.iceberg.apache.org/"><code class="language-plaintext highlighter-rouge">pyiceberg</code></a>)
+  
+  
+</h4>
+    
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pyiceberg.catalog</span> <span class="kn">import</span> <span class="n">load_catalog</span>
+
+<span class="n">catalog</span> <span class="o">=</span> <span class="n">RestCatalog</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
+    <span class="s">'prefix'</span><span class="p">:</span> <span class="s">'lakefs'</span><span class="p">,</span>
+    <span class="s">'uri'</span><span class="p">:</span> <span class="sa">f</span><span class="s">'</span><span class="si">{</span><span class="n">lakefs_endpoint</span><span class="si">}</span><span class="s">/iceberg/api'</span><span class="p">,</span>
+    <span class="s">'oauth2-server-uri'</span><span class="p">:</span> <span class="sa">f</span><span class="s">'</span><span class="si">{</span><span class="n">lakefs_endpoint</span><span class="si">}</span><span class="s">/iceberg/api/v1/oauth/tokens'</span><span class="p">,</span>
+    <span class="s">'credential'</span><span class="p">:</span> <span class="sa">f</span><span class="s">'</span><span class="si">{</span><span class="n">lakefs_client_key</span><span class="si">}</span><span class="s">:</span><span class="si">{</span><span class="n">lakefs_client_secret</span><span class="si">}</span><span class="s">'</span><span class="p">,</span>
+<span class="p">})</span>
 </code></pre></div></div>
-<h2 id="setup">
+<h4 id="example-client-code">
+  
+  
+    <a href="#example-client-code" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Example Client code
+  
+  
+</h4>
+    
+
+<div class="tabs">
+  <ul>
+    <li><a href="#python">Python</a></li>
+    <li><a href="#trino">Trino</a></li>
+    <li><a href="#spark">Spark</a></li>
+  </ul>
+
+  <div id="PyIceberg">
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">lakefs</span>
+<span class="kn">from</span> <span class="nn">pyiceberg.catalog</span> <span class="kn">import</span> <span class="n">load_catalog</span>
+
+<span class="c1"># Initialize the catalog
+</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">RestCatalog</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
+    <span class="s">'prefix'</span><span class="p">:</span> <span class="s">'lakefs'</span><span class="p">,</span>
+    <span class="s">'uri'</span><span class="p">:</span> <span class="s">'https://lakefs.example.com/iceberg/api'</span><span class="p">,</span>
+    <span class="s">'oauth2-server-uri'</span><span class="p">:</span> <span class="s">'https://lakefs.example.com/iceberg/api/iceberg/api/v1/oauth/tokens'</span><span class="p">,</span>
+    <span class="s">'credential'</span><span class="p">:</span> <span class="sa">f</span><span class="s">'AKIAlakefs12345EXAMPLE:abc/lakefs/1234567bPxRfiCYEXAMPLEKEY'</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1"># List namespaces in a branch
+</span><span class="n">catalog</span><span class="p">.</span><span class="n">list_namespaces</span><span class="p">((</span><span class="s">'repo'</span><span class="p">,</span> <span class="s">'main'</span><span class="p">))</span>
+
+<span class="c1"># Query a table
+</span><span class="n">catalog</span><span class="p">.</span><span class="n">list_tables</span><span class="p">(</span><span class="s">'repo.main.inventory'</span><span class="p">)</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">.</span><span class="n">load_table</span><span class="p">(</span><span class="s">'repo.main.inventory.books'</span><span class="p">)</span>
+<span class="n">arrow_df</span> <span class="o">=</span> <span class="n">table</span><span class="p">.</span><span class="n">scan</span><span class="p">().</span><span class="n">to_arrow</span><span class="p">()</span>
+</code></pre></div>    </div>
+
+  </div>
+
+  <div id="trino">
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- List tables in the iceberg catalog</span>
+<span class="n">USE</span> <span class="nv">"repo.main.inventory"</span><span class="p">;</span> <span class="c1">-- &lt;repository&gt;.&lt;branch or reference&gt;.&lt;namespace&gt;</span>
+<span class="k">SHOW</span> <span class="n">TABLES</span><span class="p">;</span>
+
+<span class="c1">-- Query a table</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">LIMIT</span> <span class="mi">100</span><span class="p">;</span>
+
+<span class="c1">-- Switch to a different branch</span>
+<span class="n">USE</span> <span class="nv">"repo.new_branch.inventory"</span><span class="p">;</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+  </div>
+
+  <div id="spark">
+
+    <div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Configure Spark to use the lakeFS REST catalog</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sql</span><span class="o">(</span><span class="s">"USE my_repo.main.inventory"</span><span class="o">)</span>
+
+<span class="c1">// List available tables</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sql</span><span class="o">(</span><span class="s">"SHOW TABLES"</span><span class="o">).</span><span class="py">show</span><span class="o">()</span>
+
+<span class="c1">// Query data with branch isolation</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sql</span><span class="o">(</span><span class="s">"SELECT * FROM books"</span><span class="o">).</span><span class="py">show</span><span class="o">()</span>
+
+<span class="c1">// Switch to a feature branch</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sql</span><span class="o">(</span><span class="s">"USE my_repo.new_branch.inventory"</span><span class="o">)</span>
+<span class="nv">spark</span><span class="o">.</span><span class="py">sql</span><span class="o">(</span><span class="s">"SELECT * FROM books"</span><span class="o">).</span><span class="py">show</span><span class="o">()</span>
+</code></pre></div>    </div>
+
+  </div>
+</div>
+<h3 id="namespaces-and-tables">
+  
+  
+    <a href="#namespaces-and-tables" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Namespaces and Tables
+  
+  
+</h3>
+    
+<h4 id="namespace-operations">
+  
+  
+    <a href="#namespace-operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Namespace Operations
+  
+  
+</h4>
+    
+
+<p>The Iceberg Catalog supports Iceberg namespace operations:</p>
+
+<ul>
+  <li>Create namespaces</li>
+  <li>List namespaces</li>
+  <li>Drop namespaces</li>
+  <li>List tables within namespaces</li>
+</ul>
+<h4 id="namespace-usage">
+  
+  
+    <a href="#namespace-usage" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Namespace Usage
+  
+  
+</h4>
+    
+
+<p>Namespaces in the Iceberg Catalog follow the pattern <code class="language-plaintext highlighter-rouge">"&lt;repository&gt;.&lt;branch&gt;.&lt;namespace&gt;(.&lt;namespace&gt;...)"</code> where:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;repository&gt;</code> must be a valid lakeFS repository name.</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;branch&gt;</code> must be a valid lakeFS branch name.</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;namespace&gt;</code> components can be nested using unit separator (e.g., <code class="language-plaintext highlighter-rouge">inventory.books</code>).</li>
+</ul>
+
+<p>Examples:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">my-repo.main.inventory</code></li>
+  <li><code class="language-plaintext highlighter-rouge">my-repo.feature-branch.inventory.books</code></li>
+</ul>
+
+<p>The repository and branch components must already exist in lakeFS before using them in the Iceberg catalog.</p>
+<h4 id="namespace-restrictions">
+  
+  
+    <a href="#namespace-restrictions" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Namespace Restrictions
+  
+  
+</h4>
+    
+
+<ul>
+  <li>Repository and branch names must follow lakeFS naming conventions.</li>
+  <li>Namespace components cannot contain special characters except dots (.) for nesting.</li>
+  <li>The total namespace path length must be less than 255 characters.</li>
+  <li>Namespaces are case-sensitive.</li>
+  <li>Empty namespace components are not allowed.</li>
+</ul>
+<h3 id="table-operations">
+  
+  
+    <a href="#table-operations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table Operations
+  
+  
+</h3>
+    
+
+<p>The Iceberg Catalog supports all standard Iceberg table operations:</p>
+
+<ul>
+  <li>Create tables with schemas and partitioning.</li>
+  <li>Update table schemas and partitioning.</li>
+  <li>Commit changes to tables.</li>
+  <li>Delete tables.</li>
+  <li>List tables in namespaces.</li>
+</ul>
+<h3 id="version-control-features">
+  
+  
+    <a href="#version-control-features" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Version Control Features
+  
+  
+</h3>
+    
+
+<p>The Iceberg Catalog integrates with lakeFS’s version control system, treating each table change as a commit. 
+This provides a complete history of table modifications and enables branching and merging workflows.</p>
+<h4 id="catalog-changes-as-commits">
+  
+  
+    <a href="#catalog-changes-as-commits" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Catalog Changes as Commits
+  
+  
+</h4>
+    
+
+<p>Each modification to a table (schema changes, data updates, etc.) creates a new commit in lakeFS. 
+Creating or deleting a namespace or a table results in a lakeFS commit on the relevant branch, as well as table data updates (“Iceberg table commit”).</p>
+<h4 id="branching-and-merging">
+  
+  
+    <a href="#branching-and-merging" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Branching and Merging
+  
+  
+</h4>
+    
+
+<p>Create a new branch to work on table changes:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create a lakeFS branch using lakeFS Python SDK
+</span><span class="n">branch</span> <span class="o">=</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">repository</span><span class="p">(</span><span class="s">'repo'</span><span class="p">).</span><span class="n">branch</span><span class="p">(</span><span class="s">'new_branch'</span><span class="p">).</span><span class="n">create</span><span class="p">(</span><span class="n">source_reference</span><span class="o">=</span><span class="s">'main'</span><span class="p">)</span>
+
+<span class="c1"># The table is now accessible in the new branch
+</span><span class="n">new_table</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">.</span><span class="n">load_table</span><span class="p">(</span><span class="sa">f</span><span class="s">'repo.</span><span class="si">{</span><span class="n">branch</span><span class="p">.</span><span class="nb">id</span><span class="si">}</span><span class="s">.inventory.books'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Merge changes between branches:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Merge the branch using lakeFS Python SDK
+</span><span class="n">branch</span><span class="p">.</span><span class="n">merge_into</span><span class="p">(</span><span class="s">'main'</span><span class="p">)</span>
+
+<span class="c1"># Changes are now visible in main
+</span><span class="n">main_table</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">.</span><span class="n">load_table</span><span class="p">(</span><span class="s">'repo.main.inventory.books'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p class="note">Currently, lakeFS handles table changes as file operations during merges. 
+This means that when merging branches with table changes, lakeFS treats the table metadata files as regular files. 
+No special merge logic is applied to handle conflicting table changes, and if there are conflicting changes to the same table in different branches, 
+the merge will fail with a conflict that needs to be resolved manually.</p>
+<h3 id="authentication">
+  
+  
+    <a href="#authentication" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Authentication
+  
+  
+</h3>
+    
+
+<p>lakeFS provides an OAuth2 token endpoint at <code class="language-plaintext highlighter-rouge">/catalog/iceberg/v1/oauth/tokens</code> that clients need to configure. 
+To authenticate, clients must provide their lakeFS access key and secret in the format <code class="language-plaintext highlighter-rouge">access_key:secret</code> as the credential.</p>
+
+<p>The authorization requirements are managed at the lakeFS level, meaning:</p>
+
+<ul>
+  <li>Users need appropriate lakeFS permissions to access repositories and branches</li>
+  <li>Table operations require lakeFS permissions on the underlying objects</li>
+  <li>The same lakeFS RBAC policies apply to Iceberg catalog operations</li>
+</ul>
+<h3 id="limitations">
+  
+  
+    <a href="#limitations" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Limitations
+  
+  
+</h3>
+    
+
+<ol>
+  <li><strong>Table Maintenance</strong>:
+    <ul>
+      <li>See <a href="#table-maintenance">Table Maintenance</a> section for details</li>
+    </ul>
+  </li>
+  <li><strong>Advanced Features</strong>:
+    <ul>
+      <li>Views (all view operations are unsupported)</li>
+      <li>Transactional DML (<code class="language-plaintext highlighter-rouge">stage-create</code>)</li>
+      <li>Server-side query planning</li>
+      <li>Table renaming</li>
+      <li>Updating table’s location (using Commit)</li>
+      <li>Table statistics (<code class="language-plaintext highlighter-rouge">set-statistics</code> and <code class="language-plaintext highlighter-rouge">remove-statistics</code> operations are currently a no-op)</li>
+    </ul>
+  </li>
+  <li>
+    <p>lakeFS Iceberg REST Catalog is currently tested to work with Amazon S3 and Google Cloud Storage. Other storage backends, such as Azure or Local storage are currently not supported, but will be in future releases.</p>
+  </li>
+  <li>Currently only <a href="https://iceberg.apache.org/spec">Iceberg <code class="language-plaintext highlighter-rouge">v2</code> table format</a> is supported</li>
+</ol>
+<h3 id="table-maintenance">
+  
+  
+    <a href="#table-maintenance" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Table Maintenance
+  
+  
+</h3>
+    
+
+<p>The following table maintenance operations are not supported in the current version:</p>
+
+<ul>
+  <li><a href="https://iceberg.apache.org/docs/latest/spark-ddl/#drop-table-purge">Drop table with purge</a></li>
+  <li><a href="https://iceberg.apache.org/docs/latest/maintenance/#compact-data-files">Compact data files</a></li>
+  <li><a href="https://iceberg.apache.org/docs/latest/maintenance/#rewrite-manifests">Rewrite manifests</a></li>
+  <li><a href="https://iceberg.apache.org/docs/latest/maintenance/#expire-snapshots">Expire snapshots</a></li>
+  <li><a href="https://iceberg.apache.org/docs/latest/maintenance/#remove-old-metadata-files">Remove old metadata files</a></li>
+  <li><a href="https://iceberg.apache.org/docs/latest/maintenance/#delete-orphan-files">Delete orphan files</a></li>
+</ul>
+
+<blockquote class="note">
+  <p><strong>⚠️ To prevent data loss, clients should disable their own cleanup operations by:</strong></p>
+  <ul>
+    <li>Disabling orphan file deletion.</li>
+    <li>Setting <code class="language-plaintext highlighter-rouge">remove-dangling-deletes</code> to false when rewriting.</li>
+    <li>Disabling snapshot expiration.</li>
+    <li>Setting a very high value for <code class="language-plaintext highlighter-rouge">min-snapshots-to-keep</code> parameter.</li>
+  </ul>
+</blockquote>
+<h3 id="roadmap">
+  
+  
+    <a href="#roadmap" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Roadmap
+  
+  
+</h3>
+    
+
+<p>The following features are planned for future releases:</p>
+
+<ol>
+  <li><strong>Catalog Sync</strong>:
+    <ul>
+      <li>Support for pushing/pulling tables to/from other catalogs</li>
+      <li>Integration with AWS Glue and other Iceberg-compatible catalogs</li>
+    </ul>
+  </li>
+  <li><strong>Table Import</strong>:
+    <ul>
+      <li>Support for importing existing Iceberg tables from other catalogs</li>
+      <li>Bulk import capabilities for large-scale migrations</li>
+    </ul>
+  </li>
+  <li><strong>Advanced Features</strong>:
+    <ul>
+      <li>Views API support</li>
+      <li>Table transactions</li>
+    </ul>
+  </li>
+  <li><strong>Azure Storage Support</strong></li>
+</ol>
+<h3 id="related-resources">
+  
+  
+    <a href="#related-resources" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Related Resources
+  
+  
+</h3>
+    
+
+<ul>
+  <li><a href="https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/apache/iceberg/main/open-api/rest-catalog-open-api.yaml">Iceberg REST Catalog API Specification</a></li>
+  <li><a href="https://iceberg.apache.org/docs/latest/">Iceberg Official Documentation</a></li>
+  <li><a href="/enterprise/">lakeFS Enterprise Features</a></li>
+</ul>
+<h2 id="deprecated-iceberg-hadoopcatalog">
+  
+  
+    <a href="#deprecated-iceberg-hadoopcatalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Deprecated: Iceberg HadoopCatalog
+  
+  
+</h2>
+    
+
+<blockquote class="note">
+  <p>✋ <strong>HadoopCatalog and other filesystem-based catalogs are currently not recommended by the Apache Iceberg community and come with several limitations around concurrency and tooling.</strong>
+<strong>As such, the <code class="language-plaintext highlighter-rouge">HadoopCatalog</code> described in this section is now deprecated and will not receive further updates</strong></p>
+</blockquote>
+<h3 class="no_toc" id="setup">
   
   
     <a href="#setup" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Setup
   
   
-</h2>
+</h3>
     
 
 <div class="tabs">
@@ -638,13 +1094,13 @@ You will then be able to query your Iceberg tables using lakeFS references, such
 </code></pre></div>    </div>
   </div>
 </div>
-<h2 id="configure">
+<h3 class="no_toc" id="configuration-1">
   
   
-    <a href="#configure" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configure
+    <a href="#configuration-1" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Configuration
   
   
-</h2>
+</h3>
     
 
 <div class="tabs">
@@ -686,46 +1142,46 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 </code></pre></div>    </div>
   </div>
 </div>
-<h2 id="using-iceberg-tables-with-lakefs">
+<h3 class="no_toc" id="using-iceberg-tables-with-hadoopcatalog">
   
   
-    <a href="#using-iceberg-tables-with-lakefs" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Iceberg tables with lakeFS
+    <a href="#using-iceberg-tables-with-hadoopcatalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Using Iceberg tables with HadoopCatalog
   
   
-</h2>
+</h3>
     
-<h3 id="create-a-table">
+<h4 class="no_toc" id="create-a-table">
   
   
     <a href="#create-a-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a table
   
   
-</h3>
+</h4>
     
 
 <p>To create a table on your main branch, use the following syntax:</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="p">(</span><span class="n">id</span> <span class="nb">int</span><span class="p">,</span> <span class="k">data</span> <span class="n">string</span><span class="p">);</span>
 </code></pre></div></div>
-<h3 id="insert-data-into-the-table">
+<h4 class="no_toc" id="insert-data-into-the-table">
   
   
     <a href="#insert-data-into-the-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Insert data into the table
   
   
-</h3>
+</h4>
     
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'data1'</span><span class="p">);</span>
 <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'data2'</span><span class="p">);</span>
 </code></pre></div></div>
-<h3 id="create-a-branch">
+<h4 class="no_toc" id="create-a-branch">
   
   
     <a href="#create-a-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Create a branch
   
   
-</h3>
+</h4>
     
 
 <p>We can now commit the creation of the table to the main branch:</p>
@@ -737,26 +1193,26 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lakectl branch create lakefs://example-repo/dev <span class="nt">-s</span> lakefs://example-repo/main
 </code></pre></div></div>
-<h3 id="make-changes-on-the-branch">
+<h4 class="no_toc" id="make-changes-on-the-branch">
   
   
     <a href="#make-changes-on-the-branch" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Make changes on the branch
   
   
-</h3>
+</h4>
     
 
 <p>We can now make changes on the branch:</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'data3'</span><span class="p">);</span>
 </code></pre></div></div>
-<h3 id="query-the-table">
+<h4 class="no_toc" id="query-the-table">
   
   
     <a href="#query-the-table" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Query the table
   
   
-</h3>
+</h4>
     
 
 <p>If we query the table on the branch, we will see the data we inserted:</p>
@@ -787,13 +1243,13 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 | 2  | data2|
 +----+------+
 </code></pre></div></div>
-<h2 id="migrating-an-existing-iceberg-table-to-lakefs-catalog">
+<h3 class="no_toc" id="migrating-an-existing-iceberg-table-to-the-hadoop-catalog">
   
   
-    <a href="#migrating-an-existing-iceberg-table-to-lakefs-catalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migrating an existing Iceberg Table to lakeFS Catalog
+    <a href="#migrating-an-existing-iceberg-table-to-the-hadoop-catalog" class="anchor-heading"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Migrating an existing Iceberg table to the Hadoop Catalog
   
   
-</h2>
+</h3>
     
 
 <p>This is done through an incremental copy from the original table into lakeFS.</p>
@@ -831,11 +1287,11 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 
     <p>Example of copy with spark-sql:</p>
 
-    <pre><code class="language-SQL"> -- Create Iceberg Schema in lakeFS
- CREATE SCHEMA IF NOT EXISTS &lt;lakefs-catalog&gt;.&lt;branch&gt;.&lt;db&gt;
- -- Create new iceberg table in lakeFS from the source table (pre-lakeFS)
- CREATE TABLE IF NOT EXISTS &lt;lakefs-catalog&gt;.&lt;branch&gt;.&lt;db&gt; USING iceberg AS SELECT * FROM &lt;iceberg-original-table&gt;
-</code></pre>
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">-- Create Iceberg Schema in lakeFS</span>
+ <span class="k">CREATE</span> <span class="k">SCHEMA</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">&lt;</span><span class="n">lakefs</span><span class="o">-</span><span class="k">catalog</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">branch</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">db</span><span class="o">&gt;</span>
+ <span class="c1">-- Create new iceberg table in lakeFS from the source table (pre-lakeFS)</span>
+ <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">&lt;</span><span class="n">lakefs</span><span class="o">-</span><span class="k">catalog</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">branch</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">db</span><span class="o">&gt;</span> <span class="k">USING</span> <span class="n">iceberg</span> <span class="k">AS</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="o">&lt;</span><span class="n">iceberg</span><span class="o">-</span><span class="n">original</span><span class="o">-</span><span class="k">table</span><span class="o">&gt;</span>
+</code></pre></div>    </div>
   </li>
 </ol>
 
