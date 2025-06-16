@@ -12,7 +12,7 @@ cc.run({
     en: {
       consent_modal: {
         title:
-          '<div style="display:flex;flex-direction:column;align-items:center;"><img style="padding-bottom:14px;" src="/assets/img/cookies.png" /><div>Hello fellow axolotl, it\'s cookie time!</div></div>',
+          '<div style="display:flex;flex-direction:column;align-items:center;"><img style="padding-bottom:14px;" src="/archive/assets/img/cookies.png" /><div>Hello fellow axolotl, it\'s cookie time!</div></div>',
         description:
           'Our website uses essential cookies to ensure its proper operation and tracking cookies to understand how you interact with it. The latter will be set only after consent. Please see our <a href="https://lakefs.io/privacy-policy/" target="_blank">privacy policy</a>.',
         primary_btn: {
