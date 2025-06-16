@@ -55,6 +55,29 @@
     <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
+  
+
+
+  <!-- Google Tag Manager -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var consent = __md_get("__consent")
+  if (consent && consent.gtm) {
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KTZBZW9');
+  }
+})
+</script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTZBZW9"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
 
     
     
@@ -2284,7 +2307,7 @@
   
   
   <span class="md-ellipsis">
-    Concepts and  Model
+    Concepts and Model
     
   </span>
   
@@ -2363,6 +2386,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../../understand/data_lifecycle_management/data-devenv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    In Test
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../understand/data_lifecycle_management/ci/" class="md-nav__link">
         
   
@@ -2392,29 +2438,6 @@
   
   <span class="md-ellipsis">
     In Production
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../understand/data_lifecycle_management/data-devenv/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    In Test
     
   </span>
   
@@ -4163,24 +4186,22 @@ With this image, you can run <a href="../../reference/cli/">lakectl</a> commands
 </ul>
 <h4 id="example-operations_1">Example operations<a class="headerlink" href="#example-operations_1" title="Permanent link">&para;</a></h4>
 <ol>
-<li>
-<p>Commit changes to a branch: A ContainerOp that commits uncommitted changes to <code>example-branch</code> on <code>example-repo</code>.</p>
-<p><div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kubernetes.client.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">V1EnvVar</span>
+<li>Commit changes to a branch: A ContainerOp that commits uncommitted changes to <code>example-branch</code> on <code>example-repo</code>.
+    <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">kubernetes.client.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">V1EnvVar</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">commit_op</span><span class="p">():</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">ContainerOp</span><span class="p">(</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;commit&#39;</span><span class="p">,</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">image</span><span class="o">=</span><span class="s1">&#39;treeverse/lakectl&#39;</span><span class="p">,</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;commit&#39;</span><span class="p">,</span> <span class="s1">&#39;lakefs://example-repo/example-branch&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;commit message&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_env_variable</span><span class="p">(</span><span class="n">V1EnvVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;LAKECTL_CREDENTIALS_ACCESS_KEY_ID&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;AKIAIOSFODNN7EXAMPLE&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">add_env_variable</span><span class="p">(</span><span class="n">V1EnvVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">add_env_variable</span><span class="p">(</span><span class="n">V1EnvVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;LAKECTL_SERVER_ENDPOINT_URL&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;https://lakefs.example.com&#39;</span><span class="p">))</span>
-</span></code></pre></div>
-1. Merge two lakeFS branches: A ContainerOp that merges <code>example-branch</code> into the <code>main</code> branch of <code>example-repo</code>.
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">merge_op</span><span class="p">():</span>
+</span></code></pre></div></li>
+<li>Merge two lakeFS branches: A ContainerOp that merges <code>example-branch</code> into the <code>main</code> branch of <code>example-repo</code>.
+    <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">merge_op</span><span class="p">():</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">return</span> <span class="n">dsl</span><span class="o">.</span><span class="n">ContainerOp</span><span class="p">(</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;merge&#39;</span><span class="p">,</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">image</span><span class="o">=</span><span class="s1">&#39;treeverse/lakectl&#39;</span><span class="p">,</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">arguments</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;merge&#39;</span><span class="p">,</span> <span class="s1">&#39;lakefs://example-repo/example-branch&#39;</span><span class="p">,</span> <span class="s1">&#39;lakefs://example-repo/main&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_env_variable</span><span class="p">(</span><span class="n">V1EnvVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;LAKECTL_CREDENTIALS_ACCESS_KEY_ID&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;AKIAIOSFODNN7EXAMPLE&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">add_env_variable</span><span class="p">(</span><span class="n">V1EnvVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">add_env_variable</span><span class="p">(</span><span class="n">V1EnvVar</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;LAKECTL_SERVER_ENDPOINT_URL&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;https://lakefs.example.com&#39;</span><span class="p">))</span>
-</span></code></pre></div></p>
-</li>
+</span></code></pre></div></li>
 </ol>
 <p>You can invoke any lakeFS operation supported by <code>lakectl</code> by implementing it as a ContainerOp. Check out the complete <a href="../../reference/cli/">CLI reference</a> for the list of supported operations.</p>
 <div class="admonition note">
@@ -4214,6 +4235,8 @@ With this image, you can run <a href="../../reference/cli/">lakectl</a> commands
   
 
 
+
+  
 
 
 
@@ -4312,6 +4335,21 @@ With this image, you can run <a href="../../reference/cli/">lakectl</a> commands
     
     
       
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
     
     
       
@@ -4331,6 +4369,23 @@ With this image, you can run <a href="../../reference/cli/">lakectl</a> commands
 
       
     
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="gtm" checked>
+      <span class="task-list-indicator"></span>
+      Google Tag Manager
+    </label>
+  </li>
+
+      
     
   </ul>
 </div>
