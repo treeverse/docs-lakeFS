@@ -1,0 +1,1 @@
+../../../archive/js/cookieconsent-init.js
