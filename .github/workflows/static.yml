@@ -36,8 +36,23 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+        # Notify slack when deploy fails
+      - name: slack-send
+        uses: slackapi/slack-github-action@v2.1.0
+        if: failure()
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: lakeFS static docs site failed to deploy
+            blocks:
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: Deployment to http://lakefs.io failed in ${{ github.repository }}
+
