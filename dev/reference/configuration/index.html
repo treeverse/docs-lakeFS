@@ -4209,45 +4209,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#lakefs-enterprise" class="md-nav__link">
-    <span class="md-ellipsis">
-      lakeFS Enterprise
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="lakeFS Enterprise">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#blockstores" class="md-nav__link">
-    <span class="md-ellipsis">
-      blockstores
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="blockstores">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-fields-for-all-stores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Common Fields for All Stores
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#using-environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       Using Environment Variables
@@ -4804,45 +4765,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#lakefs-enterprise" class="md-nav__link">
-    <span class="md-ellipsis">
-      lakeFS Enterprise
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="lakeFS Enterprise">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#blockstores" class="md-nav__link">
-    <span class="md-ellipsis">
-      blockstores
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="blockstores">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-fields-for-all-stores" class="md-nav__link">
-    <span class="md-ellipsis">
-      Common Fields for All Stores
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#using-environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       Using Environment Variables
@@ -5243,81 +5165,6 @@ default authentication (with env vars) will be used.</li>
 <li><code>ugc.prepare_max_file_size</code> <code>(int: 125829120)</code> - Uncommitted garbage collection prepare request, limit the produced file maximum size</li>
 <li><code>ugc.prepare_interval</code> <code>(duraction: 1m)</code> - Uncommitted garbage collection prepare request, limit produce time to interval</li>
 </ul>
-<h2 id="lakefs-enterprise">lakeFS Enterprise<a class="headerlink" href="#lakefs-enterprise" title="Permanent link">&para;</a></h2>
-<p>This section provides configuration references exclusive to <a href="../../enterprise/">lakeFS Enterprise</a>, and serves as a complement
-to the general configuration <a href="#reference">reference</a> above.</p>
-<h3 id="blockstores">blockstores<a class="headerlink" href="#blockstores" title="Permanent link">&para;</a></h3>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>The <code>blockstores</code> configuration is required for <a href="../../howto/multiple-storage-backends/">multi-storage backend</a> setups and replaces the previous <code>blockstore</code> configuration.</p>
-</div>
-<ul>
-<li><code>blockstores.signing.secret_key</code> <code>(string : required)</code> - A random generated string that is used for HMAC signing when using get/link physical address</li>
-<li><code>blockstores.stores</code> <code>([{id: string, type: string, ...}] : required)</code> - Defines multiple storage backends used in a multi-storage backend setup. Each storage backend must have a unique id and a valid configuration.</li>
-</ul>
-<h4 id="common-fields-for-all-stores">Common Fields for All Stores<a class="headerlink" href="#common-fields-for-all-stores" title="Permanent link">&para;</a></h4>
-<ul>
-<li><code>blockstores.stores[].id</code> <code>(string : required)</code> - Unique identifier for the storage backend.</li>
-<li><code>blockstores.stores[].backward_compatible</code> <code>(bool : false)</code> - Optional. Defaults to false. Used to migrate from a single to a multi-storage backend setup.</li>
-<li><code>blockstores.stores[].description</code> <code>(string : )</code> - A human-readable description of the storage backend.</li>
-<li><code>blockstores.stores[].type</code> <code>(string : required)</code> - <code>(one of ["local", "s3", "gs", "azure", "mem"] : required)</code>. Block adapter to use. This controls where the underlying data will be stored.</li>
-</ul>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="blockstoresstoreslocal" name="__tabbed_3" type="radio" /><input id="blockstoresstoress3" name="__tabbed_3" type="radio" /><input id="blockstoresazure" name="__tabbed_3" type="radio" /><input id="blockstoresgs" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="blockstoresstoreslocal"><code>blockstores.stores.local</code></label><label for="blockstoresstoress3"><code>blockstores.stores.s3</code></label><label for="blockstoresazure"><code>blockstores.azure</code></label><label for="blockstoresgs"><code>blockstores.gs</code></label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<ul>
-<li><code>blockstores.stores[].local.path</code> <code>(string: "~/lakefs/data")</code> - When using the local Block Adapter, which directory to store files in</li>
-<li><code>blockstores.stores[].local.import_enabled</code> <code>(bool: false)</code> - Enable import for local Block Adapter, relevant only if you are using shared location</li>
-<li><code>blockstores.stores[].local.import_hidden</code> <code>(bool: false)</code> - When enabled import will scan and import any file or folder that starts with a dot character.</li>
-<li><code>blockstores.stores[].local.allowed_external_prefixes</code> <code>([]string: [])</code> - List of absolute path prefixes used to match any access for external location (ex: /var/data/). Empty list mean no access to external location.</li>
-</ul>
-</div>
-<div class="tabbed-block">
-<ul>
-<li><code>blockstores.stores[].s3.region</code> <code>(string : "us-east-1")</code> - Default region for lakeFS to use when interacting with S3.</li>
-<li><code>blockstores.stores[].s3.profile</code> <code>(string : )</code> - If specified, will be used as a <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-using-profiles">named credentials profile</a></li>
-<li><code>blockstores.stores[].credentials_file</code> <code>(string : )</code> - If specified, will be used as a <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html">credentials file</a></li>
-<li><code>blockstores.stores[].credentials.access_key_id</code> <code>(string : )</code> - If specified, will be used as a static set of credential</li>
-<li><code>blockstores.stores[].credentials.secret_access_key</code> <code>(string : )</code> - If specified, will be used as a static set of credential</li>
-<li><code>blockstores.stores[].s3.credentials.session_token</code> <code>(string : )</code> - If specified, will be used as a static session token</li>
-<li><code>blockstores.stores[].s3.endpoint</code> <code>(string : )</code> - If specified, custom endpoint for the AWS S3 API (https://s3_compatible_service_endpoint:port)</li>
-<li><code>blockstores.stores[].s3.force_path_style</code> <code>(bool : false)</code> - When true, use path-style S3 URLs (https://<host>/<bucket> instead of https://<bucket>.<host>)</li>
-<li><code>blockstores.stores[].s3.discover_bucket_region</code> <code>(bool : true)</code> - (Can be turned off if the underlying S3 bucket doesn't support the GetBucketRegion API).</li>
-<li><code>blockstores.stores[].s3.skip_verify_certificate_test_only</code> <code>(bool : false)</code> - Skip certificate verification while connecting to the storage endpoint. Should be used only for testing.</li>
-<li><code>blockstores.stores[].s3.server_side_encryption</code> <code>(string : )</code> - Server side encryption format used (Example on AWS using SSE-KMS while passing "aws:kms")</li>
-<li><code>blockstores.stores[].s3.server_side_encryption_kms_key_id</code> <code>(string : )</code> - Server side encryption KMS key ID</li>
-<li><code>blockstores.stores[].s3.pre_signed_expiry</code> <code>(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
-<li><code>blockstores.stores[].s3.pre_signed_endpoint</code> <code>(string : )</code> - Custom endpoint for pre-signed URLs.</li>
-<li><code>blockstores.stores[].s3.disable_pre_signed</code> <code>(bool : false)</code> - Disable use of pre-signed URL.</li>
-<li><code>blockstores.stores[].s3.disable_pre_signed_ui</code> <code>(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
-<li><code>blockstores.stores[].s3.disable_pre_signed_multipart</code> <code>(bool : )</code> - Disable use of pre-signed multipart upload <strong>experimental</strong>, enabled on S3 block adapter with presign support.</li>
-<li><code>blockstores.stores[].s3.client_log_request</code> <code>(bool : false)</code> - Set SDK logging bit to log requests</li>
-<li><code>blockstores.stores[].s3.client_log_retries</code> <code>(bool : false)</code> - Set SDK logging bit to log retries</li>
-</ul>
-</div>
-<div class="tabbed-block">
-<ul>
-<li><code>blockstores.stores[].azure.storage_account</code> <code>(string : )</code> - If specified, will be used as the Azure storage account</li>
-<li><code>blockstores.stores[].azure.storage_access_key</code> <code>(string : )</code> - If specified, will be used as the Azure storage access key</li>
-<li><code>blockstores.stores[].azure.pre_signed_expiry</code> <code>(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
-<li><code>blockstores.stores[].azure.disable_pre_signed</code> <code>(bool : false)</code> - Disable use of pre-signed URL.</li>
-<li><code>blockstores.stores[].azure.disable_pre_signed_ui</code> <code>(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
-<li><code>blockstores.stores[].azure.domain</code> <code>(string : blob.core.windows.net)</code> - Enables support of different Azure cloud domains. Current supported domains (in Beta stage): [<code>blob.core.chinacloudapi.cn</code>, <code>blob.core.usgovcloudapi.net</code>]</li>
-</ul>
-</div>
-<div class="tabbed-block">
-<ul>
-<li><code>blockstores.stores[].gs.credentials_file</code> <code>(string : )</code> - If specified will be used as a file path of the JSON file that contains your Google service account key</li>
-<li><code>blockstores.stores[].gs.credentials_json</code> <code>(string : )</code> - If specified will be used as JSON string that contains your Google service account key (when credentials_file is not set)</li>
-<li><code>blockstores.stores[].gs.pre_signed_expiry</code> <code>(time duration : "15m")</code> - Expiry of pre-signed URL.</li>
-<li><code>blockstores.stores[].gs.disable_pre_signed</code> <code>(bool : false)</code> - Disable use of pre-signed URL.</li>
-<li><code>blockstores.stores[].gs.disable_pre_signed_ui</code> <code>(bool : true)</code> - Disable use of pre-signed URL in the UI.</li>
-<li><code>blockstores.stores[].gs.server_side_encryption_customer_supplied</code> <code>(string : )</code> - Server side encryption with AES key in hex format, exclusive with key ID below</li>
-<li><code>blockstores.stores[].gs.server_side_encryption_kms_key_id</code> <code>(string : )</code> - Server side encryption KMS key ID, exclusive with above</li>
-</ul>
-</div>
-</div>
-</div>
 <h2 id="using-environment-variables">Using Environment Variables<a class="headerlink" href="#using-environment-variables" title="Permanent link">&para;</a></h2>
 <p>All the configuration variables can be set or overridden using environment variables.</p>
 <p>To set an environment variable, prepend <code>LAKEFS_</code> to its name, convert it to upper case, and replace <code>.</code> with <code>_</code>:</p>
