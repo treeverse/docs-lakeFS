@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4460,7 +4469,7 @@ Save the YAML below as <code>animals.yaml</code> and upload it to lakeFS. </p>
 <h3 id="write-some-table-data">Write some table data<a class="headerlink" href="#write-some-table-data" title="Permanent link">&para;</a></h3>
 <p>Insert data into the table path, using your preferred method (e.g. <a href="../spark/">Spark</a>), and commit upon completion.
 This example uses CSV files, and the files added to lakeFS should look like this:</p>
-<p><img alt="lakeFS Uploaded CSV Files" src="../../assets/img/csv_export_hooks_data.png" /></p>
+<p><a class="glightbox" href="../../assets/img/csv_export_hooks_data.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS Uploaded CSV Files" src="../../assets/img/csv_export_hooks_data.png" /></a></p>
 <h3 id="the-exporter-script">The exporter script<a class="headerlink" href="#the-exporter-script" title="Permanent link">&para;</a></h3>
 <p>Upload the following script to your main branch under <code>scripts/animals_exporter.lua</code> (or a path of your choice).</p>
 <div class="admonition note">
@@ -4607,7 +4616,7 @@ It also shows how to run the lua script inline instead of a file, depending on u
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>lakectl<span class="w"> </span>commit<span class="w"> </span>lakefs://catalogs/main<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;trigger first export hook&quot;</span>
 </span></code></pre></div>
 <p>Once the action has completed its execution, you can review the results in the action logs.</p>
-<p><img alt="Hooks log result in lakeFS UI" src="../../assets/img/glue_export_hook_result_log.png" /></p>
+<p><a class="glightbox" href="../../assets/img/glue_export_hook_result_log.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Hooks log result in lakeFS UI" src="../../assets/img/glue_export_hook_result_log.png" /></a></p>
 <h3 id="use-athena">Use Athena<a class="headerlink" href="#use-athena" title="Permanent link">&para;</a></h3>
 <p>We can use the exported Glue table with any tool that supports Glue Catalog (or Hive compatible) such as Athena, Trino, Spark and others.
 To use Athena we can simply run <code>MSCK REPAIR TABLE</code> and then query the tables.</p>
@@ -4615,7 +4624,7 @@ To use Athena we can simply run <code>MSCK REPAIR TABLE</code> and then query th
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">MSCK</span><span class="w"> </span><span class="n">REPAIR</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">animals_catalogs_main_9255e5</span><span class="o">`</span><span class="p">;</span><span class="w"> </span><span class="c1">-- load partitions for the first time </span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">animals_catalogs_main_9255e5</span><span class="o">`</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
 </span></code></pre></div>
-<p><img alt="Athena SQL Result" src="../../assets/img/catalog_export_athena_aws_ui_sql.png" /></p>
+<p><a class="glightbox" href="../../assets/img/catalog_export_athena_aws_ui_sql.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Athena SQL Result" src="../../assets/img/catalog_export_athena_aws_ui_sql.png" /></a></p>
 <h3 id="cleanup">Cleanup<a class="headerlink" href="#cleanup" title="Permanent link">&para;</a></h3>
 <p>Users can use additional hooks / actions to implement a custom cleanup logic to delete the symlink in S3 and Glue Tables. </p>
 <div class="language-lua highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nv">glue</span><span class="p">.</span><span class="nf">delete_table</span><span class="p">(</span><span class="nv">db</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&lt;glue table name&gt;&#39;</span><span class="p">)</span>
@@ -4797,5 +4806,7 @@ To use Athena we can simply run <code>MSCK REPAIR TABLE</code> and then query th
       <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

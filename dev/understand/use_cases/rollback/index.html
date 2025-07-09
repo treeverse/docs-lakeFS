@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4333,17 +4342,17 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>lakeFS lets you develop in your data lake in such a way that rollbacks are simple to perform. This starts by taking a commit over your lakeFS repository whenever a change to its state occurs.</p>
 <p>Using the lakeFS UI or CLI, you can set the current state, or HEAD, of a branch to any historical commit in seconds, effectively performing a rollback.</p>
 <p>To demonstrate how this works, let's take the example of a lakeFS repo with the following commit history:</p>
-<p><img alt="Commit History" src="../../../assets/img/rollback-commit-history.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/rollback-commit-history.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Commit History" src="../../../assets/img/rollback-commit-history.png" /></a></p>
 <p>As can be inferred from the history, this repo is updated every minute with a data sync from some data source. An example data sync is a typical ETL job that replicates data from an internal database or any other data source. After each sync, a commit is taken in lakeFS to save a snapshot of data at that point in time.</p>
 <h3 id="how-to-rollback-from-a-bad-data-sync">How to Rollback From a Bad Data Sync?<a class="headerlink" href="#how-to-rollback-from-a-bad-data-sync" title="Permanent link">&para;</a></h3>
 <p>Say a situation occurs where one of the syncs had bad data and is causing downstream dashboards to fail to load. Since we took a commit of the repo right after the sync ran, we can use a <code>revert</code> operation to undo the changes introduced in that sync.</p>
-<p><img alt="Copy Commit ID" src="../../../assets/img/rollback-copy-id.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/rollback-copy-id.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Copy Commit ID" src="../../../assets/img/rollback-copy-id.png" /></a></p>
 <p>Step 1: Copy the <code>commit_id</code> associated with the commit we want to revert. As the screenshot above shows, you can use the <em>Copy ID to Clipboard</em> button to do this.</p>
 <p>Step 2: Run the revert command using <a href="../../../reference/cli/">lakectl</a>, the lakeFS CLI. In this example, the command will be as follows:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lakectl<span class="w"> </span>branch<span class="w"> </span>revert<span class="w"> </span><span class="s2">&quot;lakefs://example/main&quot;</span><span class="w"> </span>9666d7c9daf37b3ba6964e733d08596ace2ec2c7bc3a4023ad8e80737a6c3e9d
 </span></code></pre></div>
 <p>This will undo the changes introduced by this commit, completing the rollback! </p>
-<p><img alt="Rollback Commit" src="../../../assets/img/rollback-revert-commit.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/rollback-revert-commit.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Rollback Commit" src="../../../assets/img/rollback-revert-commit.png" /></a></p>
 <p>The rollback operation is that simple, even if many changes were introduced in a commit, spanning acrossmultiple data collections.</p>
 <p>In lakeFS, rolling back data is always a one-liner.</p>
 
@@ -4522,5 +4531,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

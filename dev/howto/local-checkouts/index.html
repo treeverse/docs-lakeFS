@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4696,16 +4705,16 @@ for the model. The code for the model is versioned by Git while the model datase
 be using lakectl local to tie code versions to data versions to achieve model reproducibility.  </p>
 <h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
 <p>To get start with, we have initialized a Git repo called <code>is_alpaca</code> that includes the model code:
-<img alt="Git repo" src="../../assets/img/lakectl-local/code_repo.png" /></p>
+<a class="glightbox" href="../../assets/img/lakectl-local/code_repo.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Git repo" src="../../assets/img/lakectl-local/code_repo.png" /></a></p>
 <p>We also created a lakeFS repository and uploaded the <em>is_alpaca</em> train <a href="https://www.kaggle.com/datasets/sayedmahmoud/alpaca-dataset">dataset</a> 
 by Kaggel into it:
-<img alt="lakeFS repo" src="../../assets/img/lakectl-local/lakefs-repo-with-train-dataset.png" /></p>
+<a class="glightbox" href="../../assets/img/lakectl-local/lakefs-repo-with-train-dataset.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS repo" src="../../assets/img/lakectl-local/lakefs-repo-with-train-dataset.png" /></a></p>
 <h3 id="create-an-isolated-environment-for-experiments">Create an Isolated Environment for Experiments<a class="headerlink" href="#create-an-isolated-environment-for-experiments" title="Permanent link">&para;</a></h3>
 <p>Our goal is to improve the model predictions. To meet our goal, we will experiment with editing the training dataset. 
 We will run our experiments in isolation to not change anything until after we are certain the data is improved and ready.    </p>
 <p>Let's create a new lakeFS branch called <code>experiment-1</code>. Our <em>is_alpaca</em> dataset is accessible on that branch, 
 and we will interact with the data from that branch only.
-<img alt="experiment-1-branch" src="../../assets/img/lakectl-local/experiment-branch.png" /></p>
+<a class="glightbox" href="../../assets/img/lakectl-local/experiment-branch.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="experiment-1-branch" src="../../assets/img/lakectl-local/experiment-branch.png" /></a></p>
 <p>On the code side, we will create a Git branch also called <code>experiment-1</code> to not pollute our main branch with a dataset
 which is under tuning.</p>
 <h3 id="clone-lakefs-data-into-a-local-git-repository">Clone lakeFS Data into a Local Git Repository<a class="headerlink" href="#clone-lakefs-data-into-a-local-git-repository" title="Permanent link">&para;</a></h3>
@@ -4798,7 +4807,7 @@ By committing to Git, we tie the current code version of the model to the datase
 <h3 id="experiment-and-version-results">Experiment and Version Results<a class="headerlink" href="#experiment-and-version-results" title="Permanent link">&para;</a></h3>
 <p>We ran the train script on the cloned input, and it generated a model. Now, let's use the model to predict whether an <strong>axolotl</strong> is an alpaca.</p>
 <p>A reminder - this is how an axolotl looks like - not like an alpaca!</p>
-<p><img src="../../assets/img/lakectl-local/axolotl.png" alt="axolotl" width="300"/></p>
+<p><a class="glightbox" href="../../assets/img/lakectl-local/axolotl.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img src="../../assets/img/lakectl-local/axolotl.png" alt="axolotl" width="300"/></a></p>
 <p>Here are the (surprising) results:</p>
 <p><div class="language-shell highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>./predict.py<span class="w"> </span>~/axolotl1.jpeg
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="o">{</span><span class="s1">&#39;alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.32112,<span class="w"> </span><span class="s1">&#39;not alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.07260383<span class="o">}</span>
@@ -4848,7 +4857,7 @@ area of our experiment branch and verifying it is empty. </p>
 </span></code></pre></div>
 <p>Looking at the lakeFS UI we can see that the lakeFS commit includes metadata that tells us what was the code version of 
 the linked Git repository at the time of the commit.
-<img alt="git metadata in lakeFS" src="../../assets/img/lakectl-local/lakefs-commit-git-commit-id.png" /></p>
+<a class="glightbox" href="../../assets/img/lakectl-local/lakefs-commit-git-commit-id.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="git metadata in lakeFS" src="../../assets/img/lakectl-local/lakefs-commit-git-commit-id.png" /></a></p>
 <p>Inspecting the Git repository, we can see that the input/.lakefs_ref.yaml is pointing to the latest lakeFS commit <code>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6</code>.  </p>
 <p>We will now re-train our model with the modified dataset and give a try to predict whether an axolotl is an alpaca: </p>
 <p><div class="language-shell highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>./predict.py<span class="w"> </span>~/axolotl1.jpeg
@@ -4921,7 +4930,7 @@ we will use <a href="../../reference/cli/#lakectl-local-status">lakectl local st
 </span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>Parents:<span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6
 </span></code></pre></div>
 <p>Looking at the lakFS UI we see that our test data is now available at lakeFS:
-<img alt="test_dataset" src="../../assets/img/lakectl-local/tes-and-train-dataset.png" /></p>
+<a class="glightbox" href="../../assets/img/lakectl-local/tes-and-train-dataset.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="test_dataset" src="../../assets/img/lakectl-local/tes-and-train-dataset.png" /></a></p>
 <p>Finally, we will Git commit the local changes to link between the Git and lakeFS repositories state.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -5117,5 +5126,7 @@ Which translates to: "What was the Git commit ID at this point?"</p>
       <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

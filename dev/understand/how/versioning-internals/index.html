@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4320,7 +4329,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Each lakeFS commit is represented as a set of contiguous, non-overlapping SSTables that make up the entire keyspace of a repository at that commit.</p>
 <h2 id="sstable-file-format-graveler-file">SSTable File Format ("Graveler File")<a class="headerlink" href="#sstable-file-format-graveler-file" title="Permanent link">&para;</a></h2>
 <p>lakeFS metadata is encoded into a format called <strong>"Graveler"</strong> - a standardized way to encode content-addressable key value pairs. This is what a Graveler file looks like:</p>
-<p><img alt="Graveler File" src="../../../assets/img/graveler1.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/graveler1.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Graveler File" src="../../../assets/img/graveler1.png" /></a></p>
 <p>Each Key/Value pair (<strong>"ValueRecord"</strong>) is constructed of a <code>key</code>, <code>identity</code>, and <code>value</code>.</p>
 <p>A simple identity could be, for example, a sha256 hash of the value’s bytes. It could be any sequence of bytes that uniquely identifies the value. As far as the Graveler is concerned, two <code>ValueRecord</code>s are considered identical if their key and identity fields are equal.</p>
 <p>A Graveler file itself is content-addressable, i.e., similarly to Git, the name of the file is its identity.
@@ -4334,7 +4343,7 @@ File identity is calculated based on the identity of the ValueRecords the file c
 <li>Allow an efficient diff between commits which runs in time proportional to the size of their difference and not their absolute sizes.</li>
 </ol>
 <p>To support these requirements, we decided to essentially build a 2-layer <a href="https://en.wikipedia.org/wiki/Merkle_tree" target="_blank">Merkle tree</a> composed of a set of leaf nodes (<strong>"Range"</strong>) addressed by their content address, and a <strong>"Meta Range"</strong>, which is a special range containing all ranges, thus representing an entire consistent view of the keyspace:</p>
-<p><img alt="Metarange to ranges relationship" src="../../../assets/img/graveler2.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/graveler2.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Metarange to ranges relationship" src="../../../assets/img/graveler2.png" /></a></p>
 <p>Assuming commit B is derived from commit A, and only changed files in range <code>e-f</code>, it can reuse all ranges except for SSTable #N (the one containing the modified range of keys), which will be recreated with a new hash representing the state as exists after applying commit B’s changes. This will, in turn, also create a new Metarange since its hash is now changed as well (as it is derived from the hash of all contained ranges).</p>
 <p>Assuming most commits usually change related objects (i.e., that are likely to share some common prefix), the reuse ratio could be very high. We tested this assumption using S3 inventory from 2 design partners - we partitioned the keyspace to an arbitrary number of simulated blocks and measured their change over time. We saw a daily change rate of about 5-20%.</p>
 <p>Given the size of the repositories, it's safe to assume that a single day would translate into multiple commits. At a modest 20 commits per day, a commit is expected to reuse &gt;= 99% of the previous commit blocks, so acceptable in terms of write amplification generated on commit.</p>
@@ -4538,5 +4547,7 @@ File identity is calculated based on the identity of the ValueRecords the file c
       <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

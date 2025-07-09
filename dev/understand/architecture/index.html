@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4582,7 +4591,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <h1 id="lakefs-architecture">lakeFS Architecture<a class="headerlink" href="#lakefs-architecture" title="Permanent link">&para;</a></h1>
 <p>lakeFS is distributed as a single binary encapsulating several logical services.</p>
 <p>The server itself is stateless, meaning you can easily add more instances to handle a bigger load.</p>
-<p><img alt="Architecture" src="../../assets/img/architecture.png" /></p>
+<p><a class="glightbox" href="../../assets/img/architecture.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Architecture" src="../../assets/img/architecture.png" /></a></p>
 <h3 id="object-storage">Object Storage<a class="headerlink" href="#object-storage" title="Permanent link">&para;</a></h3>
 <p>lakeFS manages data stored on various object storage platforms, including:</p>
 <ul>
@@ -4647,7 +4656,7 @@ and all data operations directly through the same underlying object store that l
 <h2 id="how-lakefs-clients-and-gateway-handle-metadata-and-data-access">How lakeFS Clients and Gateway Handle Metadata and Data Access<a class="headerlink" href="#how-lakefs-clients-and-gateway-handle-metadata-and-data-access" title="Permanent link">&para;</a></h2>
 <p>When using the Python client, lakeCTL, or the lakeFS Spark client, these clients communicate with the lakeFS server to retrieve metadata information. For example, they may query lakeFS to understand which version of a file is needed or to track changes in branches and commits. This communication does not include the actual data transfer, but instead involves passing only metadata about data locations and versions.
 Once the client knows the exact data location from the lakeFS metadata, it directly accesses the data in the underlying object storage (potentially using presigned URLs) without routing through lakeFS. For instance, if data is stored in S3, the Spark client will retrieve the S3 paths from lakeFS, then directly read and write to those paths in S3 without involving lakeFS in the data transfer.</p>
-<p><img alt="lakeFS Clients vs Gateway Data Flow" src="../../assets/img/s3gatewayvsclientdataflow.png" /></p>
+<p><a class="glightbox" href="../../assets/img/s3gatewayvsclientdataflow.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS Clients vs Gateway Data Flow" src="../../assets/img/s3gatewayvsclientdataflow.png" /></a></p>
 
 
 
@@ -4824,5 +4833,7 @@ Once the client knows the exact data location from the lakeFS metadata, it direc
       <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

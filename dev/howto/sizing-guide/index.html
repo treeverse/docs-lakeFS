@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -5080,7 +5089,7 @@ For high availability, we'll deploy 2 pods with 1 CPU core and 1 GiB of RAM each
 (at 500k, expected dataset size is <code>150MiB (for 100k records) * 5 = 750MiB</code>). 
 To ensure we have enough RAM to hold this, we'll need 3 GiB of RAM, so, a very moderate Aurora instance <code>db.t3.large</code> (2 vCPUs, 8 GB RAM) will be more than enough.
 An equivalent database instance on GCP or Azure should give similar results.</p>
-<p><img src="../../assets/img/reference_arch1.png" alt="ML and Research lakeFS reference architecture"/></p>
+<p><a class="glightbox" href="../../assets/img/reference_arch1.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img src="../../assets/img/reference_arch1.png" alt="ML and Research lakeFS reference architecture"/></a></p>
 <h3 id="reference-architecture-automated-production-pipelines">Reference Architecture: Automated Production Pipelines<a class="headerlink" href="#reference-architecture-automated-production-pipelines" title="Permanent link">&para;</a></h3>
 <p><strong>Use case:</strong> Manage multiple concurrent data pipelines using Apache Spark and Airflow. 
 Airflow DAGs start by creating a branch for isolation and for CI/CD. 
@@ -5099,7 +5108,7 @@ we're doing roughly 625 requests/core, so 24 cores should cover our peak traffic
 <p>On to the PostgreSQL instance - at 500k, the expected dataset size is <code>150MiB (for 100k records) * 25 = 3750 MiB</code>. 
 To ensure we have enough RAM to hold this, we'll need at least 15 GiB of RAM, so we'll go with a <code>db.r5.xlarge</code> (4 vCPUs, 32GB RAM) Aurora instance.
 An equivalent database instance on GCP or Azure should give similar results.</p>
-<p><img alt="Automated pipelines lakeFS reference architecture" src="../../assets/img/reference_arch2.png" /></p>
+<p><a class="glightbox" href="../../assets/img/reference_arch2.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Automated pipelines lakeFS reference architecture" src="../../assets/img/reference_arch2.png" /></a></p>
 
 
 
@@ -5276,5 +5285,7 @@ An equivalent database instance on GCP or Azure should give similar results.</p>
       <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

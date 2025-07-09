@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4488,7 +4497,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 id="using-branches-as-development-and-testing-environments">Using branches as development and testing environments<a class="headerlink" href="#using-branches-as-development-and-testing-environments" title="Permanent link">&para;</a></h2>
 <p>The key difference when using lakeFS for isolated data environments is that you can create them immediately before testing a change. And once new data is merged into production, you can delete the branch - effectively deleting the old environment.</p>
 <p>This is different from creating a long-living test environment used as a staging area to test all the updates. With lakeFS, <strong>we create a new branch for each change to production</strong> that we want to make. One benefit of this is the ability to test multiple changes at one time.</p>
-<p><img alt="dev/test branches as environments" src="../../../assets/img/iso_env_dev_test_branching.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/iso_env_dev_test_branching.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="dev/test branches as environments" src="../../../assets/img/iso_env_dev_test_branching.png" /></a></p>
 <h2 id="try-it-out-creating-devtest-environments-with-lakefs-for-etl-testing">Try it out! Creating Dev/Test Environments with lakeFS for ETL Testing<a class="headerlink" href="#try-it-out-creating-devtest-environments-with-lakefs-for-etl-testing" title="Permanent link">&para;</a></h2>
 <p>lakeFS supports UI, CLI (<code>lakectl</code> command-line utility) and several clients for the <a href="../../../reference/api/">API</a> to run the Git-like operations. Let us explore how to create dev/test environments using each of these options below.</p>
 <p>There are two ways that you can try out lakeFS:</p>
@@ -4500,11 +4509,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <h3 id="using-lakefs-playground-on-lakefs-cloud">Using lakeFS Playground on lakeFS Cloud<a class="headerlink" href="#using-lakefs-playground-on-lakefs-cloud" title="Permanent link">&para;</a></h3>
 <p>In this tutorial, we will use <a href="https://lakefs.cloud/">a lakeFS playground environment</a> to create dev/test data environments for ETL testing. This allows you to spin up a lakeFS instance in a click, create different data environments by simply branching out of your data repository and develop &amp; test data pipelines in these isolated branches.</p>
 <p>First, let us spin up a <a href="https://lakefs.cloud/">playground</a> instance. Once you have a live environment, login to your instance with access and secret keys. Then, you can work with the sample data repository <code>my-repo</code> that is created for you.</p>
-<p><img alt="sample repository" src="../../../assets/img/iso_env_myrepo.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/iso_env_myrepo.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="sample repository" src="../../../assets/img/iso_env_myrepo.png" /></a></p>
 <p>Click on <code>my-repo</code> and notice that by default, the repository has a <code>main</code> branch created and <code>sample_data</code> preloaded to work with.</p>
-<p><img alt="main branch" src="../../../assets/img/iso_env_sampledata.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/iso_env_sampledata.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="main branch" src="../../../assets/img/iso_env_sampledata.png" /></a></p>
 <p>You can create a new branch (say, <code>test-env</code>) by going to the <em>Branches</em> tab and clicking <em>Create Branch</em>. Once it is successful, you will see two branches under the repository: <code>main</code> and <code>test-env</code>.</p>
-<p><img alt="test-env branch" src="../../../assets/img/iso_env_testenv_branch.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/iso_env_testenv_branch.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="test-env branch" src="../../../assets/img/iso_env_testenv_branch.png" /></a></p>
 <p>Now you can add, modify or delete objects under the <code>test-env</code> branch without affecting the data in the main branch.</p>
 <h3 id="trying-out-lakefs-with-docker-and-jupyter-notebooks">Trying out lakeFS with Docker and Jupyter Notebooks<a class="headerlink" href="#trying-out-lakefs-with-docker-and-jupyter-notebooks" title="Permanent link">&para;</a></h3>
 <p>This use case shows how to create dev/test data environments for ETL testing using lakeFS branches. The following tutorial provides a lakeFS environment, a Jupyter notebook, and Python SDK API to demonstrate integration of lakeFS with <a href="../../../integrations/spark/">Spark</a>. You can run this tutorial on your local machine.</p>
@@ -4772,5 +4781,7 @@ There will be twice as many rows in <code>test-env</code> branch. That is, we ac
       <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

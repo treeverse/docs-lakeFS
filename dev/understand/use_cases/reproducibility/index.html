@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4282,7 +4291,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>The code above assumes that all objects in the repository under this path are stored in parquet format. If a different format is used, the applicable Spark read method should be used.</p>
 </div>
 <p>In a lakeFS repository, we are capable of taking many commits over the data, making many points in time reproducible. </p>
-<p><img alt="Commit History" src="../../../assets/img/reproduce-commit-history.png" /></p>
+<p><a class="glightbox" href="../../../assets/img/reproduce-commit-history.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Commit History" src="../../../assets/img/reproduce-commit-history.png" /></a></p>
 <p>In the repository above, a new commit is taken each time a model training script is run, and the commit message includes the specific run number. </p>
 <p>If we wanted to re-run the model training script and reproduce the exact same results for a historical run, say run #435, we could copy the commit ID associated with the run and read the data into a dataframe like so:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s2">&quot;s3://example/296e54fbee5e176f3f4f4aeb7e087f9d57515750e8c3d033b8b841778613cb23/training_dataset/&quot;</span><span class="p">)</span>
@@ -4464,5 +4473,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

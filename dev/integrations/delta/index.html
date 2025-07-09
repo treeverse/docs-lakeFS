@@ -75,7 +75,16 @@ document.addEventListener("DOMContentLoaded", function() {
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4460,10 +4469,10 @@ Typically, residing under the <code>_delta_log</code> path, relative to the root
 <p>Consequently, when making changes to a Delta table within the lakeFS environment, these changes are reflected as changes
 to objects within the table location. For instance, inserting a record into a table named "my-table," which is partitioned
 by 'category' and 'country,' is represented in lakeFS as added objects within the table prefix (i.e., the table data) and the table transaction log.
-<img alt="Record addition" src="../../assets/img/delta-record-addition.png" /></p>
+<a class="glightbox" href="../../assets/img/delta-record-addition.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Record addition" src="../../assets/img/delta-record-addition.png" /></a></p>
 <p>Similarly, when performing a metadata operation such as renaming a table column, new objects are appended to the table transaction log,
 indicating the schema change.
-<img alt="Record addition" src="../../assets/img/delta-schema-change.png" /></p>
+<a class="glightbox" href="../../assets/img/delta-schema-change.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Record addition" src="../../assets/img/delta-schema-change.png" /></a></p>
 <h2 id="using-delta-lake-with-lakefs-from-apache-spark">Using Delta Lake with lakeFS from Apache Spark<a class="headerlink" href="#using-delta-lake-with-lakefs-from-apache-spark" title="Permanent link">&para;</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -4510,9 +4519,9 @@ you can work on Delta tables in isolation and easily explore them within the Uni
 <p>lakeFS currently supports a single writer for Delta Lake tables. Attempting to utilize multiple writers for writing to a Delta table may result in two types of issues:</p>
 <ol>
 <li>Merge Conflicts: These conflicts arise when multiple writers modify a Delta table on different branches, and an attempt is made to merge these branches.
-    <img alt="Merge conflicts" src="../../assets/img/delta-lake/merge-conflict.png" /></li>
+    <a class="glightbox" href="../../assets/img/delta-lake/merge-conflict.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Merge conflicts" src="../../assets/img/delta-lake/merge-conflict.png" /></a></li>
 <li>Concurrent File Overwrite: This issue occurs when multiple writers concurrently modify a Delta table on the same branch.
-    <img alt="Concurrent file overwrite" src="../../assets/img/delta-lake/concurrent-file-overwrite.png" /></li>
+    <a class="glightbox" href="../../assets/img/delta-lake/concurrent-file-overwrite.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Concurrent file overwrite" src="../../assets/img/delta-lake/concurrent-file-overwrite.png" /></a></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -4534,7 +4543,7 @@ you can work on Delta tables in isolation and easily explore them within the Uni
 <li>Iterating the process in case of a merge failure due to conflicts.</li>
 </ul>
 <p>The diagram below provides a visual representation of how branches and merges can be utilized to manage concurrency effectively:
-<img alt="Multi writers workaround" src="../../assets/img/delta-lake/multi-writers-with-lakefs-branches-merges.png" /></p>
+<a class="glightbox" href="../../assets/img/delta-lake/multi-writers-with-lakefs-branches-merges.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Multi writers workaround" src="../../assets/img/delta-lake/multi-writers-with-lakefs-branches-merges.png" /></a></p>
 <h3 id="follow-vacuum-by-garbage-collection">Follow Vacuum by Garbage Collection<a class="headerlink" href="#follow-vacuum-by-garbage-collection" title="Permanent link">&para;</a></h3>
 <p>To delete unused files from a table directory while working with Delta Lake over lakeFS you need to first use Delta lake
 <a href="https://docs.databricks.com/en/sql/language-manual/delta-vacuum.html">Vacuum</a> to soft-delete the files, and then use
@@ -4732,5 +4741,7 @@ If you are trying to achieve that, please reach out on Slack and the community w
       <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>
