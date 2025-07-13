@@ -4427,7 +4427,7 @@ If you're using the open-source version you can check the <a href="../rbac/#plug
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>lakeFS supports authenticating users programmatically using AWS IAM roles instead of using static lakeFS access and secret keys.
 The method enables you to bound IAM principal ARNs to lakeFS users.
-A single lakeFS user may have many AWS's principle ARNs attached to it. When a client is authenticating to a lakeFS server with an AWS's session, the actions performed by the client are on behalf of the user attached to the ARN.</p>
+A single lakeFS user may have many AWS principal ARNs attached to it. When a client is authenticated to a lakeFS server with an AWS session, the actions performed by the client are on behalf of the user attached to the ARN.</p>
 <h3 id="using-session-names">Using Session Names<a class="headerlink" href="#using-session-names" title="Permanent link">&para;</a></h3>
 <p>The bound ARN can be attached to a single lakeFS user with or without SessionName, serving different users.
 For example, consider the following mapping: </p>
@@ -4452,52 +4452,62 @@ For example, consider the following mapping: </p>
 <p>if the bound ARN were <code>arn:aws:sts::123456:assumed-role/Dev/&lt;SessionName&gt;</code> it would allow any principal assuming <code>Dev</code> role in AWS account <code>123456</code> to login to it.
 If the <code>SessionName</code> is <code>john@acme.com</code> then lakeFS would return token for <code>john</code> user</p>
 <h3 id="how-aws-authentication-works">How AWS authentication works<a class="headerlink" href="#how-aws-authentication-works" title="Permanent link">&para;</a></h3>
-<p>The AWS STS API includes a method, <code>sts:GetCallerIdentity</code>, which allows you to validate the identity of a client. The client signs a GetCallerIdentity query using the AWS Signature v4 algorithm and sends it to the lakeFS server. </p>
+<p>The AWS STS API includes a method, <code>sts:GetCallerIdentity</code>, which allows you to validate the identity of a client. The client signs a GetCallerIdentity query using the AWS Signature v4 algorithm and sends it to the lakeFS server.</p>
 <p>The <code>GetCallerIdentity</code> query consists of four pieces of information: the request URL, the request body, the request headers and the request method. The AWS signature is computed over those fields. The lakeFS server reconstructs the query using this information and forwards it on to the AWS STS service. Depending on the response from the STS service, the server authenticates the client.</p>
 <p>Notably, clients don't need network-level access themselves to talk to the AWS STS API endpoint; they merely need access to the credentials to sign the request. However, it means that the lakeFS server does need network-level access to send requests to the STS endpoint.</p>
-<p>Each signed AWS request includes the current timestamp to mitigate the risk of replay attacks. In addition, lakeFS allows you to require an additional header, <code>X-LakeFS-Server-ID</code> (added by default), to be present to mitigate against different types of replay attacks (such as a signed <code>GetCallerIdentity</code> request stolen from a dev lakeFS instance and used to authenticate to a prod lakeFS instance). </p>
+<p>Each signed AWS request includes the current timestamp to mitigate the risk of replay attacks. In addition, lakeFS allows you to require an additional header, <code>X-LakeFS-Server-ID</code> (added by default), to be present to mitigate against different types of replay attacks (such as a signed <code>GetCallerIdentity</code> request stolen from a dev lakeFS instance and used to authenticate to a prod lakeFS instance).</p>
 <p>It's also important to note that Amazon does NOT appear to include any sort of authorization around calls to GetCallerIdentity. For example, if you have an IAM policy on your credential that requires all access to be MFA authenticated, non-MFA authenticated credentials will still be able to authenticate to lakeFS using this method.</p>
 <h2 id="server-configuration">Server Configuration<a class="headerlink" href="#server-configuration" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>lakeFS Helm chart supports the configuration since version <code>1.2.11</code> - see usage <a href="https://github.com/treeverse/charts/blob/master/examples/lakefs/enterprise/values-external-aws.yaml">values.yaml example</a>.</p>
+<p>lakeFS Helm chart supports the configuration below since version 1.5.0</p>
 </div>
-<ul>
-<li>in lakeFS <code>auth.authentication_api.external_principals_enabled</code> must be set to <code>true</code> in the configuration file, other configuration (<code>auth.authentication_api.*</code>) can be found at <a href="../../reference/configuration/">configuration reference</a></li>
-</ul>
-<p>For the full list of the Fluffy server configuration, see <a href="../../enterprise/configuration/#fluffy-server-configuration">Fluffy Configuration</a> under <code>auth.external.aws_auth</code></p>
+<p>To enable AWS IAM authentication in lakeFS Enterprise:</p>
+<ol>
+<li>Enable external principals in lakeFS configuration</li>
+<li>Configure external AWS authentication settings</li>
+</ol>
+<p><strong>Helm Configuration (<code>values.yaml</code>):</strong></p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">ingress</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">ingressClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;class-name&gt;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">hosts</span><span class="p">:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakefs.ingress.domain&gt;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nt">lakefsConfig</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="no">auth:</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="no"># Configure external AWS authentication</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="no">external_aws_auth:</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="no">enabled: true</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="no"># the maximum age in seconds for the GetCallerIdentity request</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="no">#get_caller_identity_max_age: 60</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="no"># headers that must be present by the client when doing login request</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="no">required_headers:</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">        </span><span class="no"># same host as the lakeFS server ingress</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">        </span><span class="no">X-LakeFS-Server-ID: &lt;lakefs.ingress.domain&gt;</span>
+</span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>By default, lakeFS clients will add the parameter <code>X-LakeFS-Server-ID: &lt;lakefs.ingress.domain&gt;</code> to the initial <a href="../../reference/api/#auth/externalPrincipalLogin">login request</a> for STS.</p>
 </div>
-<p><strong>Example configuration with required headers:</strong></p>
-<p>Configuration for <code>lakefs.yaml</code>: </p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">authentication_api</span><span class="p">:</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://&lt;fluffy-sso&gt;/api/v1</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">external_principals_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">api</span><span class="p">:</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://&lt;fluffy-rbac&gt;/api/v1</span>
-</span></code></pre></div>
-<p>Configuration for <code>fluffy.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># fluffy address for lakefs auth.authentication_api.endpoint</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># used by lakeFS to log in and get the token</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">listen_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;fluffy-sso&gt;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="c1"># fluffy address for lakeFS auth.api.endpoint </span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="c1"># used by lakeFS to manage the lifecycle attach/detach of the external principals</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">serve_listen_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;fluffy-rbac&gt;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nt">external</span><span class="p">:</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">aws_auth</span><span class="p">:</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="c1"># headers that must be present by the client when doing login request</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">required_headers</span><span class="p">:</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="c1"># same host as the lakeFS server ingress</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">        </span><span class="nt">X-LakeFS-Server-ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakefs.ingress.domain&gt;</span>
+<p><strong>Direct Configuration File (<code>lakefs.yaml</code>):</strong></p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">auth</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">external_aws_auth</span><span class="p">:</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="c1"># Optional: max age for GetCallerIdentity requests (default: 24h)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">get_caller_identity_max_age</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="c1"># Required headers for login requests</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">required_headers</span><span class="p">:</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">X-LakeFS-Server-ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakefs.ingress.domain&gt;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="c1"># Optional headers that may be present</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">optional_headers</span><span class="p">:</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="nt">X-Custom-Header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
 </span></code></pre></div>
 <h2 id="administration-of-iam-roles-in-lakefs">Administration of IAM Roles in lakeFS<a class="headerlink" href="#administration-of-iam-roles-in-lakefs" title="Permanent link">&para;</a></h2>
 <p>Administration refers to the management of the IAM roles that are allowed to authenticate to lakeFS.
-Operations such as attaching and detaching IAM roles to a user, listing the roles attached to a user, and listing the users attached to a role. 
+Operations such as attaching and detaching IAM roles to a user, listing the roles attached to a user, and listing the users attached to a role.
 Currently, this is done through the lakeFS <a href="../../reference/api/#external">External Principals API</a> and generated clients.</p>
 <p>Example of attaching an IAM roles to a user:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs_sdk</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lakefs</span>  
@@ -4526,12 +4536,12 @@ Currently, the login operation is supported out of the box in:</p>
 <li><a href="#login-with-python">python</a></li>
 <li><a href="../../reference/mount/#authenticating-with-aws-iam-role.md">Everest mount</a></li>
 </ul>
-<p>For other use cases authenticate to lakeFS via login endpoint, this will require building the request input.</p>
+<p>For other use cases authenticated to lakeFS via login endpoint, this will require building the request input.</p>
 <h2 id="login-with-python">Login with python<a class="headerlink" href="#login-with-python" title="Permanent link">&para;</a></h2>
 <h3 id="prerequisites">prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <ol>
-<li>lakeFS should be <a href="#server-configuration">configured</a> to allow external principals to authenticate and the used IAM role should be <a href="#administration-of-iam-roles-in-lakefs">attached</a> to the relevant lakeFS user</li>
-<li>The Python SDK requires additional packages to be installed in order to generate a lakeFS client with the assumed role.
+<li>lakeFS should be <a href="#server-configuration">configured</a> to allow external principals to authenticate, and the used IAM role should be <a href="#administration-of-iam-roles-in-lakefs">attached</a> to the relevant lakeFS user</li>
+<li>The Python SDK requires additional packages to be installed to generate a lakeFS client with the assumed role.
 To install the required packages, run the following command:</li>
 </ol>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;lakefs[aws-iam]&quot;</span>

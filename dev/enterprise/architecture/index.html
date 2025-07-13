@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="lakeFS Enterprise architecture explained!!!!!1">
+        <meta name="description" content="lakeFS Enterprise architecture explained!">
       
       
       
@@ -4203,29 +4203,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 <h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>fluffy will be deprecated in the upcoming versions and all functionality will be migrated into lakeFS Enterprise</p>
-</div>
-<p>The lakeFS Enterprise software consists of two components:
-1. lakeFS Enterprise: a proprietary version of lakeFS which is based on the OSS version and includes advanced functionality.
-2. A proprietary component called <strong>Fluffy</strong> which includes lakeFS' Enterprise features.</p>
-<p><a class="glightbox" href="../../assets/img/enterprise/enterprise-arch.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="img.png" src="../../assets/img/enterprise/enterprise-arch.png" /></a></p>
+<p>lakeFS Enterprise extends the open-source lakeFS foundation, delivering a complete data versioning and governance solution with seamlessly integrated enterprise features like SSO, RBAC, mounting capabilities, and more.</p>
+<p><a class="glightbox" href="../../assets/img/enterprise/lakefs-enterprise-architecture.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="img.png" src="../../assets/img/enterprise/lakefs-enterprise-architecture.png" /></a></p>
 <p>[1] Any user request to lakeFS via Browser or Programmatic access (SDK, HTTP
 API, lakectl).</p>
-<p>[2] Reverse Proxy (e.g. NGINX, Traefik, K8S Ingress): will handle user requests
-and proxy between lakeFS server and fluffy server based on the path prefix
-while maintaining the same host.</p>
-<p>[3] lakeFS server - the main lakeFS service.</p>
-<p>[4] fluffy server - service that is responsible for the Enterprise features.,
-it is separated by ports for security reasons.</p>
-<ol>
-<li>SSO auth (i.e Browser login via Azure AD, Okta, Auth0), default port 8000.</li>
-<li>RBAC authorization, default port 9000.</li>
-</ol>
-<p>[5] The <a href="../../understand/architecture/">KV Store</a> - Where metadata is stored used both by lakeFS and fluffy.</p>
-<p>[6] SSO IdP - Identity provider (e.g. Azure AD, Okta, JumpCloud). fluffy
-implements SAML and Oauth2 protocols.</p>
+<p>[2] A reverse proxy (e.g., NGINX, Traefik, Kubernetes Ingress, Load Balanacer) will distribute requests between lakeFS server instances, SSL termination etc. Required when using more than 1 lakeFS instance.</p>
+<p>[3] lakeFS Enterprise - lakeFS with additional enterprise functionality, including advanced security, SSO authentication, RBAC authorization, compliance, audit logging, and enterprise support.</p>
+<p>[4] The <a href="../../understand/architecture/">KV Store</a> - Where metadata is stored, used by both core lakeFS and enterprise features.</p>
+<p>[5] SSO IdP - External identity provider (e.g. Azure AD, Okta, JumpCloud). 
+lakeFS Enterprise implements SAML, OAuth2, and OIDC protocols.</p>
 <p>For more details and pricing, please <a href="https://lakefs.io/contact-sales/">contact sales</a>.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>

@@ -4205,20 +4205,19 @@ document.addEventListener("DOMContentLoaded", function() {
 <h1 id="migrate-from-lakefs-open-source-to-lakefs-enterprise">Migrate From lakeFS Open-Source to lakeFS Enterprise<a class="headerlink" href="#migrate-from-lakefs-open-source-to-lakefs-enterprise" title="Permanent link">&para;</a></h1>
 <p>To migrate from lakeFS Open Source to lakeFS Enterprise, follow the steps below:</p>
 <ol>
-<li>Make sure you have the Fluffy Docker token, if not <a href="https://lakefs.io/contact-sales/">contact us</a> to gain access to Fluffy. You will be granted with a token that enables downloading <em>dockerhub/fluffy</em> from <a href="https://hub.docker.com/u/treeverse">Docker Hub</a>.</li>
-<li>Update lakeFS docker image to enterprise. Use <code>treeverse/lakefs-enterprise</code> instead of <code>treeverse/lakefs</code>. The image can be pulled using the same token as Fluffy.</li>
+<li>Make sure you have the lakeFS Enterprise Docker token. if not, <a href="https://lakefs.io/contact-sales/">contact us</a> to gain access to lakeFS Enterprise. You will be granted a token that enables downloading <em>dockerhub/lakefs-enterprise</em> from <a href="https://hub.docker.com/u/treeverse">Docker Hub</a>.</li>
+<li>Update the lakeFS Docker image to the enterprise version. Replace <code>treeverse/lakefs</code> with <code>treeverse/lakefs-enterprise</code> in your configuration. The enterprise image can be pulled using your lakeFS Enterprise token.</li>
 <li>Sanity Test (Optional): Install a new test lakeFS Enterprise before moving your current production setup. Test the setup &gt; login &gt; Create repository etc. Once everything seems to work, delete and cleanup the test setup and we will move to the migration process.</li>
-<li>Follow lakeFS <a href="../install/">Enterprise installation guide</a><ol>
-<li>Make sure that you meet the <a href="../install/#prerequisites">prerequisites</a></li>
-<li>Update your existing <code>values.yaml</code> file for your deployment</li>
+<li>Make sure to configure the lakeFS enterprise properly, see <a href="../install/">Enterprise installation guide</a><ol>
+<li>Update your existing lakeFS configuration for enterprise (i.e <code>values.yaml</code> file for your deployment if using helm)</li>
 </ol>
 </li>
-<li>DB Migration: we are going to use the same DB for both lakeFS and Fluffy, so we need to migrate the DB schema.</li>
-<li>Make sure to SSH / exec into the lakeFS server (old pre-upgrade version), the point is to use the same lakefs configuration file when running a migration.<ol>
+<li>DB Migration: We are going to use the same database for lakeFS Enterprise, so we need to migrate the database schema.</li>
+<li>Make sure to SSH / exec into the lakeFS server (old pre-upgrade version); the point is to use the same lakeFS configuration file when running a migration.<ol>
 <li>If upgrading <code>lakefs</code> version do this or skip to the next step: Install the new lakeFS binary, if not use the existing one (the one you are running).</li>
 <li>Run the command: <code>LAKEFS_AUTH_UI_CONFIG_RBAC=internal lakefs migrate up</code> (use the <strong>new binary</strong> if upgrading lakeFS version).</li>
 <li>You should expect to see a log message saying Migration completed successfully.</li>
-<li>During this short db migration process please make sure not to make any policy / RBAC related changes.</li>
+<li>During this short DB migration process, please make sure not to make any policy / RBAC related changes.</li>
 </ol>
 </li>
 <li>Once the migration completed - Upgrade your helm release with the modified <code>values.yaml</code> and the new version and run <code>helm ugprade</code>.</li>
@@ -4230,7 +4229,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Please note that the newly set up lakeFS instance remains inaccessible to users until full setup completion, due to the absence of established credentials within the system.</p>
+<p>Please note that the newly set-up lakeFS instance remains inaccessible to users until full setup completion, due to the absence of established credentials within the system.</p>
 </div>
 
 
