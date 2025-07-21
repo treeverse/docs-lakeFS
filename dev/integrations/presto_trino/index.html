@@ -2430,44 +2430,11 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#integration-with-lakefs-data-catalogs" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
+      Integration with lakeFS Data Catalogs
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-with-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example with schema
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-with-external-table" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example with External table
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-of-copying-a-table-with-metastore-tools" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example of copying a table with metastore tools:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2940,14 +2907,6 @@ document.addEventListener("DOMContentLoaded", function() {
     Glue / Hive metastore
     
   </span>
-  
-    
-  
-  
-    <span class="md-status md-status--deprecated" title="Deprecated Feature">
-    </span>
-  
-
   
 
       </a>
@@ -4363,44 +4322,11 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#integration-with-lakefs-data-catalogs" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
+      Integration with lakeFS Data Catalogs
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-with-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example with schema
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-with-external-table" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example with External table
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-of-copying-a-table-with-metastore-tools" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example of copying a table with metastore tools:
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -4465,51 +4391,14 @@ In case you are using Hive Metastore, you will need to configure Hive as well.</
 </span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="nt">&lt;/property&gt;</span>
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="nt">&lt;/configuration&gt;</span>
 </span></code></pre></div>
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<p>Here are some examples based on examples from the <a href="https://prestodb.io/docs/current/connector/hive.html#examples" target="_blank">Presto Hive connector examples</a> and <a href="https://trino.io/docs/current/connector/hive.html#examples" target="_blank">Trino Hive connector examples</a></p>
-<h3 id="example-with-schema">Example with schema<a class="headerlink" href="#example-with-schema" title="Permanent link">&para;</a></h3>
-<p>Create a new schema named <code>main</code> that will store tables in a lakeFS repository named <code>example</code> branch: <code>master</code>:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="n">main</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">WITH</span><span class="w"> </span><span class="p">(</span><span class="k">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;s3a://example/main&#39;</span><span class="p">)</span>
-</span></code></pre></div>
-<p>Create a new Hive table named <code>page_views</code> in the <code>web</code> schema stored using the ORC file format,
- partitioned by date and country, and bucketed by user into <code>50</code> buckets (note that Hive requires the partition columns to be the last columns in the table):</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">main</span><span class="p">.</span><span class="n">page_views</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="n">view_time</span><span class="w"> </span><span class="k">timestamp</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">bigint</span><span class="p">,</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="n">page_url</span><span class="w"> </span><span class="nb">varchar</span><span class="p">,</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="n">ds</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="n">country</span><span class="w"> </span><span class="nb">varchar</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="k">WITH</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;ORC&#39;</span><span class="p">,</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span><span class="n">partitioned_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">ARRAY</span><span class="p">[</span><span class="s1">&#39;ds&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;country&#39;</span><span class="p">],</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="n">bucketed_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">ARRAY</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">],</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="n">bucket_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="example-with-external-table">Example with External table<a class="headerlink" href="#example-with-external-table" title="Permanent link">&para;</a></h3>
-<p>Create an external Hive table named <code>request_logs</code> that points at existing data in lakeFS:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">main</span><span class="p">.</span><span class="n">request_logs</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="n">request_time</span><span class="w"> </span><span class="k">timestamp</span><span class="p">,</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="n">url</span><span class="w"> </span><span class="nb">varchar</span><span class="p">,</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="n">ip</span><span class="w"> </span><span class="nb">varchar</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="n">user_agent</span><span class="w"> </span><span class="nb">varchar</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">)</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">WITH</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;TEXTFILE&#39;</span><span class="p">,</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="n">external_location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;s3a://example/main/data/logs/&#39;</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="example-of-copying-a-table-with-metastore-tools">Example of copying a table with <a href="../glue_hive_metastore/">metastore tools</a>:<a class="headerlink" href="#example-of-copying-a-table-with-metastore-tools" title="Permanent link">&para;</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Deprecated Feature</p>
-<p>Having heard the feedback from the community, we are planning to replace the below manual steps with an automated process.
-You can read more about it <a href="https://github.com/treeverse/lakeFS/issues/6461">here</a>.</p>
-</div>
-<p>Copy the created table <code>page_views</code> on schema <code>main</code> to schema <code>example_branch</code> with location <code>s3a://example/example_branch/page_views/</code> </p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>lakectl<span class="w"> </span>metastore<span class="w"> </span>copy<span class="w"> </span>--from-schema<span class="w"> </span>main<span class="w"> </span>--from-table<span class="w"> </span>page_views<span class="w"> </span>--to-branch<span class="w"> </span>example_branch<span class="w"> </span>
-</span></code></pre></div>
+<h2 id="integration-with-lakefs-data-catalogs">Integration with lakeFS Data Catalogs<a class="headerlink" href="#integration-with-lakefs-data-catalogs" title="Permanent link">&para;</a></h2>
+<p>For advanced integration with lakeFS that supports querying different branches as schemas, see the <a href="../../howto/catalog_exports/">Data Catalog Exports documentation</a>. This approach allows you to:</p>
+<ul>
+<li>Query data from specific lakeFS branches using branch names as schemas</li>
+<li>Automate table metadata synchronization through hooks</li>
+<li>Support multiple table formats (Hive, Delta Lake, etc.)</li>
+</ul>
+<p>For AWS Glue users, see the detailed <a href="../glue_metastore/">Glue Data Catalog integration guide</a> which provides step-by-step instructions for setting up automated exports.</p>
 
 
 
