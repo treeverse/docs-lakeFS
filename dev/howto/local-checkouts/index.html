@@ -976,7 +976,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Prerequisites:
+      Prerequisites
     </span>
   </a>
   
@@ -1020,6 +1020,21 @@ document.addEventListener("DOMContentLoaded", function() {
       lakectl local: Sync lakeFS data with a local directory
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="lakectl local: Sync lakeFS data with a local directory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4461,7 +4476,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Prerequisites:
+      Prerequisites
     </span>
   </a>
   
@@ -4505,6 +4520,21 @@ document.addEventListener("DOMContentLoaded", function() {
       lakectl local: Sync lakeFS data with a local directory
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="lakectl local: Sync lakeFS data with a local directory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4608,23 +4638,23 @@ document.addEventListener("DOMContentLoaded", function() {
 <h1 id="working-with-lakefs-data-locally">Working with lakeFS Data Locally<a class="headerlink" href="#working-with-lakefs-data-locally" title="Permanent link">&para;</a></h1>
 <p>lakeFS is a scalable data version control system designed to scale to billions of objects. The larger the data, the less
 feasible it becomes to consume it from a single machine. lakeFS addresses this challenge by enabling efficient management
-of large-scale data stored remotely. </p>
+of large-scale data stored remotely.</p>
 <p>In addition to its capability to manage large datasets, lakeFS offers the flexibility
 to work with versioned data by exposing it as a local filesystem directory.  </p>
 <p>This page explains <a href="../../reference/mount/">lakeFS Mount</a> and <code>lakectl local</code>: two common ways of exposing lakeFS data locally, with different performance characteristics.  </p>
 <h2 id="use-cases">Use cases<a class="headerlink" href="#use-cases" title="Permanent link">&para;</a></h2>
 <h3 id="local-development-of-ml-models">Local development of ML models<a class="headerlink" href="#local-development-of-ml-models" title="Permanent link">&para;</a></h3>
-<p>The development of machine learning models is a dynamic and iterative process, including experimentation with various data versions, 
-transformations, algorithms, and hyperparameters. To optimize this iterative workflow, experiments must be conducted with speed, 
-ease of tracking, and reproducibility in mind. Localizing the model data during development enhances the development process. 
-It <strong>accelerates the development process</strong> by enabling interactive and offline development and reducing data access latency. </p>
+<p>The development of machine learning models is a dynamic and iterative process, including experimentation with various data versions,
+transformations, algorithms, and hyperparameters. To optimize this iterative workflow, experiments must be conducted with speed,
+ease of tracking, and reproducibility in mind. Localizing the model data during development enhances the development process.
+It <strong>accelerates the development process</strong> by enabling interactive and offline development and reducing data access latency.</p>
 <p>The local availability of data is required to <strong>seamlessly integrate data version control systems and source control systems</strong>
-like Git. This integration is vital for achieving model reproducibility, allowing for a more efficient and collaborative 
+like Git. This integration is vital for achieving model reproducibility, allowing for a more efficient and collaborative
 model development environment.</p>
 <h3 id="data-locality-for-optimized-gpu-utilization">Data Locality for Optimized GPU Utilization<a class="headerlink" href="#data-locality-for-optimized-gpu-utilization" title="Permanent link">&para;</a></h3>
 <p>Training Deep Learning models requires expensive GPUs. In the context of running such programs, the goal is to optimize
 GPU usage and prevent them from sitting idle. Many deep learning tasks involve accessing images, and in some cases, the
-same images are accessed multiple times. Localizing the data can eliminate redundant round trip times to access remote 
+same images are accessed multiple times. Localizing the data can eliminate redundant round trip times to access remote
 storage, resulting in cost savings.</p>
 <iframe width="420" height="315" src="https://www.youtube.com/embed/afgQnmesLZM"></iframe>
 
@@ -4633,14 +4663,14 @@ storage, resulting in cost savings.</p>
 <p class="admonition-title">Info</p>
 <p>Mount requires no installation, please <a href="https://info.lakefs.io/thanks-lakefs-mounts">contact us</a> to get access.</p>
 </div>
-<h4 id="prerequisites">Prerequisites:<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h4>
+<h4 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h4>
 <ul>
 <li>A working lakeFS Server running either <a href="../../enterprise/">lakeFS Enterprise</a> or <a href="../../cloud/">lakeFS Cloud</a></li>
 <li>You’ve installed the <a href="../../reference/cli/"><code>lakectl</code></a> command line utility: this is the official lakeFS command line interface, on top of which lakeFS Mount is built.</li>
 <li>lakectl is configured properly to access your lakeFS server as detailed in the configuration instructions</li>
 </ul>
 <h3 id="mounting-a-lakefs-reference-as-a-local-directory">Mounting a lakeFS reference as a local directory<a class="headerlink" href="#mounting-a-lakefs-reference-as-a-local-directory" title="Permanent link">&para;</a></h3>
-<p>lakeFS Mount works by exposing a virtual mountpoint on the host computer. </p>
+<p>lakeFS Mount works by exposing a virtual mountpoint on the host computer.</p>
 <p>This "acts" as a local directory, allowing applications to read write and interact with data as it is all local to the machine, while lakeFS Mount optimizes this behind the scenes by lazily fetching data as requested, caching accessed objects and efficiently managing metadata to ensure best in class performance. <a href="../../reference/mount/">Read more about how lakeFS Mount optimizes performance</a></p>
 <p>Mounting a reference is a single command:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>everest<span class="w"> </span>mount<span class="w"> </span>lakefs://example-repo/example-branch/path/to/data/<span class="w"> </span>./my_local_dir
@@ -4669,9 +4699,9 @@ storage, resulting in cost savings.</p>
 <p>This will unmount the lakeFS Mount, cleaning up background tasks</p>
 <h2 id="lakectl-local-sync-lakefs-data-with-a-local-directory"><strong>lakectl local</strong>: Sync lakeFS data with a local directory<a class="headerlink" href="#lakectl-local-sync-lakefs-data-with-a-local-directory" title="Permanent link">&para;</a></h2>
 <p>The <em>local</em> command of lakeFS' CLI <em>lakectl</em> enables working with lakeFS data locally by copying the data onto the host machine.
-It allows syncing local directories with remote lakeFS locations, 
+It allows syncing local directories with remote lakeFS locations,
 and to <a href="#example-using-lakectl-local-in-tandem-with-git">seamlessly integrate lakeFS with Git</a>.</p>
-<p>Here are the available <em>lakectl local</em> commands: </p>
+<p>Here are the available <em>lakectl local</em> commands:</p>
 <table>
 <thead>
 <tr>
@@ -4722,257 +4752,294 @@ and to <a href="#example-using-lakectl-local-in-tandem-with-git">seamlessly inte
 <p class="admonition-title">Warning</p>
 <p>The data size you work with locally should be reasonable for smooth operation on a local machine which is typically no larger than 15 GB.  </p>
 </div>
+<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<p>The <code>lakectl local</code> commands can be configured through the lakectl configuration file to handle special cases like symbolic links. The following configuration options are available under the <code>local</code> section:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Configuration Option</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>skip_non_regular_files</code></td>
+<td style="text-align: left;">By default, lakectl local fails if a local directory contains non regular files. When set to <code>true</code>, lakectl will ignore them instead of failing.</td>
+<td style="text-align: left;"><code>false</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>symlink_support</code></td>
+<td style="text-align: left;">Controls whether symlinks are supported and processed by lakectl local commands.</td>
+<td style="text-align: left;"><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>Example configuration:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">local</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">symlink_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<p>When <code>symlink_support</code> is enabled, <code>lakectl local</code> commands will store and restore the state of the symlinks by creating special metadata objects that specify the symlink target. Metadata objects representing symlinks are created during data uploads. In contrast, during data downloads, <code>lakectl</code> will recreate the symbolic links in the local directory based on these metadata objects. This allows for a seamless integration of symlinks within your data management workflow. However, if the feature is turned off, any previously created symlinks will be treated as empty objects, meaning their targets will not be preserved or recreated during sync operations. It is crucial to enable this feature if your workflow relies on symbolic links to ensure data integrity and consistency.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <code>skip_non_regular_files</code> is enabled, symbolic links in your local directory will be ignored during sync operations. If you need to work with symbolic links, consider using <code>symlink_support</code> instead, though this feature may have different behavior and limitations.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Using symbolic links can be potentially dangerous as they can point to any file on your system.
+When <code>symlink_support</code> is enabled, lakeFS will not download data to a target which is a symlink, to prevent any unexpected behavior.</p>
+</div>
 <h2 id="example-using-lakectl-local-in-tandem-with-git">Example: Using <em>lakectl local</em> in tandem with Git<a class="headerlink" href="#example-using-lakectl-local-in-tandem-with-git" title="Permanent link">&para;</a></h2>
-<p>We are going to develop an ML model that predicts whether an image is an Alpaca or not. Our goal is to improve the input 
+<p>We are going to develop an ML model that predicts whether an image is an Alpaca or not. Our goal is to improve the input
 for the model. The code for the model is versioned by Git while the model dataset is versioned by lakeFS. We will
 be using lakectl local to tie code versions to data versions to achieve model reproducibility.  </p>
 <h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
 <p>To get start with, we have initialized a Git repo called <code>is_alpaca</code> that includes the model code:
 <a class="glightbox" href="../../assets/img/lakectl-local/code_repo.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Git repo" src="../../assets/img/lakectl-local/code_repo.png" /></a></p>
-<p>We also created a lakeFS repository and uploaded the <em>is_alpaca</em> train <a href="https://www.kaggle.com/datasets/sayedmahmoud/alpaca-dataset">dataset</a> 
+<p>We also created a lakeFS repository and uploaded the <em>is_alpaca</em> train <a href="https://www.kaggle.com/datasets/sayedmahmoud/alpaca-dataset">dataset</a>
 by Kaggel into it:
 <a class="glightbox" href="../../assets/img/lakectl-local/lakefs-repo-with-train-dataset.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS repo" src="../../assets/img/lakectl-local/lakefs-repo-with-train-dataset.png" /></a></p>
 <h3 id="create-an-isolated-environment-for-experiments">Create an Isolated Environment for Experiments<a class="headerlink" href="#create-an-isolated-environment-for-experiments" title="Permanent link">&para;</a></h3>
-<p>Our goal is to improve the model predictions. To meet our goal, we will experiment with editing the training dataset. 
-We will run our experiments in isolation to not change anything until after we are certain the data is improved and ready.    </p>
-<p>Let's create a new lakeFS branch called <code>experiment-1</code>. Our <em>is_alpaca</em> dataset is accessible on that branch, 
+<p>Our goal is to improve the model predictions. To meet our goal, we will experiment with editing the training dataset.
+We will run our experiments in isolation to not change anything until after we are certain the data is improved and ready.</p>
+<p>Let's create a new lakeFS branch called <code>experiment-1</code>. Our <em>is_alpaca</em> dataset is accessible on that branch,
 and we will interact with the data from that branch only.
 <a class="glightbox" href="../../assets/img/lakectl-local/experiment-branch.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="experiment-1-branch" src="../../assets/img/lakectl-local/experiment-branch.png" /></a></p>
 <p>On the code side, we will create a Git branch also called <code>experiment-1</code> to not pollute our main branch with a dataset
 which is under tuning.</p>
 <h3 id="clone-lakefs-data-into-a-local-git-repository">Clone lakeFS Data into a Local Git Repository<a class="headerlink" href="#clone-lakefs-data-into-a-local-git-repository" title="Permanent link">&para;</a></h3>
 <p>Inspecting the <code>train.py</code> script, we can see that it expects an input on the <code>input</code> directory.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="ch">#!/usr/bin/env python</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">input_location</span> <span class="o">=</span> <span class="s1">&#39;./input&#39;</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">model_location</span> <span class="o">=</span> <span class="s1">&#39;./models/is_alpaca.h5&#39;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_ds</span><span class="p">(</span><span class="n">subset</span><span class="p">):</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">image_dataset_from_directory</span><span class="p">(</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        <span class="n">input_location</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>        <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">image_size</span><span class="o">=</span><span class="p">(</span><span class="mi">244</span><span class="p">,</span> <span class="mi">244</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">train_ds</span> <span class="o">=</span> <span class="n">get_ds</span><span class="p">(</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="n">val_ds</span> <span class="o">=</span> <span class="n">get_ds</span><span class="p">(</span><span class="s2">&quot;validation&quot;</span><span class="p">)</span>
-</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
-</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
-</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Rescaling</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">255</span><span class="p">),</span>
-</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
-</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
-</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
-</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
-</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
-</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
-</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
-</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
-</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">)])</span>
-</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>
-</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="c1"># Fit and save</span>
-</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">SparseCategoricalCrossentropy</span><span class="p">(</span><span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
-</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">val_ds</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_location</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="ch">#!/usr/bin/env python</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">input_location</span> <span class="o">=</span> <span class="s1">&#39;./input&#39;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">model_location</span> <span class="o">=</span> <span class="s1">&#39;./models/is_alpaca.h5&#39;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_ds</span><span class="p">(</span><span class="n">subset</span><span class="p">):</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">image_dataset_from_directory</span><span class="p">(</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="n">input_location</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">image_size</span><span class="o">=</span><span class="p">(</span><span class="mi">244</span><span class="p">,</span> <span class="mi">244</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="n">train_ds</span> <span class="o">=</span> <span class="n">get_ds</span><span class="p">(</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="n">val_ds</span> <span class="o">=</span> <span class="n">get_ds</span><span class="p">(</span><span class="s2">&quot;validation&quot;</span><span class="p">)</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Rescaling</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">255</span><span class="p">),</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">),</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">)])</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="c1"># Fit and save</span>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">SparseCategoricalCrossentropy</span><span class="p">(</span><span class="n">from_logits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">val_ds</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_location</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This means that to be able to locally develop our model and experiment with it we need to have the <em>is_alpaca</em> dataset managed
-by lakeFS available locally on that path. To do that, we will use the <a href="../../reference/cli/#lakectl-local-clone"><code>lakectl local clone</code></a> 
+by lakeFS available locally on that path. To do that, we will use the <a href="../../reference/cli/#lakectl-local-clone"><code>lakectl local clone</code></a>
 command from our local Git repository root:</p>
-<p><div class="language-shell highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>clone<span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/<span class="w"> </span>input
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>clone<span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/<span class="w"> </span>input
 </span></code></pre></div>
-This command will do a diff between out local input directory (that did not exist until now) and the provided lakeFS path 
+<p>This command will do a diff between out local input directory (that did not exist until now) and the provided lakeFS path
 and identify that there are files to be downloaded from lakeFS.</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Successfully<span class="w"> </span>cloned<span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/<span class="w"> </span>to<span class="w"> </span>~/ml_models/is_alpaca/input
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Clone<span class="w"> </span>Summary:
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Downloaded:<span class="w"> </span><span class="m">250</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>Uploaded:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Removed:<span class="w"> </span><span class="m">0</span>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Successfully<span class="w"> </span>cloned<span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/<span class="w"> </span>to<span class="w"> </span>~/ml_models/is_alpaca/input
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Clone<span class="w"> </span>Summary:
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>Downloaded:<span class="w"> </span><span class="m">250</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>Uploaded:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>Removed:<span class="w"> </span><span class="m">0</span>
 </span></code></pre></div>
-<p>Running <a href="../../reference/cli/#lakectl-local-list"><code>lakectl local list</code></a> from our Git repository root will show that the 
-<code>input</code> directory is now in sync with a lakeFS prefix (Remote URI), and what lakeFS version of the data (Synced Commit) 
+<p>Running <a href="../../reference/cli/#lakectl-local-list"><code>lakectl local list</code></a> from our Git repository root will show that the
+<code>input</code> directory is now in sync with a lakeFS prefix (Remote URI), and what lakeFS version of the data (Synced Commit)
 the is it tracking:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="w"> </span>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>list<span class="w">                 </span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>+-----------+------------------------------------------------+------------------------------------------------------------------+
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">|</span><span class="w"> </span>DIRECTORY<span class="w"> </span><span class="p">|</span><span class="w"> </span>REMOTE<span class="w"> </span>URI<span class="w">                                     </span><span class="p">|</span><span class="w"> </span>SYNCED<span class="w"> </span>COMMIT<span class="w">                                                    </span><span class="p">|</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>+-----------+------------------------------------------------+------------------------------------------------------------------+
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">|</span><span class="w"> </span>input<span class="w">     </span><span class="p">|</span><span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/<span class="w"> </span><span class="p">|</span><span class="w"> </span>589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3<span class="w"> </span><span class="p">|</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>+-----------+------------------------------------------------+------------------------------------------------------------------+
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="w"> </span>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>list<span class="w">                 </span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>+-----------+------------------------------------------------+------------------------------------------------------------------+
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">|</span><span class="w"> </span>DIRECTORY<span class="w"> </span><span class="p">|</span><span class="w"> </span>REMOTE<span class="w"> </span>URI<span class="w">                                     </span><span class="p">|</span><span class="w"> </span>SYNCED<span class="w"> </span>COMMIT<span class="w">                                                    </span><span class="p">|</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>+-----------+------------------------------------------------+------------------------------------------------------------------+
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">|</span><span class="w"> </span>input<span class="w">     </span><span class="p">|</span><span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/<span class="w"> </span><span class="p">|</span><span class="w"> </span>589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3<span class="w"> </span><span class="p">|</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>+-----------+------------------------------------------------+------------------------------------------------------------------+
 </span></code></pre></div>
 <h3 id="tie-code-version-and-data-version">Tie Code Version and Data Version<a class="headerlink" href="#tie-code-version-and-data-version" title="Permanent link">&para;</a></h3>
 <p>Now let's tell Git to stage the dataset we've added and inspect our Git branch status:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>input/
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>git<span class="w"> </span>status<span class="w"> </span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>On<span class="w"> </span>branch<span class="w"> </span>experiment-1
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>Changes<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>committed:
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="o">(</span>use<span class="w"> </span><span class="s2">&quot;git restore --staged &lt;file&gt;...&quot;</span><span class="w"> </span>to<span class="w"> </span>unstage<span class="o">)</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span>new<span class="w"> </span>file:<span class="w">   </span>input/.lakefs_ref.yaml
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>Changes<span class="w"> </span>not<span class="w"> </span>staged<span class="w"> </span><span class="k">for</span><span class="w"> </span>commit:
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="o">(</span>use<span class="w"> </span><span class="s2">&quot;git add &lt;file&gt;...&quot;</span><span class="w"> </span>to<span class="w"> </span>update<span class="w"> </span>what<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>committed<span class="o">)</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="o">(</span>use<span class="w"> </span><span class="s2">&quot;git restore &lt;file&gt;...&quot;</span><span class="w"> </span>to<span class="w"> </span>discard<span class="w"> </span>changes<span class="w"> </span><span class="k">in</span><span class="w"> </span>working<span class="w"> </span>directory<span class="o">)</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span>modified:<span class="w">   </span>.gitignore
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>input/
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>git<span class="w"> </span>status<span class="w"> </span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>On<span class="w"> </span>branch<span class="w"> </span>experiment-1
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Changes<span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>committed:
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="o">(</span>use<span class="w"> </span><span class="s2">&quot;git restore --staged &lt;file&gt;...&quot;</span><span class="w"> </span>to<span class="w"> </span>unstage<span class="o">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w"> </span>new<span class="w"> </span>file:<span class="w">   </span>input/.lakefs_ref.yaml
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>Changes<span class="w"> </span>not<span class="w"> </span>staged<span class="w"> </span><span class="k">for</span><span class="w"> </span>commit:
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="o">(</span>use<span class="w"> </span><span class="s2">&quot;git add &lt;file&gt;...&quot;</span><span class="w"> </span>to<span class="w"> </span>update<span class="w"> </span>what<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>committed<span class="o">)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="o">(</span>use<span class="w"> </span><span class="s2">&quot;git restore &lt;file&gt;...&quot;</span><span class="w"> </span>to<span class="w"> </span>discard<span class="w"> </span>changes<span class="w"> </span><span class="k">in</span><span class="w"> </span>working<span class="w"> </span>directory<span class="o">)</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w"> </span>modified:<span class="w">   </span>.gitignore
 </span></code></pre></div>
-<p>We can see that the <code>.gitignore</code> file changed, and that the files we cloned from lakeFS into the <code>input</code> directory are not 
+<p>We can see that the <code>.gitignore</code> file changed, and that the files we cloned from lakeFS into the <code>input</code> directory are not
 tracked by git. This is intentional - remember that <strong>lakeFS is the one managing the data</strong>. But wait, what is this special
 <code>input/.lakefs_ref.yaml</code> file that Git does track?  </p>
-<p><div class="language-shell highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>cat<span class="w"> </span>input/.lakefs_ref.yaml
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>src:<span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/s
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>at_head:<span class="w"> </span>589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>cat<span class="w"> </span>input/.lakefs_ref.yaml
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>src:<span class="w"> </span>lakefs://is-alpaca/experiment-1/dataset/train/s
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>at_head:<span class="w"> </span>589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3
 </span></code></pre></div>
-This file includes the lakeFS version of the <strong>data</strong> that the Git repository is currently pointing to.</p>
+<p>This file includes the lakeFS version of the <strong>data</strong> that the Git repository is currently pointing to.</p>
 <p>Let's commit the changes to Git with:</p>
-<p><div class="language-shell highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;added is_alpaca dataset&quot;</span><span class="w"> </span>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;added is_alpaca dataset&quot;</span><span class="w"> </span>
 </span></code></pre></div>
-By committing to Git, we tie the current code version of the model to the dataset version in lakeFS as it appears in
+<p>By committing to Git, we tie the current code version of the model to the dataset version in lakeFS as it appears in
 <code>input/.lakefs_ref.yaml</code>.</p>
 <h3 id="experiment-and-version-results">Experiment and Version Results<a class="headerlink" href="#experiment-and-version-results" title="Permanent link">&para;</a></h3>
 <p>We ran the train script on the cloned input, and it generated a model. Now, let's use the model to predict whether an <strong>axolotl</strong> is an alpaca.</p>
 <p>A reminder - this is how an axolotl looks like - not like an alpaca!</p>
 <p><a class="glightbox" href="../../assets/img/lakectl-local/axolotl.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img src="../../assets/img/lakectl-local/axolotl.png" alt="axolotl" width="300"/></a></p>
 <p>Here are the (surprising) results:</p>
-<p><div class="language-shell highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>./predict.py<span class="w"> </span>~/axolotl1.jpeg
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="o">{</span><span class="s1">&#39;alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.32112,<span class="w"> </span><span class="s1">&#39;not alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.07260383<span class="o">}</span>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>./predict.py<span class="w"> </span>~/axolotl1.jpeg
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="o">{</span><span class="s1">&#39;alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.32112,<span class="w"> </span><span class="s1">&#39;not alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.07260383<span class="o">}</span>
 </span></code></pre></div>
-We expected the model to provide a more concise prediction, so let's try to improve it. To do that, we will add additional
-images of axolotls to the model input directory: </p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>cp<span class="w"> </span>~/axolotls_images/*<span class="w"> </span>input/not_alpaca
+<p>We expected the model to provide a more concise prediction, so let's try to improve it. To do that, we will add additional
+images of axolotls to the model input directory:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>cp<span class="w"> </span>~/axolotls_images/*<span class="w"> </span>input/not_alpaca
 </span></code></pre></div>
 <p>To inspect what changes we made to out dataset we will use <a href="../../reference/cli/#lakectl-local-status">lakectl local status</a>.</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>status<span class="w"> </span>input<span class="w"> </span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/input&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3/dataset/train/&#39;</span>...
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>diff<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3/dataset/train/&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/experiment-1/dataset/train/&#39;</span>...
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>╔════════╦════════╦════════════════════════════╗
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>║<span class="w"> </span>SOURCE<span class="w"> </span>║<span class="w"> </span>CHANGE<span class="w"> </span>║<span class="w"> </span>PATH<span class="w">                       </span>║
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>╠════════╬════════╬════════════════════════════╣
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/axolotl2.jpeg<span class="w"> </span>║
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/axolotl3.png<span class="w">  </span>║
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/axolotl4.jpeg<span class="w"> </span>║
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>╚════════╩════════╩════════════════════════════╝
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>status<span class="w"> </span>input<span class="w"> </span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/input&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3/dataset/train/&#39;</span>...
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>diff<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3/dataset/train/&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/experiment-1/dataset/train/&#39;</span>...
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>╔════════╦════════╦════════════════════════════╗
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>║<span class="w"> </span>SOURCE<span class="w"> </span>║<span class="w"> </span>CHANGE<span class="w"> </span>║<span class="w"> </span>PATH<span class="w">                       </span>║
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>╠════════╬════════╬════════════════════════════╣
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/axolotl2.jpeg<span class="w">   </span>║
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/axolotl3.png<span class="w">    </span>║
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/axolotl4.jpeg<span class="w">   </span>║
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>╚════════╩════════╩════════════════════════════╝
 </span></code></pre></div>
 <p>At this point, the dataset changes are not yet tracked by lakeFS. We will validate that by looking at the uncommitted changes
-area of our experiment branch and verifying it is empty. </p>
+area of our experiment branch and verifying it is empty.</p>
 <p>To commit these changes to lakeFS we will use <a href="../../reference/cli/#lakectl-local-commit">lakectl local commit</a>:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>commit<span class="w"> </span>input<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add images of axolotls to the training dataset&quot;</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Getting<span class="w"> </span>branch:<span class="w"> </span>experiment-1
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/input&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3/dataset/train/&#39;</span>...
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>upload<span class="w"> </span>not_alpaca/axolotl3.png<span class="w">              </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">5</span>.04KB<span class="w"> </span><span class="k">in</span><span class="w"> </span>679ms<span class="o">]</span>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>upload<span class="w"> </span>not_alpaca/axolotl2.jpeg<span class="w">             </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">38</span>.31KB<span class="w"> </span><span class="k">in</span><span class="w"> </span>685ms<span class="o">]</span>
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>upload<span class="w"> </span>not_alpaca/axolotl4.jpeg<span class="w">             </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">7</span>.70KB<span class="w"> </span><span class="k">in</span><span class="w"> </span>718ms<span class="o">]</span>
-</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
-</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>Sync<span class="w"> </span>Summary:
-</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>
-</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>Downloaded:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>Uploaded:<span class="w"> </span><span class="m">3</span>
-</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>Removed:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>
-</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>Finished<span class="w"> </span>syncing<span class="w"> </span>changes.<span class="w"> </span>Perform<span class="w"> </span>commit<span class="w"> </span>on<span class="w"> </span>branch...
-</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>Commit<span class="w"> </span><span class="k">for</span><span class="w"> </span>branch<span class="w"> </span><span class="s2">&quot;experiment-1&quot;</span><span class="w"> </span>completed.
-</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>
-</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>ID:<span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6
-</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>Message:<span class="w"> </span>add<span class="w"> </span>images<span class="w"> </span>of<span class="w"> </span>axolotls<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>training<span class="w"> </span>dataset
-</span><span id="__span-14-21"><a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>Timestamp:<span class="w"> </span><span class="m">2024</span>-02-08<span class="w"> </span><span class="m">17</span>:41:20<span class="w"> </span>+0200<span class="w"> </span>IST
-</span><span id="__span-14-22"><a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a>Parents:<span class="w"> </span>589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>commit<span class="w"> </span>input<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add images of axolotls to the training dataset&quot;</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Getting<span class="w"> </span>branch:<span class="w"> </span>experiment-1
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/input&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3/dataset/train/&#39;</span>...
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>upload<span class="w"> </span>not_alpaca/axolotl3.png<span class="w">              </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">5</span>.04KB<span class="w"> </span><span class="k">in</span><span class="w"> </span>679ms<span class="o">]</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>upload<span class="w"> </span>not_alpaca/axolotl2.jpeg<span class="w">             </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">38</span>.31KB<span class="w"> </span><span class="k">in</span><span class="w"> </span>685ms<span class="o">]</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>upload<span class="w"> </span>not_alpaca/axolotl4.jpeg<span class="w">             </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">7</span>.70KB<span class="w"> </span><span class="k">in</span><span class="w"> </span>718ms<span class="o">]</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>Sync<span class="w"> </span>Summary:
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>Downloaded:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>Uploaded:<span class="w"> </span><span class="m">3</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>Removed:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>Finished<span class="w"> </span>syncing<span class="w"> </span>changes.<span class="w"> </span>Perform<span class="w"> </span>commit<span class="w"> </span>on<span class="w"> </span>branch...
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>Commit<span class="w"> </span><span class="k">for</span><span class="w"> </span>branch<span class="w"> </span><span class="s2">&quot;experiment-1&quot;</span><span class="w"> </span>completed.
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>
+</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>ID:<span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6
+</span><span id="__span-15-20"><a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>Message:<span class="w"> </span>add<span class="w"> </span>images<span class="w"> </span>of<span class="w"> </span>axolotls<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>training<span class="w"> </span>dataset
+</span><span id="__span-15-21"><a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a>Timestamp:<span class="w"> </span><span class="m">2024</span>-02-08<span class="w"> </span><span class="m">17</span>:41:20<span class="w"> </span>+0200<span class="w"> </span>IST
+</span><span id="__span-15-22"><a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a>Parents:<span class="w"> </span>589f87704418c6bac80c5a6fc1b52c245af347b9ad1ea8d06597e4437fae4ca3
 </span></code></pre></div>
-<p>Looking at the lakeFS UI we can see that the lakeFS commit includes metadata that tells us what was the code version of 
+<p>Looking at the lakeFS UI we can see that the lakeFS commit includes metadata that tells us what was the code version of
 the linked Git repository at the time of the commit.
 <a class="glightbox" href="../../assets/img/lakectl-local/lakefs-commit-git-commit-id.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="git metadata in lakeFS" src="../../assets/img/lakectl-local/lakefs-commit-git-commit-id.png" /></a></p>
 <p>Inspecting the Git repository, we can see that the input/.lakefs_ref.yaml is pointing to the latest lakeFS commit <code>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6</code>.  </p>
-<p>We will now re-train our model with the modified dataset and give a try to predict whether an axolotl is an alpaca: </p>
-<p><div class="language-shell highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>./predict.py<span class="w"> </span>~/axolotl1.jpeg
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="o">{</span><span class="s1">&#39;alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.12443,<span class="w"> </span><span class="s1">&#39;not alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.47260383<span class="o">}</span>
+<p>We will now re-train our model with the modified dataset and give a try to predict whether an axolotl is an alpaca:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>./predict.py<span class="w"> </span>~/axolotl1.jpeg
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="o">{</span><span class="s1">&#39;alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.12443,<span class="w"> </span><span class="s1">&#39;not alpaca&#39;</span>:<span class="w"> </span><span class="m">0</span>.47260383<span class="o">}</span>
 </span></code></pre></div>
-Results are indeed more accurate.</p>
+<p>Results are indeed more accurate.</p>
 <h3 id="sync-a-local-directory-with-lakefs">Sync a Local Directory with lakeFS<a class="headerlink" href="#sync-a-local-directory-with-lakefs" title="Permanent link">&para;</a></h3>
 <p>Now that we think that the latest version of our model generates reliable predictions, let's validate it against a test dataset
-rather than against a single picture. We will use the test dataset provided by <a href="https://www.kaggle.com/datasets/sayedmahmoud/alpaca-dataset">Kaggel</a>. 
-Let's create a local <code>testDataset</code> directory in our git repository and populate it with the test dataset. </p>
-<p>Now, we will use  <a href="../../reference/cli/#lakectl-local-init">lakectl local init</a> to sync the <code>testDataset</code> directory with our lakeFS repository: </p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>init<span class="w"> </span>lakefs://is-alpaca/main/dataset/test/<span class="w"> </span>testDataset<span class="w"> </span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Location<span class="w"> </span>added<span class="w"> </span>to<span class="w"> </span>/is_alpaca/.gitignore
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Successfully<span class="w"> </span>linked<span class="w"> </span><span class="nb">local</span><span class="w"> </span>directory<span class="w"> </span><span class="s1">&#39;/is_alpaca/testDataset&#39;</span><span class="w"> </span>with<span class="w"> </span>remote<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/main/dataset/test/&#39;</span>
+rather than against a single picture. We will use the test dataset provided by <a href="https://www.kaggle.com/datasets/sayedmahmoud/alpaca-dataset">Kaggel</a>.
+Let's create a local <code>testDataset</code> directory in our git repository and populate it with the test dataset.</p>
+<p>Now, we will use  <a href="../../reference/cli/#lakectl-local-init">lakectl local init</a> to sync the <code>testDataset</code> directory with our lakeFS repository:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>init<span class="w"> </span>lakefs://is-alpaca/main/dataset/test/<span class="w"> </span>testDataset<span class="w"> </span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>Location<span class="w"> </span>added<span class="w"> </span>to<span class="w"> </span>/is_alpaca/.gitignore
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>Successfully<span class="w"> </span>linked<span class="w"> </span><span class="nb">local</span><span class="w"> </span>directory<span class="w"> </span><span class="s1">&#39;/is_alpaca/testDataset&#39;</span><span class="w"> </span>with<span class="w"> </span>remote<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/main/dataset/test/&#39;</span>
 </span></code></pre></div>
-<p>And validate that the directory was linked successfully: </p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>list<span class="w">                                                           </span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>+-------------+-------------------------------------------------+------------------------------------------------------------------+
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="p">|</span><span class="w"> </span>DIRECTORY<span class="w">   </span><span class="p">|</span><span class="w"> </span>REMOTE<span class="w"> </span>URI<span class="w">                                      </span><span class="p">|</span><span class="w"> </span>SYNCED<span class="w"> </span>COMMIT<span class="w">                                                    </span><span class="p">|</span>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>+-------------+-------------------------------------------------+------------------------------------------------------------------+
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="p">|</span><span class="w"> </span>input<span class="w">       </span><span class="p">|</span><span class="w"> </span>lakefs://is-alpaca/main/dataset/train/<span class="w">          </span><span class="p">|</span><span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6<span class="w"> </span><span class="p">|</span>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">|</span><span class="w"> </span>testDataset<span class="w"> </span><span class="p">|</span><span class="w"> </span>lakefs://is-alpaca/main/dataset/test/<span class="w">           </span><span class="p">|</span><span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6<span class="w"> </span><span class="p">|</span>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>+-------------+-------------------------------------------------+------------------------------------------------------------------+
+<p>And validate that the directory was linked successfully:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>list<span class="w">                                                           </span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>+-------------+-------------------------------------------------+------------------------------------------------------------------+
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="p">|</span><span class="w"> </span>DIRECTORY<span class="w">   </span><span class="p">|</span><span class="w"> </span>REMOTE<span class="w"> </span>URI<span class="w">                                      </span><span class="p">|</span><span class="w"> </span>SYNCED<span class="w"> </span>COMMIT<span class="w">                                                    </span><span class="p">|</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>+-------------+-------------------------------------------------+------------------------------------------------------------------+
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="p">|</span><span class="w"> </span>input<span class="w">       </span><span class="p">|</span><span class="w"> </span>lakefs://is-alpaca/main/dataset/train/<span class="w">          </span><span class="p">|</span><span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6<span class="w"> </span><span class="p">|</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="p">|</span><span class="w"> </span>testDataset<span class="w"> </span><span class="p">|</span><span class="w"> </span>lakefs://is-alpaca/main/dataset/test/<span class="w">           </span><span class="p">|</span><span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6<span class="w"> </span><span class="p">|</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>+-------------+-------------------------------------------------+------------------------------------------------------------------+
 </span></code></pre></div>
-<p>Now we will tell Git to track the <code>testDataset</code> directory with <code>git add testDataset</code>, and as we saw earlier Git will only track the <code>testDataset/.lakefs_ref.yaml</code> 
+<p>Now we will tell Git to track the <code>testDataset</code> directory with <code>git add testDataset</code>, and as we saw earlier Git will only track the <code>testDataset/.lakefs_ref.yaml</code>
 for that directory rather than its content.  </p>
-<p>To see the difference between our local <code>testDataset</code> directory and its lakeFS location <code>lakefs://is-alpaca/main/dataset/test/</code> 
+<p>To see the difference between our local <code>testDataset</code> directory and its lakeFS location <code>lakefs://is-alpaca/main/dataset/test/</code>
 we will use <a href="../../reference/cli/#lakectl-local-status">lakectl local status</a>:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>status<span class="w"> </span>testDataset<span class="w"> </span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/testDataset&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6/dataset/test/&#39;</span>...
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>diff<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6/dataset/test/&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/main/dataset/test/&#39;</span>...
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>
-</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>╔════════╦════════╦════════════════════════════════╗
-</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>║<span class="w"> </span>SOURCE<span class="w"> </span>║<span class="w"> </span>CHANGE<span class="w"> </span>║<span class="w"> </span>PATH<span class="w">                           </span>║
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>╠════════╬════════╬════════════════════════════════╣
-</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>.jpg<span class="w">          </span>║
-</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">10</span><span class="o">)</span>.jpg<span class="w">         </span>║
-</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>║<span class="w">    </span>.<span class="w">         </span>.<span class="w">                  </span>.<span class="w">                </span>║<span class="w"> </span>
-</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>║<span class="w">    </span>.<span class="w">         </span>.<span class="w">                  </span>.<span class="w">                </span>║
-</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>║<span class="w">    </span>.<span class="w">         </span>.<span class="w">                  </span>.<span class="w">                </span>║
-</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/not_alpaca<span class="w"> </span><span class="o">(</span><span class="m">9</span><span class="o">)</span>.jpg<span class="w">  </span>║
-</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>╚════════╩════════╩════════════════════════════════╝
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>status<span class="w"> </span>testDataset<span class="w"> </span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/testDataset&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6/dataset/test/&#39;</span>...
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>diff<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6/dataset/test/&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/main/dataset/test/&#39;</span>...
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>╔════════╦════════╦════════════════════════════════╗
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>║<span class="w"> </span>SOURCE<span class="w"> </span>║<span class="w"> </span>CHANGE<span class="w"> </span>║<span class="w"> </span>PATH<span class="w">                           </span>║
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>╠════════╬════════╬════════════════════════════════╣
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>.jpg<span class="w">          </span>║
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">10</span><span class="o">)</span>.jpg<span class="w">         </span>║
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>║<span class="w">    </span>.<span class="w">         </span>.<span class="w">                  </span>.<span class="w">                </span>║<span class="w"> </span>
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>║<span class="w">    </span>.<span class="w">         </span>.<span class="w">                  </span>.<span class="w">                </span>║
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>║<span class="w">    </span>.<span class="w">         </span>.<span class="w">                  </span>.<span class="w">                </span>║
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>added<span class="w">  </span>║<span class="w"> </span>not_alpaca/not_alpaca<span class="w"> </span><span class="o">(</span><span class="m">9</span><span class="o">)</span>.jpg<span class="w">  </span>║
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>╚════════╩════════╩════════════════════════════════╝
 </span></code></pre></div>
 <p>We can see that multiple files were locally added to the synced directory.  </p>
-<p>To apply these changes to lakeFS we will commit them: </p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>commit<span class="w"> </span>testDataset<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add is_alpaca test dataset to lakeFS&quot;</span><span class="w"> </span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>Getting<span class="w"> </span>branch:<span class="w"> </span>experiment-1
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/testDataset&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6/dataset/test/&#39;</span>...
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>upload<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">23</span><span class="o">)</span>.jpg<span class="w">            </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">113</span>.81KB<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span>.241s<span class="o">]</span>
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>upload<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">26</span><span class="o">)</span>.jpg<span class="w">            </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">102</span>.74KB<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span>.4s<span class="o">]</span>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">          </span>.<span class="w">                                             </span>.
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">          </span>.<span class="w">                                             </span>.
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>upload<span class="w"> </span>not_alpaca/not_alpaca<span class="w"> </span><span class="o">(</span><span class="m">42</span><span class="o">)</span>.jpg<span class="w">    </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">886</span>.93KB<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">14</span>.336s<span class="o">]</span>
-</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>
-</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>Sync<span class="w"> </span>Summary:
-</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>
-</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>Downloaded:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>Uploaded:<span class="w"> </span><span class="m">77</span>
-</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>Removed:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>
-</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>Finished<span class="w"> </span>syncing<span class="w"> </span>changes.<span class="w"> </span>Perform<span class="w"> </span>commit<span class="w"> </span>on<span class="w"> </span>branch...
-</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>Commit<span class="w"> </span><span class="k">for</span><span class="w"> </span>branch<span class="w"> </span><span class="s2">&quot;experiment-1&quot;</span><span class="w"> </span>completed.
-</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>
-</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>ID:<span class="w"> </span>c8be7f4f5c13dd2e489ae85e6f747230bfde8e50f9cd9b6af20b2baebfb576cf
-</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>Message:<span class="w"> </span>add<span class="w"> </span>is_alpaca<span class="w"> </span><span class="nb">test</span><span class="w"> </span>dataset<span class="w"> </span>to<span class="w"> </span>lakeFS
-</span><span id="__span-19-23"><a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a>Timestamp:<span class="w"> </span><span class="m">2024</span>-02-10<span class="w"> </span><span class="m">12</span>:31:53<span class="w"> </span>+0200<span class="w"> </span>IST
-</span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>Parents:<span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6
+<p>To apply these changes to lakeFS we will commit them:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>is_alpaca<span class="w"> </span>%<span class="w"> </span>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>commit<span class="w"> </span>testDataset<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;add is_alpaca test dataset to lakeFS&quot;</span><span class="w"> </span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>Getting<span class="w"> </span>branch:<span class="w"> </span>experiment-1
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>diff<span class="w"> </span><span class="s1">&#39;local:///ml_models/is_alpaca/testDataset&#39;</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">&#39;lakefs://is-alpaca/0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6/dataset/test/&#39;</span>...
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>upload<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">23</span><span class="o">)</span>.jpg<span class="w">            </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">113</span>.81KB<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span>.241s<span class="o">]</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>upload<span class="w"> </span>alpaca/alpaca<span class="w"> </span><span class="o">(</span><span class="m">26</span><span class="o">)</span>.jpg<span class="w">            </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">102</span>.74KB<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span>.4s<span class="o">]</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">          </span>.<span class="w">                                             </span>.
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">          </span>.<span class="w">                                             </span>.
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>upload<span class="w"> </span>not_alpaca/not_alpaca<span class="w"> </span><span class="o">(</span><span class="m">42</span><span class="o">)</span>.jpg<span class="w">    </span>...<span class="w"> </span><span class="k">done</span>!<span class="w"> </span><span class="o">[</span><span class="m">886</span>.93KB<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">14</span>.336s<span class="o">]</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>Sync<span class="w"> </span>Summary:
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>Downloaded:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>Uploaded:<span class="w"> </span><span class="m">77</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>Removed:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>
+</span><span id="__span-20-18"><a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>Finished<span class="w"> </span>syncing<span class="w"> </span>changes.<span class="w"> </span>Perform<span class="w"> </span>commit<span class="w"> </span>on<span class="w"> </span>branch...
+</span><span id="__span-20-19"><a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a>Commit<span class="w"> </span><span class="k">for</span><span class="w"> </span>branch<span class="w"> </span><span class="s2">&quot;experiment-1&quot;</span><span class="w"> </span>completed.
+</span><span id="__span-20-20"><a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>
+</span><span id="__span-20-21"><a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>ID:<span class="w"> </span>c8be7f4f5c13dd2e489ae85e6f747230bfde8e50f9cd9b6af20b2baebfb576cf
+</span><span id="__span-20-22"><a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>Message:<span class="w"> </span>add<span class="w"> </span>is_alpaca<span class="w"> </span><span class="nb">test</span><span class="w"> </span>dataset<span class="w"> </span>to<span class="w"> </span>lakeFS
+</span><span id="__span-20-23"><a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a>Timestamp:<span class="w"> </span><span class="m">2024</span>-02-10<span class="w"> </span><span class="m">12</span>:31:53<span class="w"> </span>+0200<span class="w"> </span>IST
+</span><span id="__span-20-24"><a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a>Parents:<span class="w"> </span>0b376f01b925a075851bbaffacf104a80de04a43ed7e56054bf54c42d2c8cce6
 </span></code></pre></div>
 <p>Looking at the lakFS UI we see that our test data is now available at lakeFS:
 <a class="glightbox" href="../../assets/img/lakectl-local/tes-and-train-dataset.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="test_dataset" src="../../assets/img/lakectl-local/tes-and-train-dataset.png" /></a></p>
 <p>Finally, we will Git commit the local changes to link between the Git and lakeFS repositories state.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>While syncing a local directory with a lakeF prefix, it is recommended to first commit the data to lakeFS and then 
+<p>While syncing a local directory with a lakeF prefix, it is recommended to first commit the data to lakeFS and then
 do a Git commit that will include the changes done to the <code>.lakefs_ref.yaml</code> for the synced directory. Reasoning is that
-only after committing the data to lakeFS, the <code>.lakefs_ref.yaml</code> file points to a lakeFS commit that includes the added 
+only after committing the data to lakeFS, the <code>.lakefs_ref.yaml</code> file points to a lakeFS commit that includes the added
 content from the directory.</p>
 </div>
 <h3 id="reproduce-model-results">Reproduce Model Results<a class="headerlink" href="#reproduce-model-results" title="Permanent link">&para;</a></h3>
-<p>What if we wanted to re-run the model that predicted that an axolotl is more likely to be an alpaca? 
+<p>What if we wanted to re-run the model that predicted that an axolotl is more likely to be an alpaca?
 This question translates into the question: "How do I roll back my code and data to the time before we optimized the train dataset?"
 Which translates to: "What was the Git commit ID at this point?"</p>
 <p>Searching our Git log we find this commit:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>commit<span class="w"> </span>5403ec29903942b692aabef404598b8dd3577f8a
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span>added<span class="w"> </span>is_alpaca<span class="w"> </span>dataset
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>commit<span class="w"> </span>5403ec29903942b692aabef404598b8dd3577f8a
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span>added<span class="w"> </span>is_alpaca<span class="w"> </span>dataset
 </span></code></pre></div>
-<p>So, all we have to do now is <code>git checkout 5403ec29903942b692aabef404598b8dd3577f8a</code> and we are good to reproduce the model results! </p>
-<p>Checkout our article about <a href="https://lakefs.io/blog/scalable-ml-data-version-control-and-reproducibility/">ML Data Version Control and Reproducibility at Scale</a> to get another example for how lakeFS and Git work seamlessly together.     </p>
+<p>So, all we have to do now is <code>git checkout 5403ec29903942b692aabef404598b8dd3577f8a</code> and we are good to reproduce the model results!</p>
+<p>Checkout our article about <a href="https://lakefs.io/blog/scalable-ml-data-version-control-and-reproducibility/">ML Data Version Control and Reproducibility at Scale</a> to get another example for how lakeFS and Git work seamlessly together.</p>
 
 
 
