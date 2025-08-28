@@ -3683,6 +3683,48 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
+  <a href="#login-with-lakectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Login with lakectl
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Login with lakectl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      prerequisites
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lakectl-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      lakectl configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token Caching
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#login-with-python" class="md-nav__link">
     <span class="md-ellipsis">
       Login with python
@@ -3693,7 +3735,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#prerequisites_1" class="md-nav__link">
     <span class="md-ellipsis">
       prerequisites
     </span>
@@ -4399,6 +4441,48 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
+  <a href="#login-with-lakectl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Login with lakectl
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Login with lakectl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      prerequisites
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lakectl-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      lakectl configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token Caching
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#login-with-python" class="md-nav__link">
     <span class="md-ellipsis">
       Login with python
@@ -4409,7 +4493,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#prerequisites_1" class="md-nav__link">
     <span class="md-ellipsis">
       prerequisites
     </span>
@@ -4555,44 +4639,86 @@ Currently, this is done through the lakeFS <a href="../../reference/api/#externa
 <p>The login to lakeFS is done by calling the <a href="../../reference/api/#auth/externalPrincipalLogin">login API</a> with the <code>GetCallerIdentity</code> request signed by the client.
 Currently, the login operation is supported out of the box in:</p>
 <ul>
+<li><a href="#login-with-lakectl">lakectl</a></li>
 <li><a href="../../integrations/spark/#lakefs-hadoop-filesystem">lakeFS Hadoop FileSystem</a> version 0.2.4, see <a href="../../integrations/spark/#usage-with-temporaryawscredentialslakefstokenprovider">Spark usage</a></li>
 <li><a href="#login-with-python">python</a></li>
 <li><a href="../../reference/mount/#authenticating-with-aws-iam-role.md">Everest mount</a></li>
 </ul>
 <p>For other use cases authenticated to lakeFS via login endpoint, this will require building the request input.</p>
-<h2 id="login-with-python">Login with python<a class="headerlink" href="#login-with-python" title="Permanent link">&para;</a></h2>
+<h2 id="login-with-lakectl">Login with lakectl<a class="headerlink" href="#login-with-lakectl" title="Permanent link">&para;</a></h2>
 <h3 id="prerequisites">prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ol>
+<li>lakeFS must be configured to allow external principals to authenticate. The relevant IAM role should be attached to the appropriate lakeFS user. </li>
+<li>lakectl must be configured to use IAM authentication.</li>
+</ol>
+<h3 id="lakectl-configuration">lakectl configuration<a class="headerlink" href="#lakectl-configuration" title="Permanent link">&para;</a></h3>
+<p>To use IAM authentication, the following configuration fields are available:</p>
+<ul>
+<li><code>credentials.provider.type</code> <code>(string: '')</code> - Settings this <code>aws_iam</code> will expect <code>aws_iam</code> block and try to use IAM.</li>
+<li><code>credentials.provider.aws_iam.token_ttl_second</code> <code>(duration: 60m)</code> - Optional: lakeFS token duration.</li>
+<li><code>credentials.provider.aws_iam.url_presign_ttl_seconds</code> <code>(duration: 15m)</code> - Optional: AWS STS's presigned URL validation duration.  </li>
+<li><code>credentials.provider.aws_iam.refresh_interval</code> <code>(duration: 15m)</code> - Optional: Amount of time before token expiration that Everest will try to fetch a new session token instead of using the current one.  </li>
+<li><code>credentials.provider.aws_iam.token_request_headers</code>: Map of required headers and their values to be signed by the AWS STS request as configured in your lakeFS server. If nothing is set the <strong>default</strong> behavior is adding <code>x-lakefs-server-id:&lt;lakeFS host&gt;</code>. If your lakeFS server doesn't require any headers (less secure) you can set this empty by setting <code>{}</code> empty map in your config. </li>
+</ul>
+<p>These configuration fields can be set via <code>.lakectl.yaml</code>: </p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">credentials</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">provider</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_iam</span><span class="w">          </span><span class="c1"># Required</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">aws_iam</span><span class="p">:</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="nt">token_ttl_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60m</span><span class="w">              </span><span class="c1"># Optional, default: 1h</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">url_presign_ttl_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15m</span><span class="w">        </span><span class="c1"># Optional, default: 15m</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">refresh_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5m</span><span class="w">                </span><span class="c1"># Optional, default: 5m</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">token_request_headers</span><span class="p">:</span><span class="w">              </span><span class="c1"># Optional, if omitted then will set x-lakefs-server-id: &lt;lakeFS host&gt; by default, to override default set to &#39;{}&#39;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="c1"># x-lakefs-server-id: &lt;lakeFS host&gt;     Added by default if token_request_headers is not set  </span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">custome-key</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">custome-val</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="nt">server</span><span class="p">:</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakeFS endpoint url&gt;</span>
+</span></code></pre></div>
+</div>
+<h3 id="token-caching">Token Caching<a class="headerlink" href="#token-caching" title="Permanent link">&para;</a></h3>
+<p>To optimize lakectl's IAM authentication, a simple token caching mechanism was introduced.
+Instead of performing a login request to AWS to get a JWT for lakeFS, lakectl will save the token to <code>$HOMEDIR/.lakectl/cache/lakectl_token_cache.json</code>.
+The token will be used in the next lakectl operations up until one hour after writing. Later than that, lakectl will try and retrieve a new token.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cache implementation does not support multiple AWS profiles. 
+When switching profiles and for general troubleshooting, try and delete the cache first.   </p>
+</div>
+<h2 id="login-with-python">Login with python<a class="headerlink" href="#login-with-python" title="Permanent link">&para;</a></h2>
+<h3 id="prerequisites_1">prerequisites<a class="headerlink" href="#prerequisites_1" title="Permanent link">&para;</a></h3>
 <ol>
 <li>lakeFS should be <a href="#server-configuration">configured</a> to allow external principals to authenticate, and the used IAM role should be <a href="#administration-of-iam-roles-in-lakefs">attached</a> to the relevant lakeFS user</li>
 <li>The Python SDK requires additional packages to be installed to generate a lakeFS client with the assumed role.
 To install the required packages, run the following command:</li>
 </ol>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w">  </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;lakefs[aws-iam]&quot;</span>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">  </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;lakefs[aws-iam]&quot;</span>
 </span></code></pre></div>
 <p>There are two ways in which external principals can be used to authenticate to lakeFS:</p>
 <ol>
 <li>
 <p>If no other authentication flow is provided, and the <code>credentials.provider.type</code> configuration is set to <code>aws_iam</code> in <code>.lakectl.yaml</code>, the client will use the machine's AWS role to authenticate with lakeFS:</p>
-<p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">provider</span><span class="p">:</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_iam</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">aws_iam</span><span class="p">:</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="nt">token_ttl_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span><span class="w">      </span><span class="c1"># TTL for the temporary token (default: 3600)</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="nt">url_presign_ttl_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w">  </span><span class="c1"># TTL for presigned URLs (default: 60)</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="nt">token_request_headers</span><span class="p">:</span><span class="w">       </span><span class="c1"># Optional headers for token requests</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="nt">HeaderName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HeaderValue</span>
+<p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">credentials</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="nt">provider</span><span class="p">:</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_iam</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">aws_iam</span><span class="p">:</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="nt">token_ttl_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span><span class="w">      </span><span class="c1"># TTL for the temporary token (default: 3600)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="nt">url_presign_ttl_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w">  </span><span class="c1"># TTL for presigned URLs (default: 60)</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="nt">token_request_headers</span><span class="p">:</span><span class="w">       </span><span class="c1"># Optional headers for token requests</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">        </span><span class="nt">HeaderName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HeaderValue</span>
 </span></code></pre></div>
 Or using environment variables:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_TYPE</span><span class="o">=</span><span class="s2">&quot;aws_iam&quot;</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;3600&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_PRESIGNED_URL_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;60&quot;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_REQUEST_HEADERS</span><span class="o">=</span><span class="s1">&#39;{&quot;HeaderName&quot;:&quot;HeaderValue&quot;}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_TYPE</span><span class="o">=</span><span class="s2">&quot;aws_iam&quot;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;3600&quot;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_PRESIGNED_URL_TTL_SECONDS</span><span class="o">=</span><span class="s2">&quot;60&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKECTL_CREDENTIALS_PROVIDER_AWS_IAM_TOKEN_REQUEST_HEADERS</span><span class="o">=</span><span class="s1">&#39;{&quot;HeaderName&quot;:&quot;HeaderValue&quot;}&#39;</span>
 </span></code></pre></div>
 To use the client, merely <code>import lakefs</code> and use it as you would normally do:
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">repository</span><span class="p">(</span><span class="s2">&quot;example-repo&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">branches</span><span class="p">():</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">repository</span><span class="p">(</span><span class="s2">&quot;example-repo&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">branches</span><span class="p">():</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
 </span></code></pre></div></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -4601,16 +4727,16 @@ To use the client, merely <code>import lakefs</code> and use it as you would nor
 </li>
 <li>
 <p>Generate a lakeFS client with the assumed role by initiating a boto3 session with the desired role and call <code>lakefs.client.frow_aws_role</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>    
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">my_client</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_aws_role</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">ttl_seconds</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;&lt;lakefs-host&gt;&quot;</span><span class="p">)</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># list repositories</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">repos</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">repositories</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">my_client</span><span class="p">)</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>    
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">my_client</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">from_aws_role</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span> <span class="n">ttl_seconds</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;&lt;lakefs-host&gt;&quot;</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># list repositories</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">repos</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">repositories</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="n">my_client</span><span class="p">)</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </span></code></pre></div>
 </li>
 </ol>
