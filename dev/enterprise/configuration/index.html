@@ -2323,6 +2323,30 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authprefetched_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.prefetched_cache
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="auth.prefetched_cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backpressure" class="md-nav__link">
+    <span class="md-ellipsis">
+      backpressure
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#blockstores" class="md-nav__link">
     <span class="md-ellipsis">
@@ -4538,6 +4562,30 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authprefetched_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.prefetched_cache
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="auth.prefetched_cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backpressure" class="md-nav__link">
+    <span class="md-ellipsis">
+      backpressure
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#blockstores" class="md-nav__link">
     <span class="md-ellipsis">
@@ -4712,6 +4760,28 @@ If the provider redirects to a URL not in this list, the login will fail. This p
 <li><code>auth.external.aws_auth.optional_headers</code> <code>(map[string]string : )</code> - Optional headers that can be present by the client when doing login request</li>
 <li><code>auth.external.aws_auth.http_client.timeout</code> <code>(duration : 10s)</code> - The timeout for the HTTP client used to communicate with AWS STS</li>
 <li><code>auth.external.aws_auth.http_client.skip_verify</code> <code>(bool : false)</code> - Skip SSL verification with AWS STS</li>
+</ul>
+<h2 id="authprefetched_cache">auth.prefetched_cache<a class="headerlink" href="#authprefetched_cache" title="Permanent link">&para;</a></h2>
+<p>Configuration section for the prefetched cache.
+The prefetched cache is used to cache entries from the auth KV store in memory to reduce the number of calls to the KV store.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When prefetched cache is enabled, the auth catch used to cache responses from the auth service is disabled.</p>
+</div>
+<ul>
+<li><code>auth.prefetched_cache.enabled</code> <code>(bool : false)</code> - Enable the prefetched cache</li>
+<li><code>auth.prefetched_cache.interval</code> <code>(duration : 30s)</code> - The interval at which to refresh the cache</li>
+<li><code>auth.prefetched_cache.ttl</code> <code>(duration : 1m)</code> - The time to live for each cache entry</li>
+<li><code>auth.prefetched_cache.size</code> <code>(int : 10000)</code> - The maximum number of entries in the cache</li>
+<li><code>auth.prefetched_cache.eviction_jitter</code> <code>(duration : 3s)</code> - The maximum random jitter to add to the eviction interval to prevent thundering herds</li>
+<li><code>auth.prefetched_cache.negative_cache_size</code> <code>(int : 40000)</code> - The maximum number of missing entries the cache will remember</li>
+</ul>
+<h3 id="backpressure">backpressure<a class="headerlink" href="#backpressure" title="Permanent link">&para;</a></h3>
+<p>Configuration section for backpressure settings.
+When enabled, backpressure will limit the number of requests each server will handle concurrently through s3 gateway</p>
+<ul>
+<li><code>backpressure.enabled</code> <code>(bool : false)</code> - Enable backpressure</li>
+<li><code>backpressure.upload_part_max_concurrent</code> <code>(int : 0)</code> - The maximum number of concurrent upload part requests. 0 means no limit</li>
 </ul>
 <h3 id="blockstores">blockstores<a class="headerlink" href="#blockstores" title="Permanent link">&para;</a></h3>
 <div class="admonition info">
