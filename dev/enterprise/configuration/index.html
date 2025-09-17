@@ -2255,6 +2255,21 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="auth">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authui_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.ui_config
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2294,25 +2309,10 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-        
           <li class="md-nav__item">
-  <a href="#authexternal" class="md-nav__link">
+  <a href="#authexternal_aws_auth" class="md-nav__link">
     <span class="md-ellipsis">
-      auth.external
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="auth.external">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#authexternalaws_auth" class="md-nav__link">
-    <span class="md-ellipsis">
-      auth.external.aws_auth
+      auth.external_aws_auth
     </span>
   </a>
   
@@ -4494,6 +4494,21 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="auth">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authui_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.ui_config
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4533,25 +4548,10 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-        
           <li class="md-nav__item">
-  <a href="#authexternal" class="md-nav__link">
+  <a href="#authexternal_aws_auth" class="md-nav__link">
     <span class="md-ellipsis">
-      auth.external
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="auth.external">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#authexternalaws_auth" class="md-nav__link">
-    <span class="md-ellipsis">
-      auth.external.aws_auth
+      auth.external_aws_auth
     </span>
   </a>
   
@@ -4692,49 +4692,62 @@ The sections below provide additional configuration references that complement t
 This ensures data is persisted and prevents data loss in case of node restarts or failures.</p>
 </div>
 <h3 id="auth">auth<a class="headerlink" href="#auth" title="Permanent link">&para;</a></h3>
-<p>Configuration section for authentication services, like SAML or OIDC.</p>
+<p>Configuration section for SSO authentication services, like SAML or OIDC.</p>
 <ul>
-<li><code>auth.logout_redirect_url</code> <code>(string : "/auth/login")</code> - The URL to redirect to after logout. The behavior depends on the authentication provider:</li>
-<li><strong>For OIDC</strong>: The logout URL of the OIDC provider (e.g., Auth0 logout endpoint)</li>
-<li><strong>For SAML</strong>: The URL within lakeFS where the IdP should redirect after logout (e.g., <code>/auth/login</code>)</li>
+<li><code>auth.logout_redirect_url</code> <code>(string : "/auth/login")</code> - The URL to redirect to after logout when using SSO authentication services, like SAML or OIDC. <br />
+The configuration depends on the authentication provider:  <ul>
+<li><strong>For OIDC:</strong> The logout URL of the OIDC provider (e.g., Auth0 logout endpoint).</li>
+<li><strong>For SAML:</strong> The URL within lakeFS where the IdP should redirect after logout (e.g., <code>/auth/login</code>).</li>
+</ul>
+</li>
+</ul>
+<h4 id="authui_config">auth.ui_config<a class="headerlink" href="#authui_config" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>auth.ui_config.login_url_method</code> <code>(string : "redirect")</code> - Controls how lakeFS handles login when an <code>auth.ui_config.login_url</code> (SSO via OIDC or SAML) is configured. This parameter is only relevant when <code>auth.ui_config.login_url</code> is set.<br />
+<strong>Supported values:</strong><ul>
+<li><code>"redirect"</code> - On login, users are redirected to the configured <code>auth.ui_config.login_url</code> (default).</li>
+<li><code>"select"</code> - On login, login selection page is used to select between build-in lakeFS and SSO login.</li>
+</ul>
+</li>
 </ul>
 <h3 id="authproviders">auth.providers<a class="headerlink" href="#authproviders" title="Permanent link">&para;</a></h3>
-<p>Configuration section external identity providers</p>
+<p>Configuration section for external identity providers used for authentication services, such as LDAP, SAML or OIDC.</p>
 <h4 id="authprovidersldap">auth.providers.ldap<a class="headerlink" href="#authprovidersldap" title="Permanent link">&para;</a></h4>
+<p>Configuration section for LDAP</p>
 <ul>
-<li><code>auth.providers.ldap.server_endpoint</code> <code>(string : "")</code> - The LDAP server address, e.g. <code>'ldaps://ldap.company.com:636'</code></li>
-<li><code>auth.providers.ldap.bind_dn</code> <code>(string : "")</code> - The bind string, e.g. <code>'uid=&lt;bind-user-name&gt;,ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com'</code></li>
-<li><code>auth.providers.ldap.bind_password</code> <code>(string : "")</code> - The password for the user to bind</li>
-<li><code>auth.providers.ldap.username_attribute</code> <code>(string : "")</code> - The user name attribute, e.g. 'uid'</li>
-<li><code>auth.providers.ldap.user_base_dn</code> <code>(string : "")</code> - The search request base dn, e.g. <code>'ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com'</code></li>
-<li><code>auth.providers.ldap.user_filter</code> <code>(string : "")</code> - The search request user filter, e.g. <code>'(objectClass=inetOrgPerson)'</code></li>
-<li><code>auth.providers.ldap.connection_timeout_seconds</code> <code>(int : 0)</code> - The timeout for a single connection</li>
-<li><code>auth.providers.ldap.request_timeout_seconds</code> <code>(int : 0)</code> - The timeout for a single request</li>
-<li><code>auth.providers.ldap.default_user_group</code> <code>(string : "")</code> - The default group for the users initially authenticated by the remote service</li>
+<li><code>auth.providers.ldap.server_endpoint</code> <code>(string : "" - required)</code> - The LDAP server address, e.g. <code>'ldaps://ldap.company.com:636'</code>.</li>
+<li><code>auth.providers.ldap.bind_dn</code> <code>(string : "" - required)</code> - The bind string, e.g. <code>'uid=&lt;bind-user-name&gt;,ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com'</code>.</li>
+<li><code>auth.providers.ldap.bind_password</code> <code>(string : "" - required)</code> - The password for the user to bind.</li>
+<li><code>auth.providers.ldap.username_attribute</code> <code>(string : "" - required)</code> - The user name attribute, e.g. 'uid'.</li>
+<li><code>auth.providers.ldap.user_base_dn</code> <code>(string : "" - required)</code> - The search request base dn, e.g. <code>'ou=Users,o=&lt;org-id&gt;,dc=&lt;company&gt;,dc=com'</code>.</li>
+<li><code>auth.providers.ldap.user_filter</code> <code>(string : "" - required)</code> - The search request user filter, e.g. <code>'(objectClass=inetOrgPerson)'</code>.</li>
+<li><code>auth.providers.ldap.connection_timeout_seconds</code> <code>(int : 0 - required)</code> - The timeout for a single connection.</li>
+<li><code>auth.providers.ldap.request_timeout_seconds</code> <code>(int : 0 - required)</code> - The timeout for a single request.</li>
+<li><code>auth.providers.ldap.default_user_group</code> <code>(string : "" - required)</code> - The default group for the users initially authenticated by the remote service.</li>
 </ul>
 <h4 id="authproviderssaml">auth.providers.saml<a class="headerlink" href="#authproviderssaml" title="Permanent link">&para;</a></h4>
 <p>Configuration section for SAML</p>
 <ul>
-<li><code>auth.providers.saml.sp_root_url</code> <code>(string : '')</code> - The base lakeFS-URL, e.g. <code>'https://&lt;lakefs-url&gt;'</code></li>
-<li><code>auth.providers.saml.sp_x509_key_path</code> <code>(string : '')</code> - The path to the private key, e.g <code>'/etc/saml_certs/rsa_saml_private.cert'</code></li>
-<li><code>auth.providers.saml.sp_x509_cert_path</code> <code>(string : '')</code> - The path to the public key, '/etc/saml_certs/rsa_saml_public.pem'</li>
-<li><code>auth.providers.saml.sp_sign_request</code> <code>(bool : false)</code> Some IdP require the SLO request to be signed</li>
-<li><code>auth.providers.saml.sp_signature_method</code> <code>(string : '')</code> Optional valid signature values depending on the IdP configuration, e.g. '<a href="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</a>'</li>
-<li><code>auth.providers.saml.idp_metadata_url</code> <code>(string : '')</code> - The URL for the metadata server, e.g. <code>'https://&lt;adfs-auth.company.com&gt;/federationmetadata/2007-06/federationmetadata.xml'</code></li>
-<li><code>auth.providers.saml.idp_metadata_file_path</code> <code>(string : '')</code> - The path to the Identity Provider (IdP) metadata XML file, e.g. '/etc/saml/idp-metadata.xml'</li>
-<li><code>auth.providers.saml.idp_skip_verify_tls_cert</code> <code>(bool : false)</code> - Insecure skip verification of the IdP TLS certificate, like when signed by a private CA</li>
-<li><code>auth.providers.saml.idp_authn_name_id_format</code> <code>(string : 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified')</code> - The format used in the NameIDPolicy for authentication requests</li>
-<li><code>auth.providers.saml.idp_request_timeout</code> <code>(duration : '10s')</code> The timeout for remote authentication requests</li>
-<li><code>auth.providers.saml.post_login_redirect_url</code> <code>(string : '')</code> - The URL to redirect users to after successful SAML authentication, e.g. <code>'http://localhost:8000/'</code></li>
+<li><code>auth.providers.saml.sp_root_url</code> <code>(string : "")</code> - The base lakeFS-URL, e.g. <code>'https://&lt;lakefs-url&gt;'</code>.</li>
+<li><code>auth.providers.saml.sp_x509_key_path</code> <code>(string : "")</code> - The path to the private key, e.g <code>'/etc/saml_certs/rsa_saml_private.cert'</code>.</li>
+<li><code>auth.providers.saml.sp_x509_cert_path</code> <code>(string : "")</code> - The path to the public key, '/etc/saml_certs/rsa_saml_public.pem'.</li>
+<li><code>auth.providers.saml.sp_sign_request</code> <code>(bool : false)</code> Some IdP require the SLO request to be signed.</li>
+<li><code>auth.providers.saml.sp_signature_method</code> <code>(string : "")</code> Optional valid signature values depending on the IdP configuration, e.g. '<a href="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</a>'.</li>
+<li><code>auth.providers.saml.idp_metadata_url</code> <code>(string : "")</code> - The URL for the metadata server, e.g. <code>'https://&lt;adfs-auth.company.com&gt;/federationmetadata/2007-06/federationmetadata.xml'</code>.</li>
+<li><code>auth.providers.saml.idp_metadata_file_path</code> <code>(string : "")</code> - The path to the Identity Provider (IdP) metadata XML file, e.g. '/etc/saml/idp-metadata.xml'.</li>
+<li><code>auth.providers.saml.idp_skip_verify_tls_cert</code> <code>(bool : false)</code> - Insecure skip verification of the IdP TLS certificate, like when signed by a private CA.</li>
+<li><code>auth.providers.saml.idp_authn_name_id_format</code> <code>(string : "")</code> - The format used in the NameIDPolicy for authentication requests. (e.g., "urn:oasis:names<img alt="🇹🇨" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f1f9-1f1e8.svg" title=":tc:" />SAML:1.1:nameid-format:unspecified")</li>
+<li><code>auth.providers.saml.idp_request_timeout</code> <code>(time duration : 10s)</code> The timeout for remote authentication requests.</li>
+<li><code>auth.providers.saml.post_login_redirect_url</code> <code>(string : "")</code> - The URL to redirect users to after successful SAML authentication, e.g. <code>'http://localhost:8000/'</code>.</li>
 </ul>
 <h4 id="authprovidersoidc">auth.providers.oidc<a class="headerlink" href="#authprovidersoidc" title="Permanent link">&para;</a></h4>
 <p>Configuration section for OIDC</p>
 <ul>
-<li><code>auth.providers.oidc.url</code> <code>(string : '')</code> - The OIDC provider url, e.g. <code>'https://oidc-provider-url.com/'</code></li>
-<li><code>auth.providers.oidc.client_id</code> <code>(string : '')</code> - The application's ID</li>
-<li><code>auth.providers.oidc.client_secret</code> <code>(string : '')</code> - The application's secret</li>
-<li><code>auth.providers.oidc.callback_base_url</code> <code>(string : '')</code> - A default callback address of the lakeFS server</li>
-<li><code>auth.providers.oidc.callback_base_urls</code> <code>(string[] : '[]')</code> - If callback_base_urls is configured, check current host is whitelisted otherwise use callback_base_url (without 's'). These config keys are mutually exclusive</li>
+<li><code>auth.providers.oidc.url</code> <code>(string : "")</code> - The OIDC provider url, e.g. <code>'https://oidc-provider-url.com/'</code></li>
+<li><code>auth.providers.oidc.client_id</code> <code>(string : "")</code> - The application's ID</li>
+<li><code>auth.providers.oidc.client_secret</code> <code>(string : "")</code> - The application's secret</li>
+<li><code>auth.providers.oidc.callback_base_url</code> <code>(string : "")</code> - A default callback address of the lakeFS server</li>
+<li><code>auth.providers.oidc.callback_base_urls</code> <code>(string[] : [])</code> - If callback_base_urls is configured, check current host is whitelisted otherwise use callback_base_url (without 's'). These config keys are mutually exclusive</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -4742,24 +4755,23 @@ This ensures data is persisted and prevents data loss in case of node restarts o
 If the provider redirects to a URL not in this list, the login will fail. This property and callback_base_url are mutually exclusive.</p>
 </div>
 <ul>
-<li><code>auth.providers.oidc.authorize_endpoint_query_parameters</code> <code>(map[string]string : {} )</code> - key/value parameters that are passed to a provider's authorization endpoint</li>
+<li><code>auth.providers.oidc.authorize_endpoint_query_parameters</code> <code>(map[string]string : {})</code> - key/value parameters that are passed to a provider's authorization endpoint</li>
 <li><code>auth.providers.oidc.logout_endpoint_query_parameters</code> <code>(string[] : [])</code> - The query parameters that will be used to redirect the user to the OIDC provider after logout, e.g. <code>["returnTo", "https://&lt;lakefs.ingress.domain&gt;/oidc/login"]</code></li>
-<li><code>auth.providers.oidc.logout_client_id_query_parameter</code> <code>(string : '')</code> - The claim name that represents the client identifier in the OIDC provider</li>
-<li><code>auth.providers.oidc.additional_scope_claims</code> <code>(string[] : '[]')</code> - Specifies optional requested permissions, other than <code>openid</code> and <code>profile</code> that are being used</li>
-<li><code>auth.providers.oidc.post_login_redirect_url</code> <code>(string : '')</code> - The URL to redirect users to after successful OIDC authentication, e.g. <code>'http://localhost:8000/'</code></li>
+<li><code>auth.providers.oidc.logout_client_id_query_parameter</code> <code>(string : "")</code> - The claim name that represents the client identifier in the OIDC provider</li>
+<li><code>auth.providers.oidc.additional_scope_claims</code> <code>(string[] : [])</code> - Specifies optional requested permissions, other than <code>openid</code> and <code>profile</code> that are being used</li>
+<li><code>auth.providers.oidc.post_login_redirect_url</code> <code>(string : "")</code> - The URL to redirect users to after successful OIDC authentication, e.g. <code>'http://localhost:8000/'</code></li>
 </ul>
-<h3 id="authexternal">auth.external<a class="headerlink" href="#authexternal" title="Permanent link">&para;</a></h3>
-<p>Configuration section for the external authentication methods</p>
-<h4 id="authexternalaws_auth">auth.external.aws_auth<a class="headerlink" href="#authexternalaws_auth" title="Permanent link">&para;</a></h4>
-<p>Configuration section for authenticating to lakeFS using AWS presign get-caller-identity request: <a href="../../security/external-principals-aws/">External Principals AWS Auth</a></p>
+<h4 id="authexternal_aws_auth">auth.external_aws_auth<a class="headerlink" href="#authexternal_aws_auth" title="Permanent link">&para;</a></h4>
+<p>Configuration section for authentication to lakeFS using the AWS presigned get-caller-identity request: <br />
+<a href="../../security/external-principals-aws/">External Principals AWS Auth</a></p>
 <ul>
-<li><code>auth.external.aws_auth.enabled</code> <code>(bool : false)</code> - If true, external principals API will be enabled, e.g auth service and login api's</li>
-<li><code>auth.external.aws_auth.get_caller_identity_max_age</code> <code>(duration : 15m)</code> - The maximum age in seconds for the GetCallerIdentity request to be valid, the max is 15 minutes enforced by AWS, smaller TTL can be set</li>
-<li><code>auth.external.aws_auth.valid_sts_hosts</code> <code>([]string)</code> - The default are all the valid AWS STS hosts (<code>sts.amazonaws.com</code>, <code>sts.us-east-2.amazonaws.com</code> etc.)</li>
-<li><code>auth.external.aws_auth.required_headers</code> <code>(map[string]string : )</code> - Headers that must be present by the client when doing login request. For security reasons it is recommended to set <code>X-LakeFS-Server-ID: &lt;lakefs.ingress.domain&gt;</code>, lakeFS clients assume that's the default</li>
-<li><code>auth.external.aws_auth.optional_headers</code> <code>(map[string]string : )</code> - Optional headers that can be present by the client when doing login request</li>
-<li><code>auth.external.aws_auth.http_client.timeout</code> <code>(duration : 10s)</code> - The timeout for the HTTP client used to communicate with AWS STS</li>
-<li><code>auth.external.aws_auth.http_client.skip_verify</code> <code>(bool : false)</code> - Skip SSL verification with AWS STS</li>
+<li><code>auth.external_aws_auth.enabled</code> <code>(bool : false)</code> - If true, external principals API will be enabled, e.g auth service and login api's</li>
+<li><code>auth.external_aws_auth.get_caller_identity_max_age</code> <code>(time duration : 15m)</code> - The maximum age in seconds for the GetCallerIdentity request to be valid, the max is 15 minutes enforced by AWS, smaller TTL can be set</li>
+<li><code>auth.external_aws_auth.valid_sts_hosts</code> <code>(string[] : [])</code> - The default are all the valid AWS STS hosts (<code>sts.amazonaws.com</code>, <code>sts.us-east-2.amazonaws.com</code> etc.)</li>
+<li><code>auth.external_aws_auth.required_headers</code> <code>(map[string]string : {})</code> - Headers that must be present by the client when doing login request. For security reasons it is recommended to set <code>X-LakeFS-Server-ID: &lt;lakefs.ingress.domain&gt;</code>, lakeFS clients assume that's the default</li>
+<li><code>auth.external_aws_auth.optional_headers</code> <code>(map[string]string : {})</code> - Optional headers that can be present by the client when doing login request</li>
+<li><code>auth.external_aws_auth.http_client.timeout</code> <code>(time duration : 10s)</code> - The timeout for the HTTP client used to communicate with AWS STS</li>
+<li><code>auth.external_aws_auth.http_client.skip_verify</code> <code>(bool : false)</code> - Skip SSL verification with AWS STS</li>
 </ul>
 <h2 id="authprefetched_cache">auth.prefetched_cache<a class="headerlink" href="#authprefetched_cache" title="Permanent link">&para;</a></h2>
 <p>Configuration section for the prefetched cache.

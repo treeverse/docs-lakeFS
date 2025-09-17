@@ -4030,6 +4030,15 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
+  <a href="#authencrypt" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.encrypt
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#authapi" class="md-nav__link">
     <span class="md-ellipsis">
       auth.api
@@ -4057,6 +4066,15 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
+  <a href="#authoidc" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.oidc
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#authcookie_auth_verification" class="md-nav__link">
     <span class="md-ellipsis">
       auth.cookie_auth_verification
@@ -4066,9 +4084,9 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#authoidc" class="md-nav__link">
+  <a href="#authui_config" class="md-nav__link">
     <span class="md-ellipsis">
-      auth.oidc
+      auth.ui_config
     </span>
   </a>
   
@@ -4586,6 +4604,15 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
+  <a href="#authencrypt" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.encrypt
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#authapi" class="md-nav__link">
     <span class="md-ellipsis">
       auth.api
@@ -4613,6 +4640,15 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
+  <a href="#authoidc" class="md-nav__link">
+    <span class="md-ellipsis">
+      auth.oidc
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#authcookie_auth_verification" class="md-nav__link">
     <span class="md-ellipsis">
       auth.cookie_auth_verification
@@ -4622,9 +4658,9 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#authoidc" class="md-nav__link">
+  <a href="#authui_config" class="md-nav__link">
     <span class="md-ellipsis">
-      auth.oidc
+      auth.ui_config
     </span>
   </a>
   
@@ -4951,17 +4987,8 @@ default authentication (with env vars) will be used.</li>
 </div>
 <h3 id="auth">auth<a class="headerlink" href="#auth" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>auth.login_duration</code> <code>(time duration : "168h")</code> - The duration the login token is valid for</li>
-<li><code>auth.login_max_duration</code> <code>(time duration : "168h")</code> - The maximum duration user can ask for a login token</li>
-<li><code>auth.cookie_domain</code> <code>(string : "")</code> - <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#define_where_cookies_are_sent">Domain attribute</a> to set the access_token cookie on (the default is an empty string which defaults to the same host that sets the cookie)</li>
-<li>
-<p><code>auth.ui_config.rbac</code> <code>(string: "none")</code> - "none", "simplified", "external" or "internal" (enterprise feature).</p>
-<p>If you have configured an external auth server you can set this to "external" to support the policy editor.</p>
-<p>If you are using the enteprrise version of lakeFS, you can set this to "internal" to use the built-in policy editor.</p>
-</li>
-<li>
-<p><code>auth.ui_config.use_login_placeholders</code> <code>(bool: false)</code> - If set to true, the login page will show placeholders for the <em>Access Key ID</em> and <em>Secret Access Key</em> (<em>Username</em> and <em>Password</em>).</p>
-</li>
+<li><code>auth.login_duration</code> <code>(time duration : "168h")</code> - The duration the login token is valid for.</li>
+<li><code>auth.login_max_duration</code> <code>(time duration : "336h")</code> - The maximum duration user can ask for a login token.</li>
 </ul>
 <h4 id="authcache">auth.cache<a class="headerlink" href="#authcache" title="Permanent link">&para;</a></h4>
 <ul>
@@ -4969,50 +4996,71 @@ default authentication (with env vars) will be used.</li>
 <li><code>auth.cache.size</code> <code>(int : 1024)</code> - How many items to store in the auth cache. Systems with a very high user count should use a larger value at the expense of ~1kb of memory per cached user.</li>
 <li><code>auth.cache.ttl</code> <code>(time duration : "20s")</code> - How long to store an item in the auth cache. Using a higher value reduces load on the database, but will cause changes longer to take effect for cached users.</li>
 <li><code>auth.cache.jitter</code> <code>(time duration : "3s")</code> - A random amount of time between 0 and this value is added to each item's TTL. This is done to avoid a large bulk of keys expiring at once and overwhelming the database.</li>
+</ul>
+<h4 id="authencrypt">auth.encrypt<a class="headerlink" href="#authencrypt" title="Permanent link">&para;</a></h4>
+<ul>
 <li>
-<p><code>auth.encrypt.secret_key</code> <code>(string : required)</code> - A random (cryptographically safe) generated string that is used for encryption and HMAC signing</p>
+<p><code>auth.encrypt.secret_key</code> <code>(string : "" - required)</code> - A random (cryptographically safe) generated string that is used for encryption and HMAC signing.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>It is best to keep this somewhere safe such as KMS or Hashicorp Vault, and provide it to the system at run time</p>
+<p>It is best to keep this somewhere safe such as KMS or Hashicorp Vault, and provide it to the system at run time.</p>
 </div>
 </li>
 </ul>
 <h4 id="authapi">auth.api<a class="headerlink" href="#authapi" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code>auth.api.endpoint</code> <code>(string: https://external.service/api/v1)</code> - URL to external Authorization Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authorization.yml">authorization.yml</a>;</li>
-<li><code>auth.api.token</code> <code>(string: eyJhbGciOiJIUzI1NiIsInR5...)</code> - API token used to authenticate requests to api endpoint</li>
-<li><code>auth.api.health_check_timeout</code> <code>(time duration : "20s")</code> - Timeout duration for external auth API health check</li>
-<li><code>auth.api.skip_health_check</code> <code>(bool : false)</code> - Skip external auth API health check</li>
+<li><code>auth.api.endpoint</code> <code>(string: "")</code> - URL to external Authorization Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authorization.yml">authorization.yml</a>; (e.g., "https://external.service/api/v1").</li>
+<li><code>auth.api.token</code> <code>(string: "")</code> - API token used to authenticate requests to api endpoint (e.g., eyJhbGciOiJIUzI1NiIsInR5...).</li>
+<li><code>auth.api.health_check_timeout</code> <code>(time duration : "20s")</code> - Timeout duration for external auth API health check.</li>
+<li><code>auth.api.skip_health_check</code> <code>(bool : false)</code> - Skip external auth API health check.</li>
 </ul>
 <h4 id="authauthentication_api">auth.authentication_api<a class="headerlink" href="#authauthentication_api" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code>auth.authentication_api.endpoint</code> <code>(string : "")</code> - URL to external Authentication Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authentication.yml">authentication.yml</a>;</li>
+<li><code>auth.authentication_api.endpoint</code> <code>(string : "")</code> - URL to external Authentication Service described at <a href="https://github.com/treeverse/lakeFS/blob/master/api/authentication.yml">authentication.yml</a>.</li>
 <li><code>auth.authentication_api.external_principals_enabled</code> <code>(bool : false)</code> - If true, external principals API will be enabled, e.g auth service and login api's.</li>
 </ul>
 <h4 id="authremote_authenticator">auth.remote_authenticator<a class="headerlink" href="#authremote_authenticator" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>auth.remote_authenticator.enabled</code> <code>(bool : false)</code> - If specified, also authenticate users via this Remote Authenticator server.</li>
-<li><code>auth.remote_authenticator.endpoint</code> <code>(string : required)</code> - Endpoint URL of the remote authentication service (e.g. https://my-auth.example.com/auth).</li>
-<li><code>auth.remote_authenticator.default_user_group</code> <code>(string : Viewers)</code> - Create users in this group (i.e <code>Viewers</code>, <code>Developers</code>, etc).</li>
-<li><code>auth.remote_authenticator.request_timeout</code> <code>(duration : 10s)</code> - If specified, timeout for remote authentication requests.</li>
-</ul>
-<h4 id="authcookie_auth_verification">auth.cookie_auth_verification<a class="headerlink" href="#authcookie_auth_verification" title="Permanent link">&para;</a></h4>
-<ul>
-<li><code>auth.cookie_auth_verification.validate_id_token_claims</code> <code>(map[string]string : )</code> - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values.</li>
-<li><code>auth.cookie_auth_verification.default_initial_groups</code> (string[] : [])` - By default, users will be assigned to these groups</li>
-<li><code>auth.cookie_auth_verification.initial_groups_claim_name</code> <code>(string[] : [])</code> - Use this claim from the ID token to provide the initial group for new users. This will take priority if <code>auth.cookie_auth_verification.default_initial_groups</code> is also set.</li>
-<li><code>auth.cookie_auth_verification.friendly_name_claim_name</code> <code>(string[] : )</code> - If specified, the value from the claim with this name will be used as the user's display name.</li>
-<li><code>auth.cookie_auth_verification.persist_friendly_name</code> <code>(string : false)</code> - If set to <code>true</code>, the friendly name is persisted to the KV store and can be displayed in the user list. This is meant to be used in conjunction with <code>auth.cookie_auth_verification.friendly_name_claim_name</code>.</li>
-<li><code>auth.cookie_auth_verification.external_user_id_claim_name</code> - <code>(string : )</code> - If specified, the value from the claim with this name will be used as the user's id name.</li>
-<li><code>auth.cookie_auth_verification.auth_source</code> - <code>(string : )</code> - If specified, user will be labeled with this auth source.</li>
+<li><code>auth.remote_authenticator.endpoint</code> <code>(string : "" - required)</code> - Endpoint URL of the remote authentication service (e.g. https://my-auth.example.com/auth).</li>
+<li><code>auth.remote_authenticator.default_user_group</code> <code>(string : "Viewers")</code> - Create users in this group (i.e <code>Viewers</code>, <code>Developers</code>, etc).</li>
+<li><code>auth.remote_authenticator.request_timeout</code> <code>(time duration : 10s)</code> - If specified, timeout for remote authentication requests.</li>
 </ul>
 <h4 id="authoidc">auth.oidc<a class="headerlink" href="#authoidc" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code>auth.oidc.default_initial_groups</code> <code>(string[] : [])</code> - By default, OIDC users will be assigned to these groups</li>
-<li><code>auth.oidc.initial_groups_claim_name</code> <code>(string[] : [])</code> - Use this claim from the ID token to provide the initial group for new users. This will take priority if <code>auth.oidc.default_initial_groups</code> is also set.</li>
-<li><code>auth.oidc.friendly_name_claim_name</code> <code>(string[] : )</code> - If specified, the value from the claim with this name will be used as the user's display name.</li>
-<li><code>auth.oidc.persist_friendly_name</code> <code>(string : false)</code> - If set to <code>true</code>, the friendly name is persisted to the KV store and can be displayed in the user list. This is meant to be used in conjunction with <code>auth.oidc.friendly_name_claim_name</code>.</li>
-<li><code>auth.oidc.validate_id_token_claims</code> <code>(map[string]string : )</code> - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values.</li>
+<li><code>auth.oidc.default_initial_groups</code> <code>(string[] : [])</code> - By default, OIDC users will be assigned to these groups.</li>
+<li><code>auth.oidc.initial_groups_claim_name</code> <code>(string : "")</code> - Use this claim from the ID token to provide the initial group for new users. This will take priority if <code>auth.oidc.default_initial_groups</code> is also set.</li>
+<li><code>auth.oidc.friendly_name_claim_name</code> <code>(string : "")</code> - If specified, the value from the claim with this name will be used as the user's display name.</li>
+<li><code>auth.oidc.persist_friendly_name</code> <code>(bool : false)</code> - If set to <code>true</code>, the friendly name is persisted to the KV store and can be displayed in the user list. This is meant to be used in conjunction with <code>auth.oidc.friendly_name_claim_name</code>.</li>
+<li><code>auth.oidc.validate_id_token_claims</code> <code>(map[string]string : {})</code> - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values.</li>
+</ul>
+<h4 id="authcookie_auth_verification">auth.cookie_auth_verification<a class="headerlink" href="#authcookie_auth_verification" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>auth.cookie_auth_verification.validate_id_token_claims</code> <code>(map[string]string : {})</code> - When a user tries to access lakeFS, validate that the ID token contains these claims with the corresponding values.</li>
+<li><code>auth.cookie_auth_verification.default_initial_groups</code> <code>(string[] : [])</code> - By default, users will be assigned to these groups.</li>
+<li><code>auth.cookie_auth_verification.initial_groups_claim_name</code> <code>(string : "")</code> - Use this claim from the ID token to provide the initial group for new users. This will take priority if <code>auth.cookie_auth_verification.default_initial_groups</code> is also set.</li>
+<li><code>auth.cookie_auth_verification.friendly_name_claim_name</code> <code>(string : "")</code> - If specified, the value from the claim with this name will be used as the user's display name.</li>
+<li><code>auth.cookie_auth_verification.persist_friendly_name</code> <code>(bool : false)</code> - If set to <code>true</code>, the friendly name is persisted to the KV store and can be displayed in the user list. This is meant to be used in conjunction with <code>auth.cookie_auth_verification.friendly_name_claim_name</code>.</li>
+<li><code>auth.cookie_auth_verification.external_user_id_claim_name</code> - <code>(string : "")</code> - If specified, the value from the claim with this name will be used as the user's id name.</li>
+<li><code>auth.cookie_auth_verification.auth_source</code> - <code>(string : "")</code> - If specified, user will be labeled with this auth source.</li>
+</ul>
+<h4 id="authui_config">auth.ui_config<a class="headerlink" href="#authui_config" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p><code>auth.ui_config.rbac</code> <code>(string: "none")</code> - "none", "simplified", "external" or "internal".</p>
+<ul>
+<li><code>"none"</code> - lakeFS runs without an RBAC authorization service. No additional users, groups, or policies can be created.</li>
+<li><code>"simplified"</code> - lakeFS uses ACL as the authorization service. You must implement your own ACL service and connect it to lakeFS. See the <a href="../../security/ACL-server-implementation/">implementation guide</a> and <a href="../../security/access-control-lists/">ACL overview</a> for details.</li>
+<li><code>"external"</code> - For lakeFS cloud - lakeFS cloud integrates with an external RBAC authorization service.</li>
+<li><code>"internal"</code> - Available in the Enterprise lakeFS version. Uses the built-in RBAC authorization service. More information is available <a href="../../security/rbac/">here</a>.</li>
+</ul>
+</li>
+<li>
+<p><code>auth.ui_config.login_url</code> <code>(string : "")</code> - An absolute or relative URL to your IdP’s login page, used to authenticate to lakeFS via SSO with OIDC or SAML.</p>
+</li>
+<li><code>auth.ui_config.login_failed_message</code> <code>(string : "The credentials don't match.")</code> - Custom error message displayed when authentication fails on the login form (defaults to "The credentials don't match." if not specified).</li>
+<li><code>auth.ui_config.logout_url</code> <code>(string : "")</code>- URL to redirect users to when they logout from lakeFS (defaults to "/logout" if not specified).</li>
+<li><code>auth.ui_config.use_login_placeholders</code> <code>(bool: false)</code> - If set to true, the login page will show placeholders for the <em>Access Key ID</em> and <em>Secret Access Key</em> (<em>Username</em> and <em>Password</em>) (defaults to "false" if not specified).</li>
 </ul>
 <h3 id="blockstore">blockstore<a class="headerlink" href="#blockstore" title="Permanent link">&para;</a></h3>
 <ul>
