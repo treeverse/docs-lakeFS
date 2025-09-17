@@ -1651,6 +1651,15 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#querying-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Querying Metadata
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#object-metadata-table-schema" class="md-nav__link">
     <span class="md-ellipsis">
       Object Metadata Table Schema
@@ -1747,6 +1756,30 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Writing Reproducible Queries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-commit-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Commit ID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-tag-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Tag Name
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1760,15 +1793,6 @@ document.addEventListener("DOMContentLoaded", function() {
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Limitations
-    </span>
-  </a>
   
 </li>
       
@@ -4449,6 +4473,15 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#querying-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Querying Metadata
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#object-metadata-table-schema" class="md-nav__link">
     <span class="md-ellipsis">
       Object Metadata Table Schema
@@ -4545,6 +4578,30 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Writing Reproducible Queries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-commit-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Commit ID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-tag-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Tag Name
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4558,15 +4615,6 @@ document.addEventListener("DOMContentLoaded", function() {
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Limitations
-    </span>
-  </a>
   
 </li>
       
@@ -4638,24 +4686,34 @@ using catalog-level system tables to manage and expose versioned object metadata
 where <code>repo</code> is the data repository id.  </li>
 <li><strong>Creates matching branches</strong> in the metadata repository for each configured branch in the data repository. For example, a <code>dev</code>
 branch in data repository <code>my-repo</code>, will have a corresponding <code>dev</code> branch in <code>my-repo-metadata</code>.</li>
-<li><strong>Maintains a versioned Iceberg object metadata table</strong> on each matching branch in the metadata repository at:
-<code>&lt;repo&gt;-metadata.&lt;branch&gt;.system.object_metadata</code>.</li>
+<li><strong>Maintains a versioned Iceberg object metadata table</strong> on each matching branch in the metadata repository.</li>
 <li><strong>Continuously syncs metadata</strong> via a background processing pipeline that keeps the object metadata tables
    <a href="#consistency">eventually consistent</a> with changes in the corresponding data repository branches.</li>
+<li><strong>Wraps the lakeFS Iceberg REST catalog</strong> to translate table queries issued against data repository references (branches,
+commits, or tags) and resolve them to the corresponding tables in the metadata repository. This indirection allows metadata
+queries to be expressed entirely in the data repository namespace, while lakeFS handles the mapping to the underlying metadata 
+storage.</li>
 </ol>
-<p>Once metadata tables are in place, you can run queries against them in two ways:</p>
+<h3 id="querying-metadata">Querying Metadata<a class="headerlink" href="#querying-metadata" title="Permanent link">&para;</a></h3>
+<p>Metadata queries are always performed through the <strong>data repository namespace</strong>, not the metadata repository that lakeFS
+manages internally. You can query metadata by: </p>
 <ul>
-<li>By <a href="#using-branch-names">branch name</a>, to search the latest metadata state on a given branch.</li>
-<li>By <a href="#using-commit-ids">commit ID</a>, to access a specific historical metadata version and ensure <a href="#writing-reproducible-queries">reproducible queries</a>. 
-This lets you retrieve the exact metadata state from any immutable point in time.</li>
+<li><strong>Branch name</strong>: <code>&lt;repo&gt;.&lt;branch&gt;.system.object_metadata</code>, to search the latest metadata state on a given branch.</li>
+<li><strong>Commit ID</strong>: <code>&lt;repo&gt;.&lt;commit_id&gt;.system.object_metadata</code>, to retrieve the metadata snapshot at a specific commit.</li>
+<li><strong>Tag name</strong>: <code>&lt;repo&gt;.&lt;tag_name&gt;.system.object_metadata</code>, to retrieve the metadata snapshot at a tagged commit.</li>
 </ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Using commit IDs or tags ensures <a href="#writing-reproducible-queries">reproducible queries</a> , letting you always access the 
+exact metadata state from an immutable point in time.</p>
+</div>
 <p>Queries are executed through the lakeFS Iceberg REST catalog, which is fully compatible with standard engines like Trino,
 DuckDB, Spark, PyIceberg, and others.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>You can use Metadata Search even without a license for full Iceberg support in lakeFS.
 The feature relies on the lakeFS-managed Iceberg REST catalog for querying object metadata, but it can work 
-side-by-side with other catalog you use for managing other Iceberg tables. </p>
+side-by-side with any other catalog you use to manage additional Iceberg tables. </p>
 </div>
 <h3 id="object-metadata-table-schema">Object Metadata Table Schema<a class="headerlink" href="#object-metadata-table-schema" title="Permanent link">&para;</a></h3>
 <p>Each row in the lakeFS object metadata table represents the latest metadata version for a given object on the corresponding
@@ -4727,7 +4785,7 @@ branch. The table contains at most one row per object, ensuring that query perfo
 </tbody>
 </table>
 <h3 id="consistency">Consistency<a class="headerlink" href="#consistency" title="Permanent link">&para;</a></h3>
-<p>lakeFS object metadata tables are eventually consistent, which means it may take up to a few minutes for newly committed 
+<p>lakeFS object metadata tables are eventually consistent, which means that it may take up to a few minutes for newly committed 
 objects to become searchable. Metadata becomes searchable <strong>atomically</strong> — either all object metadata from the commit 
 is available, or none of it is. Commits are processed sequentially: a child commit will only be processed after its parent
 has been fully ingested.</p>
@@ -4735,7 +4793,7 @@ has been fully ingested.</p>
 <p class="admonition-title">Tip</p>
 <p>To check whether the most recent state of your branch is available for metadata search queries, check if the following 
 query returns results:
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;&lt;repo&gt;-metadata.&lt;branch&gt;.system&quot;</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;&lt;repo&gt;.&lt;branch&gt;.system&quot;</span><span class="p">;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">commit_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">head_commit</span><span class="o">&gt;</span><span class="w"> </span><span class="c1">-- Replace with the head commit ID of the branch you are looking at </span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
@@ -4803,7 +4861,10 @@ asterisk, e.g., <code>dev-*</code>.  </li>
 </div>
 <h2 id="how-to-search-by-metadata">How to Search by Metadata<a class="headerlink" href="#how-to-search-by-metadata" title="Permanent link">&para;</a></h2>
 <p>To search by object metadata in lakeFS, query the Iceberg <code>object_metadata</code> tables that lakeFS automatically creates and
-manages. You can use any Iceberg-compatible engine, such as DuckDB, Trino, Spark, PyIceberg, or others.</p>
+manages. These tables are always available under the data repository namespace: </p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&lt;repo&gt;.&lt;ref&gt;.system.object_metadata
+</span></code></pre></div>
+<p>You can use any Iceberg-compatible engine, such as DuckDB, Trino, Spark, PyIceberg, or others.</p>
 <p>If you're using DuckDB, note the Iceberg REST Catalog <a href="../../integrations/iceberg/#relative-namespace-support">guide</a> for 
 details on how to reference <code>object_metadata</code> tables.</p>
 <div class="admonition requirements">
@@ -4815,7 +4876,17 @@ To perform metadata search queries, ensure users have access to the appropriate 
 </div>
 <h4 id="search-steps">Search Steps<a class="headerlink" href="#search-steps" title="Permanent link">&para;</a></h4>
 <ol>
-<li><a href="../../integrations/iceberg/#catalog-initialization-example-using-pyiceberg">Initialize</a> lakeFS Iceberg catalog, and authenticate.</li>
+<li>Initialize lakeFS Iceberg catalog, and authenticate.
+The following example uses PyIceberg:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyiceberg.catalog.rest</span><span class="w"> </span><span class="kn">import</span> <span class="n">RestCatalog</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">catalog</span> <span class="o">=</span> <span class="n">RestCatalog</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my_catalog&quot;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;lakefs&#39;</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="s1">&#39;uri&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lakefs_endpoint</span><span class="si">}</span><span class="s1">/mds/iceberg/api&#39;</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="s1">&#39;oauth2-server-uri&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lakefs_endpoint</span><span class="si">}</span><span class="s1">/mds/iceberg/api/v1/oauth/tokens&#39;</span><span class="p">,</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="s1">&#39;credential&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lakefs_client_key</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">lakefs_client_secret</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">})</span>
+</span></code></pre></div></li>
 <li>Load the object metadata table that represents the reference you would like to query.</li>
 <li>Use SQL to search by system or user-defined metadata.</li>
 </ol>
@@ -4824,116 +4895,129 @@ To perform metadata search queries, ensure users have access to the appropriate 
 <p class="admonition-title">Requirements</p>
 <p>This requires duckdb to be <a href="https://duckdb.org/docs/installation/?version=stable&amp;environment=python">installed</a>. </p>
 </div>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyiceberg.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_catalog</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Initialize the catalog</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">catalog</span> <span class="o">=</span> <span class="n">RestCatalog</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my_catalog&quot;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;lakefs&#39;</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="s1">&#39;uri&#39;</span><span class="p">:</span> <span class="s1">&#39;https://lakefs.example.com/iceberg/api&#39;</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="s1">&#39;oauth2-server-uri&#39;</span><span class="p">:</span> <span class="s1">&#39;https://lakefs.example.com/iceberg/api/iceberg/api/v1/oauth/tokens&#39;</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="s1">&#39;credential&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;AKIAlakefs12345EXAMPLE:abc/lakefs/1234567bPxRfiCYEXAMPLEKEY&#39;</span><span class="p">,</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">})</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1"># `repo` is the repository name we would like to search </span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="n">con</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="s1">&#39;repo-metadata.main.system.object_metadata&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span><span class="o">.</span><span class="n">to_duckdb</span><span class="p">(</span><span class="s1">&#39;object_metadata&#39;</span><span class="p">)</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="s2">SELECT path   </span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="s2">FROM object_metadata</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="s2">WHERE user_metadata[&#39;animal&#39;] = &#39;cat&#39; </span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="s2">  AND last_modified &gt; (now() - INTERVAL &#39;20 days&#39;) </span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="s2">&quot;&quot;&quot;</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="n">df</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">df</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pyiceberg.catalog</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_catalog</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Initialize the catalog</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">catalog</span> <span class="o">=</span> <span class="n">RestCatalog</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my_catalog&quot;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="s1">&#39;lakefs&#39;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="s1">&#39;uri&#39;</span><span class="p">:</span> <span class="s1">&#39;https://lakefs.example.com/mds/iceberg/api&#39;</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="s1">&#39;oauth2-server-uri&#39;</span><span class="p">:</span> <span class="s1">&#39;https://lakefs.example.com/mds/iceberg/api/iceberg/api/v1/oauth/tokens&#39;</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="s1">&#39;credential&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;AKIAlakefs12345EXAMPLE:abc/lakefs/1234567bPxRfiCYEXAMPLEKEY&#39;</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">})</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># `repo` is the repository name we would like to search </span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">con</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="s1">&#39;repo.main.system.object_metadata&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span><span class="o">.</span><span class="n">to_duckdb</span><span class="p">(</span><span class="s1">&#39;object_metadata&#39;</span><span class="p">)</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="s2">SELECT path   </span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="s2">FROM object_metadata</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="s2">WHERE user_metadata[&#39;animal&#39;] = &#39;cat&#39; </span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="s2">  AND last_modified &gt; (now() - INTERVAL &#39;20 days&#39;) </span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="s2">&quot;&quot;&quot;</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="n">df</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">df</span><span class="p">()</span>
 </span></code></pre></div>
 <p>This query finds all newly added cat images (added in the past week), demonstrating how you can combine user-defined and
 system metadata fields in powerful, version-aware searches.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This catalog initialization differs from the <a href="../../integrations/iceberg/#catalog-initialization-example-using-pyiceberg">classic lakeFS Iceberg catalog</a>.
+Notice the additional <code>mds</code> path segment in the endpoints, which routes requests through the Metadata Search catalog.</p>
+</div>
 <h3 id="writing-reproducible-queries">Writing Reproducible Queries<a class="headerlink" href="#writing-reproducible-queries" title="Permanent link">&para;</a></h3>
 <p>In collaborative environments or during iterative development, it's important to ensure that metadata queries return consistent,
-reproducible results. To achieve this, you should query object metadata tables using commit IDs, which are immutable references,
-instead of branch names.</p>
+reproducible results. To achieve this, you should query object metadata tables using commit IDs or tag names, which are 
+immutable references, instead of branch names.</p>
 <p><strong>Why not use Branch names?</strong></p>
-<p>Querying metadata tables using a branch name, e.g., <code>repo-metadata.main.system.object_metadata</code> return results based on
+<p>Querying metadata tables using a branch name, e.g., <code>repo.main.system.object_metadata</code> return results based on
 the state of the branch’s HEAD commit at the time of the query, assuming the metadata has already been ingested (within 
 <a href="#consistency">eventual consistency</a> constraints). However, because branch heads are mutable and advance with each new
 commit, the results of such queries can change over time.</p>
-<p><strong>Use commit IDs for stability</strong></p>
-<p>To ensure stability and reproducibility, use lakeFS commit IDs in your queries. Each commit ID made to the <strong>data repository</strong> 
-references a specific, fixed snapshot of the repository state, including its metadata. This guarantees that the same query
-always returns the same results, regardless of subsequent changes to the branch.</p>
-<p><strong>How to query using commit IDs?</strong>  </p>
+<p><strong>Use commit ID or tag name for stability</strong></p>
+<p>To ensure stability and reproducibility, use lakeFS commit IDs or tag names in your queries. Each commit or tag created 
+on the <strong>data repository</strong> reference a specific, fixed snapshot of the repository state, including its metadata. 
+This guarantees that the same query always returns the same results, regardless of subsequent changes to the branch.</p>
+<h4 id="using-commit-id">Using Commit ID<a class="headerlink" href="#using-commit-id" title="Permanent link">&para;</a></h4>
 <ol>
-<li>Identify the relevant <strong>full</strong> commit ID from the data repository (e.g., <code>c12</code> on branch <code>dev</code> in repo <code>my-repo</code>). </li>
-<li>Query the object metadata table using the following pattern: <code>&lt;repo&gt;-metadata.commit-&lt;commit_id&gt;.system.object_metadata</code>,
-or <code>my-repo-metadata.commit-c12.system.object_metadata</code> in our example. </li>
+<li>Identify the relevant commit ID from the data repository (e.g., <code>dc3117ec3a727104226c896bf7ab9350ee5da06ae052406262840e9a4a8c9ffb</code>
+on branch <code>dev</code> in repo <code>my-repo</code>). </li>
+<li>Query the object metadata table using the following pattern: 
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>&lt;repo&gt;.&lt;commit_id&gt;.system.object_metadata
+</span></code></pre></div>
+Examples:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>my-repo.dc3117e.system.object_metadata
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>my-repo.dc3117ec3a727104226c896bf7ab9350ee5da06ae052406262840e9a4a8c9ffb.system.object_metadata
+</span></code></pre></div>
+Both table paths return the metadata for commit <code>dc3117ec3a727104226c896bf7ab9350ee5da06ae052406262840e9a4a8c9ffb</code>.</li>
 </ol>
-<p>This accesses the metadata corresponding to commit <code>c12</code>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Use the full commit SHA when querying by commit. Shortened commit IDs are not supported at this time.  </p>
-</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>For full reproducibility and version control, include the commit ID directly in your queries and store those 
-queries in Git.   </p>
+<p>For readability, prefer using the short commit SHA (e.g., <code>dc3117e</code>).  </p>
+</div>
+<h4 id="using-tag-name">Using Tag Name<a class="headerlink" href="#using-tag-name" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Identify the relevant tag from the data repository (e.g., <code>v0.2.1</code> on branch <code>main</code> in repo <code>my-repo</code>).</li>
+<li>Query the object metadata table using the following pattern:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>&lt;repo&gt;.&lt;tag_name&gt;.system.object_metadata
+</span></code></pre></div>
+Examples:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>my-repo.v0.2.1.system.object_metadata
+</span></code></pre></div></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For end-to-end reproducibility, include the <strong>commit ID</strong> or <strong>tag name</strong> directly in your queries, and version those
+queries with Git.</p>
 </div>
 <h3 id="example-queries">Example Queries<a class="headerlink" href="#example-queries" title="Permanent link">&para;</a></h3>
 <p>This section showcases how to use lakeFS Metadata Search to answer different types of questions using standard SQL.</p>
 <p>For simplicity and readability, the examples are written in Trino SQL. If you're using another engine (e.g., DuckDB, 
 Spark, or PyIceberg), you may need to adjust the syntax accordingly.</p>
+<p>The examples below use <strong>branch names</strong> as references for simplicity. However, for reproducible results, it is recommended
+to use <strong>commit IDs</strong> or <strong>tag names</strong> instead. You can convert any example into a <a href="#writing-reproducible-queries">reproducible query</a>
+by replacing the branch reference accordingly.</p>
 <h4>Object Annotation and Labeling</h4>
 
 <h5>Filter by Object Labels</h5>
 
 <p>The following example returns images labeled as dogs that are not in a sitting position:
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo-metadata.main.system&quot;</span><span class="p">;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="o">`%</span><span class="p">.</span><span class="n">jpg</span><span class="o">`</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;animal&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dog&#39;</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;sitting&#39;</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo.main.system&quot;</span><span class="p">;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="o">`%</span><span class="p">.</span><span class="n">jpg</span><span class="o">`</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;animal&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dog&#39;</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;sitting&#39;</span><span class="p">;</span>
 </span></code></pre></div></p>
-<h5>Filter by Object Labels on past commit</h5>
-
-<p>This example demonstrates how to write reproducible queries by referencing a specific lakeFS commit.
-It returns images labeled as dogs that are not sitting, based on the metadata state at that commit:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo-metadata.commit-dc3117ec3a727104226c896bf7ab9350ee5da06ae052406262840e9a4a8c9ffb.system&quot;</span><span class="p">;</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="o">`%</span><span class="p">.</span><span class="n">jpg</span><span class="o">`</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;animal&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;dog&#39;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;sitting&#39;</span><span class="p">;</span>
-</span></code></pre></div>
 <h5>View Metadata from AI-Powered Annotators</h5>
 
 <p>Assume that any object annotated by an AI-powered tool includes the object metadata key-value pair <code>source: autolabel</code> to 
 indicate its origin. The following example returns all such AI-annotated objects: </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo-metadata.main.system&quot;</span><span class="p">;</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;autolabel&#39;</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo.main.system&quot;</span><span class="p">;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;autolabel&#39;</span><span class="p">;</span>
 </span></code></pre></div>
 <h4>File Properties and Storage</h4>
 
 <h5>Filter by File Extension & Size</h5>
 
 <p>Find all <code>.png</code> files larger than 2MB.</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo-metadata.main.system&quot;</span><span class="p">;</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%.png&#39;</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">size</span><span class="p">::</span><span class="nb">INT</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2000000</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo.main.system&quot;</span><span class="p">;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%.png&#39;</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">size</span><span class="p">::</span><span class="nb">INT</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2000000</span><span class="p">;</span>
 </span></code></pre></div>
 <h5>Filter objects by addition Time</h5>
 
 <p>This example finds all objects added in the last 7 days.</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo-metadata.main.system&quot;</span><span class="p">;</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">last_modified</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">current_timestamp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">interval</span><span class="w"> </span><span class="s1">&#39;7&#39;</span><span class="w"> </span><span class="k">day</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo.main.system&quot;</span><span class="p">;</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">last_modified</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">current_timestamp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">interval</span><span class="w"> </span><span class="s1">&#39;7&#39;</span><span class="w"> </span><span class="k">day</span><span class="p">;</span>
 </span></code></pre></div>
 <h4>Audit and Governance</h4>
 
@@ -4941,21 +5025,16 @@ indicate its origin. The following example returns all such AI-annotated objects
 
 <p>Assume all objects under <code>customers/</code> must have user metadata <code>PII=true</code>. 
 This example returns objects where <code>PII=false</code>, or PII key is missing. </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo-metadata.main.system&quot;</span><span class="p">;</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;customers/%&#39;</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;PII&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;false&#39;</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="k">OR</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;PII&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="p">);</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">USE</span><span class="w"> </span><span class="ss">&quot;repo.main.system&quot;</span><span class="p">;</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="k">FROM</span><span class="w"> </span><span class="n">object_metadata</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;customers/%&#39;</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="p">(</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;PII&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;false&#39;</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">        </span><span class="k">OR</span><span class="w"> </span><span class="n">user_metadata</span><span class="p">[</span><span class="s1">&#39;PII&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="p">);</span>
 </span></code></pre></div>
-<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Querying by <a href="../../understand/glossary/#tag">tags</a> is unsupported, and is in our roadmap.  </li>
-<li>Querying by commit is only supported by using the pattern described <a href="#using-commit-ids">here</a>.</li>
-</ul>
 
 
 
