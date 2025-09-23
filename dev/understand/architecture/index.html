@@ -3297,15 +3297,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#applications" class="md-nav__link">
-    <span class="md-ellipsis">
-      Applications
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#lakefs-clients" class="md-nav__link">
     <span class="md-ellipsis">
       lakeFS Clients
@@ -3328,6 +3319,15 @@ document.addEventListener("DOMContentLoaded", function() {
   <a href="#lakectl" class="md-nav__link">
     <span class="md-ellipsis">
       lakectl
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lakefs-mount-everest" class="md-nav__link">
+    <span class="md-ellipsis">
+      lakeFS Mount (Everest)
     </span>
   </a>
   
@@ -3449,29 +3449,6 @@ document.addEventListener("DOMContentLoaded", function() {
   
   
   
-    <li class="md-nav__item">
-      <a href="../../reference/mount-write-mode-semantics/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Mount Write Mode Semantics
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     
     
     
@@ -3481,10 +3458,10 @@ document.addEventListener("DOMContentLoaded", function() {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_5" >
         
           
-          <label class="md-nav__link" for="__nav_8_6" id="__nav_8_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_5" id="__nav_8_5_label" tabindex="0">
             
   
   
@@ -3497,8 +3474,8 @@ document.addEventListener("DOMContentLoaded", function() {
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_5">
             <span class="md-nav__icon md-icon"></span>
             Internals
           </label>
@@ -4524,15 +4501,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#applications" class="md-nav__link">
-    <span class="md-ellipsis">
-      Applications
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#lakefs-clients" class="md-nav__link">
     <span class="md-ellipsis">
       lakeFS Clients
@@ -4555,6 +4523,15 @@ document.addEventListener("DOMContentLoaded", function() {
   <a href="#lakectl" class="md-nav__link">
     <span class="md-ellipsis">
       lakectl
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lakefs-mount-everest" class="md-nav__link">
+    <span class="md-ellipsis">
+      lakeFS Mount (Everest)
     </span>
   </a>
   
@@ -4629,16 +4606,26 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>With <a href="../../enterprise/">lakeFS Enterprise</a>, you can leverage <a href="../../howto/multiple-storage-backends/">multiple storage backend support</a>
 to manage data across multiple storage locations, including on-prem, hybrid, and multi-cloud environments.</p>
 <h3 id="metadata-storage">Metadata Storage<a class="headerlink" href="#metadata-storage" title="Permanent link">&para;</a></h3>
-<p>In additional a Key Value storage is used for storing metadata, with supported databases including PostgreSQL, DynamoDB, and CosmosDB Instructions of how to deploy such database on AWS can be found <a href="../../howto/deploy/aws/#grant-lakefs-permissions-to-dynamodb">here</a>.</p>
-<p>Additional information on the data format can be found in <a href="../how/versioning-internals/">Versioning internals</a> and <a href="../how/kv/">Internal database structure</a></p>
+<p>An auxiliary Key Value storage is used for storing metadata, with supported databases including:</p>
+<ul>
+<li>PostgreSQL</li>
+<li>DynamoDB</li>
+<li>CosmosDB</li>
+<li>MemoryDB (or other Redis-compatible options) <span title="lakeFS Enterprise">🚀</span></li>
+</ul>
+<p>See the <a href="../../howto/deploy/">installation guide</a> and <a href="../../reference/configuration/#database">configuration reference</a> on how to setup lakeFS with any of the above options</p>
+<div class="admonition abstract">
+<p class="admonition-title">Learn More</p>
+<p>More information about how lakeFS manages its versioning metadata is available in <a href="../how/versioning-internals/">Versioning internals</a> and <a href="../how/kv/">Internal database structure</a></p>
+</div>
 <h3 id="load-balancing">Load Balancing<a class="headerlink" href="#load-balancing" title="Permanent link">&para;</a></h3>
 <p>Accessing lakeFS is done using HTTP.
 lakeFS exposes a frontend UI, an <a href="#openapi-server">OpenAPI server</a>, as well as an S3-compatible service (see <a href="#s3-gateway">S3 Gateway</a> below).
 lakeFS uses a single port that serves all three endpoints, so for most use cases a single load balancer pointing
 to lakeFS server(s) would do.</p>
-<iframe width="420" height="315" src="https://www.youtube.com/embed/1vNQXFceFx4"></iframe>
-
 <h2 id="lakefs-components">lakeFS Components<a class="headerlink" href="#lakefs-components" title="Permanent link">&para;</a></h2>
+<p>Internally, the lakeFS server is composed of a few key pieces that make up the single binary that lakeFS is distributed as:</p>
+<p><a class="glightbox" href="../../assets/img/server-components.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="Server Components" src="../../assets/img/server-components.png" /></a></p>
 <h3 id="s3-gateway">S3 Gateway<a class="headerlink" href="#s3-gateway" title="Permanent link">&para;</a></h3>
 <p>The S3 Gateway is the layer in lakeFS responsible for the compatibility with S3. It implements a compatible subset of the S3 API to ensure most data systems can use lakeFS as a drop-in replacement for S3.</p>
 <p>See the <a href="../../reference/s3/">S3 API Reference</a> section for information on supported API operations.</p>
@@ -4659,8 +4646,6 @@ To learn about the data model used to store lakeFS metadata, see the <a href="..
 <p>The Hooks Engine enables CI/CD for data by triggering user defined <a href="../use_cases/cicd_for_data/#using-hooks-as-data-quality-gates">Actions</a> that will run during commit/merge.</p>
 <h3 id="ui">UI<a class="headerlink" href="#ui" title="Permanent link">&para;</a></h3>
 <p>The UI layer is a simple browser-based client that uses the OpenAPI server. It allows management, exploration, and data access to repositories, branches, commits and objects in the system.</p>
-<h2 id="applications">Applications<a class="headerlink" href="#applications" title="Permanent link">&para;</a></h2>
-<p>As a rule of thumb, lakeFS supports any S3-compatible application. This means that many common data applications work with lakeFS out-of-the-box.</p>
 <h2 id="lakefs-clients">lakeFS Clients<a class="headerlink" href="#lakefs-clients" title="Permanent link">&para;</a></h2>
 <p>Some data applications benefit from deeper integrations with lakeFS to support different use cases or enhanced functionality provided by lakeFS clients.</p>
 <h3 id="openapi-generated-sdks">OpenAPI Generated SDKs<a class="headerlink" href="#openapi-generated-sdks" title="Permanent link">&para;</a></h3>
@@ -4668,6 +4653,12 @@ To learn about the data model used to store lakeFS metadata, see the <a href="..
 For example, the <a href="https://pypi.org/project/lakefs-sdk/">Python lakefs-sdk</a> or the <a href="https://central.sonatype.com/artifact/io.lakefs/api-client">Java client</a> are published with every new lakeFS release.</p>
 <h3 id="lakectl">lakectl<a class="headerlink" href="#lakectl" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/cli/">lakectl</a> is a CLI tool that enables lakeFS operations using the lakeFS API from your preferred terminal.</p>
+<h3 id="lakefs-mount-everest">lakeFS Mount (Everest)<a class="headerlink" href="#lakefs-mount-everest" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>lakeFS Mount is available in <strong>lakeFS Cloud</strong> and <strong>lakeFS Enterprise</strong></p>
+</div>
+<p><a href="../../reference/mount/">lakeFS Mount</a> allows users to virtually mount a remote lakeFS repository onto a local directory. Once mounted, users can access the data as if it resides on their local filesystem, using any tool, library, or framework that reads from a local filesystem.</p>
 <h3 id="spark-metadata-client">Spark Metadata Client<a class="headerlink" href="#spark-metadata-client" title="Permanent link">&para;</a></h3>
 <p>The lakeFS <a href="../../reference/spark-client/">Spark Metadata Client</a> makes it easy to perform
 operations related to lakeFS metadata, at scale. Examples include <a href="../../howto/garbage-collection/gc/">garbage collection</a> or <a href="../../howto/export/">exporting data from lakeFS</a>.</p>
@@ -4677,9 +4668,15 @@ but due to limitations of the S3 API, doing so requires reading and writing data
 Using <a href="../../integrations/spark/#lakefs-hadoop-filesystem">lakeFSFileSystem</a> increases Spark ETL jobs performance by executing the metadata operations on the lakeFS server,
 and all data operations directly through the same underlying object store that lakeFS uses.</p>
 <h2 id="how-lakefs-clients-and-gateway-handle-metadata-and-data-access">How lakeFS Clients and Gateway Handle Metadata and Data Access<a class="headerlink" href="#how-lakefs-clients-and-gateway-handle-metadata-and-data-access" title="Permanent link">&para;</a></h2>
-<p>When using the Python client, lakeCTL, or the lakeFS Spark client, these clients communicate with the lakeFS server to retrieve metadata information. For example, they may query lakeFS to understand which version of a file is needed or to track changes in branches and commits. This communication does not include the actual data transfer, but instead involves passing only metadata about data locations and versions.
-Once the client knows the exact data location from the lakeFS metadata, it directly accesses the data in the underlying object storage (potentially using presigned URLs) without routing through lakeFS. For instance, if data is stored in S3, the Spark client will retrieve the S3 paths from lakeFS, then directly read and write to those paths in S3 without involving lakeFS in the data transfer.</p>
-<p><a class="glightbox" href="../../assets/img/s3gatewayvsclientdataflow.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS Clients vs Gateway Data Flow" src="../../assets/img/s3gatewayvsclientdataflow.png" /></a></p>
+<p>When using any of the native integrations such as the Python SDK, lakectl, Everest or the lakeFS Spark client - these clients communicate with the lakeFS server to retrieve metadata. </p>
+<p>For example, they may query lakeFS to understand which version of a file is needed or to track changes in branches and commits. 
+This communication does not include the actual data transfer, but instead involves passing only metadata about data locations and versions.</p>
+<p>Once the client knows the exact data location from the lakeFS metadata, it <strong>directly accesses the data in the underlying object storage</strong> (potentially using <a href="../../security/presigned-url/">presigned URLs</a>) without routing through lakeFS. </p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>if data is stored in S3, the Spark client will retrieve the S3 paths as pre-signed URLs from lakeFS, then directly read and/or write to those URLs in S3 without involving lakeFS in the data transfer.</p>
+</div>
+<p><a class="glightbox" href="../../assets/img/native-vs-gw-integrations.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS Clients vs Gateway Data Flow" src="../../assets/img/native-vs-gw-integrations.png" /></a></p>
 
 
 
