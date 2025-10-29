@@ -90,7 +90,16 @@ components:
       required: false
       schema:
         type: string
-    
+
+    IfMatch:
+      in: header
+      name: If-Match
+      description: Set to the object's ETag to atomically allow operations only if the object's current ETag matches the provided value.
+      example: "2e9ec317e197e02e4264d128c2e7e681"
+      required: false
+      schema:
+        type: string
+
     NoTombstone:
       in: query
       name: no_tombstone
@@ -1224,6 +1233,18 @@ components:
         description:
           type: string
 
+    PolicyCondition:
+      type: object
+      description: Condition operator (e.g., IpAddress)
+      additionalProperties:
+        type: array
+        items:
+          type: string
+      example:
+        IpAddress:
+          - 192.168.0.1/32
+          - 192.168.0.2/32
+
     Statement:
       type: object
       required:
@@ -1241,6 +1262,11 @@ components:
           items:
             type: string
           minItems: 1
+        condition:
+          type: object
+          description: Optional conditions for when this statement applies.
+          additionalProperties:
+            $ref: "#/components/schemas/PolicyCondition"
 
     Policy:
       type: object
@@ -4877,6 +4903,7 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/IfNoneMatch"
+        - $ref: "#/components/parameters/IfMatch"
 
       responses:
         200:
@@ -4906,6 +4933,8 @@ paths:
           $ref: "#/components/responses/PreconditionFailed"
         429:
           description: too many requests
+        501:
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/ServerError"
 
@@ -5114,6 +5143,7 @@ paths:
 
       parameters:
         - $ref: "#/components/parameters/IfNoneMatch"
+        - $ref: "#/components/parameters/IfMatch"
         - in: query
           name: storageClass
           description: Deprecated, this capability will not be supported in future releases.
@@ -5146,6 +5176,8 @@ paths:
           $ref: "#/components/responses/PreconditionFailed"
         429:
           description: too many requests
+        501:
+          $ref: "#/components/responses/NotImplemented"
         default:
           $ref: "#/components/responses/ServerError"
     delete:
