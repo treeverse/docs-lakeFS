@@ -2490,9 +2490,9 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#catalog-changes-as-commits" class="md-nav__link">
+  <a href="#catalog-changes-in-lakefs" class="md-nav__link">
     <span class="md-ellipsis">
-      Catalog Changes as Commits
+      Catalog Changes in lakeFS
     </span>
   </a>
   
@@ -4719,9 +4719,9 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#catalog-changes-as-commits" class="md-nav__link">
+  <a href="#catalog-changes-in-lakefs" class="md-nav__link">
     <span class="md-ellipsis">
-      Catalog Changes as Commits
+      Catalog Changes in lakeFS
     </span>
   </a>
   
@@ -5078,11 +5078,13 @@ We can use relative namespaces to allow scoping the catalog connecting to a spec
 <li>List tables in namespaces.</li>
 </ul>
 <h3 id="version-control-features">Version Control Features<a class="headerlink" href="#version-control-features" title="Permanent link">&para;</a></h3>
-<p>The Iceberg Catalog integrates with lakeFS's version control system, treating each table change as a commit. 
-This provides a complete history of table modifications and enables branching and merging workflows.</p>
-<h4 id="catalog-changes-as-commits">Catalog Changes as Commits<a class="headerlink" href="#catalog-changes-as-commits" title="Permanent link">&para;</a></h4>
-<p>Each modification to a table (schema changes, data updates, etc.) creates a new commit in lakeFS. 
-Creating or deleting a namespace or a table results in a lakeFS commit on the relevant branch, as well as table data updates ("Iceberg table commit").</p>
+<p>The Iceberg Catalog integrates with lakeFS's version control system. Table and namespace changes made through the 
+Iceberg API are staged on the target lakeFS reference, and may be committed to lakeFS to record these staged changes. 
+This provides a complete history of table modifications and enables lakeFS branching and merging workflows.</p>
+<h4 id="catalog-changes-in-lakefs">Catalog Changes in lakeFS<a class="headerlink" href="#catalog-changes-in-lakefs" title="Permanent link">&para;</a></h4>
+<p>Iceberg changes (create/drop/commit to table, create/drop namespace) are reflected as staging changes on the relevant lakeFS (table/namespace) object.
+These changes aren't committed to lakeFS, and should be explicitly committed by using lakeFS tools.</p>
+<p>Note that several Iceberg operations can be grouped across multiple tables into a single lakeFS commit.</p>
 <h4 id="branching-and-merging">Branching and Merging<a class="headerlink" href="#branching-and-merging" title="Permanent link">&para;</a></h4>
 <p>Create a new branch to work on table changes:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Create a lakeFS branch using lakeFS Python SDK</span>
@@ -5100,7 +5102,7 @@ Creating or deleting a namespace or a table results in a lakeFS commit on the re
 </span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>Currently, lakeFS handles table changes as file operations during merges.</p>
+<p>lakeFS handles table changes as file operations during merges.</p>
 <p>This means that when merging branches with table changes, lakeFS treats the table metadata files as regular files.</p>
 <p>No special merge logic is applied to handle conflicting table changes, and if there are conflicting changes to the same table in different branches, 
 the merge will fail with a conflict that needs to be resolved manually.</p>
@@ -5216,7 +5218,7 @@ set the <code>iceberg.ignore_compaction_commits</code> configuration flag to <co
 <p>This pointer is stored inside the repository's <a href="../../understand/glossary/#storage-namespace" title="A storage namespace is a path on the underlying storage that defines where a lakeFS repository stores both metadata and data">storage namespace</a>. </p>
 <p>When a request is made, the catalog would examine the table's fully qualified namespace: <code>&lt;repository&gt;.&lt;reference&gt;.&lt;namespace&gt;.&lt;table_name&gt;</code> to read that special pointer file from the given reference specified,
 and returns the underlying object store location of the metadata file to the client. When a table is created or updated, lakeFS would make sure to generate a new metadata file inside the storage namespace, and register
-that metadata file as the current pointer for the requested branch.</p>
+that metadata file as the current pointer for the requested branch. These changes are staged in lakeFS, and may be committed to the branch.</p>
 <p>This approach leverages Iceberg's existing metadata and the immutability of its snapshots: a commit in lakeFS captures a metadata file, which in turn captures manifest lists, manifest files and all related data files.</p>
 <p>Besides simply avoiding "double booking" where both Iceberg and lakeFS would need to keep track of which files belong to which version, it also greatly improves the scalability and compatibility of the catalog with the existing Iceberg tool ecosystem.</p>
 <h4 id="example-reading-an-iceberg-table">Example: Reading an Iceberg Table<a class="headerlink" href="#example-reading-an-iceberg-table" title="Permanent link">&para;</a></h4>
@@ -5240,13 +5242,12 @@ that metadata file as the current pointer for the requested branch.</p>
     participant lakeFS Catalog API
     participant lakeFS
     participant Object Store
-    Iceberg Client-&gt;&gt;Object Store: table data
-    Iceberg Client-&gt;&gt;lakeFS Catalog API: commit
-    lakeFS Catalog API-&gt;&gt;lakeFS: create branch("branch-tx-uuid")
-    lakeFS Catalog API-&gt;&gt;lakeFS: put('new table pointer')
+    Iceberg Client-&gt;&gt;Object Store: write table data
+    Iceberg Client-&gt;&gt;lakeFS Catalog API: Iceberg commit
+    lakeFS Catalog API-&gt;&gt;lakeFS: stage('new table pointer')
     lakeFS-&gt;&gt;Object Store: PutObject("metdata.json")
-    lakeFS Catalog API-&gt;&gt;lakeFS: merge('branch-tx-uuid', 'branch)
-    lakeFS Catalog API-&gt;&gt;Iceberg Client: done</code></pre>
+    lakeFS Catalog API-&gt;&gt;Iceberg Client: Iceberg commit done
+    Iceberg Client-&gt;&gt;lakeFS: lakeFS commit('repo','branch', message)</code></pre>
 <h3 id="related-resources">Related Resources<a class="headerlink" href="#related-resources" title="Permanent link">&para;</a></h3>
 <div class="admonition question">
 <p class="admonition-title">Further Reading</p>
