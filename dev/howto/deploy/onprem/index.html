@@ -4589,6 +4589,21 @@ command to demonstrate starting lakeFS using Docker:</p>
 <p class="admonition-title">Info</p>
 <p>Notice that the lakeFS Blockstore type is set to <code>s3</code> - This configuration works with S3-compatible storage engines such as <a href="https://min.io/" target="blank">MinIO</a>.</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Local Database and Local Blockstore</p>
+<p>When using local database (<code>LAKEFS_DATABASE_TYPE=local</code>) and local blockstore (<code>LAKEFS_BLOCKSTORE_TYPE=local</code>), 
+lakeFS stores all data and metadata under <code>${HOME}/lakefs</code> in the container by default (configurable).
+You can mount this location to the host using Docker volumes to persist data and metadata on host storage:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--name<span class="w"> </span>lakefs<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>-v<span class="w"> </span>/path/on/host:/home/lakefs/lakefs<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_DATABASE_TYPE</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_BLOCKSTORE_TYPE</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_AUTH_ENCRYPT_SECRET_KEY</span><span class="o">=</span><span class="s2">&quot;[ENCRYPTION_SECRET_KEY]&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span>treeverse/lakefs:latest<span class="w"> </span>run
+</span></code></pre></div>
+</div>
 <p>See the [reference][config-envariables] for a complete list of environment variables.</p>
 </div>
 <div class="tabbed-block">
@@ -4597,21 +4612,21 @@ command to demonstrate starting lakeFS using Docker:</p>
 <ol>
 <li>
 <p>Copy the Helm values file relevant for S3-Compatible storage (MinIO in this example):</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">secrets</span><span class="p">:</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="c1"># replace this with the connection string of the database you created in a previous step:</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">databaseConnectionString</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">DATABASE_CONNECTION_STRING</span><span class="p p-Indicator">]</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="c1"># replace this with a randomly-generated string</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">authEncryptSecretKey</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ENCRYPTION_SECRET_KEY</span><span class="p p-Indicator">]</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nt">lakefsConfig</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="no">blockstore:</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="no">type: s3</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">        </span><span class="no">s3:</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">        </span><span class="no">force_path_style: true</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="no">endpoint: http://&lt;minio_endpoint&gt;</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">        </span><span class="no">discover_bucket_region: false</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="no">credentials:</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">            </span><span class="no">access_key_id: &lt;minio_access_key&gt;</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">            </span><span class="no">secret_access_key: &lt;minio_secret_key&gt;</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">secrets</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="c1"># replace this with the connection string of the database you created in a previous step:</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">databaseConnectionString</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">DATABASE_CONNECTION_STRING</span><span class="p p-Indicator">]</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="c1"># replace this with a randomly-generated string</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">authEncryptSecretKey</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ENCRYPTION_SECRET_KEY</span><span class="p p-Indicator">]</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="nt">lakefsConfig</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="no">blockstore:</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="no">type: s3</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="no">s3:</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="no">force_path_style: true</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="no">endpoint: http://&lt;minio_endpoint&gt;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">        </span><span class="no">discover_bucket_region: false</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">        </span><span class="no">credentials:</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">            </span><span class="no">access_key_id: &lt;minio_access_key&gt;</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">            </span><span class="no">secret_access_key: &lt;minio_secret_key&gt;</span>
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -4625,10 +4640,10 @@ command to demonstrate starting lakeFS using Docker:</p>
     Sensitive information like <code>databaseConnectionString</code> is given through separate parameters, and the chart will inject it into Kubernetes secrets.</p>
 </li>
 <li>In the directory where you created <code>conf-values.yaml</code>, run the following commands:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Add the lakeFS repository</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>lakefs<span class="w"> </span>https://charts.lakefs.io
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Deploy lakeFS</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>helm<span class="w"> </span>install<span class="w"> </span>my-lakefs<span class="w"> </span>lakefs/lakefs<span class="w"> </span>-f<span class="w"> </span>conf-values.yaml
+    <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Add the lakeFS repository</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>lakefs<span class="w"> </span>https://charts.lakefs.io
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Deploy lakeFS</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>helm<span class="w"> </span>install<span class="w"> </span>my-lakefs<span class="w"> </span>lakefs/lakefs<span class="w"> </span>-f<span class="w"> </span>conf-values.yaml
 </span></code></pre></div></li>
 </ol>
 <p><em>my-lakefs</em> is the <a href="https://helm.sh/docs/intro/using_helm/#three-big-concepts">Helm Release</a> name.</p>
@@ -4648,10 +4663,10 @@ a simple PUT request using the [OpenAPI Server][openapi].</p>
 <h2 id="secure-connection">Secure connection<a class="headerlink" href="#secure-connection" title="Permanent link">&para;</a></h2>
 <p>Using a load balancer or cluster manager for TLS/SSL termination is recommended. It helps speed the decryption process and reduces the processing burden from lakeFS.</p>
 <p>In case lakeFS needs to listen and serve with HTTPS, for example for development purposes, update its config yaml with the following section:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">tls</span><span class="p">:</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">cert_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server.crt</span><span class="w">   </span><span class="c1"># provide path to your certificate file</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">key_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server.key</span><span class="w">    </span><span class="c1"># provide path to your server private key</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">tls</span><span class="p">:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">cert_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server.crt</span><span class="w">   </span><span class="c1"># provide path to your certificate file</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">key_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server.key</span><span class="w">    </span><span class="c1"># provide path to your server private key</span>
 </span></code></pre></div>
 <h2 id="local-blockstore">Local Blockstore<a class="headerlink" href="#local-blockstore" title="Permanent link">&para;</a></h2>
 <p>You can configure a block adapter to a POSIX compatible storage location shared by all lakeFS instances.
@@ -4660,24 +4675,24 @@ Using the shared storage location, both data and metadata will be stored there.<
 Import is not enabled by default, as it doesn't assume the local path is shared and there is a security concern about accessing a path outside the specified in the blockstore configuration.
 Enabling is done by <code>blockstore.local.import_enabled</code> and <code>blockstore.local.allowed_external_prefixes</code> as described in the <a href="../../../reference/configuration/">configuration reference</a>.</p>
 <h3 id="sample-configuration-using-local-blockstore">Sample configuration using local blockstore<a class="headerlink" href="#sample-configuration-using-local-blockstore" title="Permanent link">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">database</span><span class="p">:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;postgres&quot;</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">connection_string</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[DATABASE_CONNECTION_STRING]&quot;</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nt">encrypt</span><span class="p">:</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="c1"># replace this with a randomly-generated string. Make sure to keep it safe!</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[ENCRYPTION_SECRET_KEY]&quot;</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nt">blockstore</span><span class="p">:</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="nt">local</span><span class="p">:</span>
-</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/shared/location/lakefs_data</span><span class="w">    </span><span class="c1"># location where data and metadata kept by lakeFS</span>
-</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="nt">import_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                  </span><span class="c1"># required to be true to enable import files</span>
-</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">                                          </span><span class="c1"># from `allowed_external_prefixes` locations</span>
-</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">    </span><span class="nt">allowed_external_prefixes</span><span class="p">:</span>
-</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/shared/location/files_to_import</span><span class="w">  </span><span class="c1"># location with files we can import into lakeFS, require access from lakeFS</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">database</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;postgres&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">connection_string</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[DATABASE_CONNECTION_STRING]&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="nt">auth</span><span class="p">:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nt">encrypt</span><span class="p">:</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="c1"># replace this with a randomly-generated string. Make sure to keep it safe!</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[ENCRYPTION_SECRET_KEY]&quot;</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="nt">blockstore</span><span class="p">:</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="nt">local</span><span class="p">:</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/shared/location/lakefs_data</span><span class="w">    </span><span class="c1"># location where data and metadata kept by lakeFS</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">    </span><span class="nt">import_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                  </span><span class="c1"># required to be true to enable import files</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">                                          </span><span class="c1"># from `allowed_external_prefixes` locations</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">    </span><span class="nt">allowed_external_prefixes</span><span class="p">:</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/shared/location/files_to_import</span><span class="w">  </span><span class="c1"># location with files we can import into lakeFS, require access from lakeFS</span>
 </span></code></pre></div>
 <h3 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
