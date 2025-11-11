@@ -2420,11 +2420,65 @@ document.addEventListener("DOMContentLoaded", function() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#iceberg-rest-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iceberg REST Catalog
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Iceberg REST Catalog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#configuration" class="md-nav__link">
     <span class="md-ellipsis">
       Configuration
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-bucket-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Bucket Permissions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-dremio-with-the-s3-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Dremio with the S3 Gateway
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Dremio with the S3 Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4609,11 +4663,65 @@ document.addEventListener("DOMContentLoaded", function() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#iceberg-rest-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iceberg REST Catalog
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Iceberg REST Catalog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#configuration" class="md-nav__link">
     <span class="md-ellipsis">
       Configuration
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#data-bucket-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Bucket Permissions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-dremio-with-the-s3-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Dremio with the S3 Gateway
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Dremio with the S3 Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4639,19 +4747,125 @@ document.addEventListener("DOMContentLoaded", function() {
 <h1 id="using-lakefs-with-dremio">Using lakeFS with Dremio<a class="headerlink" href="#using-lakefs-with-dremio" title="Permanent link">&para;</a></h1>
 <p><a href="https://www.dremio.com/">Dremio</a> is a next-generation data lake engine that liberates your data with live, 
 interactive queries directly on cloud data lake storage, including S3 and lakeFS.</p>
-<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<h2 id="iceberg-rest-catalog">Iceberg REST Catalog<a class="headerlink" href="#iceberg-rest-catalog" title="Permanent link">&para;</a></h2>
+<p>lakeFS Iceberg REST Catalog allow you to use lakeFS as a <a href="https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml">spec-compliant</a> Apache <a href="https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/apache/iceberg/main/open-api/rest-catalog-open-api.yaml">Iceberg REST catalog</a>,
+allowing Dremio to manage and access tables using a standard REST API.</p>
+<p><a class="glightbox" href="../../assets/img/lakefs_iceberg_rest_catalog.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="lakeFS Iceberg REST Catalog" src="../../assets/img/lakefs_iceberg_rest_catalog.png" /></a></p>
+<p>This is the recommended way to use lakeFS with Dremio, as it allows lakeFS to stay completely outside the data path: data itself is read and written by Dremio executors, directly to the underlying object store. Metadata is managed by Iceberg at the table level, while lakeFS keeps track of new snapshots to provide versioning and isolation.</p>
+<p><a href="../iceberg/#iceberg-rest-catalog">Read more about using the Iceberg REST Catalog</a>.</p>
+<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<p>To configure Dremio to work with the Iceberg REST Catalog, you need to configure the <a href="https://docs.dremio.com/current/data-sources/lakehouse-catalogs/iceberg-rest-catalog/">Iceberg REST Catalog in Dremio</a>.</p>
+<ol>
+<li>On the Datasets page, to the right of <strong>Sources</strong> in the left panel, click <code>+</code></li>
+<li>
+<p>In the <strong>Add Data Source</strong> dialog, under Lakehouse Catalogs, select <strong>Iceberg REST Catalog</strong> Source. The New Iceberg REST Catalog Source dialog box appears, which contains the following tabs:</p>
+<ol>
+<li>In <strong>General</strong> →<ul>
+<li>Enter a name for your Iceberg REST Catalog source, specify the endpoint URI (i.e. <code>https://lakefs.example.com/iceberg/api</code>)</li>
+<li>Uncheck "Use vended credentials"</li>
+</ul>
+</li>
+<li>
+<p>In <strong>Advanced Options</strong> → Catalog Properties, add the following key-value pairs (left = key, right = value):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>oauth2-server-uri</code></td>
+<td><code>https://lakefs.example.com/iceberg/api/v1/oauth/tokens</code></td>
+<td>Your lakeFS OAuth2 token endpoint (not the catalog URL).</td>
+</tr>
+<tr>
+<td><code>credential</code></td>
+<td><code>&lt;lakefs_access_key&gt;:&lt;lakefs_secret_key&gt;</code></td>
+<td>Your lakeFS credentials.</td>
+</tr>
+<tr>
+<td><code>fs.s3a.aws.credentials.provider</code></td>
+<td><code>org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider</code></td>
+<td>Use static AWS credentials.</td>
+</tr>
+<tr>
+<td><code>fs.s3a.access.key</code></td>
+<td><code>&lt;aws_access_key_id&gt;</code></td>
+<td>AWS key with read/write access to your data bucket.</td>
+</tr>
+<tr>
+<td><code>fs.s3a.secret.key</code></td>
+<td><code>&lt;aws_secret_access_key&gt;</code></td>
+<td>AWS secret key.</td>
+</tr>
+<tr>
+<td><code>dremio.s3.list.all.buckets</code></td>
+<td><code>false</code></td>
+<td>Avoid listing all buckets during initialization.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+</li>
+<li>
+<p>Click <strong>Save</strong> to create the Iceberg REST Catalog source.</p>
+</li>
+</ol>
+<h4 id="data-bucket-permissions">Data Bucket Permissions<a class="headerlink" href="#data-bucket-permissions" title="Permanent link">&para;</a></h4>
+<p>The lakeFS Iceberg Catalog manages table metadata, while Dremio reads and writes data files directly from your underlying 
+storage (for example, Amazon S3).</p>
+<p>You must ensure that the IAM role or user Dremio uses has read/write access to your data bucket.
+The following AWS IAM policy provides the required permissions for direct access: </p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">            </span><span class="nt">&quot;Sid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DremioIcebergAccess&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">            </span><span class="nt">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">            </span><span class="nt">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;s3:*&quot;</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">            </span><span class="nt">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">                </span><span class="s2">&quot;arn:aws:s3:::&lt;lakefs_repo_storage_namespace&gt;/_managed/&quot;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">                </span><span class="s2">&quot;arn:aws:s3:::&lt;lakefs_repo_storage_namespace&gt;/_managed/*&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">            </span><span class="p">]</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">            </span><span class="nt">&quot;Sid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BucketLevelRequiredForDremio&quot;</span><span class="p">,</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">            </span><span class="nt">&quot;Effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allow&quot;</span><span class="p">,</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">            </span><span class="nt">&quot;Action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">                </span><span class="s2">&quot;s3:GetBucketLocation&quot;</span><span class="p">,</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">                </span><span class="s2">&quot;s3:ListBucket&quot;</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">            </span><span class="nt">&quot;Resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:s3:::&lt;lakefs_repo_storage_namespace_bucket_name&gt;&quot;</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To learn more about the Iceberg REST Catalog, see the <a href="../iceberg/#iceberg-rest-catalog">Iceberg REST Catalog</a> documentation.</p>
+</div>
+<h2 id="using-dremio-with-the-s3-gateway">Using Dremio with the S3 Gateway<a class="headerlink" href="#using-dremio-with-the-s3-gateway" title="Permanent link">&para;</a></h2>
+<p>Alternatively, you can use the S3 Gateway to read and write data to lakeFS from Dremio.</p>
+<p>While flexible, this approach requires lakeFS to be involved in the data path, which can be less efficient than the Iceberg 
+REST Catalog approach, since lakeFS has to proxy all data operations through the lakeFS server. This is particularly true 
+for large data sets where network bandwidth might incur some overhead.</p>
+<h3 id="configuration_1">Configuration<a class="headerlink" href="#configuration_1" title="Permanent link">&para;</a></h3>
 <p>Starting from version 3.2.3, Dremio supports Minio as an <a href="https://docs.dremio.com/current/sonar/data-sources/object/s3/#configuring-s3-for-minio">experimental S3-compatible plugin</a>.
 Similarly, you can connect lakeFS with Dremio.</p>
 <p>Suppose you already have both lakeFS and Dremio deployed, and want to use Dremio to query your data in the lakeFS repositories.
 You can follow the steps listed below to configure on Dremio UI:</p>
 <ol>
-<li>click <em>Add Data Lake</em>.</li>
-<li>Under <em>File Stores</em>, choose <em>Amazon S3</em>.</li>
-<li>Under <em>Advanced Options</em>, check <em>Enable compatibility mode (experimental)</em>.</li>
-<li>Under <em>Advanced Options</em> &gt; <em>Connection Properties</em>, add <code>fs.s3a.path.style.access</code> and set the value to <code>true</code>.</li>
-<li>Under <em>Advanced Options</em> &gt; <em>Connection Properties</em>, add <code>fs.s3a.endpoint</code> and set lakeFS S3 endpoint to the value. </li>
-<li>Under the <em>General</em> tab, specify the <em>access_key_id</em> and <em>secret_access_key</em> provided by lakeFS server.</li>
-<li>Click <em>Save</em>, and now you should be able to browse lakeFS repositories on Dremio.</li>
+<li>click <strong>Add Data Lake</strong>.</li>
+<li>Under <strong>File Stores</strong>, choose <strong>Amazon S3</strong>.</li>
+<li>Under <strong>Advanced Options</strong>, check <strong>Enable compatibility mode (experimental)</strong>.</li>
+<li>Under <strong>Advanced Options</strong> &gt; <strong>Connection Properties</strong>, add <code>fs.s3a.path.style.access</code> and set the value to <code>true</code>.</li>
+<li>Under <strong>Advanced Options</strong> &gt; <strong>Connection Properties</strong>, add <code>fs.s3a.endpoint</code> and set lakeFS S3 endpoint to the value. </li>
+<li>Under the <strong>General</strong> tab, specify the <strong>access_key_id</strong> and <strong>secret_access_key</strong> provided by lakeFS server.</li>
+<li>Click <strong>Save</strong>, and now you should be able to browse lakeFS repositories on Dremio.</li>
 </ol>
 
 
