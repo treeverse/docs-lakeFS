@@ -5524,7 +5524,6 @@ See Everest for <a href="#everest-for-windows">Windows</a></p>
 <ul>
 <li><strong>Direct Object Store Access</strong>: By default, Everest uses pre-signed URLs to read and write data directly to and from the underlying object store, bypassing the lakeFS server for data transfer. Only metadata operations go through the lakeFS server.</li>
 <li><strong>Lazy Metadata Loading</strong>: Directory listings are fetched on-demand, allowing you to work with repositories containing billions of files without upfront overhead.</li>
-<li><strong>Partial Reads</strong>: The experimental <code>--partial-reads</code> flag enables reading only the accessed portions of large files, which is useful for file formats like Parquet that support column pruning.</li>
 <li><strong>Cache Sizing</strong>: Setting an appropriate <code>--cache-size</code> prevents frequent eviction and re-fetching. As a rule of thumb, size your cache to accommodate your working set.</li>
 <li><strong>Network Bandwidth</strong>: Since data is fetched directly from object storage, ensure your network connection has adequate bandwidth for your workload.</li>
 </ul>
@@ -6056,7 +6055,6 @@ The driver currently provides only read-only access.</p>
 <li><code>--log-format</code>: Set logging output format.</li>
 <li><code>--log-output</code>: Set logging output(s).</li>
 <li><code>--presign</code>: Use pre-signed URLs for direct object store access (default: <code>true</code>).</li>
-<li><code>--partial-reads</code>: (Experimental) Fetch only the accessed parts of large files. This can be useful for streaming workloads or for applications handling file formats such as Parquet, m4a, zip, and tar that do not need to read the entire file.</li>
 </ul>
 <h4>`everest umount`</h4>
 
@@ -6119,10 +6117,7 @@ The driver currently provides only read-only access.</p>
 
 <ul>
 <li><strong>Metadata Operations:</strong> Modifying file metadata (<code>chmod</code>, <code>chown</code>, <code>chgrp</code>, time attributes) results in a no-op. The file metadata will not be changed.</li>
-<li><strong>Deletion Implementation:</strong> When calling <code>remove</code>, Everest marks a file as a tombstone using <a href="https://en.wikipedia.org/wiki/Extended_file_attributes">Extended Attributes</a> APIs.</li>
-<li><strong>Deletion Race Conditions:</strong> Removal is not an atomic operation. Calling <code>remove</code> and <code>open</code> simultaneously on the same file may result in a race condition where the <code>open</code> operation might succeed.</li>
-<li><strong>Type Reuse Restriction:</strong> A deleted file's name cannot be reused as a directory, and vice-versa. For example, this sequence is not allowed: <code>touch foo; rm foo; mkdir foo;</code>.</li>
-<li><strong>Directory Removal:</strong> Calling <code>remove</code> on a directory will fail explicitly with an error. Use appropriate directory removal commands instead.</li>
+<li><strong>Directory Removal:</strong> Calling <code>remove</code> on a directory is not supported. Use appropriate directory removal commands (e.g. <code>rm -r</code>) instead, and on the next commit, the directory will be deleted.</li>
 </ul>
 <h4>Functionality Limitations</h4>
 
