@@ -67,6 +67,18 @@ document.addEventListener("DOMContentLoaded", function() {
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KTZBZW9');
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag(){dataLayer.push(arguments)};
+  gtag('consent','default',{
+    'ad_storage':'denied',
+    'ad_user_data':'denied',
+    'ad_personalization':'denied',
+    'analytics_storage':'denied',
+    'functionality_storage': 'denied',
+    'personalization_storage': 'denied',
+    'security_storage': 'granted'
+  });
 })
 </script>
 
@@ -810,6 +822,48 @@ document.addEventListener("DOMContentLoaded", function() {
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisite-skills-and-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisite skills and access
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite skills and access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-administration" class="md-nav__link">
+    <span class="md-ellipsis">
+      AWS account administration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-aws-services-used-by-lakefs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core AWS services used by lakeFS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-container-and-orchestration-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional: Container and orchestration skills
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#grant-lakefs-permissions-to-dynamodb" class="md-nav__link">
@@ -4686,6 +4740,48 @@ document.addEventListener("DOMContentLoaded", function() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prerequisite-skills-and-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisite skills and access
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisite skills and access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws-account-administration" class="md-nav__link">
+    <span class="md-ellipsis">
+      AWS account administration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-aws-services-used-by-lakefs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core AWS services used by lakeFS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-container-and-orchestration-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional: Container and orchestration skills
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#grant-lakefs-permissions-to-dynamodb" class="md-nav__link">
     <span class="md-ellipsis">
       Grant lakeFS permissions to DynamoDB
@@ -4800,6 +4896,27 @@ For a hosted lakeFS service with guaranteed SLAs, try <a href="https://lakefs.cl
 <div class="admonition info">
 <p class="admonition-title">⏰ Expected deployment time: 25 min</p>
 </div>
+<h2 id="prerequisite-skills-and-access">Prerequisite skills and access<a class="headerlink" href="#prerequisite-skills-and-access" title="Permanent link">&para;</a></h2>
+<p>To successfully deploy and operate lakeFS on AWS, you should be comfortable with the following topics and have the corresponding level of access.</p>
+<h3 id="aws-account-administration">AWS account administration<a class="headerlink" href="#aws-account-administration" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ability to create and modify IAM roles and policies.</li>
+<li>Ability to create and configure S3 buckets and prefixes.</li>
+<li>Permissions to provision networking and compute resources in your AWS account (for example, VPC, subnets, security groups, load balancers, EC2, ECS, or EKS).</li>
+</ul>
+<h3 id="core-aws-services-used-by-lakefs">Core AWS services used by lakeFS<a class="headerlink" href="#core-aws-services-used-by-lakefs" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Amazon S3</strong> – bucket layout, prefixes, encryption options, and lifecycle rules.</li>
+<li><strong>Metadata backend</strong>, either:</li>
+<li><strong>Amazon DynamoDB</strong></li>
+<li><strong>PostgreSQL / Amazon RDS for PostgreSQL</strong></li>
+<li><strong>Amazon MemoryDB</strong></li>
+</ul>
+<p>For any metadata backend you choose, you should be able to perform configuration, connectivity, storage and persistence configuration, backups, and monitoring.</p>
+<h3 id="optional-container-and-orchestration-skills">Optional: Container and orchestration skills<a class="headerlink" href="#optional-container-and-orchestration-skills" title="Permanent link">&para;</a></h3>
+<p>Depending on the chosen deployment model:
+- <strong>Kubernetes / Amazon EKS</strong> – understanding of Deployments, Services, Ingress, kubectl, and optionally Helm.
+- <strong>Amazon ECS or EC2 with containers</strong> – understanding task definitions, services, container logs, and IAM roles for tasks.</p>
 <h2 id="grant-lakefs-permissions-to-dynamodb">Grant lakeFS permissions to DynamoDB<a class="headerlink" href="#grant-lakefs-permissions-to-dynamodb" title="Permanent link">&para;</a></h2>
 <p>By default, lakeFS will create the required DynamoDB table if it does not already exist. You'll have to give the IAM role used by lakeFS the following permissions:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
