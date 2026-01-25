@@ -1201,6 +1201,57 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#async-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Merge (Enterprise)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Async Merge (Enterprise)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Client Support
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lakectl-and-ui-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      lakectl and UI behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      API usage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4712,6 +4763,57 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#async-merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Merge (Enterprise)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Async Merge (Enterprise)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Client Support
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lakectl-and-ui-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      lakectl and UI behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      API usage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4842,6 +4944,42 @@ below, "A", "B" and "C" are possible file contents, "X" is a missing file, and "
 <p>The strategy will affect all conflicting objects in the merge if it is set. Currently it is not possible to treat conflicts individually.</p>
 <p>As a format-agnostic system, lakeFS currently merges by complete files. Format-specific and
 other user-defined merge strategies for handling conflicts are on the roadmap.</p>
+<h2 id="async-merge">Async Merge (Enterprise)<a class="headerlink" href="#async-merge" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Available in <strong>lakeFS Cloud</strong> and <strong>lakeFS Enterprise</strong> from v1.76.0.</p>
+</div>
+<p>lakeFS Enterprise supports asynchronous merge operations for improved scalability.</p>
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>In lakeFS Enterprise, merge operations execute asynchronously:</p>
+<ol>
+<li>The API returns immediately with a task ID</li>
+<li>The merge executes in the background</li>
+<li>Clients poll for completion status</li>
+<li>On success, the status response includes the merge commit information (same as a synchronous merge response)</li>
+<li>On failure, the status response includes the error with its status code (same as a synchronous merge error)</li>
+</ol>
+<h3 id="client-support">Client Support<a class="headerlink" href="#client-support" title="Permanent link">&para;</a></h3>
+<p>Async merge is supported by:</p>
+<ul>
+<li><strong>lakectl</strong>  - Uses async merge automatically when connected to lakeFS Enterprise</li>
+<li><strong>lakeFS UI</strong> - Uses async merge automatically</li>
+<li><strong>Python (lakefs-sdk)</strong> - Supports async operations via the API. Support in the high-level Python SDK will be added soon.</li>
+</ul>
+<p><strong>Backwards compatibility</strong>: Older clients that don't support async operations will continue to work, as both sync and async APIs are supported.</p>
+<h3 id="lakectl-and-ui-behavior">lakectl and UI behavior<a class="headerlink" href="#lakectl-and-ui-behavior" title="Permanent link">&para;</a></h3>
+<p>When using lakeFS Enterprise:</p>
+<ul>
+<li><code>lakectl merge</code> uses async merge by default</li>
+<li>The lakeFS UI uses async merge by default</li>
+<li>Both handle polling automatically, so the experience is seamless</li>
+</ul>
+<h3 id="api-usage">API usage<a class="headerlink" href="#api-usage" title="Permanent link">&para;</a></h3>
+<p>For direct API access, use the experimental async endpoints:</p>
+<ul>
+<li><code>POST /repositories/{repo}/refs/{source}/merge/{dest}/async</code> - Start async merge</li>
+<li><code>GET /repositories/{repo}/refs/{source}/merge/{dest}/async/{id}/status</code> - Poll status</li>
+</ul>
 
 
 
