@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Auditing is a solution for lakeFS Cloud which enables tracking of events and activities performed within the solution. These logs capture information such as who accessed the solution, what actions were taken, and when they occurred.">
+        <meta name="description" content="Audit logs track events and activities in lakeFS, capturing who accessed the system, what actions were taken, and when they occurred. Available for both lakeFS Cloud and lakeFS Enterprise.">
       
       
       
@@ -1981,6 +1981,48 @@ document.addEventListener("DOMContentLoaded", function() {
       IdP users: map user IDs from audit logs to an email in lakeFS
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audit-logs-for-lakefs-enterprise-on-premises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Audit Logs for lakeFS Enterprise On-Premises
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audit Logs for lakeFS Enterprise On-Premises">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reference-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference Architecture
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-and-querying" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage and Querying
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4776,6 +4818,48 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#audit-logs-for-lakefs-enterprise-on-premises" class="md-nav__link">
+    <span class="md-ellipsis">
+      Audit Logs for lakeFS Enterprise On-Premises
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audit Logs for lakeFS Enterprise On-Premises">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reference-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference Architecture
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-and-querying" class="md-nav__link">
+    <span class="md-ellipsis">
+      Storage and Querying
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -5056,6 +5140,64 @@ Using Spark's <a href="https://spark.apache.org/docs/3.5.2/api/python/reference/
 </span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="n">s3_dyf</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
 </span></code></pre></div>
 </div>
+<h2 id="audit-logs-for-lakefs-enterprise-on-premises">Audit Logs for lakeFS Enterprise On-Premises<a class="headerlink" href="#audit-logs-for-lakefs-enterprise-on-premises" title="Permanent link">&para;</a></h2>
+<p>In the case of On-Premises deployment, you are responsible for collecting, storing, and querying audit logs.</p>
+<h3 id="reference-architecture">Reference Architecture<a class="headerlink" href="#reference-architecture" title="Permanent link">&para;</a></h3>
+<p>An audit log pipeline for lakeFS Enterprise consists of three stages:</p>
+<ol>
+<li><strong>Collect</strong>: Capture logs from lakeFS container stdout and filter for <code>log_audit: true</code></li>
+<li><strong>Store</strong>: Ship filtered logs to durable storage (e.g., S3, GCS, Azure Blob)</li>
+<li><strong>Query</strong>: Use a query engine to analyze logs (e.g., Athena, BigQuery, Elasticsearch)</li>
+</ol>
+<h3 id="collection">Collection<a class="headerlink" href="#collection" title="Permanent link">&para;</a></h3>
+<p>The recommended practice is to send logs to container stdout (the default configuration) and use a log collector to capture and forward them. See the <a href="../configuration/#logging">logging configuration</a> for more details.</p>
+<p>Common log collectors include: <a href="https://fluentbit.io/">Fluent Bit</a>, <a href="https://www.fluentd.org/">Fluentd</a>, <a href="https://www.elastic.co/logstash">Logstash</a>.</p>
+<p>When configuring your log collector, filter for entries where <code>log_audit</code> equals <code>true</code> to separate audit logs from regular application logs.</p>
+<p><strong>lakeFS outputs two kinds of logs:</strong></p>
+<ul>
+<li><strong>Regular logs</strong>: API errors, event descriptions, and debugging information</li>
+<li><strong>Audit logs</strong>: User actions such as creating a branch, committing, or deleting a repository</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To filter audit logs, use the boolean field <code>log_audit</code>. When <code>log_audit</code> is <code>true</code>, the log entry is an audit event.</p>
+</div>
+<p><strong>Example audit log entry (JSON):</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;client&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lakefs-python-sdk/1.65.2&quot;</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;usr/local/go/src/net/http/server.go:2322&quot;</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&quot;func&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;net/http.HandlerFunc.ServeHTTP&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">&quot;host&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lakefs.example.com&quot;</span><span class="p">,</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;info&quot;</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nt">&quot;log_audit&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="nt">&quot;msg&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HTTP call ended&quot;</span><span class="p">,</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="nt">&quot;operation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DeleteObjects&quot;</span><span class="p">,</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/api/v1/repositories/my-repo/branches/my-branch/objects/delete&quot;</span><span class="p">,</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234567-5b66-7655-b4e8-2h0c271f6r90&quot;</span><span class="p">,</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="nt">&quot;sent_bytes&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="nt">&quot;service_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rest_api&quot;</span><span class="p">,</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span><span class="nt">&quot;source_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;80.0.0.10:34708&quot;</span><span class="p">,</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">  </span><span class="nt">&quot;status_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">  </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-12-25T12:30:32Z&quot;</span><span class="p">,</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">  </span><span class="nt">&quot;took&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">600747890</span><span class="p">,</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">  </span><span class="nt">&quot;took_str&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;600.74789ms&quot;</span><span class="p">,</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="w">  </span><span class="nt">&quot;user&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lakefs-ci-bot&quot;</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="storage-and-querying">Storage and Querying<a class="headerlink" href="#storage-and-querying" title="Permanent link">&para;</a></h3>
+<p>Once collected, audit logs can be stored and queried using various approaches depending on your infrastructure.
+The choice of storage and query engine depends on your existing infrastructure, retention requirements, and query patterns.</p>
+<p><strong>Example:</strong> storage in S3, ETL indexing with Spark and querying layer with Athena / Spark, or storing in Elasticsearch for real-time analysis.</p>
+<p><strong>Scaling Considerations</strong></p>
+<p>At high scale, lakeFS can generate a significant volume of audit logs. Consider the following:</p>
+<ul>
+<li><strong>Partitioning</strong>: Partition logs by time (e.g., <code>year/month/day/hour</code>) to improve query performance and manage storage costs</li>
+<li><strong>Retention policies</strong>: Define retention periods and lifecycle rules to archive or delete old logs</li>
+</ul>
+<p><strong>Schema Considerations</strong></p>
+<p>The audit log schema is stable and evolves additively over time. If you're using a schema-aware query engine (e.g., Athena, BigQuery), consider using a schema discovery mechanism such as AWS Glue Crawler or equivalent to automatically detect and update your table schema as new fields appear.
+The fields described in the <a href="#schema">Schema</a> section above (remove the <code>data_</code> prefix for on-prem) are expected to be present in all audit log entries.</p>
 
 
 
