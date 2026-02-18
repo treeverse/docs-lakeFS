@@ -10,7 +10,7 @@
         <link rel="canonical" href="https://docs.lakefs.io/v1.77/understand/use_cases/reproducibility/">
       
       
-        <link rel="prev" href="../etl_testing/">
+        <link rel="prev" href="../rollback/">
       
       
         <link rel="next" href="../../../howto/deploy/">
@@ -683,15 +683,62 @@ document.addEventListener("DOMContentLoaded", function() {
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1">
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Quality
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Quality
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../cicd_for_data/" class="md-nav__link">
+      <a href="../etl_testing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CI/CD for Data Lakes
+    Isolated Dev &amp; Test Environments
   
 
     
@@ -712,14 +759,14 @@ document.addEventListener("DOMContentLoaded", function() {
   
   
     <li class="md-nav__item">
-      <a href="../etl_testing/" class="md-nav__link">
+      <a href="../cicd_for_data/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ETL Testing Environment
+    Data Contract Enforcement
   
 
     
@@ -728,6 +775,42 @@ document.addEventListener("DOMContentLoaded", function() {
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rollback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rollback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -814,6 +897,34 @@ document.addEventListener("DOMContentLoaded", function() {
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Achieving Reproducibility with lakeFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-commits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Commits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Tags
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1303,34 +1414,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
   
     Branch Protection
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../rollback/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Rollback &amp; Revert
   
 
     
@@ -5541,6 +5624,34 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Achieving Reproducibility with lakeFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-commits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Commits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Tags
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -5569,9 +5680,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Data changes frequently. This makes the task of keeping track of its exact state over time difficult. Oftentimes, people maintain only one state of their data - its current state.</p>
 <p>This has a negative impact on the work, as it becomes hard to:</p>
 <ul>
-<li>Debug a data issue.</li>
-<li>Validate machine learning training accuracy (re-running a model over different data gives different results).</li>
-<li>Comply with data audits.</li>
+<li>Debug a data issue</li>
+<li>Validate machine learning training accuracy (re-running a model over different data gives different results) </li>
+<li>Comply with data audits, and model audits in particular</li>
 </ul>
 <p>In comparison, lakeFS exposes a Git-like interface to data that allows keeping track of more than just the current state of data. This makes reproducing its state at any point in time straightforward.</p>
 <h2 id="achieving-reproducibility-with-lakefs">Achieving Reproducibility with lakeFS<a class="headerlink" href="#achieving-reproducibility-with-lakefs" title="Permanent link">¶</a></h2>
@@ -5583,13 +5694,28 @@ document.addEventListener("DOMContentLoaded", function() {
 </span></code></pre></div>
 <p>The code above assumes that all objects in the repository under this path are stored in parquet format. If a different format is used, the applicable Spark read method should be used.</p>
 </div>
-<p>In a lakeFS repository, we are capable of taking many commits over the data, making many points in time reproducible. </p>
+<h3 id="using-commits">Using Commits<a class="headerlink" href="#using-commits" title="Permanent link">¶</a></h3>
+<p>In a lakeFS repository, we are capable of taking many <a href="../../glossary/#commit">commits</a> over the data, making many points in time reproducible. </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../../assets/img/reproduce-commit-history.png" data-desc-position="bottom"><img alt="Commit History" src="../../../assets/img/reproduce-commit-history.png"></a></p>
 <p>In the repository above, a new commit is taken each time a model training script is run, and the commit message includes the specific run number. </p>
 <p>If we wanted to re-run the model training script and reproduce the exact same results for a historical run, say run #435, we could copy the commit ID associated with the run and read the data into a dataframe like so:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s2">"s3://example/296e54fbee5e176f3f4f4aeb7e087f9d57515750e8c3d033b8b841778613cb23/training_dataset/"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>The ability to reference a specific <code>commit_id</code> in code simplifies reproducing the specific state a data collection or even multiple collections. This has many applications that are common in data development, such as historical debugging, identifying deltas in a data collection, audit compliance, and more.</p>
+<h3 id="using-tags">Using Tags<a class="headerlink" href="#using-tags" title="Permanent link">¶</a></h3>
+<p>In addition to commits, lakeFS supports <a href="../../glossary/#tag">tags</a>. A tag is a human-readable label that points to a specific commit.</p>
+<p>Tags are useful when you want to mark important points in time, such as:
+* A production data release
+* A specific model training dataset
+* A dataset used for an audit</p>
+<p>Instead of referencing a non-readable <code>commit_id</code>, you can reference the tag directly in your code. For example:
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s2">"s3://example/v1.0/training_dataset/"</span><span class="p">)</span>
+</span></code></pre></div><p></p>
+<p>Here, <code>v1.0</code> is a tag that points to a specific commit. While commits in lakeFS are immutable, a tag is simply a reference 
+to one of those immutable commits. Once created, a tag cannot be updated to point to a different commit (it can only be 
+deleted and recreated).</p>
+<p>As a result, reading data through a tag will always return the exact same data state for as long as that tag exists.</p>
+<p>Using tags makes it easier to work with reproducible datasets in a way that is readable, shareable, and stable over time.</p>
 
 
 

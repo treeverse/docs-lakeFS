@@ -681,15 +681,62 @@ document.addEventListener("DOMContentLoaded", function() {
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1">
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Quality
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data Quality
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../understand/use_cases/cicd_for_data/" class="md-nav__link">
+      <a href="../../understand/use_cases/etl_testing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CI/CD for Data Lakes
+    Isolated Dev &amp; Test Environments
   
 
     
@@ -710,14 +757,14 @@ document.addEventListener("DOMContentLoaded", function() {
   
   
     <li class="md-nav__item">
-      <a href="../../understand/use_cases/etl_testing/" class="md-nav__link">
+      <a href="../../understand/use_cases/cicd_for_data/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    ETL Testing Environment
+    Data Contract Enforcement
   
 
     
@@ -726,6 +773,42 @@ document.addEventListener("DOMContentLoaded", function() {
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/use_cases/rollback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rollback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1236,34 +1319,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
   
     Branch Protection
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../understand/use_cases/rollback/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Rollback &amp; Revert
   
 
     
@@ -5602,25 +5657,57 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Please note that Spark <strong>2.x</strong> is no longer supported with the lakeFS metadata client.</p>
+<p>Spark <strong>2.x</strong> is no longer supported with the lakeFS metadata client.</p>
 </div>
-<p>The Spark metadata client is compiled for Spark 3.1.2 with Hadoop 3.2.1, but
-can work for other Spark versions and higher Hadoop versions.</p>
+<p>The Spark metadata client is cross-compiled for Scala 2.12 and Scala 2.13, supporting both Spark 3.x and Spark 4.x:</p>
+<table>
+<thead>
+<tr>
+<th>Spark version</th>
+<th>Scala version</th>
+<th>Maven artifact</th>
+<th>Java requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.x</td>
+<td>2.12</td>
+<td><code>io.lakefs:lakefs-spark-client_2.12:0.19.0</code></td>
+<td>Java 8+</td>
+</tr>
+<tr>
+<td>4.x</td>
+<td>2.13</td>
+<td><code>io.lakefs:lakefs-spark-client_2.13:0.19.0</code></td>
+<td>Java 17+</td>
+</tr>
+</tbody>
+</table>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="pyspark-spark-shell-spark-submit-spark-sql" name="__tabbed_1" type="radio"><input id="databricks" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="pyspark-spark-shell-spark-submit-spark-sql">PySpark, spark-shell, spark-submit, spark-sql</label><label for="databricks">Databricks</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>Start Spark Shell / PySpark with the <code>--packages</code> flag, for instance:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>spark-shell<span class="w"> </span>--packages<span class="w"> </span>io.lakefs:lakefs-spark-client_2.12:0.17.0
-</span></code></pre></div>
-<p>Alternatively use the assembled jar (an "Überjar") on S3, from
-<code>s3://treeverse-clients-us-east/lakefs-spark-client/0.17.0/lakefs-spark-client-assembly-0.17.0.jar</code>
-by passing its path to <code>--jars</code>.</p>
+<p>Start Spark Shell / PySpark with the <code>--packages</code> flag:</p>
+<p>For <strong>Spark 3.x</strong>:
+</p><div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>spark-shell<span class="w"> </span>--packages<span class="w"> </span>io.lakefs:lakefs-spark-client_2.12:0.19.0
+</span></code></pre></div><p></p>
+<p>For <strong>Spark 4.x</strong>:
+</p><div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>spark-shell<span class="w"> </span>--packages<span class="w"> </span>io.lakefs:lakefs-spark-client_2.13:0.19.0
+</span></code></pre></div><p></p>
+<p>Alternatively use the assembled jar (an "Überjar") on S3 by passing its path to <code>--jars</code>:</p>
+<ul>
+<li>Spark 3.x: <code>s3://treeverse-clients-us-east/lakefs-spark-client/0.19.0/lakefs-spark-client_2.12-assembly-0.19.0.jar</code></li>
+<li>Spark 4.x: <code>s3://treeverse-clients-us-east/lakefs-spark-client/0.19.0/lakefs-spark-client_2.13-assembly-0.19.0.jar</code></li>
+</ul>
 <p>The assembled jar is larger but shades several common libraries.  Use it if Spark
 complains about bad classes or missing methods.</p>
 </div>
 <div class="tabbed-block">
-<p>Include this assembled jar (an "Überjar") from S3, from
-<code>s3://treeverse-clients-us-east/lakefs-spark-client/0.17.0/lakefs-spark-client-assembly-0.17.0.jar</code>.</p>
+<p>Include this assembled jar (an "Überjar") from S3:</p>
+<ul>
+<li>Spark 3.x: <code>s3://treeverse-clients-us-east/lakefs-spark-client/0.19.0/lakefs-spark-client_2.12-assembly-0.19.0.jar</code></li>
+<li>Spark 4.x: <code>s3://treeverse-clients-us-east/lakefs-spark-client/0.19.0/lakefs-spark-client_2.13-assembly-0.19.0.jar</code></li>
+</ul>
 </div>
 </div>
 </div>
@@ -5651,21 +5738,21 @@ complains about bad classes or missing methods.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">¶</a></h2>
 <div class="admonition example">
 <p class="admonition-title">Get a DataFrame for listing all objects in a commit</p>
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="nn">io</span><span class="p">.</span><span class="nn">treeverse</span><span class="p">.</span><span class="nn">clients</span><span class="p">.</span><span class="nc">LakeFSContext</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kd">val</span><span class="w"> </span><span class="n">commitID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"a1b2c3d4"</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kd">val</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">LakeFSContext</span><span class="p">.</span><span class="n">newDF</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span><span class="w"> </span><span class="s">"example-repo"</span><span class="p">,</span><span class="w"> </span><span class="n">commitID</span><span class="p">)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">df</span><span class="p">.</span><span class="n">show</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="cm">/* output example:</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="cm">+------------+--------------------+--------------------+-------------------+----+</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="cm">|        key |             address|                etag|      last_modified|size|</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="cm">+------------+--------------------+--------------------+-------------------+----+</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="cm">|     file_1 |791457df80a0465a8...|7b90878a7c9be5a27...|2021-03-05 11:23:30|  36|</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="cm">|     file_2 |e15be8f6e2a74c329...|95bee987e9504e2c3...|2021-03-05 11:45:25|  36|</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="cm">|     file_3 |f6089c25029240578...|32e2f296cb3867d57...|2021-03-07 13:43:19|  36|</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="cm">|     file_4 |bef38ef97883445c8...|e920efe2bc220ffbb...|2021-03-07 13:43:11|  13|</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="cm">+------------+--------------------+--------------------+-------------------+----+</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="cm">*/</span>
+<div class="language-scala highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="nn">io</span><span class="p">.</span><span class="nn">treeverse</span><span class="p">.</span><span class="nn">clients</span><span class="p">.</span><span class="nc">LakeFSContext</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kd">val</span><span class="w"> </span><span class="n">commitID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"a1b2c3d4"</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kd">val</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">LakeFSContext</span><span class="p">.</span><span class="n">newDF</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span><span class="w"> </span><span class="s">"example-repo"</span><span class="p">,</span><span class="w"> </span><span class="n">commitID</span><span class="p">)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">df</span><span class="p">.</span><span class="n">show</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="cm">/* output example:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="cm">+------------+--------------------+--------------------+-------------------+----+</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="cm">|        key |             address|                etag|      last_modified|size|</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="cm">+------------+--------------------+--------------------+-------------------+----+</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="cm">|     file_1 |791457df80a0465a8...|7b90878a7c9be5a27...|2021-03-05 11:23:30|  36|</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="cm">|     file_2 |e15be8f6e2a74c329...|95bee987e9504e2c3...|2021-03-05 11:45:25|  36|</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="cm">|     file_3 |f6089c25029240578...|32e2f296cb3867d57...|2021-03-07 13:43:19|  36|</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="cm">|     file_4 |bef38ef97883445c8...|e920efe2bc220ffbb...|2021-03-07 13:43:11|  13|</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="cm">+------------+--------------------+--------------------+-------------------+----+</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="cm">*/</span>
 </span></code></pre></div>
 </div>
 
