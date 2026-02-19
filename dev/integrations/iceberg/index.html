@@ -3075,6 +3075,45 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Authorization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -6207,6 +6246,45 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Authorization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Policies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -6682,12 +6760,170 @@ the merge will fail with a conflict that needs to be resolved manually.</p>
 <p>lakeFS provides an OAuth2 token endpoint at <code>/catalog/iceberg/v1/oauth/tokens</code> that clients need to configure. 
 To authenticate, clients must provide their lakeFS access key and secret in the format <code>access_key:secret</code> as the credential.</p>
 <h3 id="authorization">Authorization<a class="headerlink" href="#authorization" title="Permanent link">¶</a></h3>
-<p>The authorization requirements are managed at the lakeFS level, meaning:</p>
-<ul>
-<li>Users need appropriate lakeFS permissions to access repositories and branches</li>
-<li>Table operations require lakeFS permissions on the underlying objects</li>
-<li>The same lakeFS RBAC policies apply to Iceberg catalog operations</li>
-</ul>
+<p>The Iceberg REST Catalog defines its own set of RBAC actions and resources, as described in the <a href="#authorization">Authorization</a> section. When using lakeFS with Iceberg, permissions must be managed through Iceberg RBAC - repository or object-level permissions alone are not sufficient.
+Iceberg catalog permissions supersede any related object permissions — for example, having <code>fs:ReadObject</code> on a 
+repository does not grant <code>catalog:ReadTable</code> on tables in that repository.</p>
+<p>For general information about lakeFS RBAC, see the <a href="../../security/rbac/">RBAC documentation</a>.</p>
+<h4 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">¶</a></h4>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>ARN Structure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Iceberg Namespace</td>
+<td><code>arn:lakefs:catalog:::namespace/{repositoryId}/{namespace}</code></td>
+</tr>
+<tr>
+<td>Iceberg Table</td>
+<td><code>arn:lakefs:catalog:::table/{repositoryId}/{namespace}/{table}</code></td>
+</tr>
+<tr>
+<td>Iceberg View</td>
+<td><code>arn:lakefs:catalog:::view/{repositoryId}/{namespace}/{view}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Namespaces in the ARN use dot-separated notation (e.g., <code>my.namespace</code>). Wildcards (<code>*</code>) are supported for any path component.</p>
+<h4 id="actions">Actions<a class="headerlink" href="#actions" title="Permanent link">¶</a></h4>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Resource</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>catalog:CreateNamespace</code></td>
+<td>Namespace</td>
+<td>Create a namespace</td>
+</tr>
+<tr>
+<td><code>catalog:GetNamespace</code></td>
+<td>Namespace</td>
+<td>Get namespace metadata</td>
+</tr>
+<tr>
+<td><code>catalog:ListNamespaces</code></td>
+<td>Namespace</td>
+<td>List child namespaces</td>
+</tr>
+<tr>
+<td><code>catalog:UpdateNamespace</code></td>
+<td>Namespace</td>
+<td>Update namespace properties</td>
+</tr>
+<tr>
+<td><code>catalog:DeleteNamespace</code></td>
+<td>Namespace</td>
+<td>Delete a namespace</td>
+</tr>
+<tr>
+<td><code>catalog:ListTables</code></td>
+<td>Namespace</td>
+<td>List tables within a namespace</td>
+</tr>
+<tr>
+<td><code>catalog:CreateTable</code></td>
+<td>Table</td>
+<td>Create a table</td>
+</tr>
+<tr>
+<td><code>catalog:ReadTable</code></td>
+<td>Table</td>
+<td>Read table metadata</td>
+</tr>
+<tr>
+<td><code>catalog:UpdateTable</code></td>
+<td>Table</td>
+<td>Update or rename a table (commit, schema, etc)</td>
+</tr>
+<tr>
+<td><code>catalog:DeleteTable</code></td>
+<td>Table</td>
+<td>Delete a table</td>
+</tr>
+<tr>
+<td><code>catalog:ListViews</code></td>
+<td>Namespace</td>
+<td>List views within a namespace</td>
+</tr>
+<tr>
+<td><code>catalog:CreateView</code></td>
+<td>View</td>
+<td>Create a view</td>
+</tr>
+<tr>
+<td><code>catalog:ReadView</code></td>
+<td>View</td>
+<td>Read view metadata</td>
+</tr>
+<tr>
+<td><code>catalog:UpdateView</code></td>
+<td>View</td>
+<td>Update, replace or rename a view</td>
+</tr>
+<tr>
+<td><code>catalog:DeleteView</code></td>
+<td>View</td>
+<td>Delete a view</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example-policies">Example Policies<a class="headerlink" href="#example-policies" title="Permanent link">¶</a></h4>
+<p><strong>Read-only access to all tables and namespaces:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"catalog:ReadTable"</span><span class="p">],</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">      </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:catalog:::table/*/*/*"</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">      </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"catalog:ListNamespaces"</span><span class="p">,</span><span class="w"> </span><span class="s2">"catalog:GetNamespace"</span><span class="p">],</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">      </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:catalog:::namespace/*/*"</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Full access to tables in a specific repository:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"catalog:*"</span><span class="p">],</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:catalog:::table/my-repo/*/*"</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">      </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"catalog:*"</span><span class="p">],</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">      </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:catalog:::namespace/my-repo/*"</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Allow reading all tables except a specific one:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"catalog:ReadTable"</span><span class="p">],</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">      </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:catalog:::table/my-repo/*/*"</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">      </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"deny"</span><span class="p">,</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">      </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"catalog:ReadTable"</span><span class="p">],</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">      </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:catalog:::table/my-repo/my.namespace/secret_table"</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="p">}</span>
+</span></code></pre></div>
 <h3 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">¶</a></h3>
 <ol>
 <li><strong>Table Maintenance</strong>:<ul>
@@ -6717,10 +6953,10 @@ so that lakeFS can automatically resolve conflicts when merging branches with co
 <li>Use the Spark Java API (not SQL procedures) with Iceberg v1.5 or newer</li>
 <li>Mark compaction operations with the following property and value using <code>snapshotProperty()</code>:</li>
 </ul>
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nc">SparkActions</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">spark</span><span class="p">)</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="p">.</span><span class="n">rewriteDataFiles</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="p">.</span><span class="n">snapshotProperty</span><span class="p">(</span><span class="s">"lakefs.compaction.operation-id"</span><span class="p">,</span><span class="w"> </span><span class="s">"rewrite-data-files"</span><span class="p">)</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="p">.</span><span class="n">execute</span><span class="p">();</span>
+<div class="language-scala highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nc">SparkActions</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">spark</span><span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="p">.</span><span class="n">rewriteDataFiles</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="p">.</span><span class="n">snapshotProperty</span><span class="p">(</span><span class="s">"lakefs.compaction.operation-id"</span><span class="p">,</span><span class="w"> </span><span class="s">"rewrite-data-files"</span><span class="p">)</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="p">.</span><span class="n">execute</span><span class="p">();</span>
 </span></code></pre></div>
 <p><strong>Conflict Resolution:</strong></p>
 <p>When merging branches, lakeFS automatically resolves conflicts if both branches have compaction commits for the same
@@ -6865,35 +7101,35 @@ Each remote catalog requires a unique identifier and type-specific connection pr
 </div>
 <h4 id="aws-glue-data-catalog">AWS Glue Data Catalog<a class="headerlink" href="#aws-glue-data-catalog" title="Permanent link">¶</a></h4>
 <p>Configure an AWS Glue catalog by specifying the region and AWS credentials:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">iceberg_catalog</span><span class="p">:</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">remotes</span><span class="p">:</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_glue_us_east_1</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">glue</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">glue</span><span class="p">:</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">        </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-glue-key&gt;</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-glue-secret&gt;</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">iceberg_catalog</span><span class="p">:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">remotes</span><span class="p">:</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_glue_us_east_1</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">glue</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">      </span><span class="nt">glue</span><span class="p">:</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">        </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-glue-key&gt;</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">        </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-glue-secret&gt;</span>
 </span></code></pre></div>
 <h4 id="iceberg-rest-catalog">Iceberg REST Catalog<a class="headerlink" href="#iceberg-rest-catalog" title="Permanent link">¶</a></h4>
 <p>Configure a generic Iceberg REST catalog with basic authentication:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">iceberg_catalog</span><span class="p">:</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">remotes</span><span class="p">:</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote_catalog</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rest</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="nt">rest</span><span class="p">:</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://catalog.example.com/iceberg/api</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">        </span><span class="nt">credential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;client-id&gt;:&lt;client-secret&gt;</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">iceberg_catalog</span><span class="p">:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">remotes</span><span class="p">:</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote_catalog</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rest</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">      </span><span class="nt">rest</span><span class="p">:</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://catalog.example.com/iceberg/api</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="nt">credential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;client-id&gt;:&lt;client-secret&gt;</span>
 </span></code></pre></div>
 <p>Or with OAuth2 client credentials flow:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">iceberg_catalog</span><span class="p">:</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">remotes</span><span class="p">:</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote_catalog</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rest</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="nt">rest</span><span class="p">:</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://catalog.example.com/iceberg/api</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="nt">credential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;client-id&gt;:&lt;client-secret&gt;</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">        </span><span class="nt">oauth_server_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://auth.example.com/oauth/tokens</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">        </span><span class="nt">oauth_scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog:read catalog:write</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">iceberg_catalog</span><span class="p">:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">remotes</span><span class="p">:</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remote_catalog</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rest</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">      </span><span class="nt">rest</span><span class="p">:</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://catalog.example.com/iceberg/api</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">        </span><span class="nt">credential</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;client-id&gt;:&lt;client-secret&gt;</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">        </span><span class="nt">oauth_server_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://auth.example.com/oauth/tokens</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">        </span><span class="nt">oauth_scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">catalog:read catalog:write</span>
 </span></code></pre></div>
 <h3 id="push-to-remote">Push to remote<a class="headerlink" href="#push-to-remote" title="Permanent link">¶</a></h3>
 <p>Push operations register a table from lakeFS into a remote catalog.
@@ -6905,23 +7141,23 @@ The table's metadata and data remain in lakeFS-managed storage, which are used a
 - <code>force_update</code>: (optional, default: <code>false</code>) Override the table if it already exists in the remote catalog
 - <code>create_namespace</code>: (optional, default: <code>false</code>) Create the namespace in the remote catalog if it doesn't exist</p>
 <p><strong>Example</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"https://lakefs.example.com/iceberg/remotes/aws_glue_us_east_1/push"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$LAKEFS_ACCESS_TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="s1">    "source": {</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="s1">      "repository_id": "my-repo",</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="s1">      "reference_id": "main",</span>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="s1">      "namespace": ["default", "features"],</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="s1">      "table": "image_properties"</span>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="s1">    },</span>
-</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="s1">    "destination": {</span>
-</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="s1">      "namespace": ["main_features"],</span>
-</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="s1">      "table": "image_properties"</span>
-</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="s1">    },</span>
-</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="s1">    "create_namespace": true,</span>
-</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="s1">    "force_update": true</span>
-</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="s1">  }'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"https://lakefs.example.com/iceberg/remotes/aws_glue_us_east_1/push"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$LAKEFS_ACCESS_TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="s1">    "source": {</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="s1">      "repository_id": "my-repo",</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="s1">      "reference_id": "main",</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="s1">      "namespace": ["default", "features"],</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="s1">      "table": "image_properties"</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="s1">    },</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="s1">    "destination": {</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="s1">      "namespace": ["main_features"],</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="s1">      "table": "image_properties"</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="s1">    },</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="s1">    "create_namespace": true,</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="s1">    "force_update": true</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="s1">  }'</span>
 </span></code></pre></div>
 <p>This example pushes the table <code>my-repo.main.default.features.image_properties</code> from lakeFS to the AWS Glue catalog as <code>main_features.image_properties</code>.
 It creates the remote namespace if needed (since <code>create_namespace: true</code>),
@@ -6936,23 +7172,23 @@ This is useful after external tools have modified a table previously pushed from
 - <code>force_update</code>: (optional, default: <code>false</code>) Override the table in lakeFS if metadata conflicts exist
 - <code>create_namespace</code>: (optional, default: <code>false</code>) Create the namespace in lakeFS if it doesn't exist</p>
 <p><strong>Example</strong>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"https://lakefs.example.com/iceberg/remotes/aws_glue_us_east_1/pull"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$LAKEFS_ACCESS_TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="s1">    "source": {</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="s1">      "namespace": ["main_features"],</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="s1">      "table": "image_properties"</span>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="s1">    },</span>
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="s1">    "destination": {</span>
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="s1">      "repository_id": "my-repo",</span>
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="s1">      "reference_id": "main",</span>
-</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="s1">      "namespace": ["default", "features"],</span>
-</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="s1">      "table": "image_properties"</span>
-</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="s1">    }</span>
-</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="s1">    "create_namespace": true,</span>
-</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="s1">    "force_update": true</span>
-</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="s1">  }'</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"https://lakefs.example.com/iceberg/remotes/aws_glue_us_east_1/pull"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer </span><span class="nv">$LAKEFS_ACCESS_TOKEN</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="s1">    "source": {</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="s1">      "namespace": ["main_features"],</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="s1">      "table": "image_properties"</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="s1">    },</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="s1">    "destination": {</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="s1">      "repository_id": "my-repo",</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="s1">      "reference_id": "main",</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="s1">      "namespace": ["default", "features"],</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="s1">      "table": "image_properties"</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="s1">    }</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="s1">    "create_namespace": true,</span>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="s1">    "force_update": true</span>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="s1">  }'</span>
 </span></code></pre></div>
 <p>This example pulls changes from the Glue table <code>main_features.image_properties</code> back into the lakeFS table <code>my-repo.main.default.features.image_properties</code>.
 It creates the namespace in lakeFS if needed (since <code>create_namespace: true</code>),
@@ -6990,16 +7226,16 @@ and overwrites any existing table or possible recent updates committed to it (si
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Use the following Maven dependency to install the lakeFS custom catalog:</p>
-<div class="language-xml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">&lt;dependency&gt;</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nt">&lt;groupId&gt;</span>io.lakefs<span class="nt">&lt;/groupId&gt;</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nt">&lt;artifactId&gt;</span>lakefs-iceberg<span class="nt">&lt;/artifactId&gt;</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="nt">&lt;version&gt;</span>0.1.4<span class="nt">&lt;/version&gt;</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="nt">&lt;/dependency&gt;</span>
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nt">&lt;dependency&gt;</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nt">&lt;groupId&gt;</span>io.lakefs<span class="nt">&lt;/groupId&gt;</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nt">&lt;artifactId&gt;</span>lakefs-iceberg<span class="nt">&lt;/artifactId&gt;</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="nt">&lt;version&gt;</span>0.1.4<span class="nt">&lt;/version&gt;</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="nt">&lt;/dependency&gt;</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>Include the <code>lakefs-iceberg</code> jar in your package list along with Iceberg. For example: </p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.jars.packages"</span><span class="p">,</span> <span class="s2">"org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.3.0,io.lakefs:lakefs-iceberg:0.1.4"</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.jars.packages"</span><span class="p">,</span> <span class="s2">"org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.3.0,io.lakefs:lakefs-iceberg:0.1.4"</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -7010,30 +7246,30 @@ and overwrites any existing table or possible recent updates committed to it (si
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Set up the Spark SQL catalog: 
-</p><div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs"</span><span class="p">,</span> <span class="s2">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">)</span> \
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span> <span class="s2">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">)</span> \
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"lakefs://</span><span class="si">{</span><span class="n">repo_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> \ 
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs.cache-enabled"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">)</span>
+</p><div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs"</span><span class="p">,</span> <span class="s2">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">)</span> \
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span> <span class="s2">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">)</span> \
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"lakefs://</span><span class="si">{</span><span class="n">repo_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> \ 
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.sql.catalog.lakefs.cache-enabled"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">)</span>
 </span></code></pre></div><p></p>
 <p>Configure the S3A Hadoop FileSystem with your lakeFS connection details.
 Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3.impl"</span><span class="p">,</span> <span class="s2">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="p">)</span> \
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.endpoint"</span><span class="p">,</span> <span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">)</span> \
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.access.key"</span><span class="p">,</span> <span class="s2">"AKIAIO5FODNN7EXAMPLE"</span><span class="p">)</span> \
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.secret.key"</span><span class="p">,</span> <span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span> \
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3.impl"</span><span class="p">,</span> <span class="s2">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="p">)</span> \
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.endpoint"</span><span class="p">,</span> <span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="p">)</span> \
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.access.key"</span><span class="p">,</span> <span class="s2">"AKIAIO5FODNN7EXAMPLE"</span><span class="p">)</span> \
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.secret.key"</span><span class="p">,</span> <span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">)</span> \
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>spark-shell<span class="w"> </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs<span class="o">=</span><span class="s2">"org.apache.iceberg.spark.SparkCatalog"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">    </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs.catalog-impl<span class="o">=</span><span class="s2">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs.warehouse<span class="o">=</span><span class="s2">"lakefs://example-repo"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs.cache-enabled<span class="o">=</span><span class="s2">"false"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3.impl<span class="o">=</span><span class="s2">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.access.key<span class="o">=</span><span class="s2">"AKIAIO5FODNN7EXAMPLE"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="s2">"true"</span>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>spark-shell<span class="w"> </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs<span class="o">=</span><span class="s2">"org.apache.iceberg.spark.SparkCatalog"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs.catalog-impl<span class="o">=</span><span class="s2">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs.warehouse<span class="o">=</span><span class="s2">"lakefs://example-repo"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span>--conf<span class="w"> </span>spark.sql.catalog.lakefs.cache-enabled<span class="o">=</span><span class="s2">"false"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3.impl<span class="o">=</span><span class="s2">"org.apache.hadoop.fs.s3a.S3AFileSystem"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.endpoint<span class="o">=</span><span class="s2">"https://example-org.us-east-1.lakefscloud.io"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.access.key<span class="o">=</span><span class="s2">"AKIAIO5FODNN7EXAMPLE"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.secret.key<span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K3MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.fs.s3a.path.style.access<span class="o">=</span><span class="s2">"true"</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -7043,50 +7279,50 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 <h4>Create a table</h4>
 
 <p>To create a table on your main branch, use the following syntax:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="n">string</span><span class="p">);</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="n">string</span><span class="p">);</span>
 </span></code></pre></div>
 <h4>Insert data into the table</h4>
 
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'data1'</span><span class="p">);</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">'data2'</span><span class="p">);</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'data1'</span><span class="p">);</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s1">'data2'</span><span class="p">);</span>
 </span></code></pre></div>
 <h4>Create a branch</h4>
 
 <p>We can now commit the creation of the table to the main branch:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>lakectl<span class="w"> </span>commit<span class="w"> </span>lakefs://example-repo/main<span class="w"> </span>-m<span class="w"> </span><span class="s2">"my first iceberg commit"</span>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>lakectl<span class="w"> </span>commit<span class="w"> </span>lakefs://example-repo/main<span class="w"> </span>-m<span class="w"> </span><span class="s2">"my first iceberg commit"</span>
 </span></code></pre></div>
 <p>Then, create a branch:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>lakectl<span class="w"> </span>branch<span class="w"> </span>create<span class="w"> </span>lakefs://example-repo/dev<span class="w"> </span>-s<span class="w"> </span>lakefs://example-repo/main
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>lakectl<span class="w"> </span>branch<span class="w"> </span>create<span class="w"> </span>lakefs://example-repo/dev<span class="w"> </span>-s<span class="w"> </span>lakefs://example-repo/main
 </span></code></pre></div>
 <h4>Make changes on the branch</h4>
 
 <p>We can now make changes on the branch:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">'data3'</span><span class="p">);</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s1">'data3'</span><span class="p">);</span>
 </span></code></pre></div>
 <h4>Query the table</h4>
 
 <p>If we query the table on the branch, we will see the data we inserted:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">dev</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
 </span></code></pre></div>
 <p>Results in:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>+----+------+
-</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>| id | data |
-</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>+----+------+
-</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>| 1  | data1|
-</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>| 2  | data2|
-</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>| 3  | data3|
-</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>+----+------+
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>+----+------+
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>| id | data |
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>+----+------+
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>| 1  | data1|
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>| 2  | data2|
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>| 3  | data3|
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>+----+------+
 </span></code></pre></div>
 <p>However, if we query the table on the main branch, we will not see the new changes:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">lakefs</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">db1</span><span class="p">.</span><span class="n">table1</span><span class="p">;</span>
 </span></code></pre></div>
 <p>Results in:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>+----+------+
-</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>| id | data |
-</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>+----+------+
-</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>| 1  | data1|
-</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>| 2  | data2|
-</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>+----+------+
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>+----+------+
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>| id | data |
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>+----+------+
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>| 1  | data1|
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>| 2  | data2|
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>+----+------+
 </span></code></pre></div>
 <h3>Migrating an existing Iceberg table to the Hadoop Catalog</h3>
 
@@ -7096,32 +7332,32 @@ Note that these are your lakeFS endpoint and credentials, not your S3 ones.</p>
 <li>
 <p>Initiate a spark session that can interact with the source iceberg table and the target lakeFS catalog. 
     Here's an example of Hadoop and S3 session and lakeFS catalog with <a href="https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.4/bk_cloud-data-access/content/s3-per-bucket-configs.html">per-bucket config</a>: </p>
-<p></p><div class="language-java highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">SparkConf</span><span class="w"> </span><span class="n">conf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SparkConf</span><span class="p">();</span>
-</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span><span class="w"> </span><span class="s">"true"</span><span class="p">);</span>
-</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
-</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1">// set hadoop on S3 config (source tables we want to copy) for spark</span>
-</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.hadoop_prod"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">);</span>
-</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.hadoop_prod.type"</span><span class="p">,</span><span class="w"> </span><span class="s">"hadoop"</span><span class="p">);</span>
-</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.hadoop_prod.warehouse"</span><span class="p">,</span><span class="w"> </span><span class="s">"s3a://my-bucket/warehouse/hadoop/"</span><span class="p">);</span>
-</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.extensions"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"</span><span class="p">);</span>
-</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.my-bucket.access.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;AWS_ACCESS_KEY&gt;"</span><span class="p">);</span>
-</span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.my-bucket.secret.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;AWS_SECRET_KEY&gt;"</span><span class="p">);</span>
-</span><span id="__span-27-11"><a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a>
-</span><span id="__span-27-12"><a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a><span class="c1">// set lakeFS config (target catalog and repository)</span>
-</span><span id="__span-27-13"><a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">);</span>
-</span><span id="__span-27-14"><a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span><span class="w"> </span><span class="s">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">);</span>
-</span><span id="__span-27-15"><a id="__codelineno-27-15" name="__codelineno-27-15" href="#__codelineno-27-15"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span><span class="w"> </span><span class="s">"lakefs://example-repo"</span><span class="p">);</span>
-</span><span id="__span-27-16"><a id="__codelineno-27-16" name="__codelineno-27-16" href="#__codelineno-27-16"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.extensions"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"</span><span class="p">);</span>
-</span><span id="__span-27-17"><a id="__codelineno-27-17" name="__codelineno-27-17" href="#__codelineno-27-17"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.access.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;LAKEFS_ACCESS_KEY&gt;"</span><span class="p">);</span>
-</span><span id="__span-27-18"><a id="__codelineno-27-18" name="__codelineno-27-18" href="#__codelineno-27-18"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.secret.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;LAKEFS_SECRET_KEY&gt;"</span><span class="p">);</span>
-</span><span id="__span-27-19"><a id="__codelineno-27-19" name="__codelineno-27-19" href="#__codelineno-27-19"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.endpoint"</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;LAKEFS_ENDPOINT&gt;"</span><span class="p">);</span>
+<p></p><div class="language-java highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">SparkConf</span><span class="w"> </span><span class="n">conf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SparkConf</span><span class="p">();</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.path.style.access"</span><span class="p">,</span><span class="w"> </span><span class="s">"true"</span><span class="p">);</span>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1">// set hadoop on S3 config (source tables we want to copy) for spark</span>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.hadoop_prod"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">);</span>
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.hadoop_prod.type"</span><span class="p">,</span><span class="w"> </span><span class="s">"hadoop"</span><span class="p">);</span>
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.hadoop_prod.warehouse"</span><span class="p">,</span><span class="w"> </span><span class="s">"s3a://my-bucket/warehouse/hadoop/"</span><span class="p">);</span>
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.extensions"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"</span><span class="p">);</span>
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.my-bucket.access.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;AWS_ACCESS_KEY&gt;"</span><span class="p">);</span>
+</span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.my-bucket.secret.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;AWS_SECRET_KEY&gt;"</span><span class="p">);</span>
+</span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>
+</span><span id="__span-30-12"><a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="c1">// set lakeFS config (target catalog and repository)</span>
+</span><span id="__span-30-13"><a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.SparkCatalog"</span><span class="p">);</span>
+</span><span id="__span-30-14"><a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.catalog-impl"</span><span class="p">,</span><span class="w"> </span><span class="s">"io.lakefs.iceberg.LakeFSCatalog"</span><span class="p">);</span>
+</span><span id="__span-30-15"><a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.catalog.lakefs.warehouse"</span><span class="p">,</span><span class="w"> </span><span class="s">"lakefs://example-repo"</span><span class="p">);</span>
+</span><span id="__span-30-16"><a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.sql.extensions"</span><span class="p">,</span><span class="w"> </span><span class="s">"org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"</span><span class="p">);</span>
+</span><span id="__span-30-17"><a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.access.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;LAKEFS_ACCESS_KEY&gt;"</span><span class="p">);</span>
+</span><span id="__span-30-18"><a id="__codelineno-30-18" name="__codelineno-30-18" href="#__codelineno-30-18"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.secret.key"</span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;LAKEFS_SECRET_KEY&gt;"</span><span class="p">);</span>
+</span><span id="__span-30-19"><a id="__codelineno-30-19" name="__codelineno-30-19" href="#__codelineno-30-19"></a><span class="n">conf</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">"spark.hadoop.fs.s3a.bucket.example-repo.endpoint"</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">"&lt;LAKEFS_ENDPOINT&gt;"</span><span class="p">);</span>
 </span></code></pre></div>
 3. Create Schema in lakeFS and copy the data<p></p>
 <p>Example of copy with spark-sql: </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1">-- Create Iceberg Schema in lakeFS</span>
-</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">&lt;</span><span class="n">lakefs</span><span class="o">-</span><span class="k">catalog</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">branch</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">db</span><span class="o">&gt;</span>
-</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="c1">-- Create new iceberg table in lakeFS from the source table (pre-lakeFS)</span>
-</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">&lt;</span><span class="n">lakefs</span><span class="o">-</span><span class="k">catalog</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">branch</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">db</span><span class="o">&gt;</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">iceberg</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">&lt;</span><span class="n">iceberg</span><span class="o">-</span><span class="n">original</span><span class="o">-</span><span class="k">table</span><span class="o">&gt;</span>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c1">-- Create Iceberg Schema in lakeFS</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">&lt;</span><span class="n">lakefs</span><span class="o">-</span><span class="k">catalog</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">branch</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">db</span><span class="o">&gt;</span>
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="c1">-- Create new iceberg table in lakeFS from the source table (pre-lakeFS)</span>
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="o">&lt;</span><span class="n">lakefs</span><span class="o">-</span><span class="k">catalog</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">branch</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">db</span><span class="o">&gt;</span><span class="w"> </span><span class="k">USING</span><span class="w"> </span><span class="n">iceberg</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">&lt;</span><span class="n">iceberg</span><span class="o">-</span><span class="n">original</span><span class="o">-</span><span class="k">table</span><span class="o">&gt;</span>
 </span></code></pre></div>
 </li>
 </ol>
