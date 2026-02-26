@@ -2106,6 +2106,34 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Using S3-compatible clients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-using-aws-profile-with-credentials-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Using AWS profile with credentials file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-using-configuration-file-with-custom-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Using configuration file with custom endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -6080,6 +6108,34 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Using S3-compatible clients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-using-aws-profile-with-credentials-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Using AWS profile with credentials file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-using-configuration-file-with-custom-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Using configuration file with custom endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -6302,7 +6358,7 @@ the <code>externallakefs</code> user.</p>
 <p>To run <code>lakefs-sgc</code>, you need both AWS (or S3-compatible) storage and lakeFS user permissions as outlined below:</p>
 <h4 id="storage-permissions">Storage permissions<a class="headerlink" href="#storage-permissions" title="Permanent link">¶</a></h4>
 <p>The minimum required permissions for AWS or S3-compatible storage are:</p>
-<p></p><div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="p">{</span>
@@ -6336,7 +6392,7 @@ the <code>externallakefs</code> user.</p>
 </span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="w">  </span><span class="p">]</span>
 </span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="p">}</span>
 </span></code></pre></div>
-In this example, the repository storage namespace is <code>s3://some-bucket/some/prefix</code>.<p></p>
+<p>In this example, the repository storage namespace is <code>s3://some-bucket/some/prefix</code>.</p>
 <h4 id="lakefs-permissions">lakeFS permissions<a class="headerlink" href="#lakefs-permissions" title="Permanent link">¶</a></h4>
 <p>The minimum required permissions for lakeFS are:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
@@ -6357,24 +6413,46 @@ In this example, the repository storage namespace is <code>s3://some-bucket/some
 </span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="credentials">Credentials<a class="headerlink" href="#credentials" title="Permanent link">¶</a></h3>
-<p>Standalone GC supports S3 and S3-compatible storage backends and relies on AWS credentials for authentication. To set up
-credentials on the <code>lakefs-sgc</code> docker container, follow AWS guidelines, such as those outlined in <a href="https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-configure.html">this guide</a>.
-For details on how to pass credentials to <code>lakefs-sgc</code>, refer to the instructions in <a href="#how-to-run-standalone-gc">How to Run Standalone GC</a>.</p>
+<p>Standalone GC supports S3 and S3-compatible storage backends and relies on AWS credentials for authentication. There are several ways to provide credentials:</p>
+<ol>
+<li><strong>AWS credentials file</strong>: Follow AWS guidelines outlined in <a href="https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-configure.html">this guide</a>.</li>
+<li><strong>AWS profile</strong>: Use the <code>aws.profile</code> configuration option to specify an AWS profile.</li>
+<li><strong>Static credentials</strong>: Provide credentials directly via configuration using <code>aws.s3.credentials.access_key_id</code>, <code>aws.s3.credentials.secret_access_key</code>, and optionally <code>aws.s3.credentials.session_token</code>.</li>
+</ol>
+<p>For details on how to pass credentials to <code>lakefs-sgc</code>, refer to the instructions in <a href="#how-to-run-standalone-gc">How to Run Standalone GC</a>.</p>
 <h3 id="using-s3-compatible-clients">Using S3-compatible clients<a class="headerlink" href="#using-s3-compatible-clients" title="Permanent link">¶</a></h3>
 <p><code>lakefs-sgc</code> leverages AWS credentials to work seamlessly with S3-compatible storage solutions, such as <a href="https://min.io/">MinIO</a>. 
-Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-compatible client:</p>
+There are two ways to configure S3-compatible endpoints:</p>
+<h4 id="option-1-using-aws-profile-with-credentials-file">Option 1: Using AWS profile with credentials file<a class="headerlink" href="#option-1-using-aws-profile-with-credentials-file" title="Permanent link">¶</a></h4>
 <ol>
 <li>Add a profile to your <code>~/.aws/config</code> file:
-    <code>[profile minio]
-   region = us-east-1
-   endpoint_url = &lt;MinIO URL&gt;
-   s3 =
-       signature_version = s3v4</code></li>
+    <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[profile minio]
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>region = us-east-1
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>endpoint_url = &lt;MinIO URL&gt;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>s3 =
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    signature_version = s3v4
+</span></code></pre></div></li>
 <li>Add an access and secret keys to your <code>~/.aws/credentials</code> file:
-    <code>[minio]
-   aws_access_key_id     = &lt;MinIO access key&gt;
-   aws_secret_access_key = &lt;MinIO secret key&gt;</code></li>
+    <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>[minio]
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>aws_access_key_id     = &lt;MinIO access key&gt;
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>aws_secret_access_key = &lt;MinIO secret key&gt;
+</span></code></pre></div></li>
 <li>Run the <code>lakefs-sgc</code> docker image and pass it the <code>minio</code> profile - see <a href="./#mounting-the-aws-directory">example</a> below.</li>
+</ol>
+<h4 id="option-2-using-configuration-file-with-custom-endpoint">Option 2: Using configuration file with custom endpoint<a class="headerlink" href="#option-2-using-configuration-file-with-custom-endpoint" title="Permanent link">¶</a></h4>
+<p>Alternatively, you can configure the S3-compatible endpoint directly in the configuration file:</p>
+<ol>
+<li>Create a config file with your S3-compatible endpoint details:
+    <div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">aws</span><span class="p">:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">s3</span><span class="p">:</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://your-minio-endpoint.example.com</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">addressing_path_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">credentials</span><span class="p">:</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">      </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;access key&gt;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">      </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;secret key&gt;</span>
+</span></code></pre></div></li>
+<li>Run the docker image and pass the config file using the <code>--config</code> flag.</li>
 </ol>
 <h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">¶</a></h3>
 <p>The following configuration keys are available:</p>
@@ -6413,16 +6491,52 @@ Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-comp
 <td>string</td>
 </tr>
 <tr>
+<td><code>aws.region</code></td>
+<td>AWS region for S3 operations</td>
+<td>NOT SET</td>
+<td>string (e.g., "us-east-1")</td>
+</tr>
+<tr>
+<td><code>aws.profile</code></td>
+<td>AWS credentials profile to use</td>
+<td>NOT SET</td>
+<td>string</td>
+</tr>
+<tr>
 <td><code>aws.max_page_size</code></td>
 <td>Max number of items per page when listing objects in AWS</td>
 <td>1000</td>
 <td>number</td>
 </tr>
 <tr>
+<td><code>aws.s3.endpoint</code></td>
+<td>Custom S3-compatible endpoint URL (e.g., for MinIO)</td>
+<td>NOT SET</td>
+<td>URL</td>
+</tr>
+<tr>
 <td><code>aws.s3.addressing_path_style</code></td>
 <td>Whether or not to use <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html#path-style-access">path-style</a> when reading objects from AWS</td>
 <td>true</td>
 <td>boolean</td>
+</tr>
+<tr>
+<td><code>aws.s3.credentials.access_key_id</code></td>
+<td>Static AWS access key ID for S3</td>
+<td>NOT SET</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>aws.s3.credentials.secret_access_key</code></td>
+<td>Static AWS secret access key for S3</td>
+<td>NOT SET</td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>aws.s3.credentials.session_token</code></td>
+<td>AWS session token for temporary credentials</td>
+<td>NOT SET</td>
+<td>string</td>
 </tr>
 <tr>
 <td><code>lakefs.endpoint_url</code></td>
@@ -6447,21 +6561,34 @@ Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-comp
 <p>These keys can be provided in the following ways:
 1. Config file: Create a YAML file with the keys, each <code>.</code> is a new nesting level. \
    For example, <code>logging.level</code> will be:
-   </p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">logging</span><span class="p">:</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span><span class="w"> </span><span class="c1"># info,debug...</span>
+   </p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">logging</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span><span class="w"> </span><span class="c1"># info,debug...</span>
 </span></code></pre></div>
    Then, pass it to the program using the <code>--config path/to/config.yaml</code> argument.
 2. Environment variables: by setting <code>LAKEFS_SGC_&lt;KEY&gt;</code>, with uppercase letters and <code>.</code>s converted to <code>_</code>s. \
    For example <code>logging.level</code> will be:
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKEFS_SGC_LOGGING_LEVEL</span><span class="o">=</span>info
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LAKEFS_SGC_LOGGING_LEVEL</span><span class="o">=</span>info
 </span></code></pre></div><p></p>
 <p>Example (minimalistic) config file:
-</p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">logging</span><span class="p">:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debug</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nt">lakefs</span><span class="p">:</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://your.url/api/v1</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakeFS access key&gt;</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakeFS secret key&gt;</span>
+</p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">logging</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debug</span>
+</span></code></pre></div><p></p>
+<p>Example config file with custom S3 endpoint and static credentials:
+</p><div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">logging</span><span class="p">:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debug</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nt">aws</span><span class="p">:</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nt">s3</span><span class="p">:</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://my-s3-endpoint.example.com</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span><span class="nt">addressing_path_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="nt">credentials</span><span class="p">:</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">      </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;AWS access key&gt;</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">      </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;AWS secret key&gt;</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">      </span><span class="nt">session_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;optional AWS session token&gt;</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="nt">lakefs</span><span class="p">:</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://your.url/api/v1</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakeFS access key&gt;</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;lakeFS secret key&gt;</span>
 </span></code></pre></div><p></p>
 <h2 id="how-to-run-standalone-gc">How to Run Standalone GC?<a class="headerlink" href="#how-to-run-standalone-gc" title="Permanent link">¶</a></h2>
 <h3 id="command-line-reference">Command line reference<a class="headerlink" href="#command-line-reference" title="Permanent link">¶</a></h3>
@@ -6481,38 +6608,38 @@ Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-comp
 </ul>
 <p>To run standalone GC, choose the method you prefer to pass AWS credentials and invoke the commands below.  </p>
 <h4 id="directly-passing-in-credentials-parsed-from-awscredentials">Directly passing in credentials parsed from <code>~/.aws/credentials</code><a class="headerlink" href="#directly-passing-in-credentials-parsed-from-awscredentials" title="Permanent link">¶</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_REGION</span><span class="o">=</span>&lt;region&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>grep<span class="w"> </span><span class="s1">'aws_session_token'</span><span class="w"> </span>~/.aws/credentials<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">' = '</span><span class="w"> </span><span class="s1">'{print $2}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>grep<span class="w"> </span><span class="s1">'aws_access_key_id'</span><span class="w"> </span>~/.aws/credentials<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">' = '</span><span class="w"> </span><span class="s1">'{print $2}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>grep<span class="w"> </span><span class="s1">'aws_secret_access_key'</span><span class="w"> </span>~/.aws/credentials<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">' = '</span><span class="w"> </span><span class="s1">'{print $2}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ENDPOINT_URL</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>endpoint<span class="w"> </span>URL&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>accesss<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>secret<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LOGGING_LEVEL</span><span class="o">=</span>debug<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span>treeverse/lakefs-sgc:&lt;tag&gt;<span class="w"> </span>run<span class="w"> </span>&lt;repository&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_REGION</span><span class="o">=</span>&lt;region&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>grep<span class="w"> </span><span class="s1">'aws_session_token'</span><span class="w"> </span>~/.aws/credentials<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">' = '</span><span class="w"> </span><span class="s1">'{print $2}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>grep<span class="w"> </span><span class="s1">'aws_access_key_id'</span><span class="w"> </span>~/.aws/credentials<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">' = '</span><span class="w"> </span><span class="s1">'{print $2}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>grep<span class="w"> </span><span class="s1">'aws_secret_access_key'</span><span class="w"> </span>~/.aws/credentials<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span>-F<span class="s1">' = '</span><span class="w"> </span><span class="s1">'{print $2}'</span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ENDPOINT_URL</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>endpoint<span class="w"> </span>URL&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>accesss<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>secret<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LOGGING_LEVEL</span><span class="o">=</span>debug<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">    </span>treeverse/lakefs-sgc:&lt;tag&gt;<span class="w"> </span>run<span class="w"> </span>&lt;repository&gt;
 </span></code></pre></div>
 <h4 id="mounting-the-aws-directory">Mounting the <code>~/.aws</code> directory<a class="headerlink" href="#mounting-the-aws-directory" title="Permanent link">¶</a></h4>
 <p>When working with S3-compatible clients, it's often more convenient to mount the <code>~/.aws</code> directory and pass in the desired profile.</p>
 <p>First, change the permissions for <code>~/.aws/*</code> to allow the docker container to read this directory:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>~/.aws/*
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>~/.aws/*
 </span></code></pre></div>
 <p>Then, run the docker image and mount <code>~/.aws</code> to the <code>lakefs-sgc</code> home directory on the docker container:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>--network<span class="o">=</span>host<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>-v<span class="w"> </span>~/.aws:/home/lakefs-sgc/.aws<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>-e<span class="w"> </span><span class="nv">AWS_REGION</span><span class="o">=</span>us-east-1<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>-e<span class="w"> </span><span class="nv">AWS_PROFILE</span><span class="o">=</span>&lt;profile&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ENDPOINT_URL</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>endpoint<span class="w"> </span>URL&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>accesss<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>secret<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LOGGING_LEVEL</span><span class="o">=</span>debug<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>treeverse/lakefs-sgc:&lt;tag&gt;<span class="w"> </span>run<span class="w"> </span>&lt;repository&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>--network<span class="o">=</span>host<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>-v<span class="w"> </span>~/.aws:/home/lakefs-sgc/.aws<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>-e<span class="w"> </span><span class="nv">AWS_REGION</span><span class="o">=</span>us-east-1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>-e<span class="w"> </span><span class="nv">AWS_PROFILE</span><span class="o">=</span>&lt;profile&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ENDPOINT_URL</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>endpoint<span class="w"> </span>URL&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_ACCESS_KEY_ID</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>accesss<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LAKEFS_SECRET_ACCESS_KEY</span><span class="o">=</span>&lt;lakefs<span class="w"> </span>secret<span class="w"> </span>key&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>-e<span class="w"> </span><span class="nv">LAKEFS_SGC_LOGGING_LEVEL</span><span class="o">=</span>debug<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>treeverse/lakefs-sgc:&lt;tag&gt;<span class="w"> </span>run<span class="w"> </span>&lt;repository&gt;
 </span></code></pre></div>
 <h3 id="get-the-list-of-objects-marked-for-deletion">Get the List of Objects Marked for Deletion<a class="headerlink" href="#get-the-list-of-objects-marked-for-deletion" title="Permanent link">¶</a></h3>
 <p><code>lakefs-sgc</code> will write its reports to <code>&lt;REPOSITORY_STORAGE_NAMESPACE&gt;/_lakefs/retention/gc/reports/&lt;RUN_ID&gt;/</code>. \
 <em>RUN_ID</em> is generated during runtime by the Standalone GC. You can find it in the logs:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>"Marking objects for deletion" ... run_id=gcoca17haabs73f2gtq0
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>"Marking objects for deletion" ... run_id=gcoca17haabs73f2gtq0
 </span></code></pre></div>
 <p>In this prefix, you'll find 2 objects:</p>
 <ul>
@@ -6520,10 +6647,10 @@ Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-comp
 <p><code>deleted.csv</code> - Containing all marked objects in a CSV containing one <code>address</code> column.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>address
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>"data/gcnobu7n2efc74lfa5ug/csfnri7n2efc74lfa69g,_e7P9j-1ahTXtofw7tWwJUIhTfL0rEs_dvBrClzc_QE"
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>"data/gcnobu7n2efc74lfa5ug/csfnri7n2efc74lfa78g,mKZnS-5YbLzmK0pKsGGimdxxBlt8QZzCyw1QeQrFvFE"
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>...
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>address
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>"data/gcnobu7n2efc74lfa5ug/csfnri7n2efc74lfa69g,_e7P9j-1ahTXtofw7tWwJUIhTfL0rEs_dvBrClzc_QE"
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>"data/gcnobu7n2efc74lfa5ug/csfnri7n2efc74lfa78g,mKZnS-5YbLzmK0pKsGGimdxxBlt8QZzCyw1QeQrFvFE"
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>...
 </span></code></pre></div>
 </div>
 <ul>
@@ -6531,14 +6658,14 @@ Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-comp
 </ul>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="nt">"run_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gcoca17haabs73f2gtq0"</span><span class="p">,</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="nt">"first_slice"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gcss5tpsrurs73cqi6e0"</span><span class="p">,</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-27T13:19:26.890099059Z"</span><span class="p">,</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="nt">"cutoff_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-27T07:19:26.890099059Z"</span><span class="p">,</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="nt">"num_deleted_objects"</span><span class="p">:</span><span class="w"> </span><span class="mi">33000</span>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="p">{</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span><span class="nt">"run_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gcoca17haabs73f2gtq0"</span><span class="p">,</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="nt">"first_slice"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gcss5tpsrurs73cqi6e0"</span><span class="p">,</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span><span class="nt">"start_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-27T13:19:26.890099059Z"</span><span class="p">,</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span><span class="nt">"cutoff_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-10-27T07:19:26.890099059Z"</span><span class="p">,</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">    </span><span class="nt">"num_deleted_objects"</span><span class="p">:</span><span class="w"> </span><span class="mi">33000</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="p">}</span>
 </span></code></pre></div>
 </div>
 </li>
@@ -6547,23 +6674,23 @@ Follow the steps below to set up and use <code>lakefs-sgc</code> with an S3-comp
 <p>We recommend starting by backing up the marked objects to a different bucket before deleting them. After ensuring the 
 backup is complete, you can proceed to delete the objects directly from the backup location.</p>
 <p>Use the following script to backup marked objects to another bucket:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Update these variables with your actual values</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nv">storage_ns</span><span class="o">=</span>&lt;storage<span class="w"> </span>namespace<span class="w"> </span><span class="o">(</span>s3://...<span class="o">)</span>&gt;
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nv">output_bucket</span><span class="o">=</span>&lt;output<span class="w"> </span>bucket<span class="w"> </span><span class="o">(</span>s3://...<span class="o">)</span>&gt;
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="nv">run_id</span><span class="o">=</span>&lt;GC<span class="w"> </span>run<span class="w"> </span>id&gt;
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># Download the CSV file</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/_lakefs/retention/gc/reports/</span><span class="nv">$run_id</span><span class="s2">/deleted.csv"</span><span class="w"> </span><span class="s2">"./run_id-</span><span class="nv">$run_id</span><span class="s2">.csv"</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># Move all addresses to the output bucket under the "run_id=$run_id" prefix</span>
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>cat<span class="w"> </span>run_id-<span class="nv">$run_id</span>.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span>+2<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>mv<span class="w"> </span><span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/{}"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output_bucket</span><span class="s2">/run_id=</span><span class="nv">$run_id</span><span class="s2">/"</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Update these variables with your actual values</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nv">storage_ns</span><span class="o">=</span>&lt;storage<span class="w"> </span>namespace<span class="w"> </span><span class="o">(</span>s3://...<span class="o">)</span>&gt;
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nv">output_bucket</span><span class="o">=</span>&lt;output<span class="w"> </span>bucket<span class="w"> </span><span class="o">(</span>s3://...<span class="o">)</span>&gt;
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="nv">run_id</span><span class="o">=</span>&lt;GC<span class="w"> </span>run<span class="w"> </span>id&gt;
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="c1"># Download the CSV file</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/_lakefs/retention/gc/reports/</span><span class="nv">$run_id</span><span class="s2">/deleted.csv"</span><span class="w"> </span><span class="s2">"./run_id-</span><span class="nv">$run_id</span><span class="s2">.csv"</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># Move all addresses to the output bucket under the "run_id=$run_id" prefix</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>cat<span class="w"> </span>run_id-<span class="nv">$run_id</span>.csv<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span>+2<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>mv<span class="w"> </span><span class="s2">"</span><span class="nv">$storage_ns</span><span class="s2">/{}"</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output_bucket</span><span class="s2">/run_id=</span><span class="nv">$run_id</span><span class="s2">/"</span>
 </span></code></pre></div>
 <p>To delete the marked objects, use the following script:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Update these variables with your actual values</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nv">output_bucket</span><span class="o">=</span>&lt;output<span class="w"> </span>bucket<span class="w"> </span><span class="o">(</span>s3://...<span class="o">)</span>&gt;
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nv">run_id</span><span class="o">=</span>&lt;GC<span class="w"> </span>run<span class="w"> </span>id&gt;
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>aws<span class="w"> </span>s3<span class="w"> </span>rm<span class="w"> </span><span class="nv">$output_bucket</span>/run_id<span class="o">=</span><span class="nv">$run_id</span><span class="w"> </span>--recursive
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Update these variables with your actual values</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nv">output_bucket</span><span class="o">=</span>&lt;output<span class="w"> </span>bucket<span class="w"> </span><span class="o">(</span>s3://...<span class="o">)</span>&gt;
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="nv">run_id</span><span class="o">=</span>&lt;GC<span class="w"> </span>run<span class="w"> </span>id&gt;
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>aws<span class="w"> </span>s3<span class="w"> </span>rm<span class="w"> </span><span class="nv">$output_bucket</span>/run_id<span class="o">=</span><span class="nv">$run_id</span><span class="w"> </span>--recursive
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
