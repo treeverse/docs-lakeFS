@@ -6065,6 +6065,14 @@ interact with your data on lakeFS.</p>
 <li><code>fs.lakefs.token.duration_seconds</code>: Optional, the duration in seconds for the lakeFS token (default is set in the lakeFS configuration <a href="../../reference/configuration/">auth.login_duration</a>)</li>
 <li><code>fs.lakefs.token.sts.additional_headers</code>: Optional, comma separated list of <code>header:value</code> to attach when generating presigned sts request. Default is <code>X-Lakefs-Server-ID:fs.lakefs.endpoint</code>.</li>
 </ul>
+<p><strong>API Retry Configuration:</strong></p>
+<p>The lakeFS Hadoop client automatically retries API requests on transient failures (HTTP 408, 429, 500-504 and connection errors) using exponential backoff with jitter. The following optional properties control retry behavior:</p>
+<ul>
+<li><code>fs.lakefs.api.retry.max-retries</code>: Maximum number of retry attempts (default: <code>5</code>). Set to <code>0</code> to disable retries.</li>
+<li><code>fs.lakefs.api.retry.initial-backoff.ms</code>: Initial backoff duration in milliseconds (default: <code>1000</code>)</li>
+<li><code>fs.lakefs.api.retry.max-backoff.ms</code>: Maximum backoff duration in milliseconds (default: <code>20000</code>)</li>
+<li><code>fs.lakefs.api.retry.jitter-factor</code>: Jitter factor applied to backoff, between 0 and 1 (default: <code>0.25</code>)</li>
+</ul>
 <p>Configure the S3A FileSystem to access your S3 storage, for example using the <code>fs.s3a.*</code> configurations (these are <strong>not</strong> your lakeFS credentials):</p>
 <ul>
 <li><code>fs.s3a.access.key</code>: AWS S3 access key</li>
