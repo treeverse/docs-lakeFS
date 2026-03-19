@@ -2317,6 +2317,46 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#helm-chart-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helm chart values
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Helm chart values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-account-and-cloud-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service account and cloud permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-service-config-replicationconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replication service config (replication.config)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replication service config (replication.config)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#required-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2332,6 +2372,17 @@ document.addEventListener("DOMContentLoaded", function() {
     <span class="md-ellipsis">
       
         Optional fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#committed-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Committed metadata
       
     </span>
   </a>
@@ -2379,6 +2430,11 @@ document.addEventListener("DOMContentLoaded", function() {
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -6185,6 +6241,46 @@ document.addEventListener("DOMContentLoaded", function() {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#helm-chart-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helm chart values
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Helm chart values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-account-and-cloud-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service account and cloud permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replication-service-config-replicationconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replication service config (replication.config)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Replication service config (replication.config)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#required-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6200,6 +6296,17 @@ document.addEventListener("DOMContentLoaded", function() {
     <span class="md-ellipsis">
       
         Optional fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#committed-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Committed metadata
       
     </span>
   </a>
@@ -6247,6 +6354,11 @@ document.addEventListener("DOMContentLoaded", function() {
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -6335,7 +6447,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li>A valid lakeFS Enterprise license with the <strong>Transactional Mirroring</strong> capability. See <a href="../../enterprise/getstarted/install/#lakefs-enterprise-license">License Configuration</a>.</li>
 <li>Object store replication configured between source and destination buckets (see <a href="#configuring-object-store-replication">below</a>).</li>
 <li>A shared database accessible from all regions for mirror coordination (e.g., a DynamoDB global table).</li>
-<li>Network connectivity between the lakeFS installations. The replication service in each region needs HTTP access to the lakeFS API in the other regions.</li>
+<li>Network connectivity: the replication service in each region requires HTTP access to the lakeFS API endpoint in the other regions.</li>
 </ol>
 <h3 id="configuring-object-store-replication">Configuring object store replication<a class="headerlink" href="#configuring-object-store-replication" title="Permanent link">¶</a></h3>
 <p>The objects within the repository are copied using your cloud provider's object store replication mechanism.</p>
@@ -6455,7 +6567,7 @@ The user should have the following <a href="../../security/rbac/">RBAC policy</a
 <p>Run this command against each lakeFS installation to ensure the replication user has identical credentials everywhere.</p>
 </div>
 <h3 id="deploying-the-replication-service">Deploying the Replication Service<a class="headerlink" href="#deploying-the-replication-service" title="Permanent link">¶</a></h3>
-<p>The replication service is deployed alongside each lakeFS Enterprise installation using the <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">lakeFS Helm chart</a>. It runs as a separate Deployment within the same Helm release.</p>
+<p>The replication service is deployed alongside each lakeFS Enterprise installation using the <a href="https://github.com/treeverse/charts/tree/master/charts/lakefs">lakeFS Helm chart</a>. It runs as a separate Deployment within the same Helm release and must be deployed in every region participating in mirroring, not just the source.</p>
 <h4 id="mirrors-database">Mirrors database<a class="headerlink" href="#mirrors-database" title="Permanent link">¶</a></h4>
 <p>The replication service requires a shared database to coordinate mirror state between regions. This database must be accessible from both regions. It supports the same database types as lakeFS (see <a href="../../reference/configuration/#database">database configuration</a>). The table/schema is created automatically by the replication service on startup if it doesn't already exist.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="dynamodb" name="__tabbed_2" type="radio"><input id="postgresql--cockroachdb" name="__tabbed_2" type="radio"><div class="tabbed-labels"><label for="dynamodb">DynamoDB</label><label for="postgresql--cockroachdb">PostgreSQL / CockroachDB</label></div>
@@ -6463,6 +6575,7 @@ The user should have the following <a href="../../security/rbac/">RBAC policy</a
 <div class="tabbed-block">
 <p>Provide the table name in the <code>mirrors_database</code> configuration. The replication service will create the table automatically if it doesn't exist.</p>
 <p>To enable cross-region replication, you must configure the table as a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html">DynamoDB global table</a> with a replica in the destination region. This requires enabling <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html">DynamoDB Streams</a> with <code>NEW_AND_OLD_IMAGES</code> view type on the table.</p>
+<p>For cross-account setups, see <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables-MultiAccount.html">DynamoDB multi-account global tables</a>.</p>
 </div>
 <div class="tabbed-block">
 <p>Provide a PostgreSQL or CockroachDB database that is accessible from both regions. Use the same connection string in the <code>mirrors_database</code> configuration on each installation.</p>
@@ -6589,8 +6702,8 @@ The user should have the following <a href="../../security/rbac/">RBAC policy</a
 <p>Both installations must use the <strong>same</strong> <code>organization_id</code> and the <strong>same</strong> <code>auth.encrypt.secret_key</code>. The <code>mirrors_database</code> table must be a global/shared table accessible from both regions.</p>
 </div>
 <h3 id="creating-a-mirror">Creating a mirror<a class="headerlink" href="#creating-a-mirror" title="Permanent link">¶</a></h3>
-<p>Once both lakeFS installations and their replication services are running, create a mirror using the replication API on the <strong>source</strong> installation:</p>
-<p></p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>curl<span class="w"> </span><span class="s1">'&lt;SOURCE_LAKEFS_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors'</span><span class="w"> </span><span class="se">\</span>
+<p>Once both lakeFS installations and their replication services are running, create a mirror by calling the replication API on the <strong>source</strong> region's replication service. This call only needs to be made once - the destination replication service will automatically detect the new mirror and create the repository on the destination.</p>
+<p></p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>curl<span class="w"> </span><span class="s1">'&lt;REPLICATION_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors'</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>--header<span class="w"> </span><span class="s1">'Content-Type: application/json'</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>-u<span class="w"> </span>&lt;ACCESS_KEY_ID&gt;:&lt;SECRET_ACCESS_KEY&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
@@ -6602,7 +6715,7 @@ The user should have the following <a href="../../security/rbac/">RBAC policy</a
 </span></code></pre></div>
 Using the following parameters:<p></p>
 <ul>
-<li><code>SOURCE_LAKEFS_ENDPOINT</code> - The URL of the source lakeFS installation (e.g. <code>https://lakefs-source.example.com</code>)</li>
+<li><code>REPLICATION_ENDPOINT</code> - The URL of the replication service in the source region</li>
 <li><code>SOURCE_REPO</code> - Name of the repository acting as the replication source. It should exist on the source installation</li>
 <li><code>ACCESS_KEY_ID</code> &amp; <code>SECRET_ACCESS_KEY</code> - Credentials for your lakeFS replication user (make sure you have the necessary RBAC permissions as <a href="#rbac">listed below</a>)</li>
 <li><code>MIRROR_NAME</code> - Name used for the read-only mirror to be created on the destination</li>
@@ -6688,20 +6801,108 @@ Deletions from garbage collection should be replicated from the source:</p>
 </table>
 <h2 id="other-replication-operations">Other replication operations<a class="headerlink" href="#other-replication-operations" title="Permanent link">¶</a></h2>
 <h3 id="listing-all-mirrors-for-a-repository">Listing all mirrors for a repository<a class="headerlink" href="#listing-all-mirrors-for-a-repository" title="Permanent link">¶</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>curl<span class="w"> </span><span class="s1">'&lt;SOURCE_LAKEFS_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors'</span><span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>curl<span class="w"> </span><span class="s1">'&lt;REPLICATION_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors'</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>-u<span class="w"> </span>&lt;ACCESS_KEY_ID&gt;:&lt;SECRET_ACCESS_KEY&gt;<span class="w"> </span>-s
 </span></code></pre></div>
 <h3 id="getting-a-specific-mirror">Getting a specific mirror<a class="headerlink" href="#getting-a-specific-mirror" title="Permanent link">¶</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span><span class="s1">'&lt;SOURCE_LAKEFS_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors/&lt;MIRROR_ID&gt;'</span><span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span><span class="s1">'&lt;REPLICATION_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors/&lt;MIRROR_ID&gt;'</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>-u<span class="w"> </span>&lt;ACCESS_KEY_ID&gt;:&lt;SECRET_ACCESS_KEY&gt;<span class="w"> </span>-s
 </span></code></pre></div>
 <h3 id="deleting-a-specific-mirror">Deleting a specific mirror<a class="headerlink" href="#deleting-a-specific-mirror" title="Permanent link">¶</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span><span class="s1">'&lt;SOURCE_LAKEFS_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors/&lt;MIRROR_ID&gt;'</span><span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span><span class="s1">'&lt;REPLICATION_ENDPOINT&gt;/service/replication/v1/repositories/&lt;SOURCE_REPO&gt;/mirrors/&lt;MIRROR_ID&gt;'</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>-u<span class="w"> </span>&lt;ACCESS_KEY_ID&gt;:&lt;SECRET_ACCESS_KEY&gt;
 </span></code></pre></div>
 <h2 id="configuration-reference">Configuration Reference<a class="headerlink" href="#configuration-reference" title="Permanent link">¶</a></h2>
-<p>The replication service is configured via the <code>replication.config</code> section of the Helm chart values, or directly via a YAML config file. Configuration can also be set via environment variables with the <code>REPLICATION_</code> prefix (e.g., <code>REPLICATION_REGION=us-east-1</code>).</p>
-<h3 id="required-fields">Required fields<a class="headerlink" href="#required-fields" title="Permanent link">¶</a></h3>
+<p>The replication service is configured via the Helm chart values under <code>replication.*</code>. All fields below are set in your <code>values.yaml</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Simple configuration values can also be set via environment variables with the <code>REPLICATION_</code> prefix (e.g., <code>REPLICATION_REGION=us-east-1</code>). Map fields like <code>dst_endpoints</code> must be set via the config file. Sensitive values like credentials should be provided via a Kubernetes Secret referenced by <code>replication.extraEnvVarsSecret</code>.</p>
+</div>
+<h3 id="helm-chart-values">Helm chart values<a class="headerlink" href="#helm-chart-values" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>replication.enabled</code></td>
+<td><code>false</code></td>
+<td>Set to <code>true</code> to enable the replication service deployment</td>
+</tr>
+<tr>
+<td><code>replication.image.repository</code></td>
+<td><code>treeverse/replication</code></td>
+<td>Docker image repository</td>
+</tr>
+<tr>
+<td><code>replication.image.tag</code></td>
+<td><code>0.1.17</code></td>
+<td>Docker image tag</td>
+</tr>
+<tr>
+<td><code>replication.image.pullPolicy</code></td>
+<td><code>IfNotPresent</code></td>
+<td>Image pull policy</td>
+</tr>
+<tr>
+<td><code>replication.port</code></td>
+<td><code>8008</code></td>
+<td>Service port</td>
+</tr>
+<tr>
+<td><code>replication.serviceAccountName</code></td>
+<td><code>""</code></td>
+<td>Kubernetes service account for the replication pod. See <a href="#service-account-and-cloud-permissions">Service account and cloud permissions</a></td>
+</tr>
+<tr>
+<td><code>replication.extraEnvVarsSecret</code></td>
+<td></td>
+<td>Name of a Kubernetes Secret containing sensitive configuration. When set, the following keys are injected as environment variables: <code>source_lakefs_access_key_id</code>, <code>source_lakefs_secret_access_key</code>, <code>auth_encrypt_secret_key</code></td>
+</tr>
+<tr>
+<td><code>replication.extraEnvVars</code></td>
+<td><code>[]</code></td>
+<td>Additional environment variables for the replication pod</td>
+</tr>
+<tr>
+<td><code>replication.resources</code></td>
+<td><code>{}</code></td>
+<td>Kubernetes resource requests/limits</td>
+</tr>
+<tr>
+<td><code>replication.podAnnotations</code></td>
+<td><code>{}</code></td>
+<td>Additional pod annotations</td>
+</tr>
+<tr>
+<td><code>replication.local_cache.base_dir</code></td>
+<td><code>/cache</code></td>
+<td>Local cache directory path</td>
+</tr>
+<tr>
+<td><code>replication.local_cache.size_bytes</code></td>
+<td><code>512000000</code></td>
+<td>Local cache size in bytes</td>
+</tr>
+</tbody>
+</table>
+<h4 id="service-account-and-cloud-permissions">Service account and cloud permissions<a class="headerlink" href="#service-account-and-cloud-permissions" title="Permanent link">¶</a></h4>
+<p>When the replication service needs access to cloud resources (e.g., DynamoDB, S3), use a Kubernetes service account with the appropriate annotations to grant permissions. On AWS, this is done using <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IAM Roles for Service Accounts (IRSA)</a>. For detailed instructions on setting up the IAM role, see the <a href="../deploy/aws/">lakeFS deployment guide</a>.</p>
+<p>Example service account:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">replication-sa</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="nt">eks.amazonaws.com/role-arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;ROLE_NAME&gt;</span>
+</span></code></pre></div>
+<p>Then set <code>replication.serviceAccountName: replication-sa</code> in the Helm values.</p>
+<h3 id="replication-service-config-replicationconfig">Replication service config (<code>replication.config</code>)<a class="headerlink" href="#replication-service-config-replicationconfig" title="Permanent link">¶</a></h3>
+<h4 id="required-fields">Required fields<a class="headerlink" href="#required-fields" title="Permanent link">¶</a></h4>
 <table>
 <thead>
 <tr>
@@ -6728,19 +6929,27 @@ Deletions from garbage collection should be replicated from the source:</p>
 </tr>
 <tr>
 <td><code>mirrors_database</code></td>
-<td>Database configuration for mirror coordination. Supports the same database types as lakeFS. Must be shared across all regions</td>
+<td>Database configuration for mirror coordination (DynamoDB, PostgreSQL, or CockroachDB). Must be shared across all regions. See <a href="#mirrors-database">Mirrors database</a></td>
 </tr>
 <tr>
 <td><code>blockstore</code></td>
 <td>Block storage configuration. Must match the lakeFS blockstore config</td>
 </tr>
 <tr>
+<td><code>lakefs_access_key_id</code></td>
+<td>Access key ID for the replication lakeFS user. Can also be provided via <code>extraEnvVarsSecret</code> (recommended)</td>
+</tr>
+<tr>
+<td><code>lakefs_secret_access_key</code></td>
+<td>Secret access key for the replication lakeFS user. Can also be provided via <code>extraEnvVarsSecret</code> (recommended)</td>
+</tr>
+<tr>
 <td><code>auth.encrypt.secret_key</code></td>
-<td>Encryption secret. Must match the lakeFS <code>auth.encrypt.secret_key</code></td>
+<td>Encryption secret key. Must match the lakeFS <code>auth.encrypt.secret_key</code>. Can also be provided via <code>extraEnvVarsSecret</code> (recommended)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="optional-fields">Optional fields<a class="headerlink" href="#optional-fields" title="Permanent link">¶</a></h3>
+<h4 id="optional-fields">Optional fields<a class="headerlink" href="#optional-fields" title="Permanent link">¶</a></h4>
 <table>
 <thead>
 <tr>
@@ -6762,8 +6971,8 @@ Deletions from garbage collection should be replicated from the source:</p>
 </tr>
 <tr>
 <td><code>refstore_database</code></td>
-<td>lakeFS <code>database</code> config</td>
-<td>Database for replication metadata (commits, ranges, metaranges). When deployed via the Helm chart, this defaults to the lakeFS <code>database</code> configuration if not explicitly set</td>
+<td></td>
+<td>Database for replication metadata (commits, ranges, metaranges). When deployed via the Helm chart, this defaults to the lakeFS <code>database</code> configuration if not explicitly set. When running outside the Helm chart, this field is required</td>
 </tr>
 <tr>
 <td><code>list_mirrors_page_size</code></td>
@@ -6787,7 +6996,45 @@ Deletions from garbage collection should be replicated from the source:</p>
 </tr>
 </tbody>
 </table>
-<h3 id="commit-sensor">Commit sensor<a class="headerlink" href="#commit-sensor" title="Permanent link">¶</a></h3>
+<h4 id="committed-metadata">Committed metadata<a class="headerlink" href="#committed-metadata" title="Permanent link">¶</a></h4>
+<p>Configuration for committed metadata (ranges and metaranges).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>committed.local_cache.size_bytes</code></td>
+<td><code>1073741824</code> (1 GiB)</td>
+<td>Local cache size in bytes</td>
+</tr>
+<tr>
+<td><code>committed.local_cache.dir</code></td>
+<td></td>
+<td>Cache directory path</td>
+</tr>
+<tr>
+<td><code>committed.local_cache.range_proportion</code></td>
+<td><code>0.9</code></td>
+<td>Proportion of cache allocated to ranges</td>
+</tr>
+<tr>
+<td><code>committed.local_cache.metarange_proportion</code></td>
+<td><code>0.1</code></td>
+<td>Proportion of cache allocated to metaranges</td>
+</tr>
+<tr>
+<td><code>committed.metadata_prefix</code></td>
+<td><code>_lakefs/</code></td>
+<td>Prefix used by lakeFS for metadata files in the storage namespace. Must match <code>committed.block_storage_prefix</code> in lakeFS</td>
+</tr>
+</tbody>
+</table>
+<h4 id="commit-sensor">Commit sensor<a class="headerlink" href="#commit-sensor" title="Permanent link">¶</a></h4>
 <p>Controls how the service detects and synchronizes new commits from source to destination.</p>
 <table>
 <thead>
@@ -6820,7 +7067,7 @@ Deletions from garbage collection should be replicated from the source:</p>
 </tr>
 </tbody>
 </table>
-<h3 id="mirrors-manager">Mirrors manager<a class="headerlink" href="#mirrors-manager" title="Permanent link">¶</a></h3>
+<h4 id="mirrors-manager">Mirrors manager<a class="headerlink" href="#mirrors-manager" title="Permanent link">¶</a></h4>
 <p>Controls how the service reconciles mirror state (creates/deletes mirror repositories).</p>
 <table>
 <thead>
@@ -6838,7 +7085,7 @@ Deletions from garbage collection should be replicated from the source:</p>
 </tr>
 </tbody>
 </table>
-<h3 id="validator">Validator<a class="headerlink" href="#validator" title="Permanent link">¶</a></h3>
+<h4 id="validator">Validator<a class="headerlink" href="#validator" title="Permanent link">¶</a></h4>
 <p>Controls how the service validates that all metadata for promoted commits exists in block storage before advancing the mirror.</p>
 <table>
 <thead>
@@ -6869,9 +7116,64 @@ Deletions from garbage collection should be replicated from the source:</p>
 <td><code>1m</code></td>
 <td>Cooldown before retrying validation after an error</td>
 </tr>
+<tr>
+<td><code>validator.metarange_presence_cache.size</code></td>
+<td><code>5000</code></td>
+<td>Number of metarange presence results to cache</td>
+</tr>
+<tr>
+<td><code>validator.metarange_presence_cache.expiry</code></td>
+<td><code>1440h</code> (60 days)</td>
+<td>Metarange cache entry expiry</td>
+</tr>
+<tr>
+<td><code>validator.metarange_presence_cache.cooldown</code></td>
+<td><code>30s</code></td>
+<td>Cooldown before retrying a missing metarange in cache</td>
+</tr>
+<tr>
+<td><code>validator.range_presence_cache.size</code></td>
+<td><code>500000</code></td>
+<td>Number of range presence results to cache</td>
+</tr>
+<tr>
+<td><code>validator.range_presence_cache.expiry</code></td>
+<td><code>1440h</code> (60 days)</td>
+<td>Range cache entry expiry</td>
+</tr>
+<tr>
+<td><code>validator.range_presence_cache.cooldown</code></td>
+<td><code>10s</code></td>
+<td>Cooldown before retrying a missing range in cache</td>
+</tr>
+<tr>
+<td><code>validator.object_presence_cache.size</code></td>
+<td><code>5000000</code></td>
+<td>Number of object presence results to cache</td>
+</tr>
+<tr>
+<td><code>validator.object_presence_cache.expiry</code></td>
+<td><code>24h</code></td>
+<td>Object cache entry expiry</td>
+</tr>
+<tr>
+<td><code>validator.object_presence_cache.cooldown</code></td>
+<td><code>5s</code></td>
+<td>Cooldown before retrying a missing object in cache</td>
+</tr>
+<tr>
+<td><code>validator.storage_namespace_cache.size</code></td>
+<td><code>1000</code></td>
+<td>Number of repository-to-storage-namespace mappings to cache</td>
+</tr>
+<tr>
+<td><code>validator.storage_namespace_cache.expiry</code></td>
+<td><code>17s</code></td>
+<td>Storage namespace cache entry expiry</td>
+</tr>
 </tbody>
 </table>
-<h3 id="auth">Auth<a class="headerlink" href="#auth" title="Permanent link">¶</a></h3>
+<h4 id="auth">Auth<a class="headerlink" href="#auth" title="Permanent link">¶</a></h4>
 <table>
 <thead>
 <tr>
@@ -6884,12 +7186,7 @@ Deletions from garbage collection should be replicated from the source:</p>
 <tr>
 <td><code>auth.encrypt.secret_key</code></td>
 <td><em>(required)</em></td>
-<td>Encryption key for stored credentials. Must match the lakeFS installation</td>
-</tr>
-<tr>
-<td><code>auth.api.endpoint</code></td>
-<td><em>(empty)</em></td>
-<td>When set, uses API-based auth against an external auth service. When empty (default), uses KV-based auth directly from the replication service's database</td>
+<td>Encryption key for stored credentials. Must match the lakeFS installation. Can also be provided via <code>extraEnvVarsSecret</code> (recommended)</td>
 </tr>
 <tr>
 <td><code>auth.cache.enabled</code></td>
@@ -6905,6 +7202,11 @@ Deletions from garbage collection should be replicated from the source:</p>
 <td><code>auth.cache.ttl</code></td>
 <td></td>
 <td>Cache entry time-to-live</td>
+</tr>
+<tr>
+<td><code>auth.cache.jitter</code></td>
+<td></td>
+<td>Random jitter added to cache TTL to prevent thundering herd</td>
 </tr>
 </tbody>
 </table>
