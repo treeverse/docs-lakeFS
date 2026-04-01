@@ -5712,10 +5712,10 @@ document.addEventListener("DOMContentLoaded", function() {
 Transitioning from <code>io.lakefs:lakefs-client</code> to <code>io.lakefs:sdk</code> will necessitate rewriting your API calls to fit the new design paradigm.</p>
 <h3 id="problem-with-the-old-style">Problem with the Old Style<a class="headerlink" href="#problem-with-the-old-style" title="Permanent link">¶</a></h3>
 <p>Previously, API calls required developers to pass all parameters, including optional ones, in a single function call. As demonstrated in this older style:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ObjectStats</span><span class="w"> </span><span class="n">objectStat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">objectsApi</span><span class="p">.</span><span class="na">statObject</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="n">objectLoc</span><span class="p">.</span><span class="na">getRepository</span><span class="p">(),</span><span class="w"> </span><span class="n">objectLoc</span><span class="p">.</span><span class="na">getRef</span><span class="p">(),</span><span class="w"> </span><span class="n">objectLoc</span><span class="p">.</span><span class="na">getPath</span><span class="p">(),</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
-</span></code></pre></div>
+<p><code>java
+ObjectStats objectStat = objectsApi.statObject(
+    objectLoc.getRepository(), objectLoc.getRef(), objectLoc.getPath(),
+    false, false);</code></p>
 <p>This method posed a couple of challenges:</p>
 <ol>
 <li><strong>Inflexibility with Upgrades:</strong> If an optional parameter were introduced in newer versions, existing code would fail to compile.</li>
@@ -5724,13 +5724,13 @@ Transitioning from <code>io.lakefs:lakefs-client</code> to <code>io.lakefs:sdk</
 <p>Adopting the Fluent Style</p>
 <p>In the revised SDK, API calls adopt a fluent style, making the code more modular and adaptive to changes.</p>
 <p>Here's an example of the new style:</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">ObjectStats</span><span class="w"> </span><span class="n">objectStat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">objectsApi</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="p">.</span><span class="na">statObject</span><span class="p">(</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="n">objectLoc</span><span class="p">.</span><span class="na">getRepository</span><span class="p">(),</span><span class="w"> </span><span class="n">objectLoc</span><span class="p">.</span><span class="na">getRef</span><span class="p">(),</span><span class="w"> </span><span class="n">objectLoc</span><span class="p">.</span><span class="na">getPath</span><span class="p">()</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="p">)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">.</span><span class="na">userMetadata</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">.</span><span class="na">execute</span><span class="p">();</span>
-</span></code></pre></div>
+<p><code>java
+ObjectStats objectStat = objectsApi
+    .statObject(
+        objectLoc.getRepository(), objectLoc.getRef(), objectLoc.getPath()
+    )
+    .userMetadata(true)
+    .execute();</code></p>
 <h3 id="heres-a-breakdown-of-the-changes">Here's a breakdown of the changes:<a class="headerlink" href="#heres-a-breakdown-of-the-changes" title="Permanent link">¶</a></h3>
 <ol>
 <li><strong>Initial Function Call:</strong> Begin by invoking the desired function with all required parameters.</li>
@@ -5761,15 +5761,15 @@ You need to switch from <code>lakefs-client</code> to <code>lakefs-sdk</code>, w
 <li><strong>Fetching results from response objects</strong>: Instead of fetching the required results properties from a dictionary using <code>response_result.get_property(prop_name)</code>, the response objects will include domain specific entities, thus referring to the properties in the <code>results</code> of the response - <code>response_result.prop_name</code>.</li>
 </ol>
 <p>For example, instead of:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">response</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">'repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s1">'main'</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">diff</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 'results' is a 'DiffList' object</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">path</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">'path'</span><span class="p">)</span> <span class="c1"># 'diff' is a dictionary</span>
-</span></code></pre></div>
+<p><code>python
+   response = lakefs_client.branches.diff_branch(repository='repo', branch='main')
+   diff = response.results[0] # 'results' is a 'DiffList' object
+   path = diff.get_property('path') # 'diff' is a dictionary</code></p>
 <p>You should use:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">response</span> <span class="o">=</span> <span class="n">lakefs_client</span><span class="o">.</span><span class="n">branches_api</span><span class="o">.</span><span class="n">diff_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">'repo'</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s1">'main'</span><span class="p">)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">diff</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># 'results' is a 'DiffList' object</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">path</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">path</span> <span class="c1"># 'diff' is a 'Diff' object</span>
-</span></code></pre></div>
+<p><code>python
+   response = lakefs_client.branches_api.diff_branch(repository='repo', branch='main')
+   diff = response.results[0] # 'results' is a 'DiffList' object
+   path = diff.path # 'diff' is a 'Diff' object</code></p>
 
 
 

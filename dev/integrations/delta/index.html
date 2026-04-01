@@ -5864,8 +5864,8 @@ indicating the schema change.
 </div>
 <p>To configure a Spark environment to read from and write to a Delta table within a lakeFS repository, you need to set the proper credentials and endpoint in the S3 Hadoop configuration, like you'd do with any <a href="../spark/">Spark</a> environment.</p>
 <p>Once set, you can interact with Delta tables using regular Spark path URIs. Make sure that you include the lakeFS repository and branch name:</p>
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">df</span><span class="p">.</span><span class="n">write</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="s">"delta"</span><span class="p">).</span><span class="n">save</span><span class="p">(</span><span class="s">"s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table"</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>scala
+df.write.format("delta").save("s3a://&lt;repo-name&gt;/&lt;branch-name&gt;/path/to/delta-table")</code></p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>If using the Databricks Analytics Platform, see the <a href="../spark/#installation">integration guide</a> for configuring a Databricks cluster to use lakeFS.</p>
@@ -5874,25 +5874,25 @@ indicating the schema change.
 <h2 id="using-delta-lake-with-lakefs-from-python">Using Delta Lake with lakeFS from Python<a class="headerlink" href="#using-delta-lake-with-lakefs-from-python" title="Permanent link">¶</a></h2>
 <p>The <a href="https://github.com/delta-io/delta-rs">delta-rs</a> library provides bindings for Python. This means that you can use Delta Lake and lakeFS directly from Python without needing Spark. Integration is done through the <a href="../../understand/architecture/#s3-gateway">lakeFS S3 Gateway</a></p>
 <p>The documentation for the <code>deltalake</code> Python module details how to <a href="https://delta-io.github.io/delta-rs/python/usage.html#loading-a-delta-table">read</a>, <a href="https://delta-io.github.io/delta-rs/python/usage.html#writing-delta-tables">write</a>, and <a href="https://delta-io.github.io/delta-rs/python/usage.html#querying-delta-tables">query</a> Delta Lake tables. To use it with lakeFS use an <code>s3a</code> path for the table based on your repository and branch (for example, <code>s3a://delta-lake-demo/main/my_table/</code>) and specify the following <code>storage_options</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">storage_options</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="s2">"AWS_ENDPOINT"</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">your</span> <span class="n">lakeFS</span> <span class="n">endpoint</span><span class="o">&gt;</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="s2">"AWS_ACCESS_KEY_ID"</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">your</span> <span class="n">lakeFS</span> <span class="n">access</span> <span class="n">key</span><span class="o">&gt;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">"AWS_SECRET_ACCESS_KEY"</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">your</span> <span class="n">lakeFS</span> <span class="n">secret</span> <span class="n">key</span><span class="o">&gt;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">"AWS_REGION"</span><span class="p">:</span> <span class="s2">"us-east-1"</span><span class="p">,</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">"AWS_S3_ALLOW_UNSAFE_RENAME"</span><span class="p">:</span> <span class="s2">"true"</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
-</span></code></pre></div>
+<p><code>python
+storage_options = {
+    "AWS_ENDPOINT": &lt;your lakeFS endpoint&gt;,
+    "AWS_ACCESS_KEY_ID": &lt;your lakeFS access key&gt;,
+    "AWS_SECRET_ACCESS_KEY": &lt;your lakeFS secret key&gt;,
+    "AWS_REGION": "us-east-1",
+    "AWS_S3_ALLOW_UNSAFE_RENAME": "true"
+}</code></p>
 <p>If your lakeFS is not using HTTPS (for example, you're just running it locally) then add the option</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="s2">"AWS_STORAGE_ALLOW_HTTP"</span><span class="p">:</span> <span class="s2">"true"</span>
-</span></code></pre></div>
+<p><code>python
+"AWS_STORAGE_ALLOW_HTTP": "true"</code></p>
 <p>To see the integration in action see <a href="https://github.com/treeverse/lakeFS-samples/blob/main/00_notebooks/delta-lake-python.ipynb">this notebook</a> in the <a href="https://github.com/treeverse/lakeFS-samples/">lakeFS Samples Repository</a>.</p>
 <h2 id="exporting-delta-lake-tables-from-lakefs-into-unity-catalog">Exporting Delta Lake tables from lakeFS into Unity Catalog<a class="headerlink" href="#exporting-delta-lake-tables-from-lakefs-into-unity-catalog" title="Permanent link">¶</a></h2>
 <p>This option is for users who are managing Delta Lake tables with lakeFS and access them through Databricks <a href="https://www.databricks.com/product/unity-catalog">Unity Catalog</a>. lakeFS offers
 a <a href="../../howto/catalog_exports/">Data Catalog Export</a> functionality that provides read-only access to your Delta tables from within Unity catalog. Using the data catalog exporters,<br>
 you can work on Delta tables in isolation and easily explore them within the Unity Catalog.</p>
 <p>Once exported, you can query the versioned table data with:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">my_catalog</span><span class="p">.</span><span class="n">main</span><span class="p">.</span><span class="n">my_delta_table</span>
-</span></code></pre></div>
+<p><code>sql
+SELECT * FROM my_catalog.main.my_delta_table</code></p>
 <p>Here, <code>main</code> is the name of the lakeFS branch from which the delta table was exported.</p>
 <p>To enable Delta table exports to Unity catalog use the Unity <a href="../unity-catalog/">catalog integration guide</a>.</p>
 <iframe data-uc-allowed="true" width="420" height="315" src="https://www.youtube.com/embed/rMDsnh7S2O0"></iframe>
@@ -5940,8 +5940,8 @@ you can work on Delta tables in isolation and easily explore them within the Uni
 <p>When lakeFS runs inside your private network, your Databricks cluster needs to be able to access it.
 This can be done by setting up a VPC peering between the two VPCs
 (the one where lakeFS runs and the one where Databricks runs). For this to work on Delta Lake tables, you would also have to disable multi-cluster writes with:</p>
-<div class="language-properties highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="na">spark.databricks.delta.multiClusterWrites.enabled</span><span class="w"> </span><span class="s">false</span>
-</span></code></pre></div>
+<p><code>properties
+spark.databricks.delta.multiClusterWrites.enabled false</code></p>
 <h3 id="using-multi-cluster-writes-on-aws">Using multi cluster writes (on AWS)<a class="headerlink" href="#using-multi-cluster-writes-on-aws" title="Permanent link">¶</a></h3>
 <p>When using multi-cluster writes, Databricks overrides Delta’s S3-commit action.</p>
 <p>The new action tries to contact lakeFS from servers on Databricks’ own AWS account, which of course won’t be able to access your private network.

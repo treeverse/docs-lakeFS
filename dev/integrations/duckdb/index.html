@@ -5754,25 +5754,23 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>The recommended way to access lakeFS from DuckDB is to use the <a href="../iceberg/#iceberg-rest-catalog">Iceberg REST Catalog</a>. </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/lakefs_iceberg_rest_catalog.png" data-desc-position="bottom"><img alt="lakeFS Iceberg REST Catalog" src="../../assets/img/lakefs_iceberg_rest_catalog.png"></a></p>
 <p>This allows you to query and update Iceberg tables using a standards-compliant catalog, built into lakeFS Enterprise. In this mode, lakeFS stays completely outside the data path: data itself is read and written by DuckDB executors, directly to the underlying object store. Metadata is managed by Iceberg at the table level, while lakeFS keeps track of new snapshots to provide versioning and isolation.</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">LOAD</span><span class="w"> </span><span class="n">iceberg</span><span class="p">;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">LOAD</span><span class="w"> </span><span class="n">httpfs</span><span class="p">;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">CREATE</span><span class="w"> </span><span class="n">SECRET</span><span class="w"> </span><span class="n">lakefs_credentials</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="k">TYPE</span><span class="w"> </span><span class="n">ICEBERG</span><span class="p">,</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="n">CLIENT_ID</span><span class="w"> </span><span class="s1">'AKIAIOSFODNN7EXAMPLE'</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="n">CLIENT_SECRET</span><span class="w"> </span><span class="s1">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="n">OAUTH2_SERVER_URI</span><span class="w"> </span><span class="s1">'https://lakefs.example.com/iceberg/api/v1/oauth/tokens'</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">);</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">ATTACH</span><span class="w"> </span><span class="s1">''</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">main_branch</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="k">TYPE</span><span class="w"> </span><span class="n">iceberg</span><span class="p">,</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="n">SECRET</span><span class="w"> </span><span class="n">lakefs_credentials</span><span class="p">,</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="n">ENDPOINT</span><span class="w"> </span><span class="s1">'https://lakefs.example.com/iceberg/relative_to/my-repo.main/api'</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">);</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">USE</span><span class="w"> </span><span class="n">main_branch</span><span class="p">.</span><span class="n">inventory</span><span class="p">;</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">books</span><span class="p">;</span>
-</span></code></pre></div>
+<p>```sql
+LOAD iceberg;
+LOAD httpfs;</p>
+<p>CREATE SECRET lakefs_credentials (
+    TYPE ICEBERG,
+    CLIENT_ID 'AKIAIOSFODNN7EXAMPLE',
+    CLIENT_SECRET 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+    OAUTH2_SERVER_URI 'https://lakefs.example.com/iceberg/api/v1/oauth/tokens'
+);</p>
+<p>ATTACH '' AS main_branch (
+    TYPE iceberg,
+    SECRET lakefs_credentials,
+    ENDPOINT 'https://lakefs.example.com/iceberg/relative_to/my-repo.main/api'
+);</p>
+<p>USE main_branch.inventory;
+SELECT * FROM books;
+```</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>To learn more about the Iceberg REST Catalog, see the <a href="../iceberg/#iceberg-rest-catalog">Iceberg REST Catalog</a> documentation.</p>
@@ -5782,42 +5780,42 @@ document.addEventListener("DOMContentLoaded", function() {
 <h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">¶</a></h3>
 <p>Querying data in lakeFS from DuckDB is similar to querying data in S3 from DuckDB. It is done using the <a href="https://duckdb.org/docs/stable/core_extensions/httpfs/overview" target="_blank">httpfs extension</a> connecting to the <a href="../../understand/architecture/#s3-gateway">S3 Gateway that lakeFS provides</a>.</p>
 <p>If not loaded already, install and load the <code>HTTPFS</code> extension: </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">INSTALL</span><span class="w"> </span><span class="n">httpfs</span><span class="p">;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">LOAD</span><span class="w"> </span><span class="n">httpfs</span><span class="p">;</span>
-</span></code></pre></div>
+<p><code>sql
+INSTALL httpfs;
+LOAD httpfs;</code></p>
 <p>Then run the following to configure the connection. </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">-- "s3_region" is the S3 region on which your bucket resides. If local storage, or not S3, then just set it to "us-east-1".</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">SET</span><span class="w"> </span><span class="n">s3_region</span><span class="o">=</span><span class="s1">'us-east-1'</span><span class="p">;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1">-- the host (and port, if necessary) of your lakeFS server</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">SET</span><span class="w"> </span><span class="n">s3_endpoint</span><span class="o">=</span><span class="s1">'lakefs.example.com'</span><span class="p">;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">-- the access credentials for your lakeFS user</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">SET</span><span class="w"> </span><span class="n">s3_access_key_id</span><span class="o">=</span><span class="s1">'AKIAIOSFODNN7EXAMPLE'</span><span class="p">;</span><span class="w"> </span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1">-- the access credentials for your lakeFS user</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">SET</span><span class="w"> </span><span class="n">s3_secret_access_key</span><span class="o">=</span><span class="s1">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span><span class="p">;</span><span class="w"> </span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="k">SET</span><span class="w"> </span><span class="n">s3_url_style</span><span class="o">=</span><span class="s1">'path'</span><span class="p">;</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1">-- Uncomment in case the endpoint listen on non-secure, for example running lakeFS locally.</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1">-- SET s3_use_ssl=false;</span>
-</span></code></pre></div>
+<p>```sql
+-- "s3_region" is the S3 region on which your bucket resides. If local storage, or not S3, then just set it to "us-east-1".
+SET s3_region='us-east-1';
+-- the host (and port, if necessary) of your lakeFS server
+SET s3_endpoint='lakefs.example.com';
+-- the access credentials for your lakeFS user
+SET s3_access_key_id='AKIAIOSFODNN7EXAMPLE'; 
+-- the access credentials for your lakeFS user
+SET s3_secret_access_key='wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'; 
+SET s3_url_style='path';</p>
+<p>-- Uncomment in case the endpoint listen on non-secure, for example running lakeFS locally.
+-- SET s3_use_ssl=false;
+```</p>
 <h3 id="querying-data">Querying Data<a class="headerlink" href="#querying-data" title="Permanent link">¶</a></h3>
 <p>Once configured, you can query data using the lakeFS S3 Gateway using the following URI pattern:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>s3://&lt;REPOSITORY NAME&gt;/&lt;REFERENCE ID&gt;/&lt;PATH TO DATA&gt;
-</span></code></pre></div>
+<p><code>text
+s3://&lt;REPOSITORY NAME&gt;/&lt;REFERENCE ID&gt;/&lt;PATH TO DATA&gt;</code></p>
 <p>Since the S3 Gateway implemenets all S3 functionality required by DuckDB, you can query using globs and patterns, including support for Hive-partitioned data.</p>
 <p>Example:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">FROM</span><span class="w"> </span><span class="n">parquet_scan</span><span class="p">(</span><span class="s1">'s3://example-repo/main/data/population/by-region/*.parquet'</span><span class="p">,</span><span class="w"> </span><span class="n">HIVE_PARTITIONING</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
-</span></code></pre></div>
+<p><code>sql
+SELECT * 
+FROM parquet_scan('s3://example-repo/main/data/population/by-region/*.parquet', HIVE_PARTITIONING=1) 
+ORDER BY name;</code></p>
 <h3 id="writing-data">Writing Data<a class="headerlink" href="#writing-data" title="Permanent link">¶</a></h3>
 <p>No special configuration required for writing to a branch. Assuming the configuration above and write permissions to a <code>dev</code> branch,
 a write operation would look like any DuckDB write:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">sampled_population</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">FROM</span><span class="w"> </span><span class="n">parquet_scan</span><span class="p">(</span><span class="s1">'s3://example-repo/main/data/population/by-region/*.parquet'</span><span class="p">,</span><span class="w"> </span><span class="n">HIVE_PARTITIONING</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">USING</span><span class="w"> </span><span class="n">SAMPLE</span><span class="w"> </span><span class="n">reservoir</span><span class="p">(</span><span class="mi">50000</span><span class="w"> </span><span class="k">ROWS</span><span class="p">)</span><span class="w"> </span><span class="k">REPEATABLE</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">COPY</span><span class="w"> </span><span class="n">sampled_population</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">'s3://example-repo/main/data/population/sample.parquet'</span><span class="p">;</span><span class="w"> </span><span class="c1">-- actual write happens here</span>
-</span></code></pre></div>
+<p>```sql
+CREATE TABLE sampled_population AS SELECT * 
+FROM parquet_scan('s3://example-repo/main/data/population/by-region/*.parquet', HIVE_PARTITIONING=1) 
+USING SAMPLE reservoir(50000 ROWS) REPEATABLE (100);</p>
+<p>COPY sampled_population TO 's3://example-repo/main/data/population/sample.parquet'; -- actual write happens here
+```</p>
 <h2 id="using-duckdb-in-python-with-lakefs-spec">Using DuckDB in Python with lakefs-spec<a class="headerlink" href="#using-duckdb-in-python-with-lakefs-spec" title="Permanent link">¶</a></h2>
 <p>Python users can use DuckDB by leveraging the <a href="https://lakefs-spec.org/latest/">lakefs-spec</a> package. </p>
 <div class="admonition note">
@@ -5826,13 +5824,12 @@ a write operation would look like any DuckDB write:</p>
 in the <a href="https://github.com/aai-institute/lakefs-spec">lakefs-spec</a> repository.</p>
 </div>
 <p>Using lakefs-spec, querying lakeFS could be done using <a href="../../security/presigned-url/">pre-signed URLs</a>, allowing for efficient and secure I/O, where the data files are read directly from the underlying object store.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">duckdb</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fsspec</span><span class="w"> </span><span class="kn">import</span> <span class="n">filesystem</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">duckdb</span><span class="o">.</span><span class="n">register_filesystem</span><span class="p">(</span><span class="n">filesystem</span><span class="p">(</span><span class="s1">'lakefs'</span><span class="p">))</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">duckdb</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">"SELECT * FROM 'lakefs://example-repo/main/data/population/sample.parquet'"</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python
+import duckdb
+from fsspec import filesystem</p>
+<p>duckdb.register_filesystem(filesystem('lakefs'))</p>
+<p>duckdb.sql("SELECT * FROM 'lakefs://example-repo/main/data/population/sample.parquet'")
+```</p>
 <h2 id="using-duckdb-in-the-lakefs-web-ui">Using DuckDB in the lakeFS web UI<a class="headerlink" href="#using-duckdb-in-the-lakefs-web-ui" title="Permanent link">¶</a></h2>
 <p>The lakeFS web UI includes DuckDB in the Object viewer page. </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/duckdb.png" data-desc-position="bottom"><img alt="DuckDB query editor on the lakeFS objects page" src="../../assets/img/duckdb.png"></a></p>

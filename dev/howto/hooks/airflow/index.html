@@ -5706,20 +5706,20 @@ The hook run succeeds if the DAG was triggered, and fails otherwise.</p>
 </table>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nn">...</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trigger_my_dag</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trigger an example_dag</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"http://localhost:8000"</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">dag_id</span><span class="p">:</span><span class="w"> </span><span class="s">"example_dag"</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">"admin"</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">"{%</span><span class="nv"> </span><span class="s">raw</span><span class="nv"> </span><span class="s">%}{{{%</span><span class="nv"> </span><span class="s">endraw</span><span class="nv"> </span><span class="s">%}</span><span class="nv"> </span><span class="s">ENV.AIRFLOW_SECRET</span><span class="nv"> </span><span class="s">{%</span><span class="nv"> </span><span class="s">raw</span><span class="nv"> </span><span class="s">%}}}{%</span><span class="nv"> </span><span class="s">endraw</span><span class="nv"> </span><span class="s">%}"</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">dag_conf</span><span class="p">:</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">          </span><span class="nt">some</span><span class="p">:</span><span class="w"> </span><span class="s">"additional_conf"</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nn">...</span>
-</span></code></pre></div>
+<p><code>yaml
+...
+hooks:
+  - id: trigger_my_dag
+    type: airflow
+    description: Trigger an example_dag
+    properties:
+      url: "http://localhost:8000"
+      dag_id: "example_dag"
+      username: "admin"
+      password: "{% raw %}{{{% endraw %} ENV.AIRFLOW_SECRET {% raw %}}}{% endraw %}"
+      dag_conf:
+          some: "additional_conf"
+...</code></p>
 </div>
 <h2 id="hook-record-in-configuration-field">Hook Record in configuration field<a class="headerlink" href="#hook-record-in-configuration-field" title="Permanent link">¶</a></h2>
 <p>lakeFS will add an entry to the Airflow request configuration property (<code>conf</code>) with the event that triggered the action.</p>

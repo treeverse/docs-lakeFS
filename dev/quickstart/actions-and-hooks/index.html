@@ -5637,55 +5637,63 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 id="configuring-the-action">Configuring the Action<a class="headerlink" href="#configuring-the-action" title="Permanent link">¶</a></h2>
 <ol>
 <li>In lakeFS create a new branch called <code>add_action</code>. You can do this through the UI or with <code>lakectl</code>: 
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lakectl<span class="w"> </span>branch<span class="w"> </span>create<span class="w"> </span>lakefs://quickstart/add_action<span class="w"> </span>--source<span class="w"> </span>lakefs://quickstart/main
-</span></code></pre></div></li>
-<li>Open up your favorite text editor (or emacs), and paste the following YAML: 
-    <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Check Commit Message and Metadata</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">pre-commit</span><span class="p">:</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">etl**</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">check_metadata</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">          </span><span class="no">commit_message=action.commit.message</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">          </span><span class="no">if commit_message and #commit_message&gt;0 then</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">              </span><span class="no">print("✅ The commit message exists and is not empty: " .. commit_message)</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">          </span><span class="no">else</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">              </span><span class="no">error("\n\n❌ A commit message must be provided")</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">          </span><span class="no">end</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">          </span><span class="no">job_name=action.commit.metadata["job_name"]</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">          </span><span class="no">if job_name == nil then</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">              </span><span class="no">error("\n❌ Commit metadata must include job_name")</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">          </span><span class="no">else</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">              </span><span class="no">print("✅ Commit metadata includes job_name: " .. job_name)</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">          </span><span class="no">end</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">          </span><span class="no">version=action.commit.metadata["version"]</span>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">          </span><span class="no">if version == nil then</span>
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">              </span><span class="no">error("\n❌ Commit metadata must include version")</span>
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="w">          </span><span class="no">else</span>
-</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="w">              </span><span class="no">print("✅ Commit metadata includes version: " .. version)</span>
-</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="w">              </span><span class="no">if tonumber(version) then</span>
-</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="w">                  </span><span class="no">print("✅ Commit metadata version is numeric")</span>
-</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">              </span><span class="no">else</span>
-</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">                  </span><span class="no">error("\n❌ Version metadata must be numeric: " .. version)</span>
-</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="w">              </span><span class="no">end</span>
-</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="w">          </span><span class="no">end</span>
-</span></code></pre></div></li>
+    <code>bash
+    lakectl branch create lakefs://quickstart/add_action --source lakefs://quickstart/main</code></li>
 <li>
-<p>Save this file as <code>/tmp/check_commit_metadata.yml</code></p>
+<p>Open up your favorite text editor (or emacs), and paste the following YAML: 
+    ```yaml
+    name: Check Commit Message and Metadata
+    on:
+      pre-commit:
+        branches:
+          - etl**
+    hooks:</p>
 <ul>
-<li>You can save it elsewhere, but make sure you change the path below when uploading</li>
+<li>
+<p>id: check_metadata
+    type: lua
+    properties:
+      script: |
+          commit_message=action.commit.message
+          if commit_message and #commit_message&gt;0 then
+              print("✅ The commit message exists and is not empty: " .. commit_message)
+          else
+              error("\n\n❌ A commit message must be provided")
+          end</p>
+<div class="codehilite"><pre><span></span><code>  job_name=action.commit.metadata["job_name"]
+  if job_name == nil then
+      error("\n❌ Commit metadata must include job_name")
+  else
+      print("✅ Commit metadata includes job_name: " .. job_name)
+  end
+
+  version=action.commit.metadata["version"]
+  if version == nil then
+      error("\n❌ Commit metadata must include version")
+  else
+      print("✅ Commit metadata includes version: " .. version)
+      if tonumber(version) then
+          print("✅ Commit metadata version is numeric")
+      else
+          error("\n❌ Version metadata must be numeric: " .. version)
+      end
+  end
+```
+</code></pre></div>
+
+<ol>
+<li>Save this file as <code>/tmp/check_commit_metadata.yml</code></li>
+</ol>
+</li>
+<li>
+<p>You can save it elsewhere, but make sure you change the path below when uploading</p>
+</li>
 </ul>
 </li>
 <li>
 <p>Upload the <code>check_commit_metadata.yml</code> file to the <code>add_action</code> branch under <code>_lakefs_actions/</code>. As above, you can use the UI (make sure you select the correct branch when you do), or with <code>lakectl</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>lakectl<span class="w"> </span>fs<span class="w"> </span>upload<span class="w"> </span>lakefs://quickstart/add_action/_lakefs_actions/check_commit_metadata.yml<span class="w"> </span>--source<span class="w"> </span>/tmp/check_commit_metadata.yml
-</span></code></pre></div>
+<p><code>bash
+lakectl fs upload lakefs://quickstart/add_action/_lakefs_actions/check_commit_metadata.yml --source /tmp/check_commit_metadata.yml</code></p>
 </li>
 <li>
 <p>Go to the <strong>Uncommitted Changes</strong> tab in the UI, and make sure that you see the new file in the path shown: </p>
@@ -5717,14 +5725,14 @@ document.addEventListener("DOMContentLoaded", function() {
 <li>
 <p>To simulate an ETL job we'll use the built-in DuckDB editor to run some SQL and write the result back to the lakeFS branch. </p>
 <p>Open the <code>lakes.parquet</code> file on the <code>etl_20230504</code> branch from the <strong>Objects</strong> tab. Replace the SQL statement with the following: </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">COPY</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">WITH</span><span class="w"> </span><span class="n">src</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="p">(</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="k">SELECT</span><span class="w"> </span><span class="n">lake_name</span><span class="p">,</span><span class="w"> </span><span class="n">country</span><span class="p">,</span><span class="w"> </span><span class="n">depth_m</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="n">RANK</span><span class="p">()</span><span class="w"> </span><span class="n">OVER</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">depth_m</span><span class="w"> </span><span class="k">DESC</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">lake_rank</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">        </span><span class="k">FROM</span><span class="w"> </span><span class="n">READ_PARQUET</span><span class="p">(</span><span class="s1">'lakefs://quickstart/etl_20230504/lakes.parquet'</span><span class="p">))</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">SRC</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">lake_rank</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">10</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">'lakefs://quickstart/etl_20230504/top10_lakes.parquet'</span><span class="w">    </span>
-</span></code></pre></div>
+<p><code>sql
+COPY (
+    WITH src AS (
+        SELECT lake_name, country, depth_m,
+            RANK() OVER ( ORDER BY depth_m DESC) AS lake_rank
+        FROM READ_PARQUET('lakefs://quickstart/etl_20230504/lakes.parquet'))
+    SELECT * FROM SRC WHERE lake_rank &lt;= 10
+) TO 'lakefs://quickstart/etl_20230504/top10_lakes.parquet'</code></p>
 </li>
 <li>
 <p>Head to the <strong>Uncommitted Changes</strong> tab in the UI and notice that there is now a file called <code>top10_lakes.parquet</code> waiting to be committed. </p>

@@ -1659,17 +1659,6 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flow
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -5758,17 +5747,6 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flow
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -5800,14 +5778,14 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Data Catalogs (such as Hive Metastore or AWS Glue) store metadata for services (such as Spark, Trino and Athena). They contain metadata such as the location of the table, information about columns, partitions and much more.</p>
 <p>With Data Catalog Exports, one can leverage the versioning capabilities of lakeFS in external data warehouses and query engines to access tables with branches and commits. </p>
 <p>At the end of this guide, you will be able to query lakeFS data from Athena, Trino and other catalog-dependent tools:</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">USE</span><span class="w"> </span><span class="n">main</span><span class="p">;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">USE</span><span class="w"> </span><span class="n">my_branch</span><span class="p">;</span><span class="w"> </span><span class="c1">-- any branch</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">USE</span><span class="w"> </span><span class="n">v101</span><span class="p">;</span><span class="w"> </span><span class="c1">-- or tag</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">users</span><span class="w"> </span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">events</span><span class="w"> </span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">ON</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">events</span><span class="p">.</span><span class="n">user_id</span><span class="p">;</span><span class="w"> </span><span class="c1">-- SQL stays the same, branch or tag exist as schema</span>
-</span></code></pre></div>
+<p>```sql
+USE main;
+USE my_branch; -- any branch
+USE v101; -- or tag</p>
+<p>SELECT * FROM users 
+INNER JOIN events 
+ON users.id = events.user_id; -- SQL stays the same, branch or tag exist as schema
+```</p>
 <h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">¶</a></h2>
 <p>Several well known formats exist today let you export existing tables in lakeFS into a "native" object store representation
 which does not require copying the data outside of lakeFS.</p>
@@ -5817,27 +5795,27 @@ which does not require copying the data outside of lakeFS.</p>
 Note: the Glue exporter can currently only export tables of <code>type: hive</code>.  We expect to add more.</p>
 <h4 id="hive-tables">Hive tables<a class="headerlink" href="#hive-tables" title="Permanent link">¶</a></h4>
 <p>Hive metadata server tables are essentially just a set of objects that share a prefix, with no table metadata stored on the object store.  You need to configure prefix, partitions, and schema.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">animals</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hive</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">path/to/animals/</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">partition_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'year'</span><span class="p p-Indicator">]</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">schema</span><span class="p">:</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">struct</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">fields</span><span class="p">:</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">year</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="nt">nullable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">page</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="nt">nullable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">site</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="nt">nullable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">        </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a comment about this column</span>
-</span></code></pre></div>
+<p><code>yaml
+name: animals
+type: hive
+path: path/to/animals/
+partition_columns: ['year']
+schema:
+  type: struct
+  fields:
+    - name: year
+      type: integer
+      nullable: false
+      metadata: {}
+    - name: page
+      type: string
+      nullable: false
+      metadata: {}
+    - name: site
+      type: string
+      nullable: true
+      metadata:
+        comment: a comment about this column</code></p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Useful types recognized by Hive include <code>integer</code>, <code>long</code>, <code>short</code>, <code>string</code>, <code>double</code>, <code>float</code>, <code>date</code>, and <code>timestamp</code>.</p>
@@ -5881,36 +5859,37 @@ Note: the Glue exporter can currently only export tables of <code>type: hive</co
 <p>Configure the actions trigger by using <a href="../hooks/#action-file-schema">events and branches</a>.  Of course, you can add additional custom filtering logic to the Lua script if needed.
 The default table name when exported is <code>${repository_id}_${_lakefs_tables/TABLE.md(name field)}_${ref_name}_${short_commit}</code>.</p>
 <p>Example of an action that will be triggered when a <code>post-commit</code> event happens in the <code>export_table</code> branch.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Glue Table Exporter</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">export my table to glue</span><span class="w">  </span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">post-commit</span><span class="p">:</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"export_table"</span><span class="p p-Indicator">]</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_exporter</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="c1"># exporter script location</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="nt">script_path</span><span class="p">:</span><span class="w"> </span><span class="s">"scripts/my_export_script.lua"</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="nt">args</span><span class="p">:</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="c1"># table descriptor</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="nt">table_source</span><span class="p">:</span><span class="w"> </span><span class="s">'_lakefs_tables/my_table.yaml'</span>
-</span></code></pre></div>
+<p><code>yaml
+name: Glue Table Exporter
+description: export my table to glue  
+on:
+  post-commit:
+    branches: ["export_table"]
+hooks:
+  - id: my_exporter
+    type: lua
+    properties:
+      # exporter script location
+      script_path: "scripts/my_export_script.lua"
+      args:
+        # table descriptor
+        table_source: '_lakefs_tables/my_table.yaml'</code></p>
 <p>Tip: Actions can be extended to customize any desired behavior, for example validating branch names since they are part of the table name: </p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># _lakefs_actions/validate_branch_name.yaml</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validate-lower-case-branches</span><span class="w"> </span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">pre-create-branch</span><span class="p">:</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">check_branch_id</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">        </span><span class="no">regexp = require("regexp")</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="no">if not regexp.match("^[a-z0-9\\_\\-]+$", action.branch_id) then</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">          </span><span class="no">error("branches must be lower case, invalid branch ID: " .. action.branch_id)</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="no">end</span>
-</span></code></pre></div>
+<p>```yaml</p>
+<h1 id="_lakefs_actionsvalidate_branch_nameyaml">_lakefs_actions/validate_branch_name.yaml<a class="headerlink" href="#_lakefs_actionsvalidate_branch_nameyaml" title="Permanent link">¶</a></h1>
+<p>name: validate-lower-case-branches 
+on:
+  pre-create-branch:
+hooks:
+  - id: check_branch_id
+    type: lua
+    properties:
+      script: |
+        regexp = require("regexp")
+        if not regexp.match("^[a-z0-9\_\-]+$", action.branch_id) then
+          error("branches must be lower case, invalid branch ID: " .. action.branch_id)
+        end
+```</p>
 <h3 id="flow">Flow<a class="headerlink" href="#flow" title="Permanent link">¶</a></h3>
 <p>The following diagram demonstrates what happens when a lakeFS Action triggers runs a lua hook that calls an exporter.</p>
 <pre class="mermaid"><code>sequenceDiagram

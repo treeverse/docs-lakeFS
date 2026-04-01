@@ -5690,8 +5690,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>To read data at it’s current state, we can use a static path containing the repository and branch names. To give an example, if you have a repository named <code>example</code> with a branch named <code>main</code>, reading the latest state of this data into a Spark Dataframe is always:</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s2">"s3://example/main/"</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+df = spark.read.parquet("s3://example/main/")</code></p>
 <p>The code above assumes that all objects in the repository under this path are stored in parquet format. If a different format is used, the applicable Spark read method should be used.</p>
 </div>
 <h3 id="using-commits">Using Commits<a class="headerlink" href="#using-commits" title="Permanent link">¶</a></h3>
@@ -5699,8 +5699,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../../assets/img/reproduce-commit-history.png" data-desc-position="bottom"><img alt="Commit History" src="../../../assets/img/reproduce-commit-history.png"></a></p>
 <p>In the repository above, a new commit is taken each time a model training script is run, and the commit message includes the specific run number. </p>
 <p>If we wanted to re-run the model training script and reproduce the exact same results for a historical run, say run #435, we could copy the commit ID associated with the run and read the data into a dataframe like so:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s2">"s3://example/296e54fbee5e176f3f4f4aeb7e087f9d57515750e8c3d033b8b841778613cb23/training_dataset/"</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+df = spark.read.parquet("s3://example/296e54fbee5e176f3f4f4aeb7e087f9d57515750e8c3d033b8b841778613cb23/training_dataset/")</code></p>
 <p>The ability to reference a specific <code>commit_id</code> in code simplifies reproducing the specific state a data collection or even multiple collections. This has many applications that are common in data development, such as historical debugging, identifying deltas in a data collection, audit compliance, and more.</p>
 <h3 id="using-tags">Using Tags<a class="headerlink" href="#using-tags" title="Permanent link">¶</a></h3>
 <p>In addition to commits, lakeFS supports <a href="../../glossary/#tag">tags</a>. A tag is a human-readable label that points to a specific commit.</p>
@@ -5709,8 +5709,8 @@ document.addEventListener("DOMContentLoaded", function() {
 * A specific model training dataset
 * A dataset used for an audit</p>
 <p>Instead of referencing a non-readable <code>commit_id</code>, you can reference the tag directly in your code. For example:
-</p><div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="s2">"s3://example/v1.0/training_dataset/"</span><span class="p">)</span>
-</span></code></pre></div><p></p>
+<code>python
+df = spark.read.parquet("s3://example/v1.0/training_dataset/")</code></p>
 <p>Here, <code>v1.0</code> is a tag that points to a specific commit. While commits in lakeFS are immutable, a tag is simply a reference 
 to one of those immutable commits. Once created, a tag cannot be updated to point to a different commit (it can only be 
 deleted and recreated).</p>

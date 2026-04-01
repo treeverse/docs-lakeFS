@@ -5866,10 +5866,16 @@ It integrates seamlessly with popular data frameworks such as <a href="integrati
 <p>With lakeFS, you can use any of the tools and libraries you are used to work with to read and write data directly from a repository.</p>
 <div class="admonition example">
 <p class="admonition-title">Example: lakeFS with Pandas</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">&gt;&gt;&gt;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'lakefs://example-repository/main-branch/path/to.csv'</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>import pandas as pd</p>
+<p>df = pd.read_csv('lakefs://example-repository/main-branch/path/to.csv')
+```</p>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <p>Using this method, lakeFS acts as a metadata layer: it figures out which objects need to be fetched from the underlying storage for that version of the data and then lets the client read or write these files directly from the storage using <a href="security/presigned-url/">pre-signed URLs</a>. This allows lakeFS to be both very efficient but also highly secure:</p>
 <p class="center">
@@ -5882,12 +5888,18 @@ any tool interacting with a data lake.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <p>For example, take the common operation of reading unstructured data from the object store using <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/index.html" target="_blank">Boto3</a> (Python):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="o">&gt;&gt;&gt;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">'s3'</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Object</span><span class="p">(</span><span class="s1">'example-repository'</span><span class="p">,</span> <span class="s1">'main-branch/path/image.png'</span><span class="p">)</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">image_data</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="s1">'Body'</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</span></code></pre></div>
+<p>```python</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>import boto3</p>
+<p>s3 = boto3.resource('s3')
+obj = s3.Object('example-repository', 'main-branch/path/image.png')
+image_data = obj.get()['Body'].read()
+```</p>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <p>You can use the same methods and syntax you are already using to read and write data when using a lakeFS repository.
 This simplifies the adoption of lakeFS - minimal changes are needed to get started, making further changes an incremental process.</p>

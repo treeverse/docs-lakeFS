@@ -5734,60 +5734,60 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>The High-Level SDK provides a Pythonic interface to lakeFS. This page covers installation, initialization, and configuration of the SDK.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
 <p>Install the High-Level SDK using pip:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>lakefs
-</span></code></pre></div>
+<p><code>shell
+pip install lakefs</code></p>
 <p>Or upgrade to the latest version:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>lakefs
-</span></code></pre></div>
+<p><code>shell
+pip install --upgrade lakefs</code></p>
 <h2 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">¶</a></h2>
 <p>The High-Level SDK by default will try to collect authentication parameters from the environment and attempt to create a default client. When working in an environment where <strong>lakectl</strong> is configured, it is not necessary to instantiate a lakeFS client or provide it for creating the lakeFS objects.</p>
 <p>In case no authentication parameters exist, it is also possible to explicitly create a lakeFS client.</p>
 <h3 id="basic-client-initialization">Basic Client Initialization<a class="headerlink" href="#basic-client-initialization" title="Permanent link">¶</a></h3>
 <p>Here's how to instantiate a client:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">"http://localhost:8000"</span><span class="p">,</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">username</span><span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">password</span><span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>
-</span></code></pre></div>
+<p>```python
+from lakefs.client import Client</p>
+<p>clt = Client(
+    host="http://localhost:8000",
+    username="AKIAIOSFODNN7EXAMPLE",
+    password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+)
+```</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>See <a href="../../security/external-principals-aws/#login-with-python">here</a> for instructions on how to log in with Python using your AWS role. This is applicable for enterprise users.</p>
 </div>
 <h3 id="ssl-configuration">SSL Configuration<a class="headerlink" href="#ssl-configuration" title="Permanent link">¶</a></h3>
 <p>You can use TLS with a CA that is not trusted on the host by configuring the client with a CA cert bundle file. It should contain concatenated CA certificates in PEM format:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">"https://lakefs.example.io"</span><span class="p">,</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">username</span><span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">password</span><span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="c1"># Customize the CA certificates used to verify the peer.</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">ssl_ca_cert</span><span class="o">=</span><span class="s2">"path/to/concatenated_CA_certificates.PEM"</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+clt = Client(
+    host="https://lakefs.example.io",
+    username="AKIAIOSFODNN7EXAMPLE",
+    password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    # Customize the CA certificates used to verify the peer.
+    ssl_ca_cert="path/to/concatenated_CA_certificates.PEM",
+)</code></p>
 <p>For connecting to a secure endpoint without verification (for test environments):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">"https://lakefs.example.io"</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">username</span><span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">password</span><span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">verify_ssl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+clt = Client(
+    host="https://lakefs.example.io",
+    username="AKIAIOSFODNN7EXAMPLE",
+    password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    verify_ssl=False,
+)</code></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This setting allows well-known "man-in-the-middle", impersonation, and credential stealing attacks. Never use this in any production setting.</p>
 </div>
 <h3 id="proxy-configuration">Proxy Configuration<a class="headerlink" href="#proxy-configuration" title="Permanent link">¶</a></h3>
 <p>To enable communication via proxies, add a proxy configuration:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">clt</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">"https://lakefs.example.io"</span><span class="p">,</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">username</span><span class="o">=</span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span><span class="p">,</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">password</span><span class="o">=</span><span class="s2">"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">ssl_ca_cert</span><span class="o">=</span><span class="s2">"(if needed)"</span><span class="p">,</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">proxy</span><span class="o">=</span><span class="s2">"&lt;proxy server URL&gt;"</span><span class="p">,</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+clt = Client(
+    host="https://lakefs.example.io",
+    username="AKIAIOSFODNN7EXAMPLE",
+    password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    ssl_ca_cert="(if needed)",
+    proxy="&lt;proxy server URL&gt;",
+)</code></p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">¶</a></h2>
 <p>Once you have initialized the SDK, explore the different operations:</p>
 <ul>

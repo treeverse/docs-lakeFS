@@ -5782,26 +5782,26 @@ accelerates the process by enabling interactive and offline development and redu
 <ol>
 <li>
 <p>In lakeFS create a new branch called <code>my-experiment</code>. You can do this through the UI or with <code>lakectl</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lakectl<span class="w"> </span>branch<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>lakefs://quickstart/my-experiment<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--source<span class="w"> </span>lakefs://quickstart/main
-</span></code></pre></div>
+<p><code>bash
+lakectl branch create \
+    lakefs://quickstart/my-experiment \
+    --source lakefs://quickstart/main</code></p>
 </li>
 <li>
 <p>Mount images from your quickstart repository into a local directory named <code>my_local_dir</code></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>everest<span class="w"> </span>mount<span class="w"> </span>lakefs://quickstart/my-experiment/images<span class="w"> </span>my_local_dir
-</span></code></pre></div>
+<p><code>bash
+everest mount lakefs://quickstart/my-experiment/images my_local_dir</code></p>
 <p>Once complete, <code>my_local_dir</code> should be mounted with the specified path.</p>
 </li>
 <li>
 <p>Verify that <code>my_local_dir</code> is linked to the correct path in your lakeFS remote:
-    </p><div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ls<span class="w"> </span>-l<span class="w"> </span>my_local_dir
-</span></code></pre></div><p></p>
+    <code>bash
+    ls -l my_local_dir</code></p>
 </li>
 <li>
 <p>To unmount the directory, simply run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>everest<span class="w"> </span>umount<span class="w"> </span>./my_local_dir
-</span></code></pre></div>
+<p><code>bash
+everest umount ./my_local_dir</code></p>
 <p>Which will unmount the path and terminate the local mount-server.</p>
 </li>
 </ol>
@@ -5814,51 +5814,51 @@ container and edit an image dataset used for ML model development. Unlike lakeFS
 <h3 id="cloning-a-subset-of-lakefs-data-into-a-local-directory">Cloning a Subset of lakeFS Data into a Local Directory<a class="headerlink" href="#cloning-a-subset-of-lakefs-data-into-a-local-directory" title="Permanent link">¶</a></h3>
 <ol>
 <li>In lakeFS create a new branch called <code>my-experiment</code>. You can do this through the UI or with <code>lakectl</code>:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>lakectl<span class="w"> </span>branch<span class="w"> </span>create<span class="w"> </span>lakefs://quickstart/my-experiment<span class="w"> </span>--source<span class="w"> </span>lakefs://quickstart/main
-</span></code></pre></div></li>
+    <code>bash
+    lakectl branch create lakefs://quickstart/my-experiment --source lakefs://quickstart/main</code></li>
 <li>Clone images from your quickstart repository into a local directory named <code>my_local_dir</code> within your container:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>clone<span class="w"> </span>lakefs://quickstart/my-experiment/images<span class="w"> </span>my_local_dir
-</span></code></pre></div></li>
+    <code>bash
+    lakectl local clone lakefs://quickstart/my-experiment/images my_local_dir</code></li>
 <li>Verify that <code>my_local_dir</code> is linked to the correct path in your lakeFS remote:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>list
-</span></code></pre></div>
+    <code>bash
+    lakectl local list</code>
    You should see confirmation that my_local_dir is tracking the desired lakeFS path.:
-   <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="w">    </span>my_local_dir<span class="w"> </span>lakefs://quickstart/my-experiment/images/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53
-</span></code></pre></div></li>
+   <code>bash
+       my_local_dir lakefs://quickstart/my-experiment/images/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53</code></li>
 <li>
 <p>Verify that your local environment is up-to-date with its remote path:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>status<span class="w"> </span>my_local_dir
-</span></code></pre></div>
+<p><code>bash
+lakectl local status my_local_dir</code></p>
 <p>You should get a confirmation message like this showing that there is no difference between your local environment and the lakeFS remote:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'...
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'...
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>No diff found.
-</span></code></pre></div>
+<p>```text
+diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'...
+diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'...</p>
+<p>No diff found.
+```</p>
 </li>
 </ol>
 <h3 id="making-changes-to-data-locally">Making Changes to Data Locally<a class="headerlink" href="#making-changes-to-data-locally" title="Permanent link">¶</a></h3>
 <ol>
 <li>Clean the dataset by removing images larger than 225 KB:
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>find<span class="w"> </span>my_local_dir<span class="w"> </span>-type<span class="w"> </span>f<span class="w"> </span>-size<span class="w"> </span>+225k<span class="w"> </span>-delete
-</span></code></pre></div></li>
+    <code>bash
+    find my_local_dir -type f -size +225k -delete</code></li>
 <li>
 <p>Check the status of your local changes compared to the lakeFS remote path:
-    </p><div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>status<span class="w"> </span>my_local_dir
-</span></code></pre></div><p></p>
+    <code>bash
+    lakectl local status my_local_dir</code></p>
 <p>You should get a confirmation message like this, showing the modifications you made locally:
-</p><div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>diff<span class="w"> </span><span class="s1">'local:///home/lakefs/my_local_dir'</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'</span>...
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>diff<span class="w"> </span><span class="s1">'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'</span><span class="w"> </span>&lt;--&gt;<span class="w"> </span><span class="s1">'lakefs://quickstart/my-experiment/images/'</span>...
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>╔════════╦══════════╦═════════════════════╗
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>║<span class="w"> </span>SOURCE<span class="w"> </span>║<span class="w"> </span>CHANGE<span class="w">   </span>║<span class="w"> </span>PATH<span class="w">                </span>║
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>╠════════╬══════════╬═════════════════════╣
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>modified<span class="w"> </span>║<span class="w"> </span>axolotl.png<span class="w">         </span>║
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>removed<span class="w">  </span>║<span class="w"> </span>duckdb-main-02.png<span class="w">  </span>║
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>removed<span class="w">  </span>║<span class="w"> </span>empty-repo-list.png<span class="w"> </span>║
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>║<span class="w"> </span><span class="nb">local</span><span class="w">  </span>║<span class="w"> </span>removed<span class="w">  </span>║<span class="w"> </span>repo-contents.png<span class="w">   </span>║
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>╚════════╩══════════╩═════════════════════╝
-</span></code></pre></div><p></p>
+```bash
+diff 'local:///home/lakefs/my_local_dir' &lt;--&gt; 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/'...
+diff 'lakefs://quickstart/8614575b5488b47a094163bd17a12ed0b82e0bcbfd22ed1856151c671f1faa53/images/' &lt;--&gt; 'lakefs://quickstart/my-experiment/images/'...</p>
+<p>╔════════╦══════════╦═════════════════════╗
+║ SOURCE ║ CHANGE   ║ PATH                ║
+╠════════╬══════════╬═════════════════════╣
+║ local  ║ modified ║ axolotl.png         ║
+║ local  ║ removed  ║ duckdb-main-02.png  ║
+║ local  ║ removed  ║ empty-repo-list.png ║
+║ local  ║ removed  ║ repo-contents.png   ║
+╚════════╩══════════╩═════════════════════╝
+```</p>
 </li>
 </ol>
 <h3 id="pushing-local-changes-to-lakefs">Pushing Local Changes to lakeFS<a class="headerlink" href="#pushing-local-changes-to-lakefs" title="Permanent link">¶</a></h3>
@@ -5867,8 +5867,8 @@ the improved dataset is shared and versioned.</p>
 <ol>
 <li>
 <p>Commit your local changes to lakeFS:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>lakectl<span class="w"> </span><span class="nb">local</span><span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">'Deleted images larger than 225KB in size and changed the Axolotl image'</span><span class="w"> </span>my_local_dir
-</span></code></pre></div>
+<p><code>bash
+lakectl local commit -m 'Deleted images larger than 225KB in size and changed the Axolotl image' my_local_dir</code></p>
 <p>In your branch, you should see the commit including your local changes:</p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/quickstart/lakectl-local-01.png" data-desc-position="bottom"><img width="75%" src="../../assets/img/quickstart/lakectl-local-01.png" alt="A lakectl local commit to lakeFS" class="quickstart"></a></p>
 </li>
@@ -5881,9 +5881,9 @@ the improved dataset is shared and versioned.</p>
 <p class="admonition-title">Bonus Challenge</p>
 <p>And so with that, this quickstart for lakeFS draws to a close. If you're simply having <em>too much fun</em> to stop then here's an exercise for you.</p>
 <p>Implement the requirement from the beginning of this quickstart <em>correctly</em>, such that you write <code>denmark-lakes.parquet</code> in the respective branch and successfully merge it back into main. Look up how to list the contents of the <code>main</code> branch and verify that it looks like this:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>object          2023-03-21 17:33:51 +0000 UTC    20.9 kB         denmark-lakes.parquet
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>object          2023-03-21 14:45:38 +0000 UTC    916.4 kB        lakes.parquet
-</span></code></pre></div>
+<p><code>text
+object          2023-03-21 17:33:51 +0000 UTC    20.9 kB         denmark-lakes.parquet
+object          2023-03-21 14:45:38 +0000 UTC    916.4 kB        lakes.parquet</code></p>
 </div>
 <hr>
 <p><a class="md-button" href="../actions-and-hooks/">← Using Actions and Hooks in lakeFS</a> <a class="md-button md-button--primary" href="../learning-more-lakefs/">Learn more about lakeFS →</a></p>

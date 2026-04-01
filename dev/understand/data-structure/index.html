@@ -5631,10 +5631,10 @@ This might cause confusion when trying to understand where our data is actually 
 <h2 id="lakefs-repository-namespace-structure">lakeFS Repository Namespace Structure<a class="headerlink" href="#lakefs-repository-namespace-structure" title="Permanent link">¶</a></h2>
 <p>lakeFS stores repository data and metadata under the repository's namespace. The lakeFS repository namespace is a dedicated path under the object store used by lakeFS to manage a repository.
 Listing a repository storage namespace in the object store will provide the following output:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://&lt;storage_namespace&gt;/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                        </span>PRE<span class="w"> </span>_lakefs/
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                        </span>PRE<span class="w"> </span>data/
-</span></code></pre></div>
+<p><code>shell
+aws s3 ls s3://&lt;storage_namespace&gt;/
+                        PRE _lakefs/
+                        PRE data/</code></p>
 <p>lakeFS stores the actual user data under the <code>data/</code> prefix. The <code>_lakefs/</code> prefix is used to store commit metadata which includes <a href="../how/versioning-internals/">range and meta-range</a> files and internal lakeFS data.
 Since lakeFS manages immutable data, objects are not saved using their logical name - these might get overwritten, violating the immutability guarantee. This means that when you upload a csv file called <code>allstar_games_stats.csv</code> to branch main, lakeFS will generate a random physical
 address under the <code>data/</code> prefix and upload it to there.<br>
@@ -5650,25 +5650,25 @@ The physical path returned will be in the form of <code>s3://&lt;storage_namespa
 </ol>
 <h2 id="finding-an-objects-location-on-your-object-store">Finding an object's location on your object store<a class="headerlink" href="#finding-an-objects-location-on-your-object-store" title="Permanent link">¶</a></h2>
 <p>One way to determine the physical location of an object is using the <code>lakectl fs stat</code> command:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>lakectl<span class="w"> </span>fs<span class="w"> </span>stat<span class="w"> </span>--pre-sign<span class="o">=</span><span class="nb">false</span><span class="w"> </span>lakefs://my-repo/main/allstar_games_stats.csv
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Path:<span class="w"> </span>allstar_games_stats.csv
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Modified<span class="w"> </span>Time:<span class="w"> </span><span class="m">2024</span>-08-02<span class="w"> </span><span class="m">10</span>:13:33<span class="w"> </span>-0400<span class="w"> </span>EDT
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Size:<span class="w"> </span><span class="m">0</span><span class="w"> </span>bytes
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Human<span class="w"> </span>Size:<span class="w"> </span><span class="m">0</span><span class="w"> </span>B
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>Physical<span class="w"> </span>Address:<span class="w"> </span>s3://niro-test/repos/docs/data/data/geh1jurck6tfom0s1t8g/cqmej33ck6tfom0s1tvg
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Checksum:<span class="w"> </span>d41d8cd98f00b204e9800998ecf8427e
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>Content-Type:<span class="w"> </span>application/octet-stream
-</span></code></pre></div>
+<p><code>bash
+lakectl fs stat --pre-sign=false lakefs://my-repo/main/allstar_games_stats.csv
+Path: allstar_games_stats.csv
+Modified Time: 2024-08-02 10:13:33 -0400 EDT
+Size: 0 bytes
+Human Size: 0 B
+Physical Address: s3://niro-test/repos/docs/data/data/geh1jurck6tfom0s1t8g/cqmej33ck6tfom0s1tvg
+Checksum: d41d8cd98f00b204e9800998ecf8427e
+Content-Type: application/octet-stream</code></p>
 <p>lakeFS can show any version of an object. For example: to see an object's physical location on branch <code>dev</code> from 3 versions ago, use reference dev~3:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>lakectl<span class="w"> </span>fs<span class="w"> </span>stat<span class="w"> </span>lakefs://my-repo/dev~3/allstar_games_stats.csv
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Path:<span class="w"> </span>allstar_games_stats.csv
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Modified<span class="w"> </span>Time:<span class="w"> </span><span class="m">2024</span>-08-02<span class="w"> </span><span class="m">10</span>:11:49<span class="w"> </span>-0400<span class="w"> </span>EDT
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Size:<span class="w"> </span><span class="m">916393</span><span class="w"> </span>bytes
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Human<span class="w"> </span>Size:<span class="w"> </span><span class="m">916</span>.4<span class="w"> </span>kB
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Physical<span class="w"> </span>Address:<span class="w"> </span>s3://&lt;storage_namespace&gt;/data/data/geh1jurck6tfom0s1t8g/cqmei9bck6tfom0s1tt0
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Checksum:<span class="w"> </span>48e04a4c072acdcf932ee6c43f46ef14
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Content-Type:<span class="w"> </span>application/octet-stream
-</span></code></pre></div>
+<p><code>bash
+lakectl fs stat lakefs://my-repo/dev~3/allstar_games_stats.csv
+Path: allstar_games_stats.csv
+Modified Time: 2024-08-02 10:11:49 -0400 EDT
+Size: 916393 bytes
+Human Size: 916.4 kB
+Physical Address: s3://&lt;storage_namespace&gt;/data/data/geh1jurck6tfom0s1t8g/cqmei9bck6tfom0s1tt0
+Checksum: 48e04a4c072acdcf932ee6c43f46ef14
+Content-Type: application/octet-stream</code></p>
 <p>This can be done using any lakeFS reference type.</p>
 <p>To learn more about the internals of lakeFS and how it stores your data, follow <a href="https://lakefs.io/blog/where-is-my-data/">this blog post</a></p>
 

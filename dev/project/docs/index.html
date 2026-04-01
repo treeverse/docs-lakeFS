@@ -5749,33 +5749,32 @@ Its application to lakeFS was discussed in <a href="https://github.com/treeverse
 <li><strong>pip</strong> (Python package installer)</li>
 </ul>
 <p>Then, from the root of the repository, install all documentation-related dependencies:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements-docs.txt
-</span></code></pre></div>
+<p><code>bash
+pip install -r docs/requirements-docs.txt</code></p>
 <h2 id="test-your-changes-locally">Test your changes locally<a class="headerlink" href="#test-your-changes-locally" title="Permanent link">¶</a></h2>
 <p>If you have the necessary dependencies installed, you can run <a href="https://www.mkdocs.org/">mkdocs</a> to build and serve the documentation from your machine using the provided Makefile target:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span>docs-serve
-</span></code></pre></div>
+<p><code>sh
+make docs-serve</code></p>
 <h2 id="link-checking-locally">Link Checking locally<a class="headerlink" href="#link-checking-locally" title="Permanent link">¶</a></h2>
 <p>When making a pull request to lakeFS that involves a <code>docs/*</code> file, a <a href="https://github.com/treeverse/lakeFS/blob/master/.github/workflows/docs-pr.yaml">GitHub action</a> will automagically check the links. You can also run this link checker manually on your local machine:</p>
 <ol>
 <li>
 <p>Build the site:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mkdocs<span class="w"> </span>build
-</span></code></pre></div>
+<p><code>bash
+mkdocs build</code></p>
 </li>
 <li>
 <p>Check the links:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker run --rm \
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>        --name lakefs_docs_lychee \
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        --volume "$PWD:/data"\
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>        --volume "/tmp:/output"\
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        --tty \
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        lycheeverse/lychee:master \
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        --exclude-file /data/.lycheeignore \
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        --output /output/lychee_report.md \
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        --format markdown \
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        /data/docs/site
-</span></code></pre></div>
+<p><code>docker run --rm \
+        --name lakefs_docs_lychee \
+        --volume "$PWD:/data"\
+        --volume "/tmp:/output"\
+        --tty \
+        lycheeverse/lychee:master \
+        --exclude-file /data/.lycheeignore \
+        --output /output/lychee_report.md \
+        --format markdown \
+        /data/docs/site</code></p>
 </li>
 <li>
 <p>Review the <code>lychee_report.md</code> in your local <code>/tmp</code> folder</p>

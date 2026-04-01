@@ -5544,12 +5544,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/quickstart/duckdb-main-01.png" data-desc-position="bottom"><img src="../../assets/img/quickstart/duckdb-main-01.png" alt="The lakeFS object viewer with embedded DuckDB to query parquet files. A query has run automagically to preview the contents of the selected parquet file." class="quickstart"></a></p>
 <p>Now we'll run our own query on it to look at the top five countries represented in the data. </p>
 <p>Copy and paste the following SQL statement into the DuckDB query panel and click on Execute.</p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">SELECT</span><span class="w">   </span><span class="n">country</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">FROM</span><span class="w">     </span><span class="n">READ_PARQUET</span><span class="p">(</span><span class="s1">'lakefs://quickstart/main/lakes.parquet'</span><span class="p">)</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">country</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">DESC</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
-</span></code></pre></div>
+<p><code>sql
+SELECT   country, COUNT(*)
+FROM     READ_PARQUET('lakefs://quickstart/main/lakes.parquet')
+GROUP BY country
+ORDER BY COUNT(*) 
+DESC LIMIT 5;</code></p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/quickstart/duckdb-main-02.png" data-desc-position="bottom"><img src="../../assets/img/quickstart/duckdb-main-02.png" alt="An embedded DuckDB query showing a count of rows per country in the dataset." class="quickstart"></a></p>
 <p>Next we're going to make some changes to the data—but on a development branch so that the data in the main branch remains untouched. </p>
 <hr>

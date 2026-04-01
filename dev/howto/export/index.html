@@ -5803,29 +5803,29 @@ other versions and uncommitted versions.</p>
 <ol>
 <li>
 <p>Export all the objects from branch <code>example-branch</code> on <code>example-repo</code> repository to S3 location <code>s3://example-bucket/prefix/</code>:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>....<span class="w"> </span>example-repo<span class="w"> </span>s3://example-bucket/prefix/<span class="w"> </span>--branch<span class="o">=</span>example-branch
-</span></code></pre></div>
+<p><code>shell
+.... example-repo s3://example-bucket/prefix/ --branch=example-branch</code></p>
 </li>
 <li>
 <p>Export all the objects from a commit <code>c805e49bafb841a0875f49cd555b397340bbd9b8</code> on <code>example-repo</code> repository to S3 location <code>s3://example-bucket/prefix/</code>:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>....<span class="w"> </span>example-repo<span class="w"> </span>s3://example-bucket/prefix/<span class="w"> </span>--commit_id<span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
-</span></code></pre></div>
+<p><code>shell
+.... example-repo s3://example-bucket/prefix/ --commit_id=c805e49bafb841a0875f49cd555b397340bbd9b8</code></p>
 </li>
 <li>
 <p>Export only the diff between branch <code>example-branch</code> and commit <code>c805e49bafb841a0875f49cd555b397340bbd9b8</code>
    on <code>example-repo</code> repository to S3 location <code>s3://example-bucket/prefix/</code>:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>....<span class="w"> </span>example-repo<span class="w"> </span>s3://example-bucket/prefix/<span class="w"> </span>--branch<span class="o">=</span>example-branch<span class="w"> </span>--prev_commit_id<span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
-</span></code></pre></div>
+<p><code>shell
+.... example-repo s3://example-bucket/prefix/ --branch=example-branch --prev_commit_id=c805e49bafb841a0875f49cd555b397340bbd9b8</code></p>
 </li>
 </ol>
 <p>The complete <code>spark-submit</code> command would look as follows:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>spark-submit<span class="w"> </span>--conf<span class="w"> </span>spark.hadoop.lakefs.api.url<span class="o">=</span>https://&lt;LAKEFS_ENDPOINT&gt;/api/v1<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.lakefs.api.access_key<span class="o">=</span>&lt;LAKEFS_ACCESS_KEY_ID&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--conf<span class="w"> </span>spark.hadoop.lakefs.api.secret_key<span class="o">=</span>&lt;LAKEFS_SECRET_ACCESS_KEY&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--packages<span class="w"> </span>io.lakefs:lakefs-spark-client_2.12:0.21.0<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--class<span class="w"> </span>io.treeverse.clients.Main<span class="w"> </span>export-app<span class="w"> </span>example-repo<span class="w"> </span>s3://example-bucket/prefix<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span>--branch<span class="o">=</span>example-branch
-</span></code></pre></div>
+<p><code>shell
+spark-submit --conf spark.hadoop.lakefs.api.url=https://&lt;LAKEFS_ENDPOINT&gt;/api/v1 \
+    --conf spark.hadoop.lakefs.api.access_key=&lt;LAKEFS_ACCESS_KEY_ID&gt; \
+    --conf spark.hadoop.lakefs.api.secret_key=&lt;LAKEFS_SECRET_ACCESS_KEY&gt; \
+    --packages io.lakefs:lakefs-spark-client_2.12:0.21.0 \
+    --class io.treeverse.clients.Main export-app example-repo s3://example-bucket/prefix \
+    --branch=example-branch</code></p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>The command assumes that the Spark cluster has permissions to write to <code>s3://example-bucket/prefix</code>.
@@ -5851,8 +5851,8 @@ files that were added to that branch but were not committed.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="scala" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="scala">Scala</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">exportAllFromBranch</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>scala
+exportAllFromBranch(branch: String)</code></p>
 </div>
 </div>
 </div>
@@ -5860,8 +5860,8 @@ files that were added to that branch but were not committed.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="scala_1" name="__tabbed_2" type="radio"><div class="tabbed-labels"><label for="scala_1">Scala</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">exportAllFromCommit</span><span class="p">(</span><span class="n">commitID</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>scala
+exportAllFromCommit(commitID: String)</code></p>
 </div>
 </div>
 </div>
@@ -5871,8 +5871,8 @@ that have been changed since the previous commit.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="scala_2" name="__tabbed_3" type="radio"><div class="tabbed-labels"><label for="scala_2">Scala</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">exportFrom</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">,</span><span class="w"> </span><span class="n">prevCommitID</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>scala
+exportFrom(branch: String, prevCommitID: String)</code></p>
 </div>
 </div>
 </div>
@@ -5894,27 +5894,23 @@ You may override the default behavior by passing a custom <code>filter</code> to
 <div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="scala_3" name="__tabbed_4" type="radio"><div class="tabbed-labels"><label for="scala_3">Scala</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">import</span><span class="w"> </span><span class="nn">io</span><span class="p">.</span><span class="nn">treeverse</span><span class="p">.</span><span class="nn">clients</span><span class="p">.{</span><span class="nc">ApiClient</span><span class="p">,</span><span class="w"> </span><span class="nc">Exporter</span><span class="p">}</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">import</span><span class="w"> </span><span class="nn">org</span><span class="p">.</span><span class="nn">apache</span><span class="p">.</span><span class="nn">spark</span><span class="p">.</span><span class="nn">sql</span><span class="p">.</span><span class="nc">SparkSession</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kd">val</span><span class="w"> </span><span class="n">endpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"http://&lt;LAKEFS_ENDPOINT&gt;/api/v1"</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kd">val</span><span class="w"> </span><span class="n">accessKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&lt;LAKEFS_ACCESS_KEY_ID&gt;"</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="kd">val</span><span class="w"> </span><span class="n">secretKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&lt;LAKEFS_SECRET_ACCESS_KEY&gt;"</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="kd">val</span><span class="w"> </span><span class="n">repo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"example-repo"</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="kd">val</span><span class="w"> </span><span class="n">spark</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">SparkSession</span><span class="p">.</span><span class="n">builder</span><span class="p">().</span><span class="n">appName</span><span class="p">(</span><span class="s">"I can export"</span><span class="p">).</span><span class="n">master</span><span class="p">(</span><span class="s">"local"</span><span class="p">).</span><span class="n">getOrCreate</span><span class="p">()</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="kd">val</span><span class="w"> </span><span class="n">sc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spark</span><span class="p">.</span><span class="n">sparkContext</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">sc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">"lakefs.api.url"</span><span class="p">,</span><span class="w"> </span><span class="n">endpoint</span><span class="p">)</span>
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="n">sc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">"lakefs.api.access_key"</span><span class="p">,</span><span class="w"> </span><span class="n">accessKey</span><span class="p">)</span>
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="n">sc</span><span class="p">.</span><span class="n">hadoopConfiguration</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">"lakefs.api.secret_key"</span><span class="p">,</span><span class="w"> </span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
-</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="c1">// Add any required spark context configuration for s3</span>
-</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="kd">val</span><span class="w"> </span><span class="n">rootLocation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"s3://company-bucket/example/latest"</span>
-</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
-</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="kd">val</span><span class="w"> </span><span class="n">apiClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">ApiClient</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span><span class="w"> </span><span class="n">accessKey</span><span class="p">,</span><span class="w"> </span><span class="n">secretKey</span><span class="p">)</span>
-</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="kd">val</span><span class="w"> </span><span class="n">exporter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">Exporter</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span><span class="w"> </span><span class="n">apiClient</span><span class="p">,</span><span class="w"> </span><span class="n">repo</span><span class="p">,</span><span class="w"> </span><span class="n">rootLocation</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```scala
+import io.treeverse.clients.{ApiClient, Exporter}
+import org.apache.spark.sql.SparkSession</p>
+<p>val endpoint = "http://<lakefs_endpoint>/api/v1"
+val accessKey = "<lakefs_access_key_id>"
+val secretKey = "<lakefs_secret_access_key>"</lakefs_secret_access_key></lakefs_access_key_id></lakefs_endpoint></p>
+<p>val repo = "example-repo"</p>
+<p>val spark = SparkSession.builder().appName("I can export").master("local").getOrCreate()
+val sc = spark.sparkContext
+sc.hadoopConfiguration.set("lakefs.api.url", endpoint)
+sc.hadoopConfiguration.set("lakefs.api.access_key", accessKey)
+sc.hadoopConfiguration.set("lakefs.api.secret_key", secretKey)</p>
+<p>// Add any required spark context configuration for s3
+val rootLocation = "s3://company-bucket/example/latest"</p>
+<p>val apiClient = new ApiClient(endpoint, accessKey, secretKey)
+val exporter = new Exporter(spark, apiClient, repo, rootLocation)
+```</p>
 </div>
 </div>
 </div>
@@ -5922,9 +5918,9 @@ You may override the default behavior by passing a custom <code>filter</code> to
 <div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="scala_4" name="__tabbed_5" type="radio"><div class="tabbed-labels"><label for="scala_4">Scala</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">val</span><span class="w"> </span><span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"main"</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">exporter</span><span class="p">.</span><span class="n">exportAllFromBranch</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>scala
+val branch = "main"
+exporter.exportAllFromBranch(branch)</code></p>
 </div>
 </div>
 </div>
@@ -5933,10 +5929,10 @@ you can alternatively export just the difference between <code>main</code> branc
 <div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="scala_5" name="__tabbed_6" type="radio"><div class="tabbed-labels"><label for="scala_5">Scala</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-scala highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kd">val</span><span class="w"> </span><span class="n">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"main"</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kd">val</span><span class="w"> </span><span class="n">commit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"f3c450d8cd0e84ac67e7bc1c5dcde9bef82d8ba7"</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">exporter</span><span class="p">.</span><span class="n">exportFrom</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span><span class="w"> </span><span class="n">commit</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>scala
+val branch = "main"
+val commit = "f3c450d8cd0e84ac67e7bc1c5dcde9bef82d8ba7"
+exporter.exportFrom(branch, commit)</code></p>
 </div>
 </div>
 </div>
@@ -5946,27 +5942,27 @@ It doesn't support distribution across machines, therefore may have a lower perf
 Using this method, you can export data from lakeFS to S3 using the export options (in a similar way to the Spark export):</p>
 <ol>
 <li>Export all objects from a branch <code>example-branch</code> on <code>example-repo</code> repository to S3 location <code>s3://destination-bucket/prefix/</code>:
-    <div class="language-shell highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>....<span class="w"> </span>example-repo<span class="w"> </span>s3://destination-bucket/prefix/<span class="w"> </span>--branch<span class="o">=</span><span class="s2">"example-branch"</span>
-</span></code></pre></div></li>
+    <code>shell
+    .... example-repo s3://destination-bucket/prefix/ --branch="example-branch"</code></li>
 <li>Export all objects from a commit <code>c805e49bafb841a0875f49cd555b397340bbd9b8</code> on <code>example-repo</code> repository to S3 location <code>s3://destination-bucket/prefix/</code>:
-    <div class="language-shell highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>....<span class="w"> </span>example-repo<span class="w"> </span>s3://destination-bucket/prefix/<span class="w"> </span>--commit_id<span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
-</span></code></pre></div></li>
+    <code>shell
+    .... example-repo s3://destination-bucket/prefix/ --commit_id=c805e49bafb841a0875f49cd555b397340bbd9b8</code></li>
 <li>Export only the diff between branch <code>example-branch</code> and commit <code>c805e49bafb841a0875f49cd555b397340bbd9b8</code>
    on <code>example-repo</code> repository to S3 location <code>s3://destination-bucket/prefix/</code>:
-    <div class="language-shell highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>....<span class="w"> </span>example-repo<span class="w"> </span>s3://destination-bucket/prefix/<span class="w"> </span>--branch<span class="o">=</span><span class="s2">"example-branch"</span><span class="w"> </span>--prev_commit_id<span class="o">=</span>c805e49bafb841a0875f49cd555b397340bbd9b8
-</span></code></pre></div></li>
+    <code>shell
+    .... example-repo s3://destination-bucket/prefix/ --branch="example-branch" --prev_commit_id=c805e49bafb841a0875f49cd555b397340bbd9b8</code></li>
 </ol>
 <p>You will need to add the relevant environment variables.
 The complete <code>docker run</code> command would look like:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_ACCESS_KEY_ID</span><span class="o">=</span>XXX<span class="w"> </span>-e<span class="w"> </span><span class="nv">LAKEFS_SECRET_ACCESS_KEY</span><span class="o">=</span>YYY<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">LAKEFS_ENDPOINT</span><span class="o">=</span>https://&lt;LAKEFS_ENDPOINT&gt;/<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>XXX<span class="w"> </span>-e<span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>YYY<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span>treeverse/lakefs-rclone-export:latest<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">        </span>example-repo<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">        </span>s3://destination-bucket/prefix/<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">        </span>--branch<span class="o">=</span><span class="s2">"example-branch"</span>
-</span></code></pre></div>
+<p><code>shell
+docker run \
+    -e LAKEFS_ACCESS_KEY_ID=XXX -e LAKEFS_SECRET_ACCESS_KEY=YYY \
+    -e LAKEFS_ENDPOINT=https://&lt;LAKEFS_ENDPOINT&gt;/ \
+    -e AWS_ACCESS_KEY_ID=XXX -e AWS_SECRET_ACCESS_KEY=YYY \
+    treeverse/lakefs-rclone-export:latest \
+        example-repo \
+        s3://destination-bucket/prefix/ \
+        --branch="example-branch"</code></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This feature uses <a href="https://rclone.org/" target="_blank">rclone</a>,

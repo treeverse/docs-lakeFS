@@ -5950,36 +5950,35 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 id="commit-changes">Commit Changes<a class="headerlink" href="#commit-changes" title="Permanent link">¶</a></h2>
 <p>Backup process doesn't backup uncommitted data, so make sure to commit any staged writes before running the backup. But this is an optional process.</p>
 <p>You can manually commit the changes by using lakeFS UI or you can programmatically commit any uncommitted changes. This Python example shows how to programmatically loop through all branches in lakeFS and commit any uncommitted data but this might take a lot of time if you have many branches in the repo:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">repo</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">Repository</span><span class="p">(</span><span class="s2">"example-repo"</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">branches</span><span class="p">():</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">repo</span><span class="o">.</span><span class="n">branch</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">uncommitted</span><span class="p">():</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">repo</span><span class="o">.</span><span class="n">branch</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">'Committed changes to backup the repository'</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python
+import lakefs</p>
+<p>repo = lakefs.Repository("example-repo")</p>
+<p>for branch in repo.branches():
+    for diff in repo.branch(branch.id).uncommitted():
+        repo.branch(branch.id).commit(message='Committed changes to backup the repository')
+```</p>
 <h2 id="backup-repository">Backup Repository<a class="headerlink" href="#backup-repository" title="Permanent link">¶</a></h2>
 <h3 id="dump-metadata">Dump Metadata<a class="headerlink" href="#dump-metadata" title="Permanent link">¶</a></h3>
 <p>Dump metadata/refs of the repository by using lakeFS API or CLI.</p>
 <ul>
 <li>Example code to dump metadata by using lakeFS Python SDK (this process will create <code>_lakefs/refs_manifest.json</code> file in your storage namespace for the repository):</li>
 </ul>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">lakefs_sdk_client</span><span class="o">.</span><span class="n">internal_api</span><span class="o">.</span><span class="n">dump_refs</span><span class="p">(</span><span class="s2">"example-repo"</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+lakefs_sdk_client.internal_api.dump_refs("example-repo")</code></p>
 <ul>
 <li>Example commands to dump metadata by using <a href="../../reference/cli/#lakectl-refs-dump">lakeFS CLI</a> and upload to S3 storage for the repository:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>lakectl<span class="w"> </span>refs-dump<span class="w"> </span>lakefs://example-repo<span class="w"> </span>&gt;<span class="w"> </span>refs_manifest.json
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>refs_manifest.json<span class="w"> </span>s3://source-bucket-name/example-repo/_lakefs/refs_manifest.json
-</span></code></pre></div>
+<p>```bash
+lakectl refs-dump lakefs://example-repo &gt; refs_manifest.json</p>
+<p>aws s3 cp refs_manifest.json s3://source-bucket-name/example-repo/_lakefs/refs_manifest.json
+```</p>
 <ul>
 <li>Example commands to dump metadata by using <a href="../../reference/cli/#lakectl-refs-dump">lakeFS CLI</a> and upload to Azure Blob storage for the repository:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>lakectl<span class="w"> </span>refs-dump<span class="w"> </span>lakefs://example-repo<span class="w"> </span>&gt;<span class="w"> </span>refs_manifest.json
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>upload<span class="w"> </span>--file<span class="w"> </span>refs_manifest.json<span class="w"> </span>--container-name<span class="w"> </span>sourceContainer<span class="w"> </span>--name<span class="w"> </span>example-repo/_lakefs/refs_manifest.json<span class="w"> </span>--account-name<span class="w"> </span>source-storage-account-name<span class="w"> </span>--account-key<span class="w"> </span>&lt;source-storage-account-key&gt;
-</span></code></pre></div>
+<p>```bash
+lakectl refs-dump lakefs://example-repo &gt; refs_manifest.json</p>
+<p>az storage blob upload --file refs_manifest.json --container-name sourceContainer --name example-repo/_lakefs/refs_manifest.json --account-name source-storage-account-name --account-key <source-storage-account-key>
+```</source-storage-account-key></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Shutdown lakeFS services immediately after dumping the metadata so nobody can make any changes in the source repository.</p>
@@ -5989,13 +5988,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <ul>
 <li>Example S3 command:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>sync<span class="w"> </span>s3://source-bucket-name/example-repo<span class="w"> </span>s3://target-bucket-name/example-repo
-</span></code></pre></div>
+<p><code>bash
+aws s3 sync s3://source-bucket-name/example-repo s3://target-bucket-name/example-repo</code></p>
 <ul>
 <li>Example Azure azcopy command:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>azcopy<span class="w"> </span>copy<span class="w"> </span><span class="s1">'https://source-storage-account-name.blob.core.windows.net/sourceContainer/example-repo/*?source_container_SAS_token'</span><span class="w"> </span><span class="s1">'https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo?target_container_SAS_token'</span><span class="w"> </span>--recursive
-</span></code></pre></div>
+<p><code>bash
+azcopy copy 'https://source-storage-account-name.blob.core.windows.net/sourceContainer/example-repo/*?source_container_SAS_token' 'https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo?target_container_SAS_token' --recursive</code></p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>You can restart lakeFS services after copying the data to backup storage location.</p>
@@ -6006,49 +6005,48 @@ document.addEventListener("DOMContentLoaded", function() {
 <ul>
 <li>Python example to create a bare lakeFS repository using S3 storage:</li>
 </ul>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">lakefs</span><span class="o">.</span><span class="n">Repository</span><span class="p">(</span><span class="s2">"target-example-repo"</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">bare</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">storage_namespace</span><span class="o">=</span><span class="s2">"s3://target-bucket-name/example-repo"</span><span class="p">,</span> <span class="n">default_branch</span><span class="o">=</span><span class="s2">"same-default-branch-as-in-source-repo"</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+lakefs.Repository("target-example-repo").create(bare=True, storage_namespace="s3://target-bucket-name/example-repo", default_branch="same-default-branch-as-in-source-repo")</code></p>
 <ul>
 <li>Python example to create a bare lakeFS repository using Azure storage:</li>
 </ul>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">lakefs</span><span class="o">.</span><span class="n">Repository</span><span class="p">(</span><span class="s2">"target-example-repo"</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">bare</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">storage_namespace</span><span class="o">=</span><span class="s2">"https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo"</span><span class="p">,</span> <span class="n">default_branch</span><span class="o">=</span><span class="s2">"same-default-branch-as-in-source-repo"</span><span class="p">)</span>
-</span></code></pre></div>
+<p><code>python
+lakefs.Repository("target-example-repo").create(bare=True, storage_namespace="https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo", default_branch="same-default-branch-as-in-source-repo")</code></p>
 <ul>
 <li><a href="../../reference/cli/#lakectl-repo-create-bare">lakeFS CLI</a> command to create a bare lakeFS repository using S3 storage:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>lakectl<span class="w"> </span>repo<span class="w"> </span>create-bare<span class="w"> </span>lakefs://target-example-repo<span class="w"> </span>s3://target-bucket-name/example-repo<span class="w"> </span>--default-branch<span class="w"> </span><span class="s2">"same-default-branch-as-in-source-repo"</span>
-</span></code></pre></div>
+<p><code>bash
+lakectl repo create-bare lakefs://target-example-repo s3://target-bucket-name/example-repo --default-branch "same-default-branch-as-in-source-repo"</code></p>
 <ul>
 <li><a href="../../reference/cli/#lakectl-repo-create-bare">lakeFS CLI</a> command to create a bare lakeFS repository using Azure storage:</li>
 </ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>lakectl repo create-bare lakefs://target-example-repo https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo --default-branch "same-default-branch-as-in-source-repo"
-</span></code></pre></div>
+<p><code>lakectl repo create-bare lakefs://target-example-repo https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo --default-branch "same-default-branch-as-in-source-repo"</code></p>
 <h3 id="restore-metadata-to-new-repository">Restore Metadata to new Repository<a class="headerlink" href="#restore-metadata-to-new-repository" title="Permanent link">¶</a></h3>
 <p>Run restore_refs to load back all commits, tags and branches.</p>
 <ul>
 <li>Python example to restore metadata to new repository. First download metadata(refs_manifest.json) file created by metadata dump process:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://target-bucket-name/example-repo/_lakefs/refs_manifest.json<span class="w"> </span>.
-</span></code></pre></div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>azcopy<span class="w"> </span>copy<span class="w"> </span><span class="s1">'https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo/_lakefs/refs_manifest.json?&lt;target_container_SAS_token&gt;'</span><span class="w"> </span>.
-</span></code></pre></div>
+<p><code>bash
+aws s3 cp s3://target-bucket-name/example-repo/_lakefs/refs_manifest.json .</code></p>
+<p><code>bash
+azcopy copy 'https://target-storage-account-name.blob.core.windows.net/targetContainer/example-repo/_lakefs/refs_manifest.json?&lt;target_container_SAS_token&gt;' .</code></p>
 <p>Then read refs_manifest.json file and restore metadata to new repository:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./refs_manifest.json'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">refs_manifest_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">refs_manifest_json</span><span class="p">)</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">target_lakefs_sdk_client</span><span class="o">.</span><span class="n">internal_api</span><span class="o">.</span><span class="n">restore_refs</span><span class="p">(</span><span class="n">target_repo_name</span><span class="p">,</span> <span class="n">refs_manifest_json</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python
+with open('./refs_manifest.json') as file:
+    refs_manifest_json = json.load(file)
+    print(refs_manifest_json)</p>
+<p>target_lakefs_sdk_client.internal_api.restore_refs(target_repo_name, refs_manifest_json)
+```</p>
 <ul>
 <li><a href="../../reference/cli/#lakectl-refs-restore">lakeFS CLI</a> command to restore metadata to new repository using S3 storage:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://target-bucket-name/example-repo/_lakefs/refs_manifest.json<span class="w"> </span>-<span class="w"> </span><span class="p">|</span><span class="w"> </span>lakectl<span class="w"> </span>refs-restore<span class="w"> </span>lakefs://target-example-repo<span class="w"> </span>--manifest<span class="w"> </span>-
-</span></code></pre></div>
+<p><code>bash
+aws s3 cp s3://target-bucket-name/example-repo/_lakefs/refs_manifest.json - | lakectl refs-restore lakefs://target-example-repo --manifest -</code></p>
 <ul>
 <li><a href="../../reference/cli/#lakectl-refs-restore">lakeFS CLI</a> command to restore metadata to new repository using Azure storage:</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>download<span class="w"> </span>--container-name<span class="w"> </span>targetContainer<span class="w"> </span>--name<span class="w"> </span>example-repo/_lakefs/refs_manifest.json<span class="w"> </span>--account-name<span class="w"> </span>target-storage-account-name<span class="w"> </span>--account-key<span class="w"> </span>&lt;target-storage-account-key&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>lakectl<span class="w"> </span>refs-restore<span class="w"> </span>lakefs://target-example-repo<span class="w"> </span>--manifest<span class="w"> </span>-
-</span></code></pre></div>
+<p><code>bash
+az storage blob download --container-name targetContainer --name example-repo/_lakefs/refs_manifest.json --account-name target-storage-account-name --account-key &lt;target-storage-account-key&gt; | lakectl refs-restore lakefs://target-example-repo --manifest -</code></p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>If you are running backups regularly, it is highly advised to test the restore process periodically to make sure that you are able to restore the repository in case of disaster.</p>
@@ -6059,13 +6057,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>The <code>lakefs-refs.py</code> script automates the backup and restore procedures described in this document. It handles all the necessary steps to dump and restore lakeFS repository references, making the process simpler and less error-prone for repository migration and backup purposes.</p>
 <h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h3>
 <p>Install the required dependencies:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-</span></code></pre></div>
+<p><code>bash
+pip install -r requirements.txt</code></p>
 <h3 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">¶</a></h3>
 <h4 id="dump-repository-references">Dump Repository References<a class="headerlink" href="#dump-repository-references" title="Permanent link">¶</a></h4>
 <p>The script provides an easy way to dump repository metadata:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>python<span class="w"> </span>lakefs-refs.py<span class="w"> </span>dump<span class="w"> </span>&lt;repository-name&gt;<span class="w"> </span><span class="o">[</span>--all<span class="o">]</span><span class="w"> </span><span class="o">[</span>--commit<span class="o">]</span><span class="w"> </span><span class="o">[</span>--rm<span class="o">]</span><span class="w"> </span><span class="o">[</span>--endpoint-url<span class="w"> </span>&lt;url&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--access-key-id<span class="w"> </span>&lt;key&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--secret-access-key<span class="w"> </span>&lt;secret&gt;<span class="o">]</span>
-</span></code></pre></div>
+<p><code>bash
+python lakefs-refs.py dump &lt;repository-name&gt; [--all] [--commit] [--rm] [--endpoint-url &lt;url&gt;] [--access-key-id &lt;key&gt;] [--secret-access-key &lt;secret&gt;]</code></p>
 <p>Options:</p>
 <ul>
 <li><code>&lt;repository-name&gt;</code>: Name of the specific repository to dump</li>
@@ -6076,8 +6074,8 @@ document.addEventListener("DOMContentLoaded", function() {
 </ul>
 <h4 id="restore-repository-references">Restore Repository References<a class="headerlink" href="#restore-repository-references" title="Permanent link">¶</a></h4>
 <p>For restoring repository metadata from manifest files:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>python<span class="w"> </span>lakefs-refs.py<span class="w"> </span>restore<span class="w"> </span>&lt;manifest-file&gt;<span class="w"> </span><span class="o">[</span>&lt;manifest-file2&gt;<span class="w"> </span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--ignore-storage-id<span class="o">]</span><span class="w"> </span><span class="o">[</span>--endpoint-url<span class="w"> </span>&lt;url&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--access-key-id<span class="w"> </span>&lt;key&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--secret-access-key<span class="w"> </span>&lt;secret&gt;<span class="o">]</span>
-</span></code></pre></div>
+<p><code>bash
+python lakefs-refs.py restore &lt;manifest-file&gt; [&lt;manifest-file2&gt; ...] [--ignore-storage-id] [--endpoint-url &lt;url&gt;] [--access-key-id &lt;key&gt;] [--secret-access-key &lt;secret&gt;]</code></p>
 <p>Options:</p>
 <ul>
 <li><code>&lt;manifest-file&gt;</code>: One or more manifest files to restore</li>

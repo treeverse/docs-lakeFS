@@ -5678,14 +5678,14 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>An example could look like this:</p>
 <div class="admonition example">
 <p class="admonition-title"><code>prometheus.yml</code></p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">scrape_configs</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lakeFS</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/metrics</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">static_configs</span><span class="p">:</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lakefs.example.com:8000</span>
-</span></code></pre></div>
+<p><code>yaml
+scrape_configs:
+- job_name: lakeFS
+  scrape_interval: 10s
+  metrics_path: /metrics
+  static_configs:
+  - targets:
+    - lakefs.example.com:8000</code></p>
 </div>
 <h2 id="metrics-exposed-by-lakefs">Metrics exposed by lakeFS<a class="headerlink" href="#metrics-exposed-by-lakefs" title="Permanent link">¶</a></h2>
 <p>By default, Prometheus exports metrics with OS process information like memory and CPU.
@@ -5815,23 +5815,19 @@ You can learn about these default metrics in this <a href="https://povilasv.me/p
 </div>
 <div class="admonition example">
 <p class="admonition-title">99th percentile of API request latencies</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sum by (operation)(histogram_quantile(0.99, rate(api_request_duration_seconds_bucket[1m])))
-</span></code></pre></div>
+<p><code>sum by (operation)(histogram_quantile(0.99, rate(api_request_duration_seconds_bucket[1m])))</code></p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">50th percentile of S3-compatible API latencies</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sum by (operation)(histogram_quantile(0.5, rate(gateway_request_duration_seconds_bucket[1m])))
-</span></code></pre></div>
+<p><code>sum by (operation)(histogram_quantile(0.5, rate(gateway_request_duration_seconds_bucket[1m])))</code></p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Number of errors in outgoing S3 requests</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sum by (operation) (increase(s3_operation_duration_seconds_count{error="true"}[1m]))
-</span></code></pre></div>
+<p><code>sum by (operation) (increase(s3_operation_duration_seconds_count{error="true"}[1m]))</code></p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Number of open connections to the database</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>go_sql_stats_connections_open
-</span></code></pre></div>
+<p><code>go_sql_stats_connections_open</code></p>
 </div>
 <h2 id="example-grafana-dashboard">Example Grafana dashboard<a class="headerlink" href="#example-grafana-dashboard" title="Permanent link">¶</a></h2>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/grafana.png" data-desc-position="bottom"><img alt="Grafana dashboard example" src="../../assets/img/grafana.png" target="_blank"></a></p>

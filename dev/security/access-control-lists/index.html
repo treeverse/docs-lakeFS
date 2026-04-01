@@ -5100,6 +5100,23 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ```yaml
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="```yaml">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#lakefs-configuration" class="md-nav__link">
     <span class="md-ellipsis">
@@ -5699,6 +5716,23 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ```yaml
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="```yaml">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#lakefs-configuration" class="md-nav__link">
     <span class="md-ellipsis">
@@ -5763,21 +5797,20 @@ Installations that have more than one user / credentials will require to run a c
 <ol>
 <li>
 <p>Delete the existing user:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lakectl<span class="w"> </span>auth<span class="w"> </span>users<span class="w"> </span>delete<span class="w"> </span>--id<span class="w"> </span>&lt;user-id&gt;
-</span></code></pre></div>
+<p><code>shell
+lakectl auth users delete --id &lt;user-id&gt;</code></p>
 </li>
 <li>
 <p>Shut down the lakeFS server - Required for invalidating the old credentials on the server</p>
 </li>
 <li>
 <p>Create a new user, with the same name and new credentials:</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>lakefs<span class="w"> </span>superuser<span class="w"> </span>--user-name<span class="w"> </span>&lt;user-id&gt;
-</span></code></pre></div>
+<p><code>shell
+lakefs superuser --user-name &lt;user-id&gt;</code></p>
 <p>This will generate a new set of credentials, and will print it out to the screen:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>credentials:
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  access_key_id: *** (omitted)
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  secret_access_key: *** (omitted)
-</span></code></pre></div>
+<p><code>credentials:
+  access_key_id: *** (omitted)
+  secret_access_key: *** (omitted)</code></p>
 </li>
 <li>
 <p>Re-run lakeFS server</p>
@@ -5805,17 +5838,16 @@ In order to do that, users will need to run the separate ACL server as part of t
 <p>For a more robust authorization solution, please see <a href="../rbac/">Role-Based Access Control</a>, available in <a href="../../cloud/">lakeFS Cloud</a> and <a href="../../enterprise/">lakeFS Enterprise</a>. </p>
 </div>
 <p>The configuration of the ACL server is similar to lakeFS configuration, here's an example of an <code>.aclserver.yaml</code> config file:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nn">---</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">listen_address</span><span class="p">:</span><span class="w"> </span><span class="s">"[ACL_SERVER_LISTEN_ADDRESS]"</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nt">database</span><span class="p">:</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">"postgres"</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">postgres</span><span class="p">:</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">connection_string</span><span class="p">:</span><span class="w"> </span><span class="s">"[DATABASE_CONNECTION_STRING]"</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nt">encrypt</span><span class="p">:</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="c1"># This should be the same encryption key as in lakeFS</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nt">secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">"[ENCRYPTION_SECRET_KEY]"</span>
-</span></code></pre></div>
+<h2 id="yaml">```yaml<a class="headerlink" href="#yaml" title="Permanent link">¶</a></h2>
+<p>listen_address: "[ACL_SERVER_LISTEN_ADDRESS]"
+database:
+    type: "postgres"
+    postgres:
+    connection_string: "[DATABASE_CONNECTION_STRING]"</p>
+<p>encrypt:
+    # This should be the same encryption key as in lakeFS
+    secret_key: "[ENCRYPTION_SECRET_KEY]"
+```</p>
 <p>It is possible to use environment variables to configure the server as in lakeFS. Use the <code>ACLSERVER_</code> prefix to do so.  </p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -5831,8 +5863,8 @@ In order to do that, users will need to run the separate ACL server as part of t
 <p>For installation with multiple users / credentials, upgrading to the new lakeFS version requires choosing which user + credentials will be used for the single user mode.
 This is done via the <code>lakefs superuser</code> command.
 For example, if you have a user with username <code>&lt;my-username&gt;</code> and credential key <code>&lt;my-access-key-id&gt;</code> use the following command to migrate that user:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>lakefs<span class="w"> </span>superuser<span class="w"> </span>--user-name<span class="w"> </span>&lt;my-username&gt;<span class="w"> </span>--access-key-id<span class="w"> </span>&lt;my-access-key-id&gt;
-</span></code></pre></div>
+<p><code>bash
+lakefs superuser --user-name &lt;my-username&gt; --access-key-id &lt;my-access-key-id&gt;</code></p>
 <p>After running the command you will be able to access the installation using the user's access key id and its respective secret access key.</p>
 
 

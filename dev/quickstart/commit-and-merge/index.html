@@ -5541,22 +5541,22 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>In the previous step we branched our data from <code>main</code> into a new <code>denmark-lakes</code> branch, and overwrote the <code>lakes.parquet</code> to hold solely information about lakes in Denmark. Now we're going to commit that change (just like Git) and merge it back to main (just like git).</p>
 </div>
 <p>Having make the change to the datafile in the <code>denmark-lakes</code> branch, we now want to commit it. There are various options for interacting with the lakeFS API, including the web interface, <a href="https://pydocs.lakefs.io/">a Python client</a>, and <code>lakectl</code> which is what we'll use here. Run the following from a terminal window:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lakectl<span class="w"> </span>commit<span class="w"> </span>lakefs://quickstart/denmark-lakes<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Create a dataset of just the lakes in Denmark"</span>
-</span></code></pre></div>
+<p><code>bash
+lakectl commit lakefs://quickstart/denmark-lakes -m "Create a dataset of just the lakes in Denmark"</code></p>
 <p>You will get confirmation of the commit including its hash.
-</p><div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Branch: lakefs://quickstart/denmark-lakes
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Commit for branch "denmark-lakes" completed.
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>ID: ba6d71d0965fa5d97f309a17ce08ad006c0dde15f99c5ea0904d3ad3e765bd74
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Message: Create a dataset of just the lakes in Denmark
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>Timestamp: 2023-03-15 08:09:36 +0000 UTC
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Parents: 3384cd7cdc4a2cd5eb6249b52f0a709b49081668bb1574ce8f1ef2d956646816
-</span></code></pre></div><p></p>
+```
+Branch: lakefs://quickstart/denmark-lakes
+Commit for branch "denmark-lakes" completed.</p>
+<p>ID: ba6d71d0965fa5d97f309a17ce08ad006c0dde15f99c5ea0904d3ad3e765bd74
+Message: Create a dataset of just the lakes in Denmark
+Timestamp: 2023-03-15 08:09:36 +0000 UTC
+Parents: 3384cd7cdc4a2cd5eb6249b52f0a709b49081668bb1574ce8f1ef2d956646816
+```</p>
 <p>With our change committed, it's now time to merge it to back to the <code>main</code> branch. </p>
 <h1 id="merging-branches-in-lakefs">Merging Branches in lakeFS 🔀<a class="headerlink" href="#merging-branches-in-lakefs" title="Permanent link">¶</a></h1>
 <p>As above, we'll use <code>lakectl</code> to do this too. The syntax just requires us to specify the source and target of the merge. Run this from a terminal window.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>lakectl<span class="w"> </span>merge<span class="w"> </span>lakefs://quickstart/denmark-lakes<span class="w"> </span>lakefs://quickstart/main
-</span></code></pre></div>
+<p><code>bash
+lakectl merge lakefs://quickstart/denmark-lakes lakefs://quickstart/main</code></p>
 <p>We can confirm that this has worked by returning to the same object view of <code>lakes.parquet</code> as before and clicking on <strong>Execute</strong> to rerun the same query. You'll see that the country row counts have changed, and only Denmark is left in the data: </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/quickstart/duckdb-main-03.png" data-desc-position="bottom"><img src="../../assets/img/quickstart/duckdb-main-03.png" alt="The lakeFS object browser with a DuckDB query on lakes.parquet showing that there is only data for Denmark." class="quickstart"></a></p>
 <p><strong>But…oh no!</strong> A slow chill creeps down your spine, and the bottom drops out of your stomach. What have you done! 😱 <em>You were supposed to create </em><em>a separate file</em><em> of Denmark's lakes - not replace the original one</em></p>

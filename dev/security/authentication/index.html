@@ -5868,11 +5868,11 @@ This integration can be especially useful if you already have an existing authen
 <h3 id="api-server-authentication">API Server Authentication<a class="headerlink" href="#api-server-authentication" title="Permanent link">¶</a></h3>
 <p>Authenticating against the API server is done using a key-pair, passed via <a href="https://en.wikipedia.org/wiki/Basic_access_authentication">Basic Access Authentication</a>.</p>
 <p>All HTTP requests must carry an <code>Authorization</code> header with the following structure:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Authorization: Basic &lt;base64 encoded access_key_id:secret_access_key&gt;
-</span></code></pre></div>
+<p><code>text
+Authorization: Basic &lt;base64 encoded access_key_id:secret_access_key&gt;</code></p>
 <p>For example, assuming my access_key_id is <code>my_access_key_id</code> and my secret_access_key is <code>my_secret_access_key</code>, we'd send the following header with every request:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Authorization: Basic bXlfYWNjZXNzX2tleV9pZDpteV9zZWNyZXRfYWNjZXNzX2tleQ==
-</span></code></pre></div>
+<p><code>text
+Authorization: Basic bXlfYWNjZXNzX2tleV9pZDpteV9zZWNyZXRfYWNjZXNzX2tleQ==</code></p>
 <h3 id="s3-gateway-authentication">S3 Gateway Authentication<a class="headerlink" href="#s3-gateway-authentication" title="Permanent link">¶</a></h3>
 <p>To provide API compatibility with Amazon S3, authentication with the S3 Gateway supports both <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html" target="_blank">SIGv2</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html" target="_blank">SIGv4</a>.
 Clients such as the AWS SDK that implement these authentication methods should work without modification.</p>
@@ -5887,17 +5887,17 @@ You can configure lakeFS to enable OIDC to manage your lakeFS users externally.
 Essentially, once configured, this enables you the benefit of OpenID connect, such as a single sign-on (SSO), etc.</p>
 <h3 id="configuring-lakefs-server-for-oidc">Configuring lakeFS server for OIDC<a class="headerlink" href="#configuring-lakefs-server-for-oidc" title="Permanent link">¶</a></h3>
 <p>To support OIDC, add the following to your <a href="../../reference/configuration/">lakeFS configuration</a>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">oidc</span><span class="p">:</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example-client-id</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">client_secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exampleSecretValue</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">callback_base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://lakefs.example.com</span><span class="w">       </span><span class="c1"># The scheme, domain (and port) of your lakeFS installation</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://my-account.oidc-provider-example.com</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">default_initial_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"Developers"</span><span class="p p-Indicator">]</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">friendly_name_claim_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="w">                      </span><span class="c1">#  Optional: use the value from this claim as the user's display name</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">persist_friendly_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">                         </span><span class="c1">#  Optional: persist friendly name to KV store so it can be displayed in the user list</span>
-</span></code></pre></div>
+<p><code>yaml
+auth:
+  oidc:
+    enabled: true
+    client_id: example-client-id
+    client_secret: exampleSecretValue
+    callback_base_url: https://lakefs.example.com       # The scheme, domain (and port) of your lakeFS installation
+    url: https://my-account.oidc-provider-example.com
+    default_initial_groups: ["Developers"]
+    friendly_name_claim_name: name                      #  Optional: use the value from this claim as the user's display name
+    persist_friendly_name: true                         #  Optional: persist friendly name to KV store so it can be displayed in the user list</code></p>
 <p>Your login page will now include a link to sign in using the
 OIDC provider. When a user first logs in through the provider, a corresponding user is created in lakeFS.</p>
 <h4 id="friendly-name-persistence">Friendly Name Persistence<a class="headerlink" href="#friendly-name-persistence" title="Permanent link">¶</a></h4>
@@ -5919,11 +5919,11 @@ comma-separated list of group names.</p>
 <h3 id="using-a-different-claim-name">Using a different claim name<a class="headerlink" href="#using-a-different-claim-name" title="Permanent link">¶</a></h3>
 <p>To supply the initial groups using another claim from your ID token, you can use the <code>auth.oidc.initial_groups_claim_name</code>
 lakeFS configuration. For example, to take the initial groups from the <em>roles</em> claim, add:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">oidc</span><span class="p">:</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="c1"># ... Other OIDC configurations</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">initial_groups_claim_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles</span>
-</span></code></pre></div>
+<p><code>yaml
+auth:
+  oidc:
+    # ... Other OIDC configurations
+    initial_groups_claim_name: roles</code></p>
 
 
 

@@ -5675,37 +5675,62 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>🤗 Datasets supports access to <a href="https://huggingface.co/docs/datasets/en/filesystems">cloud storage</a> providers through <a href="https://filesystem-spec.readthedocs.io/en/latest/">fsspec</a> FileSystem implementations.</p>
 <p><a href="https://lakefs-spec.org/">lakefs-spec</a> is a community implementation of an fsspec Filesystem that fully leverages lakeFS' capabilities. Let's start by installing it:</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>lakefs-spec
-</span></code></pre></div>
+<p><code>shell
+pip install lakefs-spec</code></p>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">¶</a></h2>
 <p>If you've already configured the lakeFS python SDK and/or lakectl, you should have a <code>$HOME/.lakectl.yaml</code> file that contains your access credentials and endpoint for your lakeFS environment.</p>
 <p>Otherwise, install <a href="../../reference/cli/#installing-lakectl-locally"><code>lakectl</code></a> and run <code>lakectl config</code> to set up your access credentials.</p>
 <h2 id="reading-a-dataset">Reading a Dataset<a class="headerlink" href="#reading-a-dataset" title="Permanent link">¶</a></h2>
 <p>To read a dataset, all we have to do is use a <code>lakefs://...</code> URI when calling <a href="https://huggingface.co/docs/datasets/en/loading"><code>load_dataset</code></a>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="o">&gt;&gt;&gt;</span> 
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">'csv'</span><span class="p">,</span> <span class="n">data_files</span><span class="o">=</span><span class="s1">'lakefs://example-repository/my-branch/data/example.csv'</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from datasets import load_dataset</p>
+<p>dataset = load_dataset('csv', data_files='lakefs://example-repository/my-branch/data/example.csv')
+```</p>
+</blockquote>
+</blockquote>
+</blockquote>
 <p>That's it! this should automatically load the lakefs-spec implementation that we've installed, which will use the <code>$HOME/.lakectl.yaml</code> file to read its credentials, so we don't need to pass additional configuration.</p>
 <h2 id="savingloading">Saving/Loading<a class="headerlink" href="#savingloading" title="Permanent link">¶</a></h2>
 <p>Once we've loaded a Dataset, we can save it using the <code>save_to_disk</code> method as normal:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">dataset</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="s1">'lakefs://example-repository/my-branch/datasets/example/'</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>dataset.save_to_disk('lakefs://example-repository/my-branch/datasets/example/')
+```</p>
+</blockquote>
+</blockquote>
+</blockquote>
 <p>At this point, we might want to commit that change to lakeFS, and tag it, so we could share it with our colleagues.</p>
 <p>We can do it through the UI or lakectl, but let's do it with the <a href="../python/#using-the-lakefs-sdk">lakeFS Python SDK</a>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span><span class="w"> </span><span class="nn">lakefs</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="o">&gt;&gt;&gt;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">repo</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">repository</span><span class="p">(</span><span class="s1">'example-repository'</span><span class="p">)</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">commit</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">branch</span><span class="p">(</span><span class="s1">'my-branch'</span><span class="p">)</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="o">...</span>     <span class="s1">'saved my first huggingface Dataset!'</span><span class="p">,</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="o">...</span>     <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">'using'</span><span class="p">:</span> <span class="s1">'🤗'</span><span class="p">})</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">repo</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="s1">'alice_experiment1'</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">commit</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>import lakefs</p>
+<p>repo = lakefs.repository('example-repository')
+commit = repo.branch('my-branch').commit(
+...     'saved my first huggingface Dataset!',
+...     metadata={'using': '🤗'})
+repo.tag('alice_experiment1').create(commit)
+```</p>
+</blockquote>
+</blockquote>
+</blockquote>
 <p>Now, others on our team can load our exact dataset by using the tag we created:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_from_disk</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="o">&gt;&gt;&gt;</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_from_disk</span><span class="p">(</span><span class="s1">'lakefs://example-repository/alice_experiment1/datasets/example/'</span><span class="p">)</span>
-</span></code></pre></div>
+<p>```python</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from datasets import load_from_disk</p>
+<p>dataset = load_from_disk('lakefs://example-repository/alice_experiment1/datasets/example/')
+```</p>
+</blockquote>
+</blockquote>
+</blockquote>
 
 
 
