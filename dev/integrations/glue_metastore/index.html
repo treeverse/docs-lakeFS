@@ -3,7 +3,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Query data from lakeFS branches in AWS Athena or other services backed by Glue Data Catalog.">
+        <meta name="description" content="Set up AWS Glue Catalog Federation with lakeFS to expose Iceberg tables to Athena and other AWS analytics services.">
       
       
       
@@ -13,7 +13,7 @@
         <link rel="prev" href="../iceberg-rest-catalog/">
       
       
-        <link rel="next" href="../glue_hive_metastore/">
+        <link rel="next" href="../unity-catalog/">
       
       
         
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div data-md-component="skip">
       
         
-        <a href="#using-lakefs-with-the-glue-catalog" class="md-skip">
+        <a href="#using-lakefs-with-the-aws-glue-data-catalog" class="md-skip">
           Skip to content
         </a>
       
@@ -2809,6 +2809,42 @@ document.addEventListener("DOMContentLoaded", function() {
   
   
     <li class="md-nav__item">
+      <a href="../athena/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Glue &amp; Athena
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--enterprise" title="Enterprise Feature">
+    </span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../presto_trino/" class="md-nav__link">
         
   
@@ -2957,34 +2993,6 @@ document.addEventListener("DOMContentLoaded", function() {
     
   
     Delta Lake
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../athena/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Amazon Athena
   
 
     
@@ -3491,6 +3499,14 @@ document.addEventListener("DOMContentLoaded", function() {
   </span>
   
   
+    
+  
+  
+    <span class="md-status md-status--enterprise" title="Enterprise Feature">
+    </span>
+  
+
+  
 
           <span class="md-nav__icon md-icon"></span>
         </label>
@@ -3508,6 +3524,14 @@ document.addEventListener("DOMContentLoaded", function() {
     
   </span>
   
+  
+    
+  
+  
+    <span class="md-status md-status--enterprise" title="Enterprise Feature">
+    </span>
+  
+
   
 
       </a>
@@ -3536,19 +3560,19 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-using-athena-to-query-lakefs-data" class="md-nav__link">
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example: Using Athena to query lakeFS data
+        How It Works
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Example: Using Athena to query lakeFS data">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
@@ -3561,11 +3585,28 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#add-table-descriptor" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-a-federated-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Add table descriptor
+        Setting Up a Federated Catalog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up a Federated Catalog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-the-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install the CLI
       
     </span>
   </a>
@@ -3573,10 +3614,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#write-some-table-data" class="md-nav__link">
+  <a href="#create-a-federated-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Write some table data
+        Create a Federated Catalog
       
     </span>
   </a>
@@ -3584,10 +3625,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-exporter-script" class="md-nav__link">
+  <a href="#configuration-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The exporter script
+        Configuration Options
       
     </span>
   </a>
@@ -3595,32 +3636,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#configure-action-hooks" class="md-nav__link">
+  <a href="#what-gets-created" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configure Action Hooks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#use-athena" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Use Athena
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cleanup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cleanup
+        What Gets Created
       
     </span>
   </a>
@@ -3632,38 +3651,54 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#working-with-multiple-branches-and-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with Multiple Branches and Refs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#querying-the-federated-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Querying the Federated Catalog
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#removing-federated-catalogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removing Federated Catalogs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../glue_hive_metastore/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Glue / Hive metastore
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -5683,19 +5718,19 @@ document.addEventListener("DOMContentLoaded", function() {
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-using-athena-to-query-lakefs-data" class="md-nav__link">
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example: Using Athena to query lakeFS data
+        How It Works
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Example: Using Athena to query lakeFS data">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
@@ -5708,11 +5743,28 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#add-table-descriptor" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-a-federated-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Add table descriptor
+        Setting Up a Federated Catalog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting Up a Federated Catalog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-the-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install the CLI
       
     </span>
   </a>
@@ -5720,10 +5772,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#write-some-table-data" class="md-nav__link">
+  <a href="#create-a-federated-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Write some table data
+        Create a Federated Catalog
       
     </span>
   </a>
@@ -5731,10 +5783,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-exporter-script" class="md-nav__link">
+  <a href="#configuration-options" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The exporter script
+        Configuration Options
       
     </span>
   </a>
@@ -5742,32 +5794,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
-  <a href="#configure-action-hooks" class="md-nav__link">
+  <a href="#what-gets-created" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configure Action Hooks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#use-athena" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Use Athena
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cleanup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cleanup
+        What Gets Created
       
     </span>
   </a>
@@ -5776,6 +5806,50 @@ document.addEventListener("DOMContentLoaded", function() {
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-multiple-branches-and-refs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with Multiple Branches and Refs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#querying-the-federated-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Querying the Federated Catalog
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#removing-federated-catalogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removing Federated Catalogs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
   
 </li>
       
@@ -5796,220 +5870,251 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-<h1 id="using-lakefs-with-the-glue-catalog">Using lakeFS with the Glue Catalog<a class="headerlink" href="#using-lakefs-with-the-glue-catalog" title="Permanent link">¶</a></h1>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
-<p>The integration between Glue and lakeFS is based on <a href="../../howto/catalog_exports/">Data Catalog Exports</a>.</p>
-<p>This guide describes how to use lakeFS with the Glue Data Catalog.
-You'll be able to query your lakeFS data by specifying the repository, branch and commit in your SQL query.
-Currently, only read operations are supported on the tables.
-You will set up the automation required to work with lakeFS on top of the Glue Data Catalog, including:</p>
-<ol>
-<li>Create a table descriptor under <code>_lakefs_tables/&lt;your-table&gt;.yaml</code>. This will represent your table schema.</li>
-<li>Write an exporter script that will:</li>
-<li>Mirror your branch's state into <a href="https://svn.apache.org/repos/infra/websites/production/hive/content/javadocs/r2.1.1/api/org/apache/hadoop/hive/ql/io/SymlinkTextInputFormat.html">Hive Symlink</a> files readable by Athena.</li>
-<li>Export the table descriptors from your branch to the Glue Catalog.</li>
-<li>Set up lakeFS <a href="../../howto/catalog_exports/#running-an-exporter">hooks</a> to trigger the above script when specific events occur.</li>
-</ol>
-<h2 id="example-using-athena-to-query-lakefs-data">Example: Using Athena to query lakeFS data<a class="headerlink" href="#example-using-athena-to-query-lakefs-data" title="Permanent link">¶</a></h2>
-<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h3>
-<p>Before starting, make sure you have:
-1. An active lakeFS installation with S3 as the backing storage, and a repository in this installation.
-2. A database in Glue Data Catalog (lakeFS does not create one).
-3. AWS Credentials with permission to manage Glue, Athena Query and S3 access.</p>
-<h3 id="add-table-descriptor">Add table descriptor<a class="headerlink" href="#add-table-descriptor" title="Permanent link">¶</a></h3>
-<p>Let's define a table, and commit it to lakeFS. 
-Save the YAML below as <code>animals.yaml</code> and upload it to lakeFS. </p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lakectl<span class="w"> </span>fs<span class="w"> </span>upload<span class="w"> </span>lakefs://catalogs/main/_lakefs_tables/animals.yaml<span class="w"> </span>-s<span class="w"> </span>./animals.yaml<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>lakectl<span class="w"> </span>commit<span class="w"> </span>lakefs://catalogs/main<span class="w"> </span>-m<span class="w"> </span><span class="s2">"added table"</span>
-</span></code></pre></div>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">animals</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hive</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># data location root in lakeFS</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tables/animals</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># partitions order</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nt">partition_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'type'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'weight'</span><span class="p p-Indicator">]</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="nt">schema</span><span class="p">:</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">struct</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="c1"># all the columns spec</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="nt">fields</span><span class="p">:</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="nt">nullable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="nt">metadata</span><span class="p">:</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">        </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">axolotl, cat, dog, fish etc</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">weight</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="nt">nullable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">      </span><span class="nt">nullable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">      </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
-</span></code></pre></div>
-<h3 id="write-some-table-data">Write some table data<a class="headerlink" href="#write-some-table-data" title="Permanent link">¶</a></h3>
-<p>Insert data into the table path, using your preferred method (e.g. <a href="../spark/">Spark</a>), and commit upon completion.
-This example uses CSV files, and the files added to lakeFS should look like this:</p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/csv_export_hooks_data.png" data-desc-position="bottom"><img alt="lakeFS Uploaded CSV Files" src="../../assets/img/csv_export_hooks_data.png"></a></p>
-<h3 id="the-exporter-script">The exporter script<a class="headerlink" href="#the-exporter-script" title="Permanent link">¶</a></h3>
-<p>Upload the following script to your main branch under <code>scripts/animals_exporter.lua</code> (or a path of your choice).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For code references check <a href="../../howto/hooks/lua/#lakefscatalogexportsymlink_exporter">symlink_exporter</a> and <a href="../../howto/hooks/lua/#lakefscatalogexportglue_exporter">glue_exporter</a> docs.</p>
-</div>
-<div class="language-lua highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">aws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="s2">"aws"</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">local</span><span class="w"> </span><span class="nv">symlink_exporter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs/catalogexport/symlink_exporter"</span><span class="p">)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kd">local</span><span class="w"> </span><span class="nv">glue_exporter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="s2">"lakefs/catalogexport/glue_exporter"</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1">-- settings </span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">access_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="py">aws</span><span class="p">.</span><span class="py">aws_access_key_id</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="kd">local</span><span class="w"> </span><span class="nv">secret_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="py">aws</span><span class="p">.</span><span class="py">aws_secret_access_key</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="kd">local</span><span class="w"> </span><span class="nv">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="py">aws</span><span class="p">.</span><span class="py">aws_region</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="kd">local</span><span class="w"> </span><span class="nv">table_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="py">table_source</span><span class="w"> </span><span class="c1">-- table descriptor </span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="kd">local</span><span class="w"> </span><span class="nv">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="py">catalog</span><span class="p">.</span><span class="py">db_name</span><span class="w"> </span><span class="c1">-- glue db</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="kd">local</span><span class="w"> </span><span class="nv">table_input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">args</span><span class="p">.</span><span class="py">catalog</span><span class="p">.</span><span class="py">table_input</span><span class="w"> </span><span class="c1">-- table input (AWS input spec) for Glue</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="c1">-- export symlinks </span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="kd">local</span><span class="w"> </span><span class="nv">s3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws</span><span class="p">.</span><span class="nf">s3_client</span><span class="p">(</span><span class="nv">access_key</span><span class="p">,</span><span class="w"> </span><span class="nv">secret_key</span><span class="p">,</span><span class="w"> </span><span class="nv">region</span><span class="p">)</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="kd">local</span><span class="w"> </span><span class="nv">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">symlink_exporter</span><span class="p">.</span><span class="nf">export_s3</span><span class="p">(</span><span class="nv">s3</span><span class="p">,</span><span class="w"> </span><span class="nv">table_path</span><span class="p">,</span><span class="w"> </span><span class="nv">action</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nv">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">})</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1">-- register glue table</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="kd">local</span><span class="w"> </span><span class="nv">glue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws</span><span class="p">.</span><span class="nf">glue_client</span><span class="p">(</span><span class="nv">access_key</span><span class="p">,</span><span class="w"> </span><span class="nv">secret_key</span><span class="p">,</span><span class="w"> </span><span class="nv">region</span><span class="p">)</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="kd">local</span><span class="w"> </span><span class="nv">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">glue_exporter</span><span class="p">.</span><span class="nf">export_glue</span><span class="p">(</span><span class="nv">glue</span><span class="p">,</span><span class="w"> </span><span class="nv">db</span><span class="p">,</span><span class="w"> </span><span class="nv">table_path</span><span class="p">,</span><span class="w"> </span><span class="nv">table_input</span><span class="p">,</span><span class="w"> </span><span class="nv">action</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nv">debug</span><span class="o">=</span><span class="kc">true</span><span class="p">})</span>
-</span></code></pre></div>
-<h3 id="configure-action-hooks">Configure Action Hooks<a class="headerlink" href="#configure-action-hooks" title="Permanent link">¶</a></h3>
-<p>Hooks serve as the mechanism that triggers the execution of the exporter.
-For more detailed information on how to configure exporter hooks, you can refer to <a href="../../howto/catalog_exports/#running-an-exporter">Running an Exporter</a>.</p>
+<h1 id="using-lakefs-with-the-aws-glue-data-catalog">Using lakeFS with the AWS Glue Data Catalog<a class="headerlink" href="#using-lakefs-with-the-aws-glue-data-catalog" title="Permanent link">¶</a></h1>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>The <code>args.catalog.table_input</code> argument in the Lua script is assumed to be passed from the action arguments, that way the same script can be reused for different tables. </p>
-<p>heck the <a href="../../howto/hooks/lua/#lakefscatalogexportglue_exporterexport_glueglue-db-table_src_path-create_table_input-action_info-options">example</a> to construct the table input in the lua code.</p>
+<p>Available in <strong>lakeFS Enterprise</strong></p>
 </div>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="hook-csv-glue-table" name="__tabbed_1" type="radio"><input id="hook-parquet-glue-table" name="__tabbed_1" type="radio"><input id="multiple-hooks--inline-script" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="hook-csv-glue-table">Hook CSV Glue Table</label><label for="hook-parquet-glue-table">Hook Parquet Glue Table</label><label for="multiple-hooks--inline-script">Multiple Hooks / Inline script</label></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This integration requires the <a href="../iceberg/">lakeFS Iceberg REST Catalog</a> to be enabled.
+<a href="https://lakefs.io/lp/iceberg-rest-catalog/">Contact us</a> to get started!</p>
+</div>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p>Using <a href="https://docs.aws.amazon.com/glue/latest/dg/catalog-federation.html">AWS Glue Catalog Federation</a>, you can expose lakeFS-managed Apache Iceberg tables to any AWS service that reads from the Glue Data Catalog -- including <a href="../athena/">Amazon Athena</a>, Redshift Spectrum, and EMR.</p>
+<p>The <a href="https://github.com/treeverse/lakefs-glue-federation"><code>lakefs-glue</code></a> CLI tool automates the creation of a federated Glue catalog that connects directly to the lakeFS Iceberg REST Catalog. Table metadata is discovered in real time through lakeFS -- no data copying or metadata syncing required.</p>
+<h3 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">¶</a></h3>
+<ol>
+<li>A query engine (e.g. Athena) submits a SQL query referencing a table in the federated <strong>Glue Data Catalog</strong>.</li>
+<li><strong>Glue</strong> connects to the <strong>lakeFS Iceberg REST Catalog</strong> via a REST API connection and retrieves table metadata.</li>
+<li><strong>Lake Formation</strong> issues temporary, scoped S3 credentials to the query engine.</li>
+<li>The query engine reads Iceberg data files directly from <strong>S3</strong>.</li>
+</ol>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h3>
+<ul>
+<li>A lakeFS instance with the <a href="../iceberg/">Iceberg REST Catalog</a> enabled.</li>
+<li>A lakeFS service account (access key and secret key).</li>
+<li>Python 3.11+ (for running the <code>lakefs-glue</code> CLI).</li>
+<li>AWS credentials with permissions to manage IAM, Glue, Lake Formation, and Secrets Manager.</li>
+</ul>
+<h2 id="setting-up-a-federated-catalog">Setting Up a Federated Catalog<a class="headerlink" href="#setting-up-a-federated-catalog" title="Permanent link">¶</a></h2>
+<h3 id="install-the-cli">Install the CLI<a class="headerlink" href="#install-the-cli" title="Permanent link">¶</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="uv-recommended" name="__tabbed_1" type="radio"><input id="pip" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="uv-recommended">uv (recommended)</label><label for="pip">pip</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>Upload to <code>_lakefs_actions/animals_glue.yaml</code>: </p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Glue Exporter</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">post-commit</span><span class="p">:</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"main"</span><span class="p p-Indicator">]</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">animals_table_glue_exporter</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">properties</span><span class="p">:</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="nt">script_path</span><span class="p">:</span><span class="w"> </span><span class="s">"scripts/animals_exporter.lua"</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">args</span><span class="p">:</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">        </span><span class="nt">aws</span><span class="p">:</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">          </span><span class="nt">aws_access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_ACCESS_KEY_ID&gt;"</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">          </span><span class="nt">aws_secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_SECRET_ACCESS_KEY&gt;"</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">          </span><span class="nt">aws_region</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_REGION&gt;"</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">        </span><span class="nt">table_source</span><span class="p">:</span><span class="w"> </span><span class="s">'_lakefs_tables/animals.yaml'</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">        </span><span class="nt">catalog</span><span class="p">:</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">          </span><span class="nt">db_name</span><span class="p">:</span><span class="w"> </span><span class="s">"my-glue-db"</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">          </span><span class="nt">table_input</span><span class="p">:</span>
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">            </span><span class="nt">StorageDescriptor</span><span class="p">:</span><span class="w"> </span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">              </span><span class="nt">InputFormat</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat"</span>
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">              </span><span class="nt">OutputFormat</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"</span>
-</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="w">              </span><span class="nt">SerdeInfo</span><span class="p">:</span>
-</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="w">                </span><span class="nt">SerializationLibrary</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.hadoop.hive.serde2.OpenCSVSerde"</span>
-</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="w">                </span><span class="nt">Parameters</span><span class="p">:</span>
-</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="w">                  </span><span class="nt">separatorChar</span><span class="p">:</span><span class="w"> </span><span class="s">","</span>
-</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="w">            </span><span class="nt">Parameters</span><span class="p">:</span><span class="w"> </span>
-</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="w">              </span><span class="nt">classification</span><span class="p">:</span><span class="w"> </span><span class="s">"csv"</span>
-</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="w">              </span><span class="s">"skip.header.line.count"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"1"</span>
+<p>The easiest way to run the tool is with <a href="https://docs.astral.sh/uv/"><code>uv</code></a> -- no install needed:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>federate<span class="w"> </span>--help
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>When working with Parquet files, upload the following to <code>_lakefs_actions/animals_glue.yaml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Glue Exporter</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">post-commit</span><span class="p">:</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"main"</span><span class="p p-Indicator">]</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">animals_table_glue_exporter</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">properties</span><span class="p p-Indicator">:</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="nt">script_path</span><span class="p">:</span><span class="w"> </span><span class="s">"scripts/animals_exporter.lua"</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="nt">args</span><span class="p">:</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="nt">aws</span><span class="p">:</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">            </span><span class="nt">aws_access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_ACCESS_KEY_ID&gt;"</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">            </span><span class="nt">aws_secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_SECRET_ACCESS_KEY&gt;"</span>
-</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">            </span><span class="nt">aws_region</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_REGION&gt;"</span>
-</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">        </span><span class="nt">table_source</span><span class="p">:</span><span class="w"> </span><span class="s">'_lakefs_tables/animals.yaml'</span>
-</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">        </span><span class="nt">catalog</span><span class="p">:</span>
-</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">            </span><span class="nt">db_name</span><span class="p">:</span><span class="w"> </span><span class="s">"my-glue-db"</span>
-</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">            </span><span class="nt">table_input</span><span class="p">:</span>
-</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">                </span><span class="nt">StorageDescriptor</span><span class="p">:</span>
-</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">                </span><span class="nt">InputFormat</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat"</span>
-</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">                </span><span class="nt">OutputFormat</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.hadoop.hive.ql.io.IgnoreKeyTextOutputFormat"</span>
-</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">                </span><span class="nt">SerdeInfo</span><span class="p">:</span>
-</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">                    </span><span class="nt">SerializationLibrary</span><span class="p">:</span><span class="w"> </span><span class="s">"org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"</span>
-</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">                </span><span class="nt">Parameters</span><span class="p">:</span>
-</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">                </span><span class="nt">classification</span><span class="p">:</span><span class="w"> </span><span class="s">"parquet"</span>
-</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">                </span><span class="nt">EXTERNAL</span><span class="p">:</span><span class="w"> </span><span class="s">"TRUE"</span>
-</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">                </span><span class="s">"parquet.compression"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"SNAPPY"</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span>lakefs-glue
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>lakefs-glue<span class="w"> </span>federate<span class="w"> </span>--help
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="create-a-federated-catalog">Create a Federated Catalog<a class="headerlink" href="#create-a-federated-catalog" title="Permanent link">¶</a></h3>
+<p>Run the <code>federate</code> command to create a Glue federated catalog that points to a lakeFS repository and ref:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="uv" name="__tabbed_2" type="radio"><input id="pip_1" name="__tabbed_2" type="radio"><div class="tabbed-labels"><label for="uv">uv</label><label for="pip_1">pip</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span>AKIAIOSFODNN7EXAMPLE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>The following example demonstrates how to separate the symlink and glue exporter into building blocks running in separate hooks.
-It also shows how to run the lua script inline instead of a file, depending on user preference.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Animal Table Exporter</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nt">on</span><span class="p">:</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">post-commit</span><span class="p">:</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"main"</span><span class="p p-Indicator">]</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nt">hooks</span><span class="p">:</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">symlink_exporter</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">properties</span><span class="p p-Indicator">:</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="nt">args</span><span class="p">:</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">        </span><span class="nt">aws</span><span class="p">:</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">        </span><span class="nt">aws_access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_ACCESS_KEY_ID&gt;"</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">        </span><span class="nt">aws_secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_SECRET_ACCESS_KEY&gt;"</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">        </span><span class="nt">aws_region</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_REGION&gt;"</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">        </span><span class="nt">table_source</span><span class="p">:</span><span class="w"> </span><span class="s">'_lakefs_tables/animals.yaml'</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">        </span><span class="no">local exporter = require("lakefs/catalogexport/symlink_exporter")</span>
-</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">        </span><span class="no">local aws = require("aws")</span>
-</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">        </span><span class="no">local table_path = args.table_source</span>
-</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">        </span><span class="no">local s3 = aws.s3_client(args.aws.aws_access_key_id, args.aws.aws_secret_access_key, args.aws.aws_region)</span>
-</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">        </span><span class="no">exporter.export_s3(s3, table_path, action, {debug=true})</span>
-</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">glue_exporter</span>
-</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lua</span>
-</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">properties</span><span class="p p-Indicator">:</span>
-</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span><span class="nt">args</span><span class="p">:</span>
-</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">        </span><span class="nt">aws</span><span class="p">:</span>
-</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">        </span><span class="nt">aws_access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_ACCESS_KEY_ID&gt;"</span>
-</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">        </span><span class="nt">aws_secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_SECRET_ACCESS_KEY&gt;"</span>
-</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">        </span><span class="nt">aws_region</span><span class="p">:</span><span class="w"> </span><span class="s">"&lt;AWS_REGION&gt;"</span>
-</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">        </span><span class="nt">table_source</span><span class="p">:</span><span class="w"> </span><span class="s">'_lakefs_tables/animals.yaml'</span>
-</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">        </span><span class="nt">catalog</span><span class="p">:</span>
-</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">        </span><span class="nt">db_name</span><span class="p">:</span><span class="w"> </span><span class="s">"my-glue-db"</span>
-</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">        </span><span class="nt">table_input</span><span class="p">:</span><span class="w"> </span><span class="c1"># add glue table input here </span>
-</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">    </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">        </span><span class="no">local aws = require("aws")</span>
-</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">        </span><span class="no">local exporter = require("lakefs/catalogexport/glue_exporter")</span>
-</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">        </span><span class="no">local glue = aws.glue_client(args.aws.aws_access_key_id, args.aws.aws_secret_access_key, args.aws.aws_region)</span>
-</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">        </span><span class="no">exporter.export_glue(glue, args.catalog.db_name, args.table_source, args.catalog.table_input, action, {debug=true})  </span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span>AKIAIOSFODNN7EXAMPLE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 </span></code></pre></div>
 </div>
 </div>
 </div>
-<p>Adding the script and the action files to the repository and commit it. This is a post-commit action, meaning it will be executed after the commit operation has taken place. </p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>lakectl<span class="w"> </span>fs<span class="w"> </span>upload<span class="w"> </span>lakefs://catalogs/main/scripts/animals_exporter.lua<span class="w"> </span>-s<span class="w"> </span>./animals_exporter.lua
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>lakectl<span class="w"> </span>fs<span class="w"> </span>upload<span class="w"> </span>lakefs://catalogs/main/_lakefs_actions/animals_glue.yaml<span class="w"> </span>-s<span class="w"> </span>./animals_glue.yaml
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>lakectl<span class="w"> </span>commit<span class="w"> </span>lakefs://catalogs/main<span class="w"> </span>-m<span class="w"> </span><span class="s2">"trigger first export hook"</span>
+<p>This creates a federated catalog named <code>lakefs-catalog</code> (the default) pointing to the <code>main</code> branch.</p>
+<h3 id="configuration-options">Configuration Options<a class="headerlink" href="#configuration-options" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--lakefs-url</code></td>
+<td>Yes</td>
+<td></td>
+<td>lakeFS server URL</td>
+</tr>
+<tr>
+<td><code>--lakefs-repo</code></td>
+<td>Yes</td>
+<td></td>
+<td>Repository name</td>
+</tr>
+<tr>
+<td><code>--lakefs-ref</code></td>
+<td>No</td>
+<td><code>main</code></td>
+<td>Branch, tag, or commit ID to expose</td>
+</tr>
+<tr>
+<td><code>--lakefs-access-key-id</code></td>
+<td>Yes</td>
+<td></td>
+<td>Service account access key</td>
+</tr>
+<tr>
+<td><code>--lakefs-secret-access-key</code></td>
+<td>Yes</td>
+<td></td>
+<td>Service account secret key</td>
+</tr>
+<tr>
+<td><code>--catalog-name</code></td>
+<td>No</td>
+<td><code>lakefs-catalog</code></td>
+<td>Name for the Glue federated catalog</td>
+</tr>
+<tr>
+<td><code>--region</code></td>
+<td>No</td>
+<td><code>us-east-1</code></td>
+<td>AWS region</td>
+</tr>
+<tr>
+<td><code>--grant-to</code></td>
+<td>No</td>
+<td></td>
+<td>IAM ARNs to grant catalog access to (repeatable)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-gets-created">What Gets Created<a class="headerlink" href="#what-gets-created" title="Permanent link">¶</a></h3>
+<p>The <code>federate</code> command creates the following AWS resources:</p>
+<ul>
+<li><strong>Secrets Manager secret</strong> (<code>&lt;catalog-name&gt;-secret</code>) -- stores lakeFS credentials for OAuth2 authentication.</li>
+<li><strong>IAM role</strong> (<code>&lt;catalog-name&gt;-GlueConnectionRole</code>) -- assumed by Glue and Lake Formation.</li>
+<li><strong>Glue Connection</strong> (<code>&lt;catalog-name&gt;-connection</code>) -- the REST API bridge to lakeFS.</li>
+<li><strong>Lake Formation resource</strong> -- enables S3 credential vending.</li>
+<li><strong>Glue Catalog</strong> (<code>&lt;catalog-name&gt;</code>) -- the federated catalog visible in Athena and other AWS services.</li>
+<li><strong>Lake Formation grants</strong> -- permissions for any principals specified with <code>--grant-to</code>.</li>
+</ul>
+<p>The command is idempotent: running it again with different parameters updates the existing resources.</p>
+<h2 id="working-with-multiple-branches-and-refs">Working with Multiple Branches and Refs<a class="headerlink" href="#working-with-multiple-branches-and-refs" title="Permanent link">¶</a></h2>
+<p>Each federated catalog points to a single lakeFS ref. To query multiple branches, tags, or commits, create a separate catalog for each:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="uv_1" name="__tabbed_3" type="radio"><input id="pip_2" name="__tabbed_3" type="radio"><div class="tabbed-labels"><label for="uv_1">uv</label><label for="pip_2">pip</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Main branch</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--lakefs-ref<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>--catalog-name<span class="w"> </span>my-repo-main<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span><span class="nv">$LAKEFS_ACCESS_KEY_ID</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span><span class="nv">$LAKEFS_SECRET_ACCESS_KEY</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># Development branch</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span>--lakefs-ref<span class="w"> </span>dev<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span>--catalog-name<span class="w"> </span>my-repo-dev<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span><span class="nv">$LAKEFS_ACCESS_KEY_ID</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span><span class="nv">$LAKEFS_SECRET_ACCESS_KEY</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="c1"># A specific tag</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span>--lakefs-ref<span class="w"> </span>v1.0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">    </span>--catalog-name<span class="w"> </span>my-repo-v1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span><span class="nv">$LAKEFS_ACCESS_KEY_ID</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span><span class="nv">$LAKEFS_SECRET_ACCESS_KEY</span>
 </span></code></pre></div>
-<p>Once the action has completed its execution, you can review the results in the action logs.</p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/glue_export_hook_result_log.png" data-desc-position="bottom"><img alt="Hooks log result in lakeFS UI" src="../../assets/img/glue_export_hook_result_log.png"></a></p>
-<h3 id="use-athena">Use Athena<a class="headerlink" href="#use-athena" title="Permanent link">¶</a></h3>
-<p>We can use the exported Glue table with any tool that supports Glue Catalog (or Hive compatible) such as Athena, Trino, Spark and others.
-To use Athena we can simply run <code>MSCK REPAIR TABLE</code> and then query the tables.</p>
-<p>In Athena, make sure that the correct database (<code>my-glue-db</code> in the example above) is configured, then run: </p>
-<div class="language-sql highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">MSCK</span><span class="w"> </span><span class="n">REPAIR</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">animals_catalogs_main_9255e5</span><span class="o">`</span><span class="p">;</span><span class="w"> </span><span class="c1">-- load partitions for the first time </span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="o">`</span><span class="n">animals_catalogs_main_9255e5</span><span class="o">`</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Main branch</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>--lakefs-ref<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>--catalog-name<span class="w"> </span>my-repo-main<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span><span class="nv">$LAKEFS_ACCESS_KEY_ID</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span><span class="nv">$LAKEFS_SECRET_ACCESS_KEY</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Development branch</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span>--lakefs-ref<span class="w"> </span>dev<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">    </span>--catalog-name<span class="w"> </span>my-repo-dev<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span><span class="nv">$LAKEFS_ACCESS_KEY_ID</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span><span class="nv">$LAKEFS_SECRET_ACCESS_KEY</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="c1"># A specific tag</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>lakefs-glue<span class="w"> </span>federate<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">    </span>--lakefs-repo<span class="w"> </span>my-repo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">    </span>--lakefs-ref<span class="w"> </span>v1.0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span>--catalog-name<span class="w"> </span>my-repo-v1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span>--lakefs-url<span class="w"> </span>https://my-org.us-east-1.lakefscloud.io<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">    </span>--lakefs-access-key-id<span class="w"> </span><span class="nv">$LAKEFS_ACCESS_KEY_ID</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">    </span>--lakefs-secret-access-key<span class="w"> </span><span class="nv">$LAKEFS_SECRET_ACCESS_KEY</span>
 </span></code></pre></div>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/img/catalog_export_athena_aws_ui_sql.png" data-desc-position="bottom"><img alt="Athena SQL Result" src="../../assets/img/catalog_export_athena_aws_ui_sql.png"></a></p>
-<h3 id="cleanup">Cleanup<a class="headerlink" href="#cleanup" title="Permanent link">¶</a></h3>
-<p>Users can use additional hooks / actions to implement a custom cleanup logic to delete the symlink in S3 and Glue Tables. </p>
-<div class="language-lua highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nv">glue</span><span class="p">.</span><span class="nf">delete_table</span><span class="p">(</span><span class="nv">db</span><span class="p">,</span><span class="w"> </span><span class="s1">'&lt;glue table name&gt;'</span><span class="p">)</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nv">s3</span><span class="p">.</span><span class="nf">delete_recursive</span><span class="p">(</span><span class="s1">'bucket'</span><span class="p">,</span><span class="w"> </span><span class="s1">'path/to/symlinks/of/a/commit/'</span><span class="p">)</span>
+</div>
+</div>
+</div>
+<p>Each catalog appears independently in Athena and Lake Formation.</p>
+<h2 id="querying-the-federated-catalog">Querying the Federated Catalog<a class="headerlink" href="#querying-the-federated-catalog" title="Permanent link">¶</a></h2>
+<p>Once set up, you can query your lakeFS tables from any AWS service that integrates with Glue Data Catalog. For a detailed guide with query examples, see <a href="../athena/">Using lakeFS with AWS Glue &amp; Amazon Athena</a>.</p>
+<h2 id="removing-federated-catalogs">Removing Federated Catalogs<a class="headerlink" href="#removing-federated-catalogs" title="Permanent link">¶</a></h2>
+<p>To clean up federated catalogs and their associated AWS resources:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="uv_2" name="__tabbed_4" type="radio"><input id="pip_3" name="__tabbed_4" type="radio"><div class="tabbed-labels"><label for="uv_2">uv</label><label for="pip_3">pip</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Remove a specific catalog</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>my-catalog
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Remove all federated catalogs</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>--all
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Skip confirmation prompt</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>my-catalog<span class="w"> </span>--yes
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Target a specific region</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>uvx<span class="w"> </span>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>my-catalog<span class="w"> </span>--region<span class="w"> </span>us-west-2
 </span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Remove a specific catalog</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>my-catalog
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Remove all federated catalogs</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>--all
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Skip confirmation prompt</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>my-catalog<span class="w"> </span>--yes
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># Target a specific region</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>lakefs-glue<span class="w"> </span>rm<span class="w"> </span>my-catalog<span class="w"> </span>--region<span class="w"> </span>us-west-2
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Read-only</strong>: AWS Glue Catalog Federation only supports read queries. <code>INSERT</code>, <code>CREATE TABLE</code>, and other write operations are not supported.</li>
+<li><strong>Single ref per catalog</strong>: Each federated catalog points to one lakeFS ref. Create multiple catalogs to query multiple branches or tags.</li>
+<li><strong>Flat namespaces only</strong>: AWS Glue Catalog Federation supports only flat <code>catalog.namespace.table</code> structures -- nested namespaces are not supported.</li>
+</ul>
 
 
 

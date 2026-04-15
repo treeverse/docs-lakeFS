@@ -3,17 +3,17 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="This section shows how you can start querying data from lakeFS using Amazon Athena.">
+        <meta name="description" content="Query lakeFS-managed Iceberg tables from Amazon Athena using AWS Glue Catalog Federation.">
       
       
       
         <link rel="canonical" href="https://docs.lakefs.io/dev/integrations/athena/">
       
       
-        <link rel="prev" href="../delta/">
+        <link rel="prev" href="../iceberg/">
       
       
-        <link rel="next" href="../kafka/">
+        <link rel="next" href="../presto_trino/">
       
       
         
@@ -24,7 +24,7 @@
     
     
       
-        <title>Amazon Athena - lakeFS Enterprise Documentation</title>
+        <title>AWS Glue &amp; Athena - lakeFS Enterprise Documentation</title>
       
     
     
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div data-md-component="skip">
       
         
-        <a href="#using-lakefs-with-amazon-athena" class="md-skip">
+        <a href="#using-lakefs-with-aws-glue-amazon-athena" class="md-skip">
           Skip to content
         </a>
       
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Amazon Athena
+              AWS Glue &amp; Athena
             
           </span>
         </div>
@@ -2808,6 +2808,152 @@ document.addEventListener("DOMContentLoaded", function() {
                 
   
   
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Glue &amp; Athena
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--enterprise" title="Enterprise Feature">
+    </span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Glue &amp; Athena
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--enterprise" title="Enterprise Feature">
+    </span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#querying-from-athena" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Querying from Athena
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparing-data-across-branches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparing Data Across Branches
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
   
   
     <li class="md-nav__item">
@@ -2967,103 +3113,6 @@ document.addEventListener("DOMContentLoaded", function() {
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Amazon Athena
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Amazon Athena
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#integration-overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Integration Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3551,33 +3600,13 @@ document.addEventListener("DOMContentLoaded", function() {
   </span>
   
   
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../glue_hive_metastore/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
     
   
-    Glue / Hive metastore
+  
+    <span class="md-status md-status--enterprise" title="Enterprise Feature">
+    </span>
   
 
-    
-  </span>
-  
   
 
       </a>
@@ -5592,10 +5621,10 @@ document.addEventListener("DOMContentLoaded", function() {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#integration-overview" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integration Overview
+        Overview
       
     </span>
   </a>
@@ -5603,10 +5632,43 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#setup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Started
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#querying-from-athena" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Querying from Athena
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparing-data-across-branches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparing Data Across Branches
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
       
     </span>
   </a>
@@ -5630,22 +5692,54 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-<h1 id="using-lakefs-with-amazon-athena">Using lakeFS with Amazon Athena<a class="headerlink" href="#using-lakefs-with-amazon-athena" title="Permanent link">¶</a></h1>
-<p><a href="https://aws.amazon.com/athena/">Amazon Athena</a> is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL.</p>
-<h2 id="integration-overview">Integration Overview<a class="headerlink" href="#integration-overview" title="Permanent link">¶</a></h2>
-<p>To query lakeFS data from Athena, you'll need to first export data to AWS Glue, and then use Athena to query it directly. To do that, use the automated <a href="../../howto/catalog_exports/">Data Catalog Exports</a> feature, which allows you to:</p>
-<ul>
-<li>Query data directly from lakeFS branches and commits</li>
-<li>Access tables using branch names as schemas</li>
-<li>Leverage lakeFS versioning capabilities in your SQL queries</li>
-</ul>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">¶</a></h2>
-<p>For a complete step-by-step guide on setting up Athena with lakeFS, see the <a href="../glue_metastore/">Glue Data Catalog integration guide</a>, which includes:</p>
+<h1 id="using-lakefs-with-aws-glue-amazon-athena">Using lakeFS with AWS Glue &amp; Amazon Athena<a class="headerlink" href="#using-lakefs-with-aws-glue-amazon-athena" title="Permanent link">¶</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Available in <strong>lakeFS Enterprise</strong></p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This integration requires the <a href="../iceberg/">lakeFS Iceberg REST Catalog</a> to be enabled.
+<a href="https://lakefs.io/lp/iceberg-rest-catalog/">Contact us</a> to get started!</p>
+</div>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
+<p><a href="https://aws.amazon.com/athena/">Amazon Athena</a> can query lakeFS-managed Apache Iceberg tables directly through <a href="https://docs.aws.amazon.com/glue/latest/dg/catalog-federation.html">AWS Glue Catalog Federation</a> -- no data copying or metadata syncing required.</p>
+<p>Athena discovers table metadata in real time through lakeFS and reads the underlying data files directly from S3.</p>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">¶</a></h2>
+<p>Before querying from Athena, you need to create a federated Glue catalog that connects to your lakeFS Iceberg REST Catalog. Follow the <a href="../glue_metastore/">Glue Data Catalog integration guide</a> for step-by-step instructions on:</p>
 <ol>
-<li><strong>Table Configuration</strong>: Define your table schema using <code>_lakefs_tables/&lt;table&gt;.yaml</code></li>
-<li><strong>Automated Export</strong>: Set up Lua hooks to export table metadata to Glue Catalog</li>
-<li><strong>Query Setup</strong>: Use Athena to query your lakeFS data with branch-specific schemas</li>
+<li>Installing the <a href="https://github.com/treeverse/lakefs-glue-federation"><code>lakefs-glue</code></a> CLI tool.</li>
+<li>Creating a federated catalog pointing to a lakeFS repository and branch.</li>
+<li>Granting access to the appropriate IAM principals.</li>
 </ol>
+<h2 id="querying-from-athena">Querying from Athena<a class="headerlink" href="#querying-from-athena" title="Permanent link">¶</a></h2>
+<p>Once the federated catalog is created, query your lakeFS tables directly from Athena using the catalog name as a prefix:</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="ss">"lakefs-catalog"</span><span class="p">.</span><span class="ss">"default"</span><span class="p">.</span><span class="ss">"my_table"</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+</span></code></pre></div>
+<p>Run aggregations and joins across lakeFS-managed tables:</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">SELECT</span><span class="w"> </span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">category</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">total_amount</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">FROM</span><span class="w"> </span><span class="ss">"lakefs-catalog"</span><span class="p">.</span><span class="ss">"default"</span><span class="p">.</span><span class="ss">"transactions"</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">category</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">total_amount</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</span></code></pre></div>
+<h2 id="comparing-data-across-branches">Comparing Data Across Branches<a class="headerlink" href="#comparing-data-across-branches" title="Permanent link">¶</a></h2>
+<p>By creating <a href="../glue_metastore/#working-with-multiple-branches-and-refs">separate catalogs for different refs</a>, you can compare data across branches, tags, or commits directly from Athena:</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">-- Compare row counts between production and dev</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="s1">'main'</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">branch</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">row_count</span><span class="w"> </span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">FROM</span><span class="w"> </span><span class="ss">"my-repo-main"</span><span class="p">.</span><span class="ss">"default"</span><span class="p">.</span><span class="ss">"my_table"</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">SELECT</span><span class="w"> </span><span class="s1">'dev'</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">branch</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">row_count</span><span class="w"> </span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">FROM</span><span class="w"> </span><span class="ss">"my-repo-dev"</span><span class="p">.</span><span class="ss">"default"</span><span class="p">.</span><span class="ss">"my_table"</span><span class="p">;</span>
+</span></code></pre></div>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Read-only</strong>: AWS Glue Catalog Federation only supports read queries. <code>INSERT</code>, <code>CREATE TABLE</code>, and other write operations are not supported through Athena.</li>
+<li><strong>Single ref per catalog</strong>: Each federated catalog points to one lakeFS ref. Create <a href="../glue_metastore/#working-with-multiple-branches-and-refs">multiple catalogs</a> to query multiple branches or tags.</li>
+<li><strong>Flat namespaces only</strong>: AWS Glue Catalog Federation supports only flat <code>catalog.namespace.table</code> structures -- nested namespaces are not supported.</li>
+</ul>
 
 
 
