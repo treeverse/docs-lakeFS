@@ -5299,6 +5299,17 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#auditlogread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AuditLogRead
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -6272,6 +6283,17 @@ document.addEventListener("DOMContentLoaded", function() {
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#auditlogread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AuditLogRead
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -6615,6 +6637,10 @@ The resource segment of the ARN supports wildcards: use <code>*</code> to match 
 <tr>
 <td><code>arn:lakefs:catalog:::view/{repositoryId}/{namespace}/{view}</code></td>
 <td>An Iceberg view</td>
+</tr>
+<tr>
+<td><code>arn:lakefs:audit:::log</code></td>
+<td>The lakeFS audit log</td>
 </tr>
 </tbody>
 </table>
@@ -7224,6 +7250,20 @@ The resource segment of the ARN supports wildcards: use <code>*</code> to match 
 <td>-</td>
 </tr>
 <tr>
+<td>Read Audit Log</td>
+<td><code>audit:ReadAuditLog</code></td>
+<td><code>arn:lakefs:audit:::log</code></td>
+<td>Iceberg catalog read operations targeting the <code>lakefssystem</code> repository</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Write Audit Log</td>
+<td><code>audit:WriteAuditLog</code></td>
+<td><code>arn:lakefs:audit:::log</code></td>
+<td>Iceberg catalog write operations targeting the <code>lakefssystem</code> repository</td>
+<td>-</td>
+</tr>
+<tr>
 <td>Login as Organization Admin <em>(Cloud only)</em></td>
 <td><code>admin:Login</code></td>
 <td><code>*</code></td>
@@ -7368,102 +7408,117 @@ you need permission to <code>fs:CreateRepository</code> for the <em>name</em> of
 </span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">  </span><span class="p">]</span>
 </span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="additional-policies">Additional Policies<a class="headerlink" href="#additional-policies" title="Permanent link">¶</a></h2>
-<p>You can create additional policies to further limit user access. Use the web UI or
-the <a href="../../reference/cli/#lakectl-auth-policies-create">lakectl auth</a> command to create policies.</p>
-<p>Here is an example to define read/write access for a specific repository:</p>
+<h3 id="auditlogread">AuditLogRead<a class="headerlink" href="#auditlogread" title="Permanent link">¶</a></h3>
+<p>Grants read access to the lakeFS audit log. Attached to the <code>Admins</code> group
+by default. Attach it to other groups or users to delegate audit-log visibility.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">        </span><span class="p">{</span>
 </span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">                </span><span class="s2">"fs:ReadRepository"</span><span class="p">,</span>
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">                </span><span class="s2">"fs:ReadCommit"</span><span class="p">,</span>
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">                </span><span class="s2">"fs:ListBranches"</span><span class="p">,</span>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">                </span><span class="s2">"fs:ListTags"</span><span class="p">,</span>
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">                </span><span class="s2">"fs:ListObjects"</span>
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">            </span><span class="p">],</span>
-</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
-</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;"</span>
-</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="w">        </span><span class="p">{</span>
-</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="w">                </span><span class="s2">"fs:RevertBranch"</span><span class="p">,</span>
-</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="w">                </span><span class="s2">"fs:ReadBranch"</span><span class="p">,</span>
-</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a><span class="w">                </span><span class="s2">"fs:CreateBranch"</span><span class="p">,</span>
-</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="w">                </span><span class="s2">"fs:DeleteBranch"</span><span class="p">,</span>
-</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="w">                </span><span class="s2">"fs:CreateCommit"</span>
-</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="w">            </span><span class="p">],</span>
-</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
-</span><span id="__span-19-23"><a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/branch/*"</span>
-</span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-19-25"><a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a><span class="w">                </span><span class="p">{</span>
-</span><span id="__span-19-26"><a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-19-27"><a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a><span class="w">                </span><span class="s2">"fs:ListObjects"</span><span class="p">,</span>
-</span><span id="__span-19-28"><a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a><span class="w">                </span><span class="s2">"fs:ReadObject"</span><span class="p">,</span>
-</span><span id="__span-19-29"><a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a><span class="w">                </span><span class="s2">"fs:WriteObject"</span><span class="p">,</span>
-</span><span id="__span-19-30"><a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a><span class="w">                </span><span class="s2">"fs:DeleteObject"</span>
-</span><span id="__span-19-31"><a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a><span class="w">            </span><span class="p">],</span>
-</span><span id="__span-19-32"><a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
-</span><span id="__span-19-33"><a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/object/*"</span>
-</span><span id="__span-19-34"><a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-19-35"><a id="__codelineno-19-35" name="__codelineno-19-35" href="#__codelineno-19-35"></a><span class="w">                </span><span class="p">{</span>
-</span><span id="__span-19-36"><a id="__codelineno-19-36" name="__codelineno-19-36" href="#__codelineno-19-36"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-19-37"><a id="__codelineno-19-37" name="__codelineno-19-37" href="#__codelineno-19-37"></a><span class="w">                </span><span class="s2">"fs:ReadTag"</span><span class="p">,</span>
-</span><span id="__span-19-38"><a id="__codelineno-19-38" name="__codelineno-19-38" href="#__codelineno-19-38"></a><span class="w">                </span><span class="s2">"fs:CreateTag"</span><span class="p">,</span>
-</span><span id="__span-19-39"><a id="__codelineno-19-39" name="__codelineno-19-39" href="#__codelineno-19-39"></a><span class="w">                </span><span class="s2">"fs:DeleteTag"</span>
-</span><span id="__span-19-40"><a id="__codelineno-19-40" name="__codelineno-19-40" href="#__codelineno-19-40"></a><span class="w">            </span><span class="p">],</span>
-</span><span id="__span-19-41"><a id="__codelineno-19-41" name="__codelineno-19-41" href="#__codelineno-19-41"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
-</span><span id="__span-19-42"><a id="__codelineno-19-42" name="__codelineno-19-42" href="#__codelineno-19-42"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/tag/*"</span>
-</span><span id="__span-19-43"><a id="__codelineno-19-43" name="__codelineno-19-43" href="#__codelineno-19-43"></a><span class="w">        </span><span class="p">},</span>
-</span><span id="__span-19-44"><a id="__codelineno-19-44" name="__codelineno-19-44" href="#__codelineno-19-44"></a><span class="w">        </span><span class="p">{</span>
-</span><span id="__span-19-45"><a id="__codelineno-19-45" name="__codelineno-19-45" href="#__codelineno-19-45"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fs:ReadConfig"</span><span class="p">],</span>
-</span><span id="__span-19-46"><a id="__codelineno-19-46" name="__codelineno-19-46" href="#__codelineno-19-46"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
-</span><span id="__span-19-47"><a id="__codelineno-19-47" name="__codelineno-19-47" href="#__codelineno-19-47"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span>
-</span><span id="__span-19-48"><a id="__codelineno-19-48" name="__codelineno-19-48" href="#__codelineno-19-48"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-19-49"><a id="__codelineno-19-49" name="__codelineno-19-49" href="#__codelineno-19-49"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-19-50"><a id="__codelineno-19-50" name="__codelineno-19-50" href="#__codelineno-19-50"></a><span class="p">}</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">                </span><span class="s2">"audit:ReadAuditLog"</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:audit:::log"</span>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<h2 id="multiple-resources-statements">Multiple Resources Statements<a class="headerlink" href="#multiple-resources-statements" title="Permanent link">¶</a></h2>
-<p>lakeFS supports specifying multiple resources in a single RBAC statement. This is available on lakeFS Cloud, or on lakeFS Enterprise if starting at version lakeFS v1.54.0 and Fluffy v0.12.0
-In addition to a single resource. The resource field can contain a string representing a JSON-encoded list of resources.</p>
+<h2 id="additional-policies">Additional Policies<a class="headerlink" href="#additional-policies" title="Permanent link">¶</a></h2>
+<p>You can create additional policies to further limit user access. Use the web UI or
+the <a href="../../reference/cli/#lakectl-auth-policies-create">lakectl auth</a> command to create policies.</p>
+<p>Here is an example to define read/write access for a specific repository:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="p">{</span>
 </span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">        </span><span class="p">{</span>
 </span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">                </span><span class="s2">"fs:Read*"</span>
-</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">            </span><span class="p">],</span>
-</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
-</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[\"arn:lakefs:fs:::repository/repo1\",\"arn:lakefs:fs:::repository/repo2\"]"</span>
-</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="p">}</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">                </span><span class="s2">"fs:ReadRepository"</span><span class="p">,</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">                </span><span class="s2">"fs:ReadCommit"</span><span class="p">,</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">                </span><span class="s2">"fs:ListBranches"</span><span class="p">,</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">                </span><span class="s2">"fs:ListTags"</span><span class="p">,</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">                </span><span class="s2">"fs:ListObjects"</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;"</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="w">                </span><span class="s2">"fs:RevertBranch"</span><span class="p">,</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="w">                </span><span class="s2">"fs:ReadBranch"</span><span class="p">,</span>
+</span><span id="__span-20-18"><a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a><span class="w">                </span><span class="s2">"fs:CreateBranch"</span><span class="p">,</span>
+</span><span id="__span-20-19"><a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="w">                </span><span class="s2">"fs:DeleteBranch"</span><span class="p">,</span>
+</span><span id="__span-20-20"><a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a><span class="w">                </span><span class="s2">"fs:CreateCommit"</span>
+</span><span id="__span-20-21"><a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-20-22"><a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-20-23"><a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/branch/*"</span>
+</span><span id="__span-20-24"><a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-20-25"><a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a><span class="w">                </span><span class="p">{</span>
+</span><span id="__span-20-26"><a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-20-27"><a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a><span class="w">                </span><span class="s2">"fs:ListObjects"</span><span class="p">,</span>
+</span><span id="__span-20-28"><a id="__codelineno-20-28" name="__codelineno-20-28" href="#__codelineno-20-28"></a><span class="w">                </span><span class="s2">"fs:ReadObject"</span><span class="p">,</span>
+</span><span id="__span-20-29"><a id="__codelineno-20-29" name="__codelineno-20-29" href="#__codelineno-20-29"></a><span class="w">                </span><span class="s2">"fs:WriteObject"</span><span class="p">,</span>
+</span><span id="__span-20-30"><a id="__codelineno-20-30" name="__codelineno-20-30" href="#__codelineno-20-30"></a><span class="w">                </span><span class="s2">"fs:DeleteObject"</span>
+</span><span id="__span-20-31"><a id="__codelineno-20-31" name="__codelineno-20-31" href="#__codelineno-20-31"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-20-32"><a id="__codelineno-20-32" name="__codelineno-20-32" href="#__codelineno-20-32"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-20-33"><a id="__codelineno-20-33" name="__codelineno-20-33" href="#__codelineno-20-33"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/object/*"</span>
+</span><span id="__span-20-34"><a id="__codelineno-20-34" name="__codelineno-20-34" href="#__codelineno-20-34"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-20-35"><a id="__codelineno-20-35" name="__codelineno-20-35" href="#__codelineno-20-35"></a><span class="w">                </span><span class="p">{</span>
+</span><span id="__span-20-36"><a id="__codelineno-20-36" name="__codelineno-20-36" href="#__codelineno-20-36"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-20-37"><a id="__codelineno-20-37" name="__codelineno-20-37" href="#__codelineno-20-37"></a><span class="w">                </span><span class="s2">"fs:ReadTag"</span><span class="p">,</span>
+</span><span id="__span-20-38"><a id="__codelineno-20-38" name="__codelineno-20-38" href="#__codelineno-20-38"></a><span class="w">                </span><span class="s2">"fs:CreateTag"</span><span class="p">,</span>
+</span><span id="__span-20-39"><a id="__codelineno-20-39" name="__codelineno-20-39" href="#__codelineno-20-39"></a><span class="w">                </span><span class="s2">"fs:DeleteTag"</span>
+</span><span id="__span-20-40"><a id="__codelineno-20-40" name="__codelineno-20-40" href="#__codelineno-20-40"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-20-41"><a id="__codelineno-20-41" name="__codelineno-20-41" href="#__codelineno-20-41"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-20-42"><a id="__codelineno-20-42" name="__codelineno-20-42" href="#__codelineno-20-42"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:lakefs:fs:::repository/&lt;repository-name&gt;/tag/*"</span>
+</span><span id="__span-20-43"><a id="__codelineno-20-43" name="__codelineno-20-43" href="#__codelineno-20-43"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-20-44"><a id="__codelineno-20-44" name="__codelineno-20-44" href="#__codelineno-20-44"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-20-45"><a id="__codelineno-20-45" name="__codelineno-20-45" href="#__codelineno-20-45"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"fs:ReadConfig"</span><span class="p">],</span>
+</span><span id="__span-20-46"><a id="__codelineno-20-46" name="__codelineno-20-46" href="#__codelineno-20-46"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-20-47"><a id="__codelineno-20-47" name="__codelineno-20-47" href="#__codelineno-20-47"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span>
+</span><span id="__span-20-48"><a id="__codelineno-20-48" name="__codelineno-20-48" href="#__codelineno-20-48"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-20-49"><a id="__codelineno-20-49" name="__codelineno-20-49" href="#__codelineno-20-49"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-20-50"><a id="__codelineno-20-50" name="__codelineno-20-50" href="#__codelineno-20-50"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="multiple-resources-statements">Multiple Resources Statements<a class="headerlink" href="#multiple-resources-statements" title="Permanent link">¶</a></h2>
+<p>lakeFS supports specifying multiple resources in a single RBAC statement. This is available on lakeFS Cloud, or on lakeFS Enterprise if starting at version lakeFS v1.54.0 and Fluffy v0.12.0
+In addition to a single resource. The resource field can contain a string representing a JSON-encoded list of resources.</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="p">{</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="nt">"statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">            </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">                </span><span class="s2">"fs:Read*"</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">            </span><span class="nt">"effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"allow"</span><span class="p">,</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">            </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"[\"arn:lakefs:fs:::repository/repo1\",\"arn:lakefs:fs:::repository/repo2\"]"</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>The list must be properly encoded as a JSON string: quote each resource, and escape those quotes as shown.
 Otherwise, the policy cannot be parsed.</p>
 <h3 id="multi-resource-policy-creation-using-python-sdk">Multi-Resource Policy Creation Using Python SDK<a class="headerlink" href="#multi-resource-policy-creation-using-python-sdk" title="Permanent link">¶</a></h3>
 <p>Here is how you can leverage Python SDK to create a multiple resource policy:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs_sdk</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_sdk.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSClient</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
-</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
-</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_sdk</span><span class="o">.</span><span class="n">Configuration</span><span class="p">(</span>
-</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>        <span class="n">host</span><span class="o">=</span><span class="n">lakefsEndPoint</span><span class="p">,</span>
-</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>        <span class="n">username</span><span class="o">=</span><span class="n">lakefsAccessKey</span><span class="p">,</span>
-</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>        <span class="n">password</span><span class="o">=</span><span class="n">lakefsSecretKey</span><span class="p">,</span>
-</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="p">)</span>
-</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="n">clt</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
-</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>
-</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="n">clt</span><span class="o">.</span><span class="n">auth_api</span><span class="o">.</span><span class="n">create_policy</span><span class="p">(</span>
-</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>    <span class="n">policy</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">Policy</span><span class="p">(</span>
-</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>        <span class="nb">id</span><span class="o">=</span><span class="s1">'FSReadTwoRepos'</span><span class="p">,</span>
-</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>        <span class="n">statement</span><span class="o">=</span><span class="p">[</span><span class="n">models</span><span class="o">.</span><span class="n">Statement</span><span class="p">(</span>
-</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a>            <span class="n">effect</span><span class="o">=</span><span class="s2">"deny"</span><span class="p">,</span>
-</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>            <span class="n">resource</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="s2">"arn:lakefs:fs:::repository/repo1"</span><span class="p">,</span><span class="s2">"arn:lakefs:fs:::repository/repo2"</span><span class="p">]),</span>
-</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a>            <span class="n">action</span><span class="o">=</span><span class="p">[</span><span class="s2">"fs:ReadRepository"</span><span class="p">],</span>
-</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a>        <span class="p">),</span>
-</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a>        <span class="p">]</span>
-</span><span id="__span-21-21"><a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a>    <span class="p">)</span>
-</span><span id="__span-21-22"><a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">lakefs_sdk</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_sdk.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSClient</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="n">configuration</span> <span class="o">=</span> <span class="n">lakefs_sdk</span><span class="o">.</span><span class="n">Configuration</span><span class="p">(</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>        <span class="n">host</span><span class="o">=</span><span class="n">lakefsEndPoint</span><span class="p">,</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>        <span class="n">username</span><span class="o">=</span><span class="n">lakefsAccessKey</span><span class="p">,</span>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>        <span class="n">password</span><span class="o">=</span><span class="n">lakefsSecretKey</span><span class="p">,</span>
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="p">)</span>
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="n">clt</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+</span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>
+</span><span id="__span-22-12"><a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a><span class="n">clt</span><span class="o">.</span><span class="n">auth_api</span><span class="o">.</span><span class="n">create_policy</span><span class="p">(</span>
+</span><span id="__span-22-13"><a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>    <span class="n">policy</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">Policy</span><span class="p">(</span>
+</span><span id="__span-22-14"><a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>        <span class="nb">id</span><span class="o">=</span><span class="s1">'FSReadTwoRepos'</span><span class="p">,</span>
+</span><span id="__span-22-15"><a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>        <span class="n">statement</span><span class="o">=</span><span class="p">[</span><span class="n">models</span><span class="o">.</span><span class="n">Statement</span><span class="p">(</span>
+</span><span id="__span-22-16"><a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>            <span class="n">effect</span><span class="o">=</span><span class="s2">"deny"</span><span class="p">,</span>
+</span><span id="__span-22-17"><a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a>            <span class="n">resource</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="s2">"arn:lakefs:fs:::repository/repo1"</span><span class="p">,</span><span class="s2">"arn:lakefs:fs:::repository/repo2"</span><span class="p">]),</span>
+</span><span id="__span-22-18"><a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>            <span class="n">action</span><span class="o">=</span><span class="p">[</span><span class="s2">"fs:ReadRepository"</span><span class="p">],</span>
+</span><span id="__span-22-19"><a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a>        <span class="p">),</span>
+</span><span id="__span-22-20"><a id="__codelineno-22-20" name="__codelineno-22-20" href="#__codelineno-22-20"></a>        <span class="p">]</span>
+</span><span id="__span-22-21"><a id="__codelineno-22-21" name="__codelineno-22-21" href="#__codelineno-22-21"></a>    <span class="p">)</span>
+</span><span id="__span-22-22"><a id="__codelineno-22-22" name="__codelineno-22-22" href="#__codelineno-22-22"></a><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="preconfigured-groups">Preconfigured Groups<a class="headerlink" href="#preconfigured-groups" title="Permanent link">¶</a></h2>
 <p>lakeFS has four preconfigured groups:</p>
@@ -7533,6 +7588,13 @@ Otherwise, the policy cannot be parsed.</p>
 <td></td>
 <td></td>
 <td>✅</td>
+</tr>
+<tr>
+<td><a href="#auditlogread"><code>AuditLogRead</code></a></td>
+<td>✅</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td><a href="#adminfullaccess"><code>AdminFullAccess</code> (<em>Cloud only)</em></a></td>
