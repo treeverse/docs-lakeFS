@@ -2874,6 +2874,45 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
+  <a href="#audit_log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit_log
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="audit_log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#audit_logflush" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit_log.flush
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audit_logmaintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit_log.maintenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#iceberg_catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5996,6 +6035,45 @@ document.addEventListener("DOMContentLoaded", function() {
 </li>
         
           <li class="md-nav__item">
+  <a href="#audit_log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit_log
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="audit_log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#audit_logflush" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit_log.flush
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audit_logmaintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        audit_log.maintenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#iceberg_catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6249,6 +6327,26 @@ When enabled, backpressure will limit the number of requests each server will ha
 <h3 id="features">features<a class="headerlink" href="#features" title="Permanent link">¶</a></h3>
 <ul>
 <li><code>features.local_rbac</code> <code>(bool: true)</code> - Backward compatibility if you use an external RBAC service (such as legacy fluffy). If <code>false</code> lakeFS will expect to use <code>auth.api</code> and all fluffy related configuration for RBAC.</li>
+</ul>
+<h3 id="audit_log">audit_log<a class="headerlink" href="#audit_log" title="Permanent link">¶</a></h3>
+<p>Configuration section for the <a href="../../reference/auditing/#iceberg-audit-log">Audit Log Iceberg System Table</a>.</p>
+<ul>
+<li><code>audit_log.enabled</code> <code>(bool : false)</code> - Enable the audit log Iceberg pipeline. When enabled, lakeFS captures all audit events and persists them to an Iceberg table.</li>
+<li><code>audit_log.retention_days</code> <code>(int : 90)</code> - Default retention period in days for snapshot expiration. Set to <code>0</code> for infinite retention.</li>
+<li><code>audit_log.storage_namespace</code> <code>(string : "")</code> - Storage location for the <code>lakefssystem</code> repository. If empty, derived from <code>blockstore.default_namespace_prefix</code> by appending <code>/lakefssystem</code> (e.g. <code>s3://my-bucket/lakefssystem</code>).</li>
+<li><code>audit_log.storage_id</code> <code>(string : "")</code> - Storage backend ID for <a href="../../howto/multiple-storage-backends/">multi-storage backend</a> setups. Must correspond to the backend that hosts the <code>storage_namespace</code> above.</li>
+</ul>
+<h4 id="audit_logflush">audit_log.flush<a class="headerlink" href="#audit_logflush" title="Permanent link">¶</a></h4>
+<ul>
+<li><code>audit_log.flush.interval</code> <code>(duration : 1m)</code> - How often to flush buffered audit events.</li>
+<li><code>audit_log.flush.batch_size</code> <code>(int : 100000)</code> - Flush when this many events accumulate. Events are flushed when either the interval or the batch size threshold is reached, whichever comes first.</li>
+</ul>
+<h4 id="audit_logmaintenance">audit_log.maintenance<a class="headerlink" href="#audit_logmaintenance" title="Permanent link">¶</a></h4>
+<p>Configuration for audit maintenance. See <a href="../../reference/auditing/#maintenance">Maintenance</a> for details. When running maintenance as an external job, set <code>enabled</code> to <code>false</code> to disable the in-process scheduler.</p>
+<ul>
+<li><code>audit_log.maintenance.enabled</code> <code>(bool : true)</code> - Run maintenance in-process when the <code>audit_log.enabled</code> setting is <code>true</code>. This setting has no effect when audit logging is disabled.</li>
+<li><code>audit_log.maintenance.schedule</code> <code>(string : "0 * * * *")</code> - Cron expression to schedule maintenance, defaulting to every hour.</li>
+<li><code>audit_log.maintenance.metrics_push_url</code> <code>(string : "")</code> - Prometheus Pushgateway URL to push maintenance metrics to after each run (used by the external job mode). If empty, metrics are not pushed.</li>
 </ul>
 <h3 id="iceberg_catalog">iceberg_catalog<a class="headerlink" href="#iceberg_catalog" title="Permanent link">¶</a></h3>
 <p>Configuration section for the Iceberg REST Catalog</p>
