@@ -1689,6 +1689,50 @@ components:
       required:
         - pattern
 
+    LifecyclePolicy:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 32
+          description: Stable identifier used in evaluator output, error messages, and applier logs. Optional on PUT; the server assigns one when not provided. When provided, must be unique within the policies list and must not contain whitespace.
+          example: "pol-a3f9c821"
+        patterns:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+          description: Glob patterns or literal branch names matched against branch names; OR semantics across the list.
+          example: ["ci/*", "feature/*", "experiment-1"]
+        max_age:
+          type: string
+          pattern: '^([0-9]+(\.[0-9]+)?(s|m|h|d|w))+$'
+          description: Branches older than this become candidates. Combines the units s (seconds), m (minutes), h (hours), d (days), w (weeks); e.g. "7d", "2w", "1w3d12h". Must be > 0. At least one of max_age or max_idle_age must be set.
+          example: "7d"
+        max_idle_age:
+          type: string
+          pattern: '^([0-9]+(\.[0-9]+)?(s|m|h|d|w))+$'
+          description: Branches whose time since last write exceeds this become candidates. Same syntax as max_age. AND-combined with max_age when both are set. At least one of max_age or max_idle_age must be set.
+          example: "7d"
+        description:
+          type: string
+      required:
+        - patterns
+
+    LifecyclePolicies:
+      type: object
+      description: |
+        Branch lifecycle policies for a repository. When a branch matches more
+        than one policy, the first matching policy by array position wins.
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: "#/components/schemas/LifecyclePolicy"
+      required:
+        - policies
+
     ImportLocation:
       type: object
       required:
@@ -3725,6 +3769,120 @@ paths:
           $ref: "#/components/responses/NotFound"
         412:
           $ref: "#/components/responses/PreconditionFailed"
+        429:
+          description: too many requests
+        default:
+          $ref: "#/components/responses/ServerError"
+
+  /repositories/{repository}/settings/branch_lifecycle/set_allowed:
+    parameters:
+      - in: path
+        name: repository
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - internal
+      operationId: setBranchLifecyclePoliciesPreflight
+      responses:
+        204:
+          description: User has permissions to set branch lifecycle policies in this repository
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        429:
+          description: too many requests
+        default:
+          $ref: "#/components/responses/ServerError"
+
+  /repositories/{repository}/settings/branch_lifecycle/policies:
+    parameters:
+      - in: path
+        name: repository
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - repositories
+      operationId: getBranchLifecyclePolicies
+      summary: get branch lifecycle policies
+      responses:
+        200:
+          description: branch lifecycle policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LifecyclePolicies"
+          headers:
+            ETag:
+              schema:
+                type: string
+                description: ETag of the branch lifecycle policies
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        429:
+          description: too many requests
+        default:
+          $ref: "#/components/responses/ServerError"
+    put:
+      parameters:
+        - in: header
+          name: If-Match
+          schema:
+            type: string
+          description: if provided, the policies will be updated only if the current ETag matches the provided value
+          allowEmptyValue: true
+      tags:
+        - repositories
+      operationId: setBranchLifecyclePolicies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LifecyclePolicies"
+      responses:
+        200:
+          description: policies updated; canonical state with server-assigned ids returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LifecyclePolicies"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        412:
+          $ref: "#/components/responses/PreconditionFailed"
+        429:
+          description: too many requests
+        default:
+          $ref: "#/components/responses/ServerError"
+    delete:
+      tags:
+        - repositories
+      operationId: deleteBranchLifecyclePolicies
+      summary: clear all branch lifecycle policies for this repository
+      responses:
+        204:
+          description: policies cleared
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
         429:
           description: too many requests
         default:
