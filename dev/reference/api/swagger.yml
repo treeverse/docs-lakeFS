@@ -1691,13 +1691,17 @@ components:
 
     LifecyclePolicy:
       type: object
+      description: |
+        A branch lifecycle policy. At least one of `max_age` or
+        `max_inactivity_time` must be set; when both are set, a branch
+        must exceed both thresholds to match.
       properties:
         id:
           type: string
           maxLength: 32
           description: Stable identifier used in evaluator output, error messages, and applier logs. Optional on PUT; the server assigns one when not provided. When provided, must be unique within the policies list and must not contain whitespace.
           example: "pol-a3f9c821"
-        patterns:
+        name_patterns:
           type: array
           minItems: 1
           items:
@@ -1706,19 +1710,21 @@ components:
           description: Glob patterns or literal branch names matched against branch names; OR semantics across the list.
           example: ["ci/*", "feature/*", "experiment-1"]
         max_age:
-          type: string
-          pattern: '^([0-9]+(\.[0-9]+)?(s|m|h|d|w))+$'
-          description: Branches older than this become candidates. Combines the units s (seconds), m (minutes), h (hours), d (days), w (weeks); e.g. "7d", "2w", "1w3d12h". Must be > 0. At least one of max_age or max_idle_age must be set.
-          example: "7d"
-        max_idle_age:
-          type: string
-          pattern: '^([0-9]+(\.[0-9]+)?(s|m|h|d|w))+$'
-          description: Branches whose time since last write exceeds this become candidates. Same syntax as max_age. AND-combined with max_age when both are set. At least one of max_age or max_idle_age must be set.
-          example: "7d"
+          type: integer
+          format: int64
+          minimum: 1
+          description: Seconds since branch creation. A branch is a candidate for deletion when its age exceeds this value.
+          example: 604800
+        max_inactivity_time:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Seconds since the branch's last write. A branch is a candidate for deletion when its inactivity exceeds this value.
+          example: 604800
         description:
           type: string
       required:
-        - patterns
+        - name_patterns
 
     LifecyclePolicies:
       type: object

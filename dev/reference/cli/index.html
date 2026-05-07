@@ -10108,7 +10108,7 @@ Simply type branch help [path to command] for full details.</p>
 <p>Manage branch lifecycle policies</p>
 <h4>Synopsis</h4>
 
-<p>Define branch lifecycle policies that delete branches matching glob patterns once they exceed max_age. Policies live at the repository level; the repository's default branch is exempt.</p>
+<p>Define branch lifecycle policies that delete branches matching glob patterns once their age or inactivity exceeds the configured thresholds. Policies live at the repository level; the repository's default branch is exempt.</p>
 <h4>Options</h4>
 
 <div class="language-text highlight"><pre><span></span><code><span id="__span-128-1"><a id="__codelineno-128-1" name="__codelineno-128-1" href="#__codelineno-128-1"></a>  -h, --help   help for branch-lifecycle
@@ -10160,15 +10160,15 @@ Simply type branch-lifecycle help [path to command] for full details.</p>
 <p>Replace the repository's branch lifecycle policies with the contents of a file. The file is parsed as YAML; JSON is accepted as well since it is valid YAML. The server returns the canonical policy list on success, including any ids it assigned to policies submitted without one.</p>
 <p>Example file:
 policies:
-  - patterns: ["feature-<em>", "wip-</em>"]
-    max_age: "7d"
-    max_idle_age: "3d"
+  - name_patterns: ["feature-<em>", "wip-</em>"]
+    max_age: 7
+    max_inactivity_time: 3
     description: "auto-cleanup of feature branches"
   - id: "temp-cleanup"
-    patterns: ["temp-*"]
-    max_idle_age: "30d"</p>
-<p>max_age and max_idle_age combine the units s (seconds), m (minutes), h (hours), d (days), w (weeks); e.g. "7d", "2w", "1w3d12h". When set, each must be &gt; 0. At least one of max_age or max_idle_age is required; when both are set, both thresholds must be exceeded for the policy to apply (AND).</p>
-<p>id is optional: provide one to keep a stable identifier across reapplies; omit it and the server assigns one (e.g. "pol-a3f9c821"). Ids must be unique within the policies list, at most 32 characters, and contain no whitespace.</p>
+    name_patterns: ["temp-*"]
+    max_inactivity_time: 30</p>
+<p>max_age and max_inactivity_time are positive whole-day counts. At least one is required; when both are set, both thresholds must be exceeded for the policy to apply (AND).</p>
+<p>id is optional: provide one to keep a stable identifier across reapplies; omit it and the server assigns one. Ids must be unique within the policies list, at most 32 characters, and contain no whitespace.</p>
 <p>By default the current ETag is read first and sent as a precondition; if policies have changed remotely the update fails with HTTP 412. Use --force to skip the precondition check.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-137-1"><a id="__codelineno-137-1" name="__codelineno-137-1" href="#__codelineno-137-1"></a>lakectl branch-lifecycle set &lt;repository URI&gt; [flags]
 </span></code></pre></div>
